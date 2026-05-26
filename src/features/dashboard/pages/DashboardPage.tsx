@@ -219,7 +219,7 @@ export function DashboardPage() {
                 <XAxis type="number" hide={true} axisLine={false} tickLine={false} />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#4a3c31' }} width={50} />
                 <Bar dataKey="value" radius={[10, 10, 10, 10]} isAnimationActive={false}>
-                  <LabelList dataKey="value" position="right" formatter={(val: number) => `$${val.toLocaleString()}`} fill="#4a3c31" fontSize={9} />
+                  <LabelList dataKey="value" position="right" formatter={(val: string | number) => `$${Number(val).toLocaleString()}`} fill="#4a3c31" fontSize={9} />
                   {spendChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
