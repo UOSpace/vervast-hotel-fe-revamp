@@ -1,0 +1,337 @@
+{
+  "metrics": {
+    "guestsToday": {
+      "title": "Guests Today",
+      "value": "2,847",
+      "trendText": "12%",
+      "trendUp": true,
+      "icon": "users",
+      "data": [
+        10,
+        15,
+        12,
+        18,
+        20,
+        24
+      ],
+      "color": "#947b66"
+    },
+    "occupancy": {
+      "title": "Occupancy",
+      "value": "68%",
+      "trendText": "6%",
+      "trendUp": true,
+      "icon": "bed",
+      "data": [
+        60,
+        40,
+        70,
+        80,
+        72,
+        90
+      ],
+      "color": "#586981"
+    },
+    "revPar": {
+      "title": "RevPAR (USD)",
+      "value": "742",
+      "trendText": "8%",
+      "trendUp": true,
+      "icon": "price",
+      "data": [
+        650,
+        680,
+        690,
+        710,
+        730,
+        742
+      ],
+      "color": "#657454"
+    },
+    "avgLengthOfStay": {
+      "title": "Avg Length of Stay",
+      "value": "4.2",
+      "trendText": "5%",
+      "trendUp": true,
+      "icon": "clock",
+      "data": [
+        3.8,
+        3.9,
+        4.0,
+        4.0,
+        4.1,
+        4.2
+      ],
+      "color": "#8b6b7a"
+    }
+  },
+  "globalAlerts": [
+    {
+      "icon": "heart",
+      "title": "WELLNESS DEMAND",
+      "text": "High wellness demand in Alpine and Ocean.",
+      "action": "See details →"
+    },
+    {
+      "icon": "users",
+      "title": "STAFFING PRESSURE",
+      "text": "Rising in 2 properties due to seasonal demand.",
+      "action": "See details →"
+    },
+    {
+      "icon": "plane",
+      "title": "ARRIVAL PEAK",
+      "text": "High arrival volume expected in the next 48 hours.",
+      "action": "See details →"
+    },
+    {
+      "icon": "weather",
+      "title": "WEATHER IMPACT",
+      "text": "Snow expected in Alpine. Plan activities accordingly.",
+      "action": "See details →"
+    }
+  ],
+  "guestMovementChart": [
+    {
+      "name": "May 12",
+      "alpine": 800,
+      "ocean": 650,
+      "city": 450,
+      "forest": 350,
+      "desert": 250,
+      "country": 200
+    },
+    {
+      "name": "May 13",
+      "alpine": 820,
+      "ocean": 680,
+      "city": 480,
+      "forest": 380,
+      "desert": 280,
+      "country": 220
+    },
+    {
+      "name": "May 14",
+      "alpine": 810,
+      "ocean": 690,
+      "city": 490,
+      "forest": 370,
+      "desert": 290,
+      "country": 230
+    },
+    {
+      "name": "May 15",
+      "alpine": 850,
+      "ocean": 700,
+      "city": 500,
+      "forest": 390,
+      "desert": 300,
+      "country": 240
+    },
+    {
+      "name": "May 16",
+      "alpine": 870,
+      "ocean": 710,
+      "city": 510,
+      "forest": 400,
+      "desert": 290,
+      "country": 250
+    },
+    {
+      "name": "May 17",
+      "alpine": 880,
+      "ocean": 715,
+      "city": 515,
+      "forest": 405,
+      "desert": 300,
+      "country": 255
+    },
+    {
+      "name": "Today",
+      "alpine": 892,
+      "ocean": 721,
+      "city": 518,
+      "forest": 410,
+      "desert": 306,
+      "country": 257
+    }
+  ],
+  "guestMovement": [
+    {
+      "name": "Sosei Alpine",
+      "current": 892,
+      "trend": "+ 11%",
+      "up": true,
+      "color": "#947b66"
+    },
+    {
+      "name": "Sosei Ocean",
+      "current": 721,
+      "trend": "+ 7%",
+      "up": true,
+      "color": "#657454"
+    },
+    {
+      "name": "Sosei City",
+      "current": 518,
+      "trend": "+ 6%",
+      "up": true,
+      "color": "#586981"
+    },
+    {
+      "name": "Sosei Forest",
+      "current": 410,
+      "trend": "+ 5%",
+      "up": true,
+      "color": "#8b6b7a"
+    },
+    {
+      "name": "Sosei Desert",
+      "current": 306,
+      "trend": "↓ 3%",
+      "up": false,
+      "color": "#a65e52"
+    },
+    {
+      "name": "Sosei Countryside",
+      "current": 257,
+      "trend": "+ 11%",
+      "up": true,
+      "color": "#d4c4b7"
+    }
+  ],
+  "portfolioPerformance": [
+    {
+      "label": "Total Revenue (USD)",
+      "value": "$ 18.7M",
+      "trend": "↑ 10%",
+      "up": true
+    },
+    {
+      "label": "RevPAR (USD)",
+      "value": "$ 742",
+      "trend": "↑ 8%",
+      "up": true
+    },
+    {
+      "label": "Occupancy",
+      "value": "68%",
+      "trend": "↑ 6%",
+      "up": true
+    },
+    {
+      "label": "ADR (USD)",
+      "value": "$ 1,091",
+      "trend": "↑ 4%",
+      "up": true
+    },
+    {
+      "label": "GOP Margin",
+      "value": "32%",
+      "trend": "↑ 7%",
+      "up": true
+    }
+  ],
+  "topNationalities": [
+    {
+      "country": "United States",
+      "percentage": "24%"
+    },
+    {
+      "country": "United Kingdom",
+      "percentage": "12%"
+    },
+    {
+      "country": "Germany",
+      "percentage": "9%"
+    },
+    {
+      "country": "India",
+      "percentage": "8%"
+    },
+    {
+      "country": "Australia",
+      "percentage": "7%"
+    }
+  ],
+  "sentimentScore": {
+    "score": "4.8",
+    "label": "Excellent",
+    "trend": "↑ 0.3 vs last month"
+  },
+  "guestArrivals": [
+    {
+      "id": 1,
+      "name": "The Anderson Family",
+      "property": "Sosei Alpine",
+      "time": "2:30 PM",
+      "vip": true
+    },
+    {
+      "id": 2,
+      "name": "Mr. James Wilson",
+      "property": "Sosei Forest",
+      "time": "7:00 PM",
+      "vip": false
+    },
+    {
+      "id": 3,
+      "name": "The Parker Family",
+      "property": "Sosei Desert",
+      "time": "5:30 PM",
+      "vip": false
+    }
+  ],
+  "topGuestNeeds": [
+    {
+      "icon": "♡",
+      "percentage": "62%",
+      "label": "Wellness"
+    },
+    {
+      "icon": "👨‍👩‍👧‍👦",
+      "percentage": "48%",
+      "label": "Family"
+    },
+    {
+      "icon": "🍽️",
+      "percentage": "41%",
+      "label": "Dining"
+    },
+    {
+      "icon": "⛷️",
+      "percentage": "33%",
+      "label": "Ski"
+    },
+    {
+      "icon": "🚗",
+      "percentage": "28%",
+      "label": "Transport"
+    }
+  ],
+  "notesFromYesterday": {
+    "text": "The family loved the fondue experience and the morning photography walk. They mentioned the team felt incredibly attentive.",
+    "author": "Front Office"
+  },
+  "journeyTimeline": [
+    { "imgKey": "alpine", "date": "November 2021", "name": "SOSEI Alpine", "location": "Switzerland" },
+    { "imgKey": "ocean", "date": "January 2022", "name": "SOSEI Ocean", "location": "Maldives" },
+    { "imgKey": "city", "date": "June 2023", "name": "SOSEI City", "location": "New York" },
+    { "imgKey": "forest", "date": "August 2024", "name": "SOSEI Forest", "location": "Tokyo" },
+    { "imgKey": "desert", "date": "October 2025", "name": "SOSEI Desert", "location": "Cairo" },
+    { "imgKey": "country", "date": "May 2026", "name": "SOSEI Countryside", "location": "Melbourne" }
+  ],
+  "spendOverTime": [
+    { "name": "2021", "value": 18650, "color": "#e5b976" },
+    { "name": "2022", "value": 23640, "color": "#c28c46" },
+    { "name": "2023", "value": 29850, "color": "#a67138" },
+    { "name": "2024 YTD", "value": 6420, "color": "#789366" }
+  ],
+  "sentimentChartData": [
+    { "name": "May 21", "value": 2 },
+    { "name": "May 22", "value": 3.5 },
+    { "name": "May 23", "value": 2.5 },
+    { "name": "May 24", "value": 4.5 },
+    { "name": "May 25", "value": 3.5 }
+  ]
+}

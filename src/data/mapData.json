@@ -1,0 +1,50 @@
+[
+  { 
+    "id": "alpine", 
+    "name": "SOSEI ALPINE", 
+    "city": "Switzerland", 
+    "coordinates": [8.2275, 46.8182], 
+    "status": "high",
+    "labelOffset": [5, 5]
+  },
+  { 
+    "id": "city", 
+    "name": "SOSEI CITY", 
+    "city": "New York", 
+    "coordinates": [-74.006, 40.7128], 
+    "status": "high",
+    "labelOffset": [-100, 5]
+  },
+  { 
+    "id": "desert", 
+    "name": "SOSEI DESERT", 
+    "city": "Cairo", 
+    "coordinates": [31.2357, 30.0444], 
+    "status": "high",
+    "labelOffset": [5, 5]
+  },
+  { 
+    "id": "ocean", 
+    "name": "SOSEI OCEAN", 
+    "city": "Maldives", 
+    "coordinates": [73.2207, 3.2028], 
+    "status": "high",
+    "labelOffset": [-90, 5]
+  },
+  { 
+    "id": "forest", 
+    "name": "SOSEI FOREST", 
+    "city": "Tokyo", 
+    "coordinates": [139.6917, 35.6895], 
+    "status": "high",
+    "labelOffset": [5, 5]
+  },
+  { 
+    "id": "countryside", 
+    "name": "SOSEI COUNTRYSIDE", 
+    "city": "Melbourne", 
+    "coordinates": [144.9631, -37.8136], 
+    "status": "high",
+    "labelOffset": [-120, 5]
+  }
+]
