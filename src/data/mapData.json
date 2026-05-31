@@ -3,48 +3,48 @@
     "id": "alpine", 
     "name": "SOSEI ALPINE", 
     "city": "Switzerland", 
-    "coordinates": [8.2275, 46.8182], 
+    "coordinates": [7.7492540, 46.0212076], 
     "status": "high",
-    "labelOffset": [5, 5]
+    "labelOffset": [6, -32]
   },
   { 
     "id": "city", 
     "name": "SOSEI CITY", 
     "city": "New York", 
-    "coordinates": [-74.006, 40.7128], 
+    "coordinates": [-74.0060152, 40.7127281], 
     "status": "high",
-    "labelOffset": [-100, 5]
+    "labelOffset": [-125, 6]
   },
   { 
     "id": "desert", 
     "name": "SOSEI DESERT", 
     "city": "Cairo", 
-    "coordinates": [31.2357, 30.0444], 
+    "coordinates": [31.2357257, 30.0443879], 
     "status": "high",
-    "labelOffset": [5, 5]
+    "labelOffset": [6, 6]
   },
   { 
     "id": "ocean", 
     "name": "SOSEI OCEAN", 
     "city": "Maldives", 
-    "coordinates": [73.2207, 3.2028], 
+    "coordinates": [73.5107387, 4.1779879], 
     "status": "high",
-    "labelOffset": [-90, 5]
+    "labelOffset": [-110, 6]
   },
   { 
     "id": "forest", 
     "name": "SOSEI FOREST", 
     "city": "Tokyo", 
-    "coordinates": [139.6917, 35.6895], 
+    "coordinates": [139.7638947, 35.6768601], 
     "status": "high",
-    "labelOffset": [5, 5]
+    "labelOffset": [6, 6]
   },
   { 
     "id": "countryside", 
     "name": "SOSEI COUNTRYSIDE", 
     "city": "Melbourne", 
-    "coordinates": [144.9631, -37.8136], 
+    "coordinates": [144.9631732, -37.8142454], 
     "status": "high",
-    "labelOffset": [-120, 5]
+    "labelOffset": [-130, 6]
   }
 ]

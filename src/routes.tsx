@@ -1,7 +1,9 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { LoginPage } from './features/auth';
 import { DashboardPage } from './features/dashboard';
+import { PropertyDashboardPage } from './features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from './components/layouts/MasterLayout';
+import { UnderConstructionPage } from './features/common/pages/UnderConstructionPage';
 
 export const routes: RouteObject[] = [
   {
@@ -20,8 +22,14 @@ export const routes: RouteObject[] = [
         path: '/dashboard',
         element: <DashboardPage />,
       },
-      // You can easily add more routes here, e.g.:
-      // { path: '/dashboard/property', element: <PropertyPage /> }
+      {
+        path: '/dashboard/property',
+        element: <PropertyDashboardPage />,
+      },
+      {
+        path: '/dashboard/*',
+        element: <UnderConstructionPage />,
+      }
     ],
   },
   {

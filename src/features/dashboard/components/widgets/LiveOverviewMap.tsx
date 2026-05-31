@@ -3,56 +3,108 @@ import mapData from '../../../../data/mapData.json';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
-export function LiveOverviewMap() {
-  const alpineHub = mapData.find(d => d.id === 'alpine')?.coordinates || [8.2275, 46.8182];
+const ALPINE_COORDS: [number, number] = [8.2275, 46.8182];
 
+export function LiveOverviewMap() {
   return (
     <div className="w-full h-full relative flex flex-col">
-      <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-2">Live Overview</h3>
-      <div className="flex-1 relative bg-transparent overflow-hidden">
-        <ComposableMap projection="geoMercator" projectionConfig={{ scale: 120 }} width={800} height={400} style={{ width: '100%', height: '100%' }}>
+      <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-1">Live Overview</h3>
+      <div className="flex-1 relative overflow-hidden rounded-md">
+        <ComposableMap
+          projection="geoMercator"
+          projectionConfig={{ scale: 145, center: [15, 20] }}
+          width={800}
+          height={440}
+          style={{ width: '100%', height: '100%' }}
+        >
+          <defs>
+            {/* Paper texture */}
+            <filter id="paper" x="0%" y="0%" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise" />
+              <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise" />
+              <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blend" />
+              <feComponentTransfer in="blend">
+                <feFuncR type="linear" slope="0.95" intercept="0.05" />
+                <feFuncG type="linear" slope="0.93" intercept="0.04" />
+                <feFuncB type="linear" slope="0.90" intercept="0.03" />
+              </feComponentTransfer>
+            </filter>
+
+            {/* Country shadow */}
+            <filter id="countryShadow" x="-10%" y="-10%" width="120%" height="130%">
+              <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#8a7060" floodOpacity="0.3" />
+            </filter>
+
+            {/* Radial gradient dot: solid amber center → transparent edge */}
+            <radialGradient id="dotGradient" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+              <stop offset="0%"   stopColor="#C8A050" stopOpacity="0.95" />
+              <stop offset="40%"  stopColor="#C8A050" stopOpacity="0.60" />
+              <stop offset="100%" stopColor="#C8A050" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* Flat country polygons — no highlight */}
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill="#e5d8cb"
-                  stroke="#d4c4b7"
+                  fill="#d9cabb"
+                  stroke="#c8b9a8"
                   strokeWidth={0.5}
+                  filter="url(#paper)"
                   style={{
-                    default: { outline: 'none' },
-                    hover: { outline: 'none', fill: '#c0ae9f' },
+                    default: { outline: 'none', filter: 'url(#countryShadow)' },
+                    hover:   { outline: 'none', fill: '#c8b49a', filter: 'url(#countryShadow)' },
                     pressed: { outline: 'none' },
                   }}
                 />
               ))
             }
           </Geographies>
-          
-          {/* Draw connecting lines from Alpine Hub */}
-          {mapData.filter(d => d.id !== 'alpine').map((location) => (
-            <Line
-              key={`line-${location.id}`}
-              from={alpineHub as [number, number]}
-              to={location.coordinates as [number, number]}
-              stroke="#BA9468"
-              strokeWidth={1}
-              strokeLinecap="round"
-              className="opacity-50"
-            />
-          ))}
 
-          {/* Draw markers and labels */}
+          {/* Connection lines from Alpine hub */}
+          {mapData
+            .filter(d => d.id !== 'alpine')
+            .map((location) => (
+              <Line
+                key={`line-${location.id}`}
+                from={ALPINE_COORDS}
+                to={location.coordinates as [number, number]}
+                stroke="#C8A050"
+                strokeWidth={1.1}
+                strokeLinecap="round"
+                style={{ opacity: 0.65 }}
+              />
+            ))}
+
+          {/* Markers — radial gradient dot + label */}
           {mapData.map(({ id, name, city, coordinates, labelOffset }) => (
             <Marker key={id} coordinates={coordinates as [number, number]}>
-              <circle r={3} fill="#BA9468" />
-              <circle r={10} fill="#BA9468" className="opacity-20 animate-ping" />
-              
-              <foreignObject x={labelOffset[0]} y={labelOffset[1]} width={130} height={40}>
-                <div className="bg-[#FAF5F0] rounded shadow-sm border border-[#E3D1C1] px-2 py-1 w-max">
-                  <div className="text-[8px] font-bold text-[#4a3c31] leading-none mb-0.5">{name}</div>
-                  <div className="text-[8px] text-[#7d6b5e] leading-none">{city}</div>
+              {/* Outer radial gradient glow */}
+              <circle r={14} fill="url(#dotGradient)" />
+              {/* Inner solid dot */}
+              <circle r={3.5} fill="#C8A050" stroke="#fff" strokeWidth={1} />
+
+              {/* Label pill */}
+              <foreignObject
+                x={labelOffset[0]}
+                y={labelOffset[1]}
+                width={150}
+                height={38}
+                style={{ overflow: 'visible' }}
+              >
+                <div style={{
+                  background: 'rgba(255,252,248,0.96)',
+                  borderRadius: '8px',
+                  padding: '4px 8px',
+                  width: 'max-content',
+                  boxShadow: '0 1px 6px rgba(100,80,60,0.18)',
+                  border: '1px solid rgba(200,180,160,0.4)',
+                }}>
+                  <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#4a3c31', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
+                  <div style={{ fontSize: '7.5px', color: '#9B8272', lineHeight: 1.2 }}>{city}</div>
                 </div>
               </foreignObject>
             </Marker>
@@ -60,24 +112,23 @@ export function LiveOverviewMap() {
         </ComposableMap>
 
         {/* Legend */}
-        <div className="absolute bottom-4 left-4 p-3 bg-[#EFE7D5]/80 backdrop-blur-sm border border-[#d4c4b7] rounded-lg">
-          <div className="space-y-1.5 text-[10px]">
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#BA9468]"></span>
-              <span className="text-[#4a3c31]">High Activity</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#829C64]"></span>
-              <span className="text-[#4a3c31]">Moderate</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#477684]"></span>
-              <span className="text-[#4a3c31]">Low</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#71558C]"></span>
-              <span className="text-[#4a3c31]">Limited Operations</span>
-            </div>
+        <div className="absolute bottom-3 left-3 px-3 py-2.5 rounded-lg" style={{
+          background: 'rgba(240,232,220,0.82)',
+          backdropFilter: 'blur(4px)',
+          border: '1px solid rgba(200,180,160,0.35)',
+        }}>
+          <div className="space-y-1.5">
+            {[
+              { label: 'High Activity',      color: '#C8A050' },
+              { label: 'Moderate',           color: '#829C64' },
+              { label: 'Low',                color: '#477684' },
+              { label: 'Limited Operations', color: '#71558C' },
+            ].map(({ label, color }) => (
+              <div key={label} className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
+                <span className="text-[9px] text-[#4a3c31]">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
