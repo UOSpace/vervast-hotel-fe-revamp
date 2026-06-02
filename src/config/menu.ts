@@ -1,4 +1,4 @@
-import { 
+import {
   Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Code, Bell
 } from '@solar-icons/react';
 
@@ -12,6 +12,5 @@ export const sidebarMenu = [
   { name: 'Operations', icon: Bed, path: '/dashboard/operations' },
   { name: 'Sales', icon: TagPrice, path: '/dashboard/sales' },
   { name: 'Finance', icon: PieChart, path: '/dashboard/finance' },
-  { name: 'Development', icon: Code, path: '/dashboard/development' },
   { name: 'Alerts', icon: Bell, path: '/dashboard/alerts' },
 ];
