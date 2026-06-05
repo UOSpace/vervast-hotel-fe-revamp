@@ -51,7 +51,7 @@ export function GuestsPage() {
   });
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'In House': return 'bg-[#947b66]/20 text-[#4a3c31] border-[#947b66]/30';
       case 'Arriving': return 'bg-[#C8A050]/20 text-[#7a5e2a] border-[#C8A050]/30';
       case 'Departed': return 'bg-[#7d6b5e]/20 text-[#4a3c31] border-[#7d6b5e]/30';
@@ -72,31 +72,31 @@ export function GuestsPage() {
           <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all guest interactions.</p>
         </div>
         <div className="flex items-center gap-3">
-            {/* Additional actions like "New Guest" could go here */}
+          {/* Additional actions like "New Guest" could go here */}
         </div>
       </header>
 
       {/* Main Content Area */}
       <div className="flex-1 min-h-0 flex flex-col px-4 lg:px-6 pb-6">
-        
+
         {/* Table Container */}
-        <div className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] backdrop-blur-sm bg-[#f3eae1]/30 overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
-          
+        <div className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] backdrop-blur-sm bg-[#f3eae1]/0  overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
+
           {/* Toolbar */}
           <div className="p-4 border-b border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/50">
             <div className="relative w-72">
               <Magnifer size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#947b66]" />
-              <Input 
-                placeholder="Search guests by name or ID..." 
+              <Input
+                placeholder="Search guests by name or ID..."
                 className="pl-9 h-9 bg-white/50 border-[#d4c4b7] text-[#4a3c31] focus-visible:ring-[#947b66] rounded-[8px] text-xs"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex gap-2 relative">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="h-9 border-[#d4c4b7] text-[#4a3c31] hover:bg-[#e5d8cb] rounded-[8px] text-xs flex gap-2"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
@@ -179,13 +179,13 @@ export function GuestsPage() {
                       <td className="px-6 py-4 text-[#7d6b5e]">{guest.departure}</td>
                       <td className="px-6 py-4 text-right font-medium">{guest.spend}</td>
                       <td className="px-6 py-4 text-right relative">
-                        <button 
+                        <button
                           onClick={(e) => toggleDropdown(guest.id, e)}
                           className="p-1.5 rounded-full hover:bg-[#d4c4b7]/50 text-[#7d6b5e] hover:text-[#4a3c31] transition-colors"
                         >
                           <MenuDots size={18} />
                         </button>
-                        
+
                         {openDropdownId === guest.id && (
                           <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
                             <button onClick={() => handlePreview(guest.id)} className="w-full px-3 py-2 text-left text-xs text-[#4a3c31] hover:bg-[#e5d8cb] flex items-center gap-2 transition-colors">
@@ -209,7 +209,7 @@ export function GuestsPage() {
               </tbody>
             </table>
           </div>
-          
+
           {/* Pagination Footer */}
           <div className="p-3 border-t border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/80 text-xs text-[#7d6b5e]">
             <span>Showing <span className="font-medium text-[#4a3c31]">{filteredGuests.length}</span> of <span className="font-medium text-[#4a3c31]">{mockGuests.length}</span> guests</span>

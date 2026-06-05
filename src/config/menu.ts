@@ -1,5 +1,5 @@
 import {
-  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Code, Bell
+  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Bell
 } from '@solar-icons/react';
 
 export const sidebarMenu = [

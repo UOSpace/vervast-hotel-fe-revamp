@@ -5,6 +5,7 @@
     "city": "Switzerland", 
     "coordinates": [7.7492540, 46.0212076], 
     "status": "high",
+    "revenue": "$4.5M",
     "labelOffset": [6, -32]
   },
   { 
@@ -12,7 +13,8 @@
     "name": "SOSEI CITY", 
     "city": "New York", 
     "coordinates": [-74.0060152, 40.7127281], 
-    "status": "high",
+    "status": "low",
+    "revenue": "$1.2M",
     "labelOffset": [-125, 6]
   },
   { 
@@ -20,7 +22,8 @@
     "name": "SOSEI DESERT", 
     "city": "Cairo", 
     "coordinates": [31.2357257, 30.0443879], 
-    "status": "high",
+    "status": "limited",
+    "revenue": "$0.6M",
     "labelOffset": [6, 6]
   },
   { 
@@ -28,7 +31,8 @@
     "name": "SOSEI OCEAN", 
     "city": "Maldives", 
     "coordinates": [73.5107387, 4.1779879], 
-    "status": "high",
+    "status": "moderate",
+    "revenue": "$2.8M",
     "labelOffset": [-110, 6]
   },
   { 
@@ -36,7 +40,8 @@
     "name": "SOSEI FOREST", 
     "city": "Tokyo", 
     "coordinates": [139.7638947, 35.6768601], 
-    "status": "high",
+    "status": "low",
+    "revenue": "$1.5M",
     "labelOffset": [6, 6]
   },
   { 
@@ -44,7 +49,8 @@
     "name": "SOSEI COUNTRYSIDE", 
     "city": "Melbourne", 
     "coordinates": [144.9631732, -37.8142454], 
-    "status": "high",
+    "status": "moderate",
+    "revenue": "$2.1M",
     "labelOffset": [-130, 6]
   }
 ]

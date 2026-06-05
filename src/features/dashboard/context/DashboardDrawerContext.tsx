@@ -8,6 +8,14 @@ export type DrawerType =
   | 'PORTFOLIO_PERFORMANCE' 
   | 'TOP_NATIONALITIES' 
   | 'SENTIMENT_SCORE'
+  | 'GUEST_ARRIVALS'
+  | 'GUEST_NEEDS'
+  | 'NOTES_YESTERDAY'
+  | 'JOURNEY_TIMELINE'
+  | 'SPEND_OVERTIME'
+  | 'GEO_MARKET'
+  | 'MARKET_SEGMENT'
+  | 'CHANNEL_DISTRIBUTION'
   | null;
 
 export interface DrawerConfig {

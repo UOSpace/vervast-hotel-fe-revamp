@@ -1,7 +1,7 @@
 {
   "metrics": {
     "guestsToday": {
-      "title": "Guests Today",
+      "title": "Number Of Guest",
       "value": "2,847",
       "trendText": "12%",
       "trendUp": true,
@@ -67,28 +67,76 @@
   },
   "globalAlerts": [
     {
+      "id": "wellness",
       "icon": "heart",
       "title": "WELLNESS DEMAND",
       "text": "High wellness demand in Alpine and Ocean.",
-      "action": "See details →"
+      "action": "See details →",
+      "priority": "Low",
+      "detail": "Spa and massage bookings have increased by 42% over the last 48 hours in Sosei Alpine and Sosei Ocean. We recommend extending spa opening hours and calling in on-call therapists to maximize capture rate."
     },
     {
+      "id": "staffing",
       "icon": "users",
       "title": "STAFFING PRESSURE",
       "text": "Rising in 2 properties due to seasonal demand.",
-      "action": "See details →"
+      "action": "See details →",
+      "priority": "Medium",
+      "detail": "F&B departments in Sosei City and Sosei Forest are reporting staffing deficits of 15% due to sudden occupancy spikes. HR is coordinating temporary staff transfers from surrounding properties."
     },
     {
+      "id": "arrival",
       "icon": "plane",
       "title": "ARRIVAL PEAK",
       "text": "High arrival volume expected in the next 48 hours.",
-      "action": "See details →"
+      "action": "See details →",
+      "priority": "High",
+      "detail": "Over 450 guests are arriving within a 12-hour window. Front desk staffing has been doubled, and pre-registration protocols have been enabled to ensure check-in times remain under 3 minutes."
     },
     {
+      "id": "weather",
       "icon": "weather",
       "title": "WEATHER IMPACT",
       "text": "Snow expected in Alpine. Plan activities accordingly.",
-      "action": "See details →"
+      "action": "See details →",
+      "priority": "High",
+      "detail": "Blizzard warning active for Sosei Alpine region. Expected accumulation of 30cm snow. All outdoor excursions have been rerouted to indoor fireplace events. Snow clearance team has been standby."
+    },
+    {
+      "id": "occupancy",
+      "icon": "users",
+      "title": "OCCUPANCY SPIKE",
+      "text": "Sosei City at 94% capacity this weekend.",
+      "action": "See details →",
+      "priority": "Medium",
+      "detail": "Last-minute weekend reservations have pushed occupancy to 94% in Sosei City. Implementing dynamic room rates and offering complimentary high-floor upgrades to loyalty program members."
+    },
+    {
+      "id": "supply",
+      "icon": "weather",
+      "title": "SUPPLY CHAIN DELAY",
+      "text": "Linen supply delayed in Sosei Desert.",
+      "action": "See details →",
+      "priority": "Medium",
+      "detail": "Local logistics delay has postponed linen delivery by 24 hours. Housekeeping has initiated linen reuse protocols and requested emergency stock from the regional hub."
+    },
+    {
+      "id": "vip",
+      "icon": "heart",
+      "title": "VIP ARRIVALS",
+      "text": "Hosting 3 VIP delegation guests tomorrow.",
+      "action": "See details →",
+      "priority": "High",
+      "detail": "Three high-profile international delegation guests are checking into Sosei Countryside. Exec Lounge has prepared custom amenities. General Manager will personally greet upon arrival."
+    },
+    {
+      "id": "maintenance",
+      "icon": "plane",
+      "title": "MAINTENANCE SCHEDULE",
+      "text": "Generator service scheduled at Sosei Ocean.",
+      "action": "See details →",
+      "priority": "Low",
+      "detail": "Routine annual testing of backup generators is scheduled for Sosei Ocean on Monday at 02:00 AM local time. Minimal guest impact expected; notification letters have been distributed."
     }
   ],
   "guestMovementChart": [
@@ -224,12 +272,6 @@
       "value": "$ 1,091",
       "trend": "↑ 4%",
       "up": true
-    },
-    {
-      "label": "GOP Margin",
-      "value": "32%",
-      "trend": "↑ 7%",
-      "up": true
     }
   ],
   "topNationalities": [
@@ -272,7 +314,7 @@
       "name": "Mr. James Wilson",
       "property": "Sosei Forest",
       "time": "7:00 PM",
-      "vip": false
+      "vip": true
     },
     {
       "id": 3,

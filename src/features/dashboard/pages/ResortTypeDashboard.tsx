@@ -49,13 +49,6 @@ const channelTable = [
   { channel: 'Total',     rnights: '100%',  adr: '$280', revenue: '$10.21M', isTotal: true },
 ];
 
-const kpis = [
-  { label: 'OCCUPANCY',         value: '68%',     trend: '↑ 2.4pp', up: true,  color: '#947b66' },
-  { label: 'REVENUE (USD)',     value: '$10.21M', trend: '↑ 8.8%',  up: true,  color: '#586981' },
-  { label: 'RevPAR (USD)',      value: '$895',    trend: '↑ 6.4%',  up: true,  color: '#657454' },
-  { label: 'ADR (USD)',         value: '$1,316',  trend: '↑ 3.7%',  up: true,  color: '#8b6b7a' },
-  { label: 'TOTAL ROOM NIGHTS', value: '7,757',   trend: '↑ 4.8%',  up: true,  color: '#a67138' },
-];
 
 export function ResortTypeDashboard() {
   const [activeResorts, setActiveResorts] = useState<string[]>(['city']);
@@ -70,40 +63,89 @@ export function ResortTypeDashboard() {
   const [compStartDate, setCompStartDate] = useState<Date | null>(firstDayOfPrevMonth);
   const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
 
-  // Dummy function to simulate data changing when filters change
-  const shuffleFactor = useMemo(() => {
-    return 0.8 + (Math.random() * 0.4); // Random factor between 0.8 and 1.2
-  }, [activeResorts, startDate, endDate, compStartDate, compEndDate]);
+  // Resort profiles mapping weights and average values for logical aggregations
+  const resortWeightsProfile = useMemo(() => ({
+    desert: { weight: 0.13, occupancy: 58, adr: 250 },
+    ocean: { weight: 0.20, occupancy: 72, adr: 290 },
+    city: { weight: 0.32, occupancy: 55, adr: 510 },
+    alpine: { weight: 0.18, occupancy: 65, adr: 285 },
+    countryside: { weight: 0.11, occupancy: 60, adr: 200 },
+    forest: { weight: 0.06, occupancy: 50, adr: 162 },
+  } as Record<string, { weight: number, occupancy: number, adr: number }>), []);
 
-  const dynamicTotal = useMemo(() => Math.round(36921 * shuffleFactor).toLocaleString(), [shuffleFactor]);
+  const dateFactor = useMemo(() => {
+    if (!startDate || !endDate) return 1.0;
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    // Stable factor based on number of days (fluctuates slightly between 0.9 and 1.1)
+    return 0.9 + ((days % 20) / 100);
+  }, [startDate, endDate]);
 
-  const dynamicKpis = useMemo(() => kpis.map(k => ({
-    ...k,
-    value: k.value.includes('%') 
-      ? `${Math.min(100, Math.round(parseInt(k.value) * shuffleFactor))}%`
-      : k.value.includes('$') 
-        ? `$${(parseFloat(k.value.replace(/[^0-9.]/g, '')) * shuffleFactor).toFixed(k.value.includes('M') ? 2 : 0)}${k.value.includes('M') ? 'M' : ''}`
-        : Math.round(parseInt(k.value.replace(/,/g, '')) * shuffleFactor).toLocaleString()
-  })), [shuffleFactor]);
+  const { sumWeights, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
+    const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
+    let totalW = 0;
+    let weightedOcc = 0;
+    let weightedAdr = 0;
+
+    activeList.forEach(r => {
+      const profile = resortWeightsProfile[r] || resortWeightsProfile['city'];
+      totalW += profile.weight;
+      weightedOcc += profile.occupancy * profile.weight;
+      weightedAdr += profile.adr * profile.weight;
+    });
+
+    const o = Math.min(100, Math.max(10, Math.round((weightedOcc / totalW) * dateFactor)));
+    const a = Math.round((weightedAdr / totalW) * dateFactor);
+    const r = Math.round((o * a) / 100);
+
+    return {
+      sumWeights: totalW,
+      avgOcc: o,
+      avgAdr: a,
+      avgRevpar: r
+    };
+  }, [activeResorts, dateFactor, resortWeightsProfile]);
+
+  const dynamicTotal = useMemo(() => {
+    const totalNights = Math.round(7757 * sumWeights * dateFactor);
+    return totalNights.toLocaleString();
+  }, [sumWeights, dateFactor]);
+
+  const dynamicKpis = useMemo(() => {
+    const totalRev = 10.21 * sumWeights * dateFactor;
+    const totalNights = Math.round(7757 * sumWeights * dateFactor);
+
+    return [
+      { label: 'OCCUPANCY',         value: `${avgOcc}%`,     trend: '↑ 2.4pp', up: true,  color: '#947b66' },
+      { label: 'REVENUE (USD)',     value: `$${totalRev.toFixed(2)}M`, trend: '↑ 8.8%',  up: true,  color: '#586981' },
+      { label: 'RevPAR (USD)',      value: `$${avgRevpar}`,    trend: '↑ 6.4%',  up: true,  color: '#657454' },
+      { label: 'ADR (USD)',         value: `$${avgAdr.toLocaleString()}`,  trend: '↑ 3.7%',  up: true,  color: '#8b6b7a' },
+      { label: 'TOTAL ROOM NIGHTS', value: totalNights.toLocaleString(),   trend: '↑ 4.8%',  up: true,  color: '#a67138' },
+    ];
+  }, [sumWeights, dateFactor, avgOcc, avgAdr, avgRevpar]);
 
   const dynamicGeoData = useMemo(() => {
     let sum = 0;
     const randomized = geoData.filter(g => !g.isTotal).map(g => {
-      const v = parseFloat(g.rnights) * (0.6 + Math.random() * 0.8);
+      // Deterministic but natural-looking distribution
+      const hash = g.region.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const v = parseFloat(g.rnights) * (0.8 + (hash % 5) / 10);
       sum += v;
       return { ...g, raw: v };
     });
     const normalized = randomized.map(g => ({
       ...g,
-      rnights: `${((g.raw / sum) * 100).toFixed(1)}%`
+      rnights: `${((g.raw / sum) * 100).toFixed(1)}%`,
+      revenue: `$${(parseFloat(g.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
     }));
-    return [...normalized, { ...geoData.find(g => g.isTotal), rnights: '100%' }];
-  }, [activeResorts, startDate, endDate, compStartDate, compEndDate]);
+    return [...normalized, { ...geoData.find(g => g.isTotal), rnights: '100%', revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` }];
+  }, [sumWeights, dateFactor]);
 
   const dynamicSegmentData = useMemo(() => {
     let sum = 0;
     const randomized = segmentData.map(s => {
-      const v = s.value * (0.6 + Math.random() * 0.8);
+      const hash = s.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const v = s.value * (0.8 + (hash % 5) / 10);
       sum += v;
       return { ...s, raw: v };
     });
@@ -111,12 +153,13 @@ export function ResortTypeDashboard() {
       ...s,
       value: Number(((s.raw / sum) * 100).toFixed(1))
     }));
-  }, [activeResorts, startDate, endDate, compStartDate, compEndDate]);
+  }, []);
 
   const dynamicChannelData = useMemo(() => {
     let sum = 0;
     const randomized = channelData.map(c => {
-      const v = c.value * (0.6 + Math.random() * 0.8);
+      const hash = c.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const v = c.value * (0.8 + (hash % 5) / 10);
       sum += v;
       return { ...c, raw: v };
     });
@@ -124,30 +167,51 @@ export function ResortTypeDashboard() {
       ...c,
       value: Number(((c.raw / sum) * 100).toFixed(1))
     }));
-  }, [activeResorts, startDate, endDate, compStartDate, compEndDate]);
+  }, []);
 
   const dynamicSegmentTable = useMemo(() => segmentTable.map((s, idx) => {
-    if (s.isTotal) return s;
+    if (s.isTotal) return { ...s, revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` };
     const newValue = dynamicSegmentData[idx]?.value || 0;
     return {
       ...s,
       rnights: `${newValue}%`,
-      revenue: `$${(parseFloat(s.revenue.replace(/[^0-9.]/g, '')) * shuffleFactor).toFixed(2)}M`
+      revenue: `$${(parseFloat(s.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
     };
-  }), [dynamicSegmentData, shuffleFactor]);
+  }), [dynamicSegmentData, sumWeights, dateFactor]);
 
   const dynamicChannelTable = useMemo(() => channelTable.map((c, idx) => {
-    if (c.isTotal) return c;
+    if (c.isTotal) return { ...c, revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` };
     const newValue = dynamicChannelData[idx]?.value || 0;
     return {
       ...c,
       rnights: `${newValue}%`,
-      revenue: `$${(parseFloat(c.revenue.replace(/[^0-9.]/g, '')) * shuffleFactor).toFixed(2)}M`
+      revenue: `$${(parseFloat(c.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
     };
-  }), [dynamicChannelData, shuffleFactor]);
+  }), [dynamicChannelData, sumWeights, dateFactor]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
+      {/* Welcome Card inside the scrollable container */}
+      <div className="w-full py-6 px-1 flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#d4c4b7]/40 animate-card-enter animate-delay-75">
+        <div className="flex gap-4 items-start">
+          {/* Traditional red stamp accent */}
+          <span className="w-2.5 h-2.5 rounded-full bg-[#a65e52] mt-2 shrink-0 opacity-80" />
+          <div>
+            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">Welcome back, Curator</p>
+            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
+              <span>Resort & Destination Analytics</span>
+              <span className="text-[10px] font-sans text-[#7d6b5e]/60 tracking-wider font-light">| 分析</span>
+            </h2>
+            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
+              Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
+            </p>
+          </div>
+        </div>
+        <div className="shrink-0 text-[9px] text-[#a65e52] font-semibold tracking-widest uppercase border border-[#a65e52]/30 px-3 py-1 rounded-sm bg-[#a65e52]/5">
+          Resort Analytics
+        </div>
+      </div>
+
       <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
       
       <DateRangeWidget 

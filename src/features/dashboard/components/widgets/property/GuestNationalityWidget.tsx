@@ -1,6 +1,22 @@
 import { ArrowRight } from '@solar-icons/react';
+import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+
+function InfoTooltip({ text }: { text: string }) {
+  return (
+    <div className="group relative inline-block ml-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+      <span className="cursor-help text-[#7d6b5e]/60 hover:text-[#C8A050] transition-colors text-[9px] border border-[#7d6b5e]/30 rounded-full w-3.5 h-3.5 inline-flex items-center justify-center font-bold font-sans">
+        ?
+      </span>
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 hidden group-hover:block bg-[#4a3c31] text-[#fdfaf7] text-[9.5px] rounded p-2 shadow-xl z-[90] pointer-events-none leading-normal font-normal normal-case tracking-normal text-left">
+        {text}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#4a3c31]" />
+      </div>
+    </div>
+  );
+}
 
 export function GuestNationalityWidget() {
+  const { openDrawer } = useDashboardDrawer();
   const data = [
     { country: 'United States', iso: 'US', pct: '24%', trend: '↑ 2%', up: true },
     { country: 'United Kingdom', iso: 'GB', pct: '16%', trend: '↑ 1%', up: true },
@@ -9,8 +25,15 @@ export function GuestNationalityWidget() {
   ];
 
   return (
-    <div className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col backdrop-blur-sm bg-[#f3eae1]/0 animate-card-enter" style={{ animationDelay: '0.4s' }}>
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4">GUEST NATIONALITY (TOP 5)</div>
+    <div 
+      className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter" 
+      style={{ animationDelay: '0.4s' }}
+      onClick={() => openDrawer({ type: 'TOP_NATIONALITIES', title: 'Top Nationalities', data })}
+    >
+      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+        <span>GUEST NATIONALITY (TOP 5)</span>
+        <InfoTooltip text="The distribution of guest origin countries based on check-ins MTD." />
+      </div>
 
       <div className="flex flex-col text-xs text-[#4a3c31] h-full justify-between pb-1">
         <div>
@@ -18,7 +41,6 @@ export function GuestNationalityWidget() {
           <div className="grid grid-cols-[45%_25%_30%] mb-2 pb-2 border-b border-[#d4c4b7]/50 font-bold">
             <div>Country</div>
             <div className="text-right whitespace-nowrap">% of Guests</div>
-            <div className="text-right">vs Yday</div>
           </div>
 
           {/* Rows */}

@@ -1,9 +1,31 @@
+import { useState } from 'react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { CloseCircle } from '@solar-icons/react';
-import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, PieChart, Pie, Cell as PieCell, Tooltip } from 'recharts';
+import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import dashboardData from '../../../data/dashboardData.json';
+
+const contactData = [
+  { name: 'John Doe', country: 'United States', email: 'john.doe@example.com', phone: '+1 (555) 019-2834' },
+  { name: 'Jane Smith', country: 'United States', email: 'jane.smith@example.com', phone: '+1 (555) 014-4921' },
+  { name: 'Robert Johnson', country: 'United States', email: 'robert.j@example.com', phone: '+1 (555) 017-8833' },
+  { name: 'Emily Davis', country: 'United Kingdom', email: 'emily.d@example.co.uk', phone: '+44 20 7946 0958' },
+  { name: 'Oliver Wilson', country: 'United Kingdom', email: 'oliver.w@example.co.uk', phone: '+44 20 7946 0912' },
+  { name: 'Hans Müller', country: 'Germany', email: 'hans.mueller@example.de', phone: '+49 30 123456' },
+  { name: 'Anna Schmidt', country: 'Germany', email: 'anna.s@example.de', phone: '+49 40 654321' },
+  { name: 'Aarav Patel', country: 'India', email: 'aarav.patel@example.in', phone: '+91 22 2789 4567' },
+  { name: 'Priya Sharma', country: 'India', email: 'priya.sharma@example.in', phone: '+91 11 4123 5678' },
+  { name: 'Lachlan Munro', country: 'Australia', email: 'lachlan.m@example.com.au', phone: '+61 2 9876 5432' },
+  { name: 'Sarah Jenkins', country: 'Australia', email: 'sarah.j@example.com.au', phone: '+61 3 8765 4321' },
+  { name: 'Michael Brown', country: 'United States', email: 'michael.b@example.com', phone: '+1 (555) 012-3456' },
+  { name: 'Sophia Evans', country: 'United Kingdom', email: 'sophia.e@example.co.uk', phone: '+44 20 7946 0111' },
+  { name: 'Lukas Fischer', country: 'Germany', email: 'lukas.f@example.de', phone: '+49 89 987654' },
+  { name: 'Aditya Rao', country: 'India', email: 'aditya.rao@example.in', phone: '+91 80 5555 1234' }
+];
 
 export function DashboardDrawer() {
-  const { isOpen, config, closeDrawer } = useDashboardDrawer();
+  const { isOpen, config, closeDrawer, openDrawer } = useDashboardDrawer();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCountry, setSelectedCountry] = useState('All');
 
   if (!isOpen && !config) return null;
 
@@ -39,56 +61,265 @@ export function DashboardDrawer() {
         );
 
       case 'METRIC':
-        const metricData = [
-          { day: 'Mon', value: 400 },
-          { day: 'Tue', value: 300 },
-          { day: 'Wed', value: 550 },
-          { day: 'Thu', value: 480 },
-          { day: 'Fri', value: 700 },
-          { day: 'Sat', value: 850 },
-          { day: 'Sun', value: 920 },
-        ];
-        return (
-          <div className="space-y-6 animate-fade-in">
-            <p className="text-xs text-[#7d6b5e]">Detailed historical trend for {config.title.toLowerCase()}.</p>
-            <div className="h-[200px] w-full mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={metricData}>
-                  <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={3} dot={{ r: 4, fill: '#C8A050' }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} dy={10} />
-                </LineChart>
-              </ResponsiveContainer>
+        {
+          const parseCardValue = () => {
+            if (!config.data) return null;
+            const str = String(config.data);
+            const cleaned = str.replace(/[^0-9.]/g, '');
+            return parseFloat(cleaned) || null;
+          };
+
+          const cardVal = parseCardValue();
+
+          const getMetricDetails = () => {
+            const t = config.title.toUpperCase();
+            if (t.includes('OCCUPANCY')) {
+              const base = cardVal !== null ? cardVal : 68;
+              return {
+                data: [
+                  { day: 'Mon', value: Math.min(100, Math.max(0, Math.round(base - 5))) },
+                  { day: 'Tue', value: Math.min(100, Math.max(0, Math.round(base - 2))) },
+                  { day: 'Wed', value: Math.min(100, Math.max(0, Math.round(base - 6))) },
+                  { day: 'Thu', value: Math.min(100, Math.max(0, Math.round(base + 2))) },
+                  { day: 'Fri', value: Math.min(100, Math.max(0, Math.round(base + 8))) },
+                  { day: 'Sat', value: Math.min(100, Math.max(0, Math.round(base + 12))) },
+                  { day: 'Sun', value: Math.min(100, Math.max(0, Math.round(base + 6))) },
+                ],
+                prefix: '',
+                suffix: '%',
+                drivers: [
+                  'High occupancy driven by weekend leisure travelers.',
+                  'Increased conference group check-ins on Thursday.',
+                  'Seasonal promotional packages boost weekday occupancy.'
+                ]
+              };
+            } else if (t.includes('REVENUE')) {
+              const base = cardVal !== null ? cardVal : 10.21;
+              return {
+                data: [
+                  { day: 'Mon', value: parseFloat((base * 0.10).toFixed(2)) },
+                  { day: 'Tue', value: parseFloat((base * 0.11).toFixed(2)) },
+                  { day: 'Wed', value: parseFloat((base * 0.105).toFixed(2)) },
+                  { day: 'Thu', value: parseFloat((base * 0.125).toFixed(2)) },
+                  { day: 'Fri', value: parseFloat((base * 0.175).toFixed(2)) },
+                  { day: 'Sat', value: parseFloat((base * 0.20).toFixed(2)) },
+                  { day: 'Sun', value: parseFloat((base - (base * 0.815)).toFixed(2)) },
+                ],
+                prefix: '$',
+                suffix: 'M',
+                drivers: [
+                  'F&B banquet revenue up due to private weddings.',
+                  'Room revenue remains main driver at 65% of total mix.',
+                  'Spa sales increase by 12% following new wellness package launch.'
+                ]
+              };
+            } else if (t.includes('REVPAR')) {
+              const base = cardVal !== null ? cardVal : 895;
+              return {
+                data: [
+                  { day: 'Mon', value: Math.round(base * 0.90) },
+                  { day: 'Tue', value: Math.round(base * 0.92) },
+                  { day: 'Wed', value: Math.round(base * 0.90) },
+                  { day: 'Thu', value: Math.round(base * 1.0) },
+                  { day: 'Fri', value: Math.round(base * 1.08) },
+                  { day: 'Sat', value: Math.round(base * 1.12) },
+                  { day: 'Sun', value: Math.round(base * 1.05) },
+                ],
+                prefix: '$',
+                suffix: '',
+                drivers: [
+                  'Strong room yield optimization via dynamic pricing.',
+                  'High-value suite upgrades contribute to RevPAR increase.',
+                  'RevPAR growth matches occupancy peak on weekends.'
+                ]
+              };
+            } else if (t.includes('ADR')) {
+              const base = cardVal !== null ? cardVal : 1316;
+              return {
+                data: [
+                  { day: 'Mon', value: Math.round(base * 0.90) },
+                  { day: 'Tue', value: Math.round(base * 0.92) },
+                  { day: 'Wed', value: Math.round(base * 0.90) },
+                  { day: 'Thu', value: Math.round(base * 1.00) },
+                  { day: 'Fri', value: Math.round(base * 1.08) },
+                  { day: 'Sat', value: Math.round(base * 1.12) },
+                  { day: 'Sun', value: Math.round(base * 1.05) },
+                ],
+                prefix: '$',
+                suffix: '',
+                drivers: [
+                  'Premium villa bookings raise the average daily rate.',
+                  'Minimal corporate discount usage over weekends.',
+                  'Direct booking rate parity matches travel agent ADR.'
+                ]
+              };
+            } else if (t.includes('NIGHTS')) {
+              const base = cardVal !== null ? cardVal : 7757;
+              const mon = Math.round(base * 0.10);
+              const tue = Math.round(base * 0.11);
+              const wed = Math.round(base * 0.105);
+              const thu = Math.round(base * 0.125);
+              const fri = Math.round(base * 0.175);
+              const sat = Math.round(base * 0.20);
+              const sun = base - (mon + tue + wed + thu + fri + sat);
+
+              return {
+                data: [
+                  { day: 'Mon', value: mon },
+                  { day: 'Tue', value: tue },
+                  { day: 'Wed', value: wed },
+                  { day: 'Thu', value: thu },
+                  { day: 'Fri', value: fri },
+                  { day: 'Sat', value: sat },
+                  { day: 'Sun', value: sun },
+                ],
+                prefix: '',
+                suffix: ' nights',
+                drivers: [
+                  'Longer average length of stay (LOS) in beach properties.',
+                  'Group bookings for retreat event secure 400 room nights.',
+                  'High repeat guest ratio contributes to stable booking volume.'
+                ]
+              };
+            } else {
+              const base = cardVal !== null ? cardVal : 400;
+              return {
+                data: [
+                  { day: 'Mon', value: Math.round(base * 0.90) },
+                  { day: 'Tue', value: Math.round(base * 0.85) },
+                  { day: 'Wed', value: Math.round(base * 0.95) },
+                  { day: 'Thu', value: Math.round(base * 1.00) },
+                  { day: 'Fri', value: Math.round(base * 1.05) },
+                  { day: 'Sat', value: Math.round(base * 1.10) },
+                  { day: 'Sun', value: Math.round(base * 1.00) },
+                ],
+                prefix: '',
+                suffix: '',
+                drivers: [
+                  'Strong weekend demand from domestic travelers.',
+                  'Group bookings up 15% across all properties.',
+                  'Corporate negotiated rates performing above target.'
+                ]
+              };
+            }
+          };
+
+          const { data: metricData, prefix, suffix, drivers } = getMetricDetails();
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              <p className="text-xs text-[#7d6b5e]">Detailed historical trend for {config.title.toLowerCase()}.</p>
+              <div className="h-[200px] w-full mt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={metricData}>
+                    <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={3} dot={{ r: 4, fill: '#C8A050' }} />
+                    <Tooltip 
+                      formatter={(value: any) => [`${prefix}${value.toLocaleString()}${suffix}`, 'Value']}
+                      contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} 
+                    />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} dy={10} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-6 border-t border-[#d4c4b7] pt-4">
+                <div className="font-bold text-sm text-[#4a3c31] mb-2">Key Drivers</div>
+                <ul className="text-xs text-[#6A5848] space-y-2 list-disc pl-4">
+                  {drivers.map((driver, idx) => (
+                    <li key={idx}>{driver}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="mt-6 border-t border-[#d4c4b7] pt-4">
-              <div className="font-bold text-sm text-[#4a3c31] mb-2">Key Drivers</div>
-              <ul className="text-xs text-[#6A5848] space-y-2 list-disc pl-4">
-                <li>Strong weekend demand from domestic travelers.</li>
-                <li>Group bookings up 15% across all properties.</li>
-                <li>Corporate negotiated rates performing above target.</li>
-              </ul>
-            </div>
-          </div>
-        );
+          );
+        }
 
       case 'ALERTS':
+        // If data is provided, show specific alert detail
+        if (config.data) {
+          const alert = config.data;
+          const priorityColorMap: Record<string, string> = {
+            High: '#a65e52',
+            Medium: '#C8A050',
+            Low: '#657454',
+          };
+          const priorityColor = priorityColorMap[alert.priority] || '#7d6b5e';
+
+          return (
+            <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+              <button
+                onClick={() => openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' })}
+                className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] flex items-center gap-1 mb-2 outline-none cursor-pointer"
+              >
+                ← Back to all alerts
+              </button>
+
+              <div className="border border-[#d4c4b7] rounded-lg p-5 bg-[#f3eae1]/0 ">
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-[9px] font-sans font-bold uppercase tracking-widest px-2.5 py-1 rounded border" style={{ borderColor: `${priorityColor}50`, color: priorityColor, backgroundColor: `${priorityColor}10` }}>
+                    {alert.priority} Priority
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-base font-bold mb-2 leading-snug">{alert.title}</h3>
+                <p className="text-xs font-semibold mb-4 text-[#7d6b5e]">{alert.text}</p>
+
+                <div className="border-t border-[#d4c4b7] pt-4 mt-4">
+                  <h4 className="text-[10px] font-bold tracking-wider uppercase text-[#7d6b5e] mb-2">Detailed Report</h4>
+                  <p className="text-xs leading-relaxed text-[#6A5848] font-serif italic">
+                    {alert.detail}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <button
+                  onClick={closeDrawer}
+                  className="flex-1 py-2 text-xs font-bold text-white bg-[#a65e52] rounded hover:bg-[#8f5045] transition-colors cursor-pointer"
+                >
+                  Acknowledge Alert
+                </button>
+              </div>
+            </div>
+          );
+        }
+
+        // Otherwise, show list of all alerts
         return (
           <div className="space-y-4 animate-fade-in">
-            <p className="text-xs text-[#7d6b5e]">Actionable insights requiring attention.</p>
-            <div className="p-4 border-l-4 border-[#a65e52] bg-[#f3eae1]/50 rounded-r-lg">
-              <div className="font-bold text-[#a65e52] text-sm">Weather Impact: Sosei Alpine</div>
-              <div className="text-xs text-[#4a3c31] mt-1">Heavy snowfall expected in 48 hours. Suggest preemptive equipment check and staffing alignment.</div>
-              <div className="text-[10px] text-[#7d6b5e] mt-2">Action Required • High Priority</div>
-            </div>
-            <div className="p-4 border-l-4 border-[#C8A050] bg-[#f3eae1]/50 rounded-r-lg">
-              <div className="font-bold text-[#C8A050] text-sm">Staffing Pressure: Sosei Ocean</div>
-              <div className="text-xs text-[#4a3c31] mt-1">Approaching 95% occupancy this weekend. F&B department understaffed by 12%.</div>
-              <div className="text-[10px] text-[#7d6b5e] mt-2">Monitoring • Medium Priority</div>
-            </div>
-            <div className="p-4 border-l-4 border-[#657454] bg-[#f3eae1]/50 rounded-r-lg">
-              <div className="font-bold text-[#657454] text-sm">Wellness Demand Surge</div>
-              <div className="text-xs text-[#4a3c31] mt-1">Spa bookings up 40% across Alpine and City locations. Consider dynamic pricing activation.</div>
-              <div className="text-[10px] text-[#7d6b5e] mt-2">Opportunity • Low Priority</div>
+            <p className="text-xs text-[#7d6b5e] mb-2">Actionable insights requiring attention across all properties.</p>
+            <div className="flex flex-col gap-3">
+              {dashboardData.globalAlerts.map((alert: any) => {
+                const priorityColorMap: Record<string, string> = {
+                  High: '#a65e52',
+                  Medium: '#C8A050',
+                  Low: '#657454',
+                };
+                const borderLeftColor = priorityColorMap[alert.priority] || '#d4c4b7';
+
+                return (
+                  <div
+                    key={alert.id}
+                    className="p-4 border-l-4 rounded-r-lg bg-[#f3eae1]/50 border-t border-r border-b border-[#d4c4b7]/50 flex flex-col justify-between"
+                    style={{ borderLeftColor }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-baseline mb-1">
+                        <span className="font-bold text-sm" style={{ color: borderLeftColor }}>{alert.title}</span>
+                        <span className="text-[8px] font-sans font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border" style={{ borderColor: `${borderLeftColor}40`, color: borderLeftColor, backgroundColor: `${borderLeftColor}08` }}>
+                          {alert.priority}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#4a3c31] mt-1">{alert.text}</p>
+                    </div>
+                    <button
+                      onClick={() => openDrawer({ type: 'ALERTS', title: 'Alert Details', data: alert })}
+                      className="text-[9px] text-[#a65e52] font-semibold border-b border-transparent hover:border-[#a65e52] self-start transition-colors outline-none focus:outline-none cursor-pointer mt-3"
+                    >
+                      See details →
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
@@ -101,13 +332,13 @@ export function DashboardDrawer() {
         ];
         return (
           <div className="space-y-6 animate-fade-in">
-             <p className="text-xs text-[#7d6b5e]">Arrivals, In-house, and Departures breakdown.</p>
-             <div className="h-[250px] w-full mt-4">
+            <p className="text-xs text-[#7d6b5e]">Arrivals, In-house, and Departures breakdown.</p>
+            <div className="h-[250px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={movementData} layout="vertical" margin={{ top: 0, right: 0, left: 10, bottom: 0 }}>
                   <XAxis type="number" hide />
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#4a3c31' }} width={50} />
-                  <Tooltip cursor={{fill: '#E3CCB2', opacity: 0.2}} contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} />
+                  <Tooltip cursor={{ fill: '#E3CCB2', opacity: 0.2 }} contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} />
                   <Bar dataKey="arr" name="Arrivals" stackId="a" fill="#C8A050" />
                   <Bar dataKey="in" name="In-House" stackId="a" fill="#d4c4b7" />
                   <Bar dataKey="dep" name="Departures" stackId="a" fill="#a65e52" />
@@ -120,133 +351,538 @@ export function DashboardDrawer() {
       case 'PORTFOLIO_PERFORMANCE':
         return (
           <div className="space-y-6 animate-fade-in">
-             <p className="text-xs text-[#7d6b5e]">Financial breakdown per property (MTD).</p>
-             <div className="overflow-x-auto">
-               <table className="w-full text-xs text-[#4a3c31]">
-                 <thead>
-                   <tr className="border-b border-[#d4c4b7] text-left">
-                     <th className="pb-2 font-bold">Property</th>
-                     <th className="pb-2 font-bold text-right">RevPAR</th>
-                     <th className="pb-2 font-bold text-right">GOP Margin</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   <tr className="border-b border-[#d4c4b7]/50">
-                     <td className="py-3">Sosei Alpine</td>
-                     <td className="py-3 text-right">$840</td>
-                     <td className="py-3 text-right text-[#657454]">38%</td>
-                   </tr>
-                   <tr className="border-b border-[#d4c4b7]/50">
-                     <td className="py-3">Sosei Ocean</td>
-                     <td className="py-3 text-right">$620</td>
-                     <td className="py-3 text-right text-[#657454]">34%</td>
-                   </tr>
-                   <tr className="border-b border-[#d4c4b7]/50">
-                     <td className="py-3">Sosei City</td>
-                     <td className="py-3 text-right">$910</td>
-                     <td className="py-3 text-right text-[#657454]">41%</td>
-                   </tr>
-                   <tr>
-                     <td className="py-3">Sosei Forest</td>
-                     <td className="py-3 text-right">$450</td>
-                     <td className="py-3 text-right text-[#a65e52]">22%</td>
-                   </tr>
-                 </tbody>
-               </table>
-             </div>
+            <p className="text-xs text-[#7d6b5e]">Financial breakdown per property (MTD).</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-[#4a3c31]">
+                <thead>
+                  <tr className="border-b border-[#d4c4b7] text-left">
+                    <th className="pb-2 font-bold">Property</th>
+                    <th className="pb-2 font-bold text-right">Revenue</th>
+                    <th className="pb-2 font-bold text-right">RevPAR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-[#d4c4b7]/50">
+                    <td className="py-3">Sosei Alpine</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$4.50M</td>
+                    <td className="py-3 text-right">$840</td>
+                  </tr>
+                  <tr className="border-b border-[#d4c4b7]/50">
+                    <td className="py-3">Sosei Ocean</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$2.80M</td>
+                    <td className="py-3 text-right">$620</td>
+                  </tr>
+                  <tr className="border-b border-[#d4c4b7]/50">
+                    <td className="py-3">Sosei City</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$1.20M</td>
+                    <td className="py-3 text-right">$910</td>
+                  </tr>
+                  <tr className="border-b border-[#d4c4b7]/50">
+                    <td className="py-3">Sosei Forest</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$1.50M</td>
+                    <td className="py-3 text-right">$450</td>
+                  </tr>
+                  <tr className="border-b border-[#d4c4b7]/50">
+                    <td className="py-3">Sosei Countryside</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$2.10M</td>
+                    <td className="py-3 text-right">$530</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3">Sosei Desert</td>
+                    <td className="py-3 text-right font-bold text-[#a65e52]">$0.60M</td>
+                    <td className="py-3 text-right">$310</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         );
 
       case 'TOP_NATIONALITIES':
-        const pieData = [
-          { name: 'US', value: 24, color: '#C8A050' },
-          { name: 'UK', value: 12, color: '#A58B6D' },
-          { name: 'DE', value: 9, color: '#88735C' },
-          { name: 'IN', value: 8, color: '#6A5848' },
-          { name: 'Other', value: 47, color: '#d4c4b7' },
-        ];
+        {
+          const countries = ['All', 'United States', 'United Kingdom', 'Germany', 'India', 'Australia'];
+          const filtered = selectedCountry === 'All'
+            ? contactData
+            : contactData.filter(c => c.country === selectedCountry);
+
+          const itemsPerPage = 5;
+          const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+
+          const activePage = Math.min(currentPage, totalPages);
+          const startIndex = (activePage - 1) * itemsPerPage;
+          const currentContacts = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+          return (
+            <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+              <p className="text-xs text-[#7d6b5e]">In-house guest contact registry by nationality.</p>
+
+              {/* Country Filter Tab buttons */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {countries.map(country => (
+                  <button
+                    key={country}
+                    onClick={() => {
+                      setSelectedCountry(country);
+                      setCurrentPage(1);
+                    }}
+                    className={`text-[8px] font-sans font-semibold tracking-wider px-2 py-1 rounded border transition-all cursor-pointer ${selectedCountry === country
+                      ? 'bg-[#a65e52] text-white border-[#a65e52]'
+                      : 'bg-[#f3eae1]/50 text-[#7d6b5e] border-[#d4c4b7]/50 hover:bg-[#e5d8cb]/30'
+                      }`}
+                  >
+                    {country === 'All' ? 'All' : country.replace('United States', 'USA').replace('United Kingdom', 'UK')}
+                  </button>
+                ))}
+              </div>
+
+              {/* Contacts Table */}
+              <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                <table className="w-full text-[10px] text-[#4a3c31]">
+                  <thead>
+                    <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/0  text-left font-bold">
+                      <th className="p-2.5">Guest Name</th>
+                      <th className="p-2.5">Nationality</th>
+                      <th className="p-2.5">Contact Detail</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentContacts.map((contact, idx) => (
+                      <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                        <td className="p-2.5 font-bold">{contact.name}</td>
+                        <td className="p-2.5 text-[#7d6b5e]">{contact.country}</td>
+                        <td className="p-2.5 text-[9px] leading-relaxed">
+                          <div className="text-[#a65e52] font-semibold">{contact.email}</div>
+                          <div className="text-[#9B8272]">{contact.phone}</div>
+                        </td>
+                      </tr>
+                    ))}
+                    {currentContacts.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="p-6 text-center text-[#7d6b5e] italic">
+                          No guest contacts found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-between pt-2 border-t border-[#d4c4b7]/40 mt-4 text-[9px]">
+                <button
+                  disabled={activePage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  className="px-2.5 py-1.5 rounded border border-[#d4c4b7] text-[#4a3c31] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#f3eae1]/50 transition-colors cursor-pointer font-bold"
+                >
+                  Prev
+                </button>
+                <span className="text-[#7d6b5e] font-sans">
+                  Page <strong className="text-[#4a3c31]">{activePage}</strong> of <strong>{totalPages}</strong>
+                </span>
+                <button
+                  disabled={activePage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  className="px-2.5 py-1.5 rounded border border-[#d4c4b7] text-[#4a3c31] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#f3eae1]/50 transition-colors cursor-pointer font-bold"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          );
+        }
+
+      case 'SENTIMENT_SCORE':
         return (
           <div className="space-y-6 animate-fade-in">
-             <p className="text-xs text-[#7d6b5e]">Demographic distribution.</p>
-             <div className="h-[200px] w-full mt-4 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
-                    {pieData.map((entry, index) => (
-                      <PieCell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} />
-                </PieChart>
-              </ResponsiveContainer>
+            <p className="text-xs text-[#7d6b5e]">Score breakdown and recent qualitative feedback.</p>
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="flex justify-between text-xs text-[#4a3c31]">
+                <span>Cleanliness</span><span className="font-bold">4.9/5</span>
+              </div>
+              <div className="w-full bg-[#d4c4b7] h-1.5 rounded-full"><div className="bg-[#C8A050] h-1.5 rounded-full w-[98%]"></div></div>
+
+              <div className="flex justify-between text-xs text-[#4a3c31] mt-2">
+                <span>Service</span><span className="font-bold">4.8/5</span>
+              </div>
+              <div className="w-full bg-[#d4c4b7] h-1.5 rounded-full"><div className="bg-[#C8A050] h-1.5 rounded-full w-[96%]"></div></div>
             </div>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {pieData.slice(0,4).map(d => (
-                <div key={d.name} className="flex justify-between text-xs border-b border-[#d4c4b7]/50 pb-1">
-                  <span className="text-[#4a3c31] font-bold">{d.name}</span>
-                  <span className="text-[#7d6b5e]">{d.value}%</span>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-white/40 rounded-lg border border-[#d4c4b7]">
+                <div className="text-xs italic text-[#4a3c31]">"Absolutely stunning resort. The spa at Alpine was world-class."</div>
+                <div className="text-[10px] font-bold text-[#C8A050] mt-2">- J. Smith (US)</div>
+              </div>
+              <div className="p-3 bg-white/40 rounded-lg border border-[#d4c4b7]">
+                <div className="text-xs italic text-[#4a3c31]">"Impeccable service, though the dining options were somewhat limited at night."</div>
+                <div className="text-[10px] font-bold text-[#C8A050] mt-2">- M. Weber (DE)</div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'GUEST_ARRIVALS':
+        return (
+          <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+            <p className="text-xs text-[#7d6b5e]">VVIP Arrivals schedule and service requests today.</p>
+            <div className="flex flex-col gap-3">
+              {dashboardData.guestArrivals.filter(g => g.vip).map((guest: any) => (
+                <div key={guest.id} className="p-4 border border-[#d4c4b7] rounded-lg bg-[#f3eae1]/0 ">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-bold text-sm text-[#a65e52]">{guest.name}</span>
+                    <span className="text-[8px] border border-[#a65e52] text-[#a65e52] bg-[#a65e52]/5 px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">VVIP</span>
+                  </div>
+                  <div className="text-[10px] text-[#7d6b5e] space-y-1 mt-2">
+                    <div><strong>Sanctuary:</strong> {guest.property}</div>
+                    <div><strong>ETA:</strong> {guest.time}</div>
+                    <div><strong>Room Request:</strong> High floor, non-smoking</div>
+                    <div><strong>Preference:</strong> Zen tea ceremony booking</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         );
 
-      case 'SENTIMENT_SCORE':
+      case 'GUEST_NEEDS':
         return (
-          <div className="space-y-6 animate-fade-in">
-             <p className="text-xs text-[#7d6b5e]">Score breakdown and recent qualitative feedback.</p>
-             <div className="flex flex-col gap-2 mb-6">
-                <div className="flex justify-between text-xs text-[#4a3c31]">
-                  <span>Cleanliness</span><span className="font-bold">4.9/5</span>
+          <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+            <p className="text-xs text-[#7d6b5e]">Top guest inquiries and amenity requests today.</p>
+            <div className="flex flex-col gap-4">
+              {dashboardData.topGuestNeeds.map((need: any, idx: number) => (
+                <div key={idx} className="p-4 border border-[#d4c4b7] rounded-lg bg-[#f3eae1]/0 ">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-sm text-[#4a3c31]">{need.label}</span>
+                    <span className="text-sm font-bold text-[#a65e52]">{need.percentage}</span>
+                  </div>
+                  <div className="w-full bg-[#d4c4b7] h-1.5 rounded-full">
+                    <div className="bg-[#a65e52] h-1.5 rounded-full" style={{ width: need.percentage }}></div>
+                  </div>
+                  <p className="text-[9px] text-[#7d6b5e] mt-2">Currently being serviced by resort experience team.</p>
                 </div>
-                <div className="w-full bg-[#d4c4b7] h-1.5 rounded-full"><div className="bg-[#C8A050] h-1.5 rounded-full w-[98%]"></div></div>
-                
-                <div className="flex justify-between text-xs text-[#4a3c31] mt-2">
-                  <span>Service</span><span className="font-bold">4.8/5</span>
-                </div>
-                <div className="w-full bg-[#d4c4b7] h-1.5 rounded-full"><div className="bg-[#C8A050] h-1.5 rounded-full w-[96%]"></div></div>
-             </div>
-
-             <div className="space-y-3">
-               <div className="p-3 bg-white/40 rounded-lg border border-[#d4c4b7]">
-                 <div className="text-xs italic text-[#4a3c31]">"Absolutely stunning resort. The spa at Alpine was world-class."</div>
-                 <div className="text-[10px] font-bold text-[#C8A050] mt-2">- J. Smith (US)</div>
-               </div>
-               <div className="p-3 bg-white/40 rounded-lg border border-[#d4c4b7]">
-                 <div className="text-xs italic text-[#4a3c31]">"Impeccable service, though the dining options were somewhat limited at night."</div>
-                 <div className="text-[10px] font-bold text-[#C8A050] mt-2">- M. Weber (DE)</div>
-               </div>
-             </div>
+              ))}
+            </div>
           </div>
         );
+
+      case 'NOTES_YESTERDAY':
+        return (
+          <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+            <p className="text-xs text-[#7d6b5e]">Operator field notes and feedback diary.</p>
+            <div className="p-5 border border-[#d4c4b7] rounded-lg bg-[#fdfaf7] relative font-serif italic text-xs leading-relaxed">
+              <span className="text-[#a65e52] text-3xl absolute top-2 left-2 leading-none">"</span>
+              <div className="pl-6 pt-2">
+                {dashboardData.notesFromYesterday.text}
+                <div className="text-right text-[10px] font-sans font-bold uppercase tracking-wider text-[#a65e52] mt-4">— {dashboardData.notesFromYesterday.author}</div>
+              </div>
+            </div>
+            <div className="border-t border-[#d4c4b7] pt-4">
+              <h4 className="text-[10px] font-bold tracking-wider uppercase text-[#7d6b5e] mb-3">Department Breakdown</h4>
+              <div className="space-y-2 text-[10px]">
+                <div className="flex justify-between border-b border-[#d4c4b7]/30 pb-1.5">
+                  <span className="font-bold">Front Office</span><span className="text-[#657454]">Checked-in 100% on time</span>
+                </div>
+                <div className="flex justify-between border-b border-[#d4c4b7]/30 pb-1.5">
+                  <span className="font-bold">F&B Experience</span><span className="text-[#C8A050]">Fondue event high praise</span>
+                </div>
+                <div className="flex justify-between border-b border-[#d4c4b7]/30 pb-1.5">
+                  <span className="font-bold">Housekeeping</span><span className="text-[#657454]">Room turnaround under 25m</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'JOURNEY_TIMELINE':
+        return (
+          <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+            <p className="text-xs text-[#7d6b5e]">The expansion history of Sosei sanctuaries.</p>
+            <div className="relative border-l border-[#d4c4b7] ml-3 pl-6 space-y-6">
+              {dashboardData.journeyTimeline.map((item: any, idx: number) => (
+                <div key={idx} className="relative">
+                  {/* Dot on the vertical line */}
+                  <span className="absolute -left-[30px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-2 border-[#a65e52] flex items-center justify-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#a65e52]"></span>
+                  </span>
+                  <div className="text-[9px] font-bold text-[#a65e52] tracking-wider uppercase">{item.date}</div>
+                  <h4 className="font-serif text-sm font-bold mt-0.5">{item.name}</h4>
+                  <p className="text-[9px] text-[#7d6b5e]">{item.location}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'SPEND_OVERTIME':
+        {
+          const spendBreakdown = [
+            { year: '2021', avg: 1865, room: 11190, fnb: 3730, spa: 1865, exc: 1865, total: 18650 },
+            { year: '2022', avg: 1970, room: 14184, fnb: 4728, spa: 2364, exc: 2364, total: 23640 },
+            { year: '2023', avg: 1990, room: 17910, fnb: 5970, spa: 2985, exc: 2985, total: 29850 },
+            { year: '2024 YTD', avg: 2140, room: 3852, fnb: 1284, spa: 642, exc: 642, total: 6420 }
+          ];
+
+          return (
+            <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+              <p className="text-xs text-[#7d6b5e]">Detailed annual guest spending breakdown and average spend per booking (USD).</p>
+              <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                <table className="w-full text-[10px] text-[#4a3c31]">
+                  <thead>
+                    <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/0  text-left font-bold">
+                      <th className="p-2.5">Year</th>
+                      <th className="p-2.5 text-right">Avg/Booking</th>
+                      <th className="p-2.5 text-right">Room</th>
+                      <th className="p-2.5 text-right">F&B</th>
+                      <th className="p-2.5 text-right">Spa</th>
+                      <th className="p-2.5 text-right">Excursion</th>
+                      <th className="p-2.5 text-right">Total Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {spendBreakdown.map((item, idx) => (
+                      <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                        <td className="p-2.5 font-bold">{item.year}</td>
+                        <td className="p-2.5 text-right font-semibold text-[#657454]">${item.avg.toLocaleString()}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">${item.room.toLocaleString()}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">${item.fnb.toLocaleString()}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">${item.spa.toLocaleString()}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">${item.exc.toLocaleString()}</td>
+                        <td className="p-2.5 text-right font-bold text-[#a65e52]">${item.total.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        }
+
+      case 'GEO_MARKET':
+        {
+          const rawTableData = Array.isArray(config.data) ? config.data : [
+            { region: 'Asia Pacific', rnights: '32.5%', adr: '$274', revenue: '$3.43M' },
+            { region: 'Europe', rnights: '20.4%', adr: '$312', revenue: '$2.94M' },
+            { region: 'America', rnights: '22.7%', adr: '$245', revenue: '$2.31M' },
+            { region: 'Middle East', rnights: '9.6%', adr: '$221', revenue: '$1.05M' },
+            { region: 'Africa', rnights: '6.6%', adr: '$195', revenue: '$0.45M' },
+          ];
+
+          const countriesMap: Record<string, string> = {
+            'Asia Pacific': 'China, Japan, Australia',
+            'Europe': 'UK, Germany, France',
+            'America': 'USA, Canada, Brazil',
+            'Middle East': 'UAE, Saudi Arabia, Oman',
+            'Africa': 'South Africa, Egypt, Kenya',
+          };
+
+          const geoTableData = rawTableData
+            .filter((item: any) => !item.isTotal)
+            .map((item: any) => ({
+              region: item.region || item.name || '',
+              rnights: item.rnights || (item.value ? `${item.value}%` : ''),
+              adr: item.adr || '-',
+              revenue: item.revenue || '-',
+              countries: item.countries || countriesMap[item.region || item.name] || 'Local markets',
+            }));
+
+          return (
+            <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+              <p className="text-xs text-[#7d6b5e]">Detailed regional room night and revenue contribution.</p>
+              <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                <table className="w-full text-[10px] text-[#4a3c31]">
+                  <thead>
+                    <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/0 text-left font-bold">
+                      <th className="p-2.5">Region</th>
+                      <th className="p-2.5 text-right">% Rnights</th>
+                      <th className="p-2.5 text-right">ADR (USD)</th>
+                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5">Top Markets</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {geoTableData.map((row, idx) => (
+                      <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                        <td className="p-2.5 font-bold">{row.region}</td>
+                        <td className="p-2.5 text-right text-[#657454] font-semibold">{row.rnights}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">{row.adr}</td>
+                        <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.revenue}</td>
+                        <td className="p-2.5 text-[#7d6b5e] text-[9.5px] italic">{row.countries}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        }
+
+      case 'MARKET_SEGMENT':
+        {
+          const rawSegmentData = Array.isArray(config.data) ? config.data : [
+            { segment: 'Leisure', rnights: '56.2%', adr: '$262', revenue: '$3.43M' },
+            { segment: 'Business', rnights: '23.1%', adr: '$312', revenue: '$2.94M' },
+            { segment: 'Social', rnights: '10.4%', adr: '$195', revenue: '$2.31M' },
+            { segment: 'MICE', rnights: '7.6%', adr: '$278', revenue: '$1.55M' },
+            { segment: 'Others', rnights: '2.7%', adr: '$175', revenue: '$0.48M' },
+          ];
+
+          const descMap: Record<string, string> = {
+            'Leisure': 'Individual tourists, holiday packages',
+            'Business': 'Corporate negotiated, corporate accounts',
+            'Social': 'Weddings, local community events',
+            'MICE': 'Meetings, incentives, conferences',
+            'Others': 'Government, educational groups',
+            'Direct': 'Direct hotel bookings, phone reservations',
+            'Corporate': 'Negotiated corporate traveler rates',
+            'Group': 'Tour packages and event blocks',
+          };
+
+          const segmentTableData = rawSegmentData
+            .filter((item: any) => !item.isTotal)
+            .map((item: any) => ({
+              segment: item.segment || item.name || '',
+              rnights: item.rnights || (item.value ? `${item.value}%` : ''),
+              adr: item.adr || '-',
+              revenue: item.revenue || '-',
+              desc: item.desc || descMap[item.segment || item.name] || 'General guest segment',
+            }));
+
+          return (
+            <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+              <p className="text-xs text-[#7d6b5e]">Performance breakdown by customer market segment.</p>
+              <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                <table className="w-full text-[10px] text-[#4a3c31]">
+                  <thead>
+                    <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/0 text-left font-bold">
+                      <th className="p-2.5">Segment</th>
+                      <th className="p-2.5 text-right">% Rnights</th>
+                      <th className="p-2.5 text-right">ADR (USD)</th>
+                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {segmentTableData.map((row, idx) => (
+                      <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                        <td className="p-2.5 font-bold">{row.segment}</td>
+                        <td className="p-2.5 text-right text-[#657454] font-semibold">{row.rnights}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">{row.adr}</td>
+                        <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.revenue}</td>
+                        <td className="p-2.5 text-[#7d6b5e] text-[9.5px]">{row.desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        }
+
+      case 'CHANNEL_DISTRIBUTION':
+        {
+          const rawChannelData = Array.isArray(config.data) ? config.data : [
+            { channel: 'Direct', rnights: '32.6%', adr: '$312', revenue: '$3.68M' },
+            { channel: 'OTA', rnights: '27.8%', adr: '$226', revenue: '$2.54M' },
+            { channel: 'Consortia', rnights: '15.2%', adr: '$244', revenue: '$1.05M' },
+            { channel: 'Own Web', rnights: '11.3%', adr: '$298', revenue: '$1.19M' },
+            { channel: 'TO', rnights: '7.5%', adr: '$205', revenue: '$0.78M' },
+            { channel: 'Trade', rnights: '5.6%', adr: '$194', revenue: '$0.46M' },
+          ];
+
+          const feeMap: Record<string, string> = {
+            'Direct': '0% commission, own booking engine',
+            'OTA': '15-20% fee, Expedia/Booking',
+            'Consortia': 'Corporate consortia rate networks',
+            'Own Web': 'Official brand website portal',
+            'TO': 'Tour operators, wholesale blocks',
+            'Trade': 'Global travel agencies networks',
+            'Travel Agent': 'Retail travel agent networks',
+            'Corporate': 'Negotiated corporate booking channels',
+          };
+
+          const channelTableData = rawChannelData
+            .filter((item: any) => !item.isTotal)
+            .map((item: any) => ({
+              channel: item.channel || item.name || '',
+              rnights: item.rnights || item.pct || (item.value ? `${item.value}%` : ''),
+              adr: item.adr || '-',
+              revenue: item.revenue || '-',
+              fee: item.fee || feeMap[item.channel || item.name] || 'General booking source info',
+            }));
+
+          return (
+            <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+              <p className="text-xs text-[#7d6b5e]">Booking source performance and channel mix.</p>
+              <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                <table className="w-full text-[10px] text-[#4a3c31]">
+                  <thead>
+                    <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/0 text-left font-bold">
+                      <th className="p-2.5">Channel</th>
+                      <th className="p-2.5 text-right">% Rnights</th>
+                      <th className="p-2.5 text-right">ADR (USD)</th>
+                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5">Channel Info</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {channelTableData.map((row, idx) => (
+                      <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                        <td className="p-2.5 font-bold">{row.channel}</td>
+                        <td className="p-2.5 text-right text-[#657454] font-semibold">{row.rnights}</td>
+                        <td className="p-2.5 text-right text-[#7d6b5e]">{row.adr}</td>
+                        <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.revenue}</td>
+                        <td className="p-2.5 text-[#7d6b5e] text-[9.5px]">{row.fee}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        }
 
       default:
         return null;
     }
   };
 
+  const getDrawerWidth = () => {
+    if (!config) return 'w-[350px] sm:w-[400px]';
+    switch (config.type) {
+      case 'SPEND_OVERTIME':
+        return 'w-[95vw] sm:w-[620px]'; // Extra wide for 7 columns
+      case 'TOP_NATIONALITIES':
+      case 'PORTFOLIO_PERFORMANCE':
+      case 'GEO_MARKET':
+      case 'MARKET_SEGMENT':
+      case 'CHANNEL_DISTRIBUTION':
+        return 'w-[90vw] sm:w-[520px]';
+      default:
+        return 'w-[350px] sm:w-[400px]';
+    }
+  };
+
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={closeDrawer}
       />
-      
+
       {/* Sliding Panel */}
-      <div 
-        className={`fixed top-0 right-0 h-full w-[350px] sm:w-[400px] bg-[#fdfaf7] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-[70] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-l border-[#d4c4b7] flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      <div
+        className={`fixed top-0 right-0 h-full ${getDrawerWidth()} bg-[#fdfaf7] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-[70] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-l border-[#d4c4b7] flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="shrink-0 p-6 flex justify-between items-center border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/50 to-transparent">
           <h2 className="font-serif text-2xl text-[#4a3c31]">{config?.title || 'Details'}</h2>
-          <button 
+          <button
             onClick={closeDrawer}
             className="p-2 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors"
           >
             <CloseCircle size={20} />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
           {renderContent()}
         </div>

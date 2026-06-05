@@ -1,9 +1,32 @@
 import { SharedDonutChart } from './SharedDonutChart';
+import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+
+function InfoTooltip({ text }: { text: string }) {
+  return (
+    <div className="group relative inline-block ml-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+      <span className="cursor-help text-[#7d6b5e]/60 hover:text-[#C8A050] transition-colors text-[9px] border border-[#7d6b5e]/30 rounded-full w-3.5 h-3.5 inline-flex items-center justify-center font-bold font-sans">
+        ?
+      </span>
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 hidden group-hover:block bg-[#4a3c31] text-[#fdfaf7] text-[9.5px] rounded p-2 shadow-xl z-[90] pointer-events-none leading-normal font-normal normal-case tracking-normal text-left">
+        {text}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#4a3c31]" />
+      </div>
+    </div>
+  );
+}
 
 export function ResortChannelStatsWidget({ channelData, channelTable, totalRnights }: { channelData: any[], channelTable: any[], totalRnights: string }) {
+  const { openDrawer } = useDashboardDrawer();
   return (
-    <div className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 backdrop-blur-sm animate-card-enter" style={{ animationDelay: '0.5s' }}>
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31]">Channel Distribution Stats</div>
+    <div
+      className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 bg-[#f3eae1]/0 hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer animate-card-enter"
+      style={{ animationDelay: '0.5s' }}
+      onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable })}
+    >
+      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between">
+        <span>Channel Distribution Stats</span>
+        <InfoTooltip text="Booking channel distribution comparing Direct bookings, OTAs, and Travel Agents." />
+      </div>
       <div className="flex items-center gap-6 px-2 py-2">
         <SharedDonutChart data={channelData} total={totalRnights} />
         <div className="space-y-1.5 flex-1">

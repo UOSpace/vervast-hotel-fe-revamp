@@ -101,7 +101,7 @@ export function PropertyHeaderWidget({
       </div>
 
       {/* Right Side - Weather */}
-      <div className="flex items-center gap-4 bg-[#f3eae1]/60 backdrop-blur-sm p-3 rounded-xl border border-[#d4c4b7]">
+      <div className="flex items-center gap-4 bg-[#f3eae1]/90 p-3 rounded-xl border border-[#d4c4b7]">
         <CloudSnowfall size={32} className="text-[#8c6b4f]" />
         <div className="flex flex-col">
           <span className="text-sm font-bold text-[#4a3c31]">-2°C | Light Snow</span>

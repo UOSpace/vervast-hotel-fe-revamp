@@ -5,10 +5,16 @@ const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 const ALPINE_COORDS: [number, number] = [8.2275, 46.8182];
 
+const statusColors: Record<string, string> = {
+  high: '#C8A050',
+  moderate: '#829C64',
+  low: '#477684',
+  limited: '#71558C',
+};
+
 export function LiveOverviewMap() {
   return (
     <div className="w-full h-full relative flex flex-col">
-      <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-1">Live Overview</h3>
       <div className="flex-1 relative overflow-hidden rounded-md">
         <ComposableMap
           projection="geoMercator"
@@ -35,12 +41,14 @@ export function LiveOverviewMap() {
               <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#8a7060" floodOpacity="0.3" />
             </filter>
 
-            {/* Radial gradient dot: solid amber center → transparent edge */}
-            <radialGradient id="dotGradient" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-              <stop offset="0%"   stopColor="#C8A050" stopOpacity="0.95" />
-              <stop offset="40%"  stopColor="#C8A050" stopOpacity="0.60" />
-              <stop offset="100%" stopColor="#C8A050" stopOpacity="0" />
-            </radialGradient>
+            {/* Radial gradient dots per status */}
+            {Object.entries(statusColors).map(([status, color]) => (
+              <radialGradient key={status} id={`dotGradient-${status}`} cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+                <stop offset="0%" stopColor={color} stopOpacity="0.95" />
+                <stop offset="40%" stopColor={color} stopOpacity="0.60" />
+                <stop offset="100%" stopColor={color} stopOpacity="0" />
+              </radialGradient>
+            ))}
           </defs>
 
           {/* Flat country polygons — no highlight */}
@@ -55,9 +63,9 @@ export function LiveOverviewMap() {
                   strokeWidth={0.5}
                   filter="url(#paper)"
                   style={{
-                    default: { outline: 'none', filter: 'url(#countryShadow)' },
-                    hover:   { outline: 'none', fill: '#c8b49a', filter: 'url(#countryShadow)' },
-                    pressed: { outline: 'none' },
+                    default: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
+                    hover: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
+                    pressed: { outline: 'none', pointerEvents: 'none' },
                   }}
                 />
               ))
@@ -80,35 +88,41 @@ export function LiveOverviewMap() {
             ))}
 
           {/* Markers — radial gradient dot + label */}
-          {mapData.map(({ id, name, city, coordinates, labelOffset }) => (
-            <Marker key={id} coordinates={coordinates as [number, number]}>
-              {/* Outer radial gradient glow */}
-              <circle r={14} fill="url(#dotGradient)" />
-              {/* Inner solid dot */}
-              <circle r={3.5} fill="#C8A050" stroke="#fff" strokeWidth={1} />
+          {mapData.map(({ id, name, city, coordinates, labelOffset, status, revenue }) => {
+            const markerColor = statusColors[status] || statusColors.high;
+            return (
+              <Marker key={id} coordinates={coordinates as [number, number]}>
+                {/* Outer radial gradient glow */}
+                <circle r={14} fill={`url(#dotGradient-${status})`} />
+                {/* Inner solid dot */}
+                <circle r={3.5} fill={markerColor} stroke="#fff" strokeWidth={1} />
 
-              {/* Label pill */}
-              <foreignObject
-                x={labelOffset[0]}
-                y={labelOffset[1]}
-                width={150}
-                height={38}
-                style={{ overflow: 'visible' }}
-              >
-                <div style={{
-                  background: 'rgba(255,252,248,0.96)',
-                  borderRadius: '8px',
-                  padding: '4px 8px',
-                  width: 'max-content',
-                  boxShadow: '0 1px 6px rgba(100,80,60,0.18)',
-                  border: '1px solid rgba(200,180,160,0.4)',
-                }}>
-                  <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#4a3c31', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
-                  <div style={{ fontSize: '7.5px', color: '#9B8272', lineHeight: 1.2 }}>{city}</div>
-                </div>
-              </foreignObject>
-            </Marker>
-          ))}
+                {/* Label pill */}
+                <foreignObject
+                  x={labelOffset[0]}
+                  y={labelOffset[1]}
+                  width={150}
+                  height={38}
+                  style={{ overflow: 'visible' }}
+                >
+                  <div style={{
+                    background: 'rgba(255,252,248,0.96)',
+                    borderRadius: '8px',
+                    padding: '4px 8px',
+                    width: 'max-content',
+                    boxShadow: '0 1px 6px rgba(100,80,60,0.18)',
+                    border: '1px solid rgba(200,180,160,0.4)',
+                  }}>
+                    <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#4a3c31', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
+                    <div className="flex justify-between items-center gap-2 mt-0.5" style={{ fontSize: '7.5px', lineHeight: 1.2 }}>
+                      <span style={{ color: '#9B8272' }}>{city}</span>
+                      <span style={{ color: '#a65e52', fontWeight: 700 }}>{revenue}</span>
+                    </div>
+                  </div>
+                </foreignObject>
+              </Marker>
+            );
+          })}
         </ComposableMap>
 
         {/* Legend */}
@@ -119,10 +133,10 @@ export function LiveOverviewMap() {
         }}>
           <div className="space-y-1.5">
             {[
-              { label: 'High Activity',      color: '#C8A050' },
-              { label: 'Moderate',           color: '#829C64' },
-              { label: 'Low',                color: '#477684' },
-              { label: 'Limited Operations', color: '#71558C' },
+              { label: 'High Revenue (≥ $4.0M)', color: '#C8A050' },
+              { label: 'Moderate Revenue ($2.0M - $3.9M)', color: '#829C64' },
+              { label: 'Low Revenue ($1.0M - $1.9M)', color: '#477684' },
+              { label: 'Underperforming (< $1.0M)', color: '#71558C' },
             ].map(({ label, color }) => (
               <div key={label} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
