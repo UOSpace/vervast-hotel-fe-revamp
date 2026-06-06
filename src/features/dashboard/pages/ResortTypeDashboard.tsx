@@ -6,49 +6,109 @@ import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortG
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
 
-const geoData = [
-  { region: 'Asia Pacific',  rnights: '32.5%', adr: '$274', revenue: '$3.43M' },
-  { region: 'Europe',        rnights: '20.4%', adr: '$312', revenue: '$2.94M' },
-  { region: 'America',       rnights: '22.7%', adr: '$245', revenue: '$2.31M' },
-  { region: 'Middle East',   rnights: '9.6%',  adr: '$221', revenue: '$1.05M' },
-  { region: 'Africa',        rnights: '6.6%',  adr: '$195', revenue: '$0.45M' },
-  { region: 'Total',         rnights: '100%',  adr: '$286', revenue: '$10.21M', isTotal: true },
+// Resort type configurations with capacity, baseline occupancy, and baseline ADR
+const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
+  desert: { capacity: 200, occupancy: 58, adr: 250 },
+  ocean: { capacity: 300, occupancy: 72, adr: 290 },
+  city: { capacity: 500, occupancy: 55, adr: 510 },
+  alpine: { capacity: 250, occupancy: 65, adr: 285 },
+  countryside: { capacity: 150, occupancy: 60, adr: 200 },
+  forest: { capacity: 100, occupancy: 50, adr: 162 },
+};
+
+// Static breakdown configurations
+const geoConfigs = [
+  { region: 'Asia Pacific',  share: 35, adrFactor: 0.95 },
+  { region: 'Europe',        share: 25, adrFactor: 1.09 },
+  { region: 'America',       share: 20, adrFactor: 0.86 },
+  { region: 'Middle East',   share: 12, adrFactor: 0.77 },
+  { region: 'Africa',        share: 8,  adrFactor: 0.68 },
 ];
 
-const segmentData = [
-  { name: 'Leisure',  value: 56.2, color: '#C8A050' },
-  { name: 'Business', value: 23.1, color: '#947b66' },
-  { name: 'Social',   value: 10.4, color: '#7d6b5e' },
-  { name: 'MICE',     value: 7.6,  color: '#d4c4b7' },
-  { name: 'Others',   value: 2.7,  color: '#e5d8cb' },
-];
-const segmentTable = [
-  { segment: 'Leisure',  rnights: '56.2%', adr: '$262', revenue: '$3.43M' },
-  { segment: 'Business', rnights: '23.1%', adr: '$312', revenue: '$2.94M' },
-  { segment: 'Social',   rnights: '10.4%', adr: '$195', revenue: '$2.31M' },
-  { segment: 'MICE',     rnights: '7.6%',  adr: '$278', revenue: '$1.55M' },
-  { segment: 'Others',   rnights: '2.7%',  adr: '$175', revenue: '$0.48M' },
-  { segment: 'Total',    rnights: '100%',  adr: '$286', revenue: '$10.21M', isTotal: true },
+const segmentConfigs = [
+  { segment: 'Leisure',  share: 55, adrFactor: 0.92, color: '#C8A050' },
+  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#947b66' },
+  { segment: 'Social',   share: 10, adrFactor: 0.68, color: '#7d6b5e' },
+  { segment: 'MICE',     share: 7,  adrFactor: 0.97, color: '#d4c4b7' },
+  { segment: 'Others',   share: 3,  adrFactor: 0.61, color: '#e5d8cb' },
 ];
 
-const channelData = [
-  { name: 'Direct',    value: 32.6, color: '#C8A050' },
-  { name: 'OTA',       value: 27.8, color: '#947b66' },
-  { name: 'Consortia', value: 15.2, color: '#7d6b5e' },
-  { name: 'Own Web',   value: 11.3, color: '#d4c4b7' },
-  { name: 'TO',        value: 7.5,  color: '#b8a899' },
-  { name: 'Trade',     value: 5.6,  color: '#e5d8cb' },
-];
-const channelTable = [
-  { channel: 'Direct',    rnights: '32.6%', adr: '$312', revenue: '$3.68M' },
-  { channel: 'OTA',       rnights: '27.8%', adr: '$226', revenue: '$2.54M' },
-  { channel: 'Consortia', rnights: '15.2%', adr: '$244', revenue: '$1.05M' },
-  { channel: 'Own Web',   rnights: '11.3%', adr: '$298', revenue: '$1.19M' },
-  { channel: 'TO',        rnights: '7.5%',  adr: '$205', revenue: '$0.78M' },
-  { channel: 'Trade',     rnights: '5.6%',  adr: '$194', revenue: '$0.46M' },
-  { channel: 'Total',     rnights: '100%',  adr: '$280', revenue: '$10.21M', isTotal: true },
+const channelConfigs = [
+  { channel: 'Direct',    share: 33, adrFactor: 1.11, color: '#C8A050' },
+  { channel: 'OTA',       share: 28, adrFactor: 0.81, color: '#947b66' },
+  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#7d6b5e' },
+  { channel: 'Own Web',   share: 11, adrFactor: 1.06, color: '#d4c4b7' },
+  { channel: 'TO',        share: 8,  adrFactor: 0.73, color: '#b8a899' },
+  { channel: 'Trade',     share: 5,  adrFactor: 0.69, color: '#e5d8cb' },
 ];
 
+// Helper to distribute metrics to categories consistently
+interface DistributionItem {
+  name: string;
+  share: number;
+  nights: number;
+  adr: number;
+  revenue: number;
+}
+
+function distributeMetrics(
+  categories: { name: string; share: number; adrFactor: number }[],
+  totalNights: number,
+  totalRevenue: number,
+  avgAdr: number
+): DistributionItem[] {
+  if (totalNights <= 0) {
+    return categories.map(cat => ({
+      name: cat.name,
+      share: cat.share,
+      nights: 0,
+      adr: 0,
+      revenue: 0,
+    }));
+  }
+
+  // 1. Calculate room nights per category with rounding
+  let nightsSum = 0;
+  const list = categories.map((cat, idx) => {
+    let nights = Math.round(totalNights * (cat.share / 100));
+    if (idx === categories.length - 1) {
+      nights = Math.max(0, totalNights - nightsSum);
+    }
+    nightsSum += nights;
+    return { ...cat, nights };
+  });
+
+  // 2. Calculate initial revenues
+  let revenueSum = 0;
+  const listWithRev = list.map(item => {
+    const itemAdr = avgAdr * item.adrFactor;
+    const itemRev = item.nights * itemAdr;
+    revenueSum += itemRev;
+    return { ...item, rawRevenue: itemRev };
+  });
+
+  // 3. Normalize revenues to match totalRevenue exactly and calculate final ADRs
+  let finalRevSum = 0;
+  const factor = revenueSum > 0 ? totalRevenue / revenueSum : 1;
+  
+  return listWithRev.map((item, idx) => {
+    let rev = item.rawRevenue * factor;
+    if (idx === listWithRev.length - 1) {
+      rev = Math.max(0, totalRevenue - finalRevSum);
+    }
+    finalRevSum += rev;
+
+    const adr = item.nights > 0 ? Math.round(rev / item.nights) : 0;
+    
+    return {
+      name: item.name,
+      share: item.share,
+      nights: item.nights,
+      adr,
+      revenue: rev
+    };
+  });
+}
 
 export function ResortTypeDashboard() {
   const [activeResorts, setActiveResorts] = useState<string[]>(['city']);
@@ -63,131 +123,230 @@ export function ResortTypeDashboard() {
   const [compStartDate, setCompStartDate] = useState<Date | null>(firstDayOfPrevMonth);
   const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
 
-  // Resort profiles mapping weights and average values for logical aggregations
-  const resortWeightsProfile = useMemo(() => ({
-    desert: { weight: 0.13, occupancy: 58, adr: 250 },
-    ocean: { weight: 0.20, occupancy: 72, adr: 290 },
-    city: { weight: 0.32, occupancy: 55, adr: 510 },
-    alpine: { weight: 0.18, occupancy: 65, adr: 285 },
-    countryside: { weight: 0.11, occupancy: 60, adr: 200 },
-    forest: { weight: 0.06, occupancy: 50, adr: 162 },
-  } as Record<string, { weight: number, occupancy: number, adr: number }>), []);
-
-  const dateFactor = useMemo(() => {
-    if (!startDate || !endDate) return 1.0;
+  // Calculate days in the current date range
+  const days = useMemo(() => {
+    if (!startDate || !endDate) return 1;
     const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-    // Stable factor based on number of days (fluctuates slightly between 0.9 and 1.1)
-    return 0.9 + ((days % 20) / 100);
+    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }, [startDate, endDate]);
 
-  const { sumWeights, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
+  // Calculate days in the comparison date range
+  const compDays = useMemo(() => {
+    if (!compStartDate || !compEndDate) return 1;
+    const diffTime = Math.abs(compEndDate.getTime() - compStartDate.getTime());
+    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  }, [compStartDate, compEndDate]);
+
+  // Calculate primary metrics for selected active resorts and days
+  const { totalOccupiedNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
-    let totalW = 0;
-    let weightedOcc = 0;
-    let weightedAdr = 0;
+    
+    let totalAvail = 0;
+    let totalOcc = 0;
+    let totalRev = 0;
 
     activeList.forEach(r => {
-      const profile = resortWeightsProfile[r] || resortWeightsProfile['city'];
-      totalW += profile.weight;
-      weightedOcc += profile.occupancy * profile.weight;
-      weightedAdr += profile.adr * profile.weight;
+      const profile = resortProfiles[r] || resortProfiles['city'];
+      const avail = profile.capacity * days;
+      const occ = avail * (profile.occupancy / 100);
+      const rev = occ * profile.adr;
+
+      totalAvail += avail;
+      totalOcc += occ;
+      totalRev += rev;
     });
 
-    const o = Math.min(100, Math.max(10, Math.round((weightedOcc / totalW) * dateFactor)));
-    const a = Math.round((weightedAdr / totalW) * dateFactor);
-    const r = Math.round((o * a) / 100);
+    const occPct = totalAvail > 0 ? (totalOcc / totalAvail) * 100 : 0;
+    const adr = totalOcc > 0 ? totalRev / totalOcc : 0;
+    const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
 
     return {
-      sumWeights: totalW,
-      avgOcc: o,
-      avgAdr: a,
-      avgRevpar: r
+      totalOccupiedNights: Math.round(totalOcc),
+      totalRevenue: totalRev,
+      avgOcc: Math.round(occPct),
+      avgAdr: Math.round(adr),
+      avgRevpar: Math.round(revpar)
     };
-  }, [activeResorts, dateFactor, resortWeightsProfile]);
+  }, [activeResorts, days]);
+
+  // Calculate comparison metrics to derive realistic and consistent trends
+  const compMetrics = useMemo(() => {
+    const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
+    
+    let totalAvail = 0;
+    let totalOcc = 0;
+    let totalRev = 0;
+
+    activeList.forEach(r => {
+      const profile = resortProfiles[r] || resortProfiles['city'];
+      // Assume slightly lower baseline for the comparison period (e.g. 5% lower occupancy, 3% lower ADR)
+      const compOcc = profile.occupancy * 0.95;
+      const compAdr = profile.adr * 0.97;
+
+      const avail = profile.capacity * compDays;
+      const occ = avail * (compOcc / 100);
+      const rev = occ * compAdr;
+
+      totalAvail += avail;
+      totalOcc += occ;
+      totalRev += rev;
+    });
+
+    const occPct = totalAvail > 0 ? (totalOcc / totalAvail) * 100 : 0;
+    const adr = totalOcc > 0 ? totalRev / totalOcc : 0;
+    const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
+
+    return {
+      totalOccupiedNights: Math.round(totalOcc),
+      totalRevenue: totalRev,
+      avgOcc: Math.round(occPct),
+      avgAdr: Math.round(adr),
+      avgRevpar: Math.round(revpar)
+    };
+  }, [activeResorts, compDays]);
 
   const dynamicTotal = useMemo(() => {
-    const totalNights = Math.round(7757 * sumWeights * dateFactor);
-    return totalNights.toLocaleString();
-  }, [sumWeights, dateFactor]);
+    return totalOccupiedNights.toLocaleString();
+  }, [totalOccupiedNights]);
 
   const dynamicKpis = useMemo(() => {
-    const totalRev = 10.21 * sumWeights * dateFactor;
-    const totalNights = Math.round(7757 * sumWeights * dateFactor);
+    const formatPctChange = (current: number, previous: number) => {
+      if (previous === 0) return '↑ 0.0%';
+      const diff = ((current - previous) / previous) * 100;
+      const arrow = diff >= 0 ? '↑' : '↓';
+      return `${arrow} ${Math.abs(diff).toFixed(1)}%`;
+    };
+
+    const formatPpChange = (current: number, previous: number) => {
+      const diff = current - previous;
+      const arrow = diff >= 0 ? '↑' : '↓';
+      return `${arrow} ${Math.abs(diff).toFixed(1)}pp`;
+    };
+
+    const occDiff = avgOcc - compMetrics.avgOcc;
+    const revDiff = totalRevenue - compMetrics.totalRevenue;
+    const revparDiff = avgRevpar - compMetrics.avgRevpar;
+    const adrDiff = avgAdr - compMetrics.avgAdr;
+    const nightsDiff = totalOccupiedNights - compMetrics.totalOccupiedNights;
 
     return [
-      { label: 'OCCUPANCY',         value: `${avgOcc}%`,     trend: '↑ 2.4pp', up: true,  color: '#947b66' },
-      { label: 'REVENUE (USD)',     value: `$${totalRev.toFixed(2)}M`, trend: '↑ 8.8%',  up: true,  color: '#586981' },
-      { label: 'RevPAR (USD)',      value: `$${avgRevpar}`,    trend: '↑ 6.4%',  up: true,  color: '#657454' },
-      { label: 'ADR (USD)',         value: `$${avgAdr.toLocaleString()}`,  trend: '↑ 3.7%',  up: true,  color: '#8b6b7a' },
-      { label: 'TOTAL ROOM NIGHTS', value: totalNights.toLocaleString(),   trend: '↑ 4.8%',  up: true,  color: '#a67138' },
+      { label: 'OCCUPANCY',         value: `${avgOcc}%`,     trend: formatPpChange(avgOcc, compMetrics.avgOcc), up: occDiff >= 0,  color: '#947b66' },
+      { label: 'REVENUE (USD)',     value: `$${(totalRevenue / 1000000).toFixed(2)}M`, trend: formatPctChange(totalRevenue, compMetrics.totalRevenue), up: revDiff >= 0,  color: '#586981' },
+      { label: 'RevPAR (USD)',      value: `$${avgRevpar}`,    trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0,  color: '#657454' },
+      { label: 'ADR (USD)',         value: `$${avgAdr.toLocaleString()}`,  trend: formatPctChange(avgAdr, compMetrics.avgAdr), up: adrDiff >= 0,  color: '#8b6b7a' },
+      { label: 'TOTAL ROOM NIGHTS', value: totalOccupiedNights.toLocaleString(),   trend: formatPctChange(totalOccupiedNights, compMetrics.totalOccupiedNights), up: nightsDiff >= 0,  color: '#a67138' },
     ];
-  }, [sumWeights, dateFactor, avgOcc, avgAdr, avgRevpar]);
+  }, [avgOcc, totalRevenue, avgRevpar, avgAdr, totalOccupiedNights, compMetrics]);
+
+  // Compute synchronized breakdown data
+  const geoDistribution = useMemo(() => {
+    return distributeMetrics(
+      geoConfigs.map(c => ({ name: c.region, share: c.share, adrFactor: c.adrFactor })),
+      totalOccupiedNights,
+      totalRevenue,
+      avgAdr
+    );
+  }, [totalOccupiedNights, totalRevenue, avgAdr]);
+
+  const segmentDistribution = useMemo(() => {
+    return distributeMetrics(
+      segmentConfigs.map(c => ({ name: c.segment, share: c.share, adrFactor: c.adrFactor })),
+      totalOccupiedNights,
+      totalRevenue,
+      avgAdr
+    );
+  }, [totalOccupiedNights, totalRevenue, avgAdr]);
+
+  const channelDistribution = useMemo(() => {
+    return distributeMetrics(
+      channelConfigs.map(c => ({ name: c.channel, share: c.share, adrFactor: c.adrFactor })),
+      totalOccupiedNights,
+      totalRevenue,
+      avgAdr
+    );
+  }, [totalOccupiedNights, totalRevenue, avgAdr]);
 
   const dynamicGeoData = useMemo(() => {
-    let sum = 0;
-    const randomized = geoData.filter(g => !g.isTotal).map(g => {
-      // Deterministic but natural-looking distribution
-      const hash = g.region.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const v = parseFloat(g.rnights) * (0.8 + (hash % 5) / 10);
-      sum += v;
-      return { ...g, raw: v };
-    });
-    const normalized = randomized.map(g => ({
-      ...g,
-      rnights: `${((g.raw / sum) * 100).toFixed(1)}%`,
-      revenue: `$${(parseFloat(g.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
+    const tableData = geoDistribution.map(item => ({
+      region: item.name,
+      rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
+      adr: `$${item.adr}`,
+      revenue: `$${(item.revenue / 1000000).toFixed(2)}M`,
     }));
-    return [...normalized, { ...geoData.find(g => g.isTotal), rnights: '100%', revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` }];
-  }, [sumWeights, dateFactor]);
+
+    // Append total row
+    tableData.push({
+      region: 'Total',
+      rnights: '100%',
+      adr: `$${avgAdr}`,
+      revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
+      isTotal: true
+    } as any);
+
+    return tableData;
+  }, [geoDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   const dynamicSegmentData = useMemo(() => {
-    let sum = 0;
-    const randomized = segmentData.map(s => {
-      const hash = s.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const v = s.value * (0.8 + (hash % 5) / 10);
-      sum += v;
-      return { ...s, raw: v };
+    return segmentConfigs.map(cfg => {
+      const finalItem = segmentDistribution.find(item => item.name === cfg.segment);
+      const val = finalItem && totalOccupiedNights > 0 ? Number(((finalItem.nights / totalOccupiedNights) * 100).toFixed(1)) : 0;
+      return {
+        name: cfg.segment,
+        value: val,
+        color: cfg.color
+      };
     });
-    return randomized.map(s => ({
-      ...s,
-      value: Number(((s.raw / sum) * 100).toFixed(1))
+  }, [segmentDistribution, totalOccupiedNights]);
+
+  const dynamicSegmentTable = useMemo(() => {
+    const tableData = segmentDistribution.map(item => ({
+      segment: item.name,
+      rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
+      adr: `$${item.adr}`,
+      revenue: `$${(item.revenue / 1000000).toFixed(2)}M`
     }));
-  }, []);
+
+    tableData.push({
+      segment: 'Total',
+      rnights: '100%',
+      adr: `$${avgAdr}`,
+      revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
+      isTotal: true
+    } as any);
+
+    return tableData;
+  }, [segmentDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   const dynamicChannelData = useMemo(() => {
-    let sum = 0;
-    const randomized = channelData.map(c => {
-      const hash = c.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const v = c.value * (0.8 + (hash % 5) / 10);
-      sum += v;
-      return { ...c, raw: v };
+    return channelConfigs.map(cfg => {
+      const finalItem = channelDistribution.find(item => item.name === cfg.channel);
+      const val = finalItem && totalOccupiedNights > 0 ? Number(((finalItem.nights / totalOccupiedNights) * 100).toFixed(1)) : 0;
+      return {
+        name: cfg.channel,
+        value: val,
+        color: cfg.color
+      };
     });
-    return randomized.map(c => ({
-      ...c,
-      value: Number(((c.raw / sum) * 100).toFixed(1))
+  }, [channelDistribution, totalOccupiedNights]);
+
+  const dynamicChannelTable = useMemo(() => {
+    const tableData = channelDistribution.map(item => ({
+      channel: item.name,
+      rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
+      adr: `$${item.adr}`,
+      revenue: `$${(item.revenue / 1000000).toFixed(2)}M`
     }));
-  }, []);
 
-  const dynamicSegmentTable = useMemo(() => segmentTable.map((s, idx) => {
-    if (s.isTotal) return { ...s, revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` };
-    const newValue = dynamicSegmentData[idx]?.value || 0;
-    return {
-      ...s,
-      rnights: `${newValue}%`,
-      revenue: `$${(parseFloat(s.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
-    };
-  }), [dynamicSegmentData, sumWeights, dateFactor]);
+    tableData.push({
+      channel: 'Total',
+      rnights: '100%',
+      adr: `$${avgAdr}`,
+      revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
+      isTotal: true
+    } as any);
 
-  const dynamicChannelTable = useMemo(() => channelTable.map((c, idx) => {
-    if (c.isTotal) return { ...c, revenue: `$${(10.21 * sumWeights * dateFactor).toFixed(2)}M` };
-    const newValue = dynamicChannelData[idx]?.value || 0;
-    return {
-      ...c,
-      rnights: `${newValue}%`,
-      revenue: `$${(parseFloat(c.revenue.replace(/[^0-9.]/g, '')) * sumWeights * dateFactor).toFixed(2)}M`
-    };
-  }), [dynamicChannelData, sumWeights, dateFactor]);
+    return tableData;
+  }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
