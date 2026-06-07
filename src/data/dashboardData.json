@@ -1,17 +1,17 @@
 {
   "metrics": {
     "guestsToday": {
-      "title": "Number of Guests",
+      "title": "# of Guests",
       "value": "2,847",
       "trendText": "12%",
       "trendUp": true,
       "icon": "users",
       "data": [
         10,
-        15,
-        12,
-        18,
-        20,
+        13,
+        16,
+        19,
+        22,
         24
       ],
       "color": "#947b66"
@@ -23,11 +23,11 @@
       "trendUp": true,
       "icon": "bed",
       "data": [
-        60,
-        40,
+        62,
+        66,
         70,
+        74,
         80,
-        72,
         90
       ],
       "color": "#586981"
@@ -40,10 +40,10 @@
       "icon": "price",
       "data": [
         1800,
-        1900,
-        2000,
-        2000,
-        2100,
+        1860,
+        1920,
+        1980,
+        2040,
         2100
       ],
       "color": "#8b6b7a"
@@ -57,9 +57,9 @@
       "data": [
         5.0,
         5.2,
-        5.5,
+        5.4,
         5.6,
-        5.8,
+        5.75,
         5.9
       ],
       "color": "#657454"
@@ -72,10 +72,10 @@
       "icon": "price",
       "data": [
         1200,
-        1300,
-        1350,
-        1380,
-        1400,
+        1245,
+        1295,
+        1345,
+        1390,
         1428
       ],
       "color": "#a67138"
@@ -176,10 +176,10 @@
     },
     {
       "name": "May 14",
-      "alpine": 810,
+      "alpine": 826,
       "ocean": 690,
       "city": 490,
-      "forest": 370,
+      "forest": 375,
       "desert": 290,
       "country": 230
     },
@@ -194,20 +194,20 @@
     },
     {
       "name": "May 16",
-      "alpine": 870,
+      "alpine": 862,
       "ocean": 710,
       "city": 510,
       "forest": 400,
-      "desert": 290,
+      "desert": 303,
       "country": 250
     },
     {
       "name": "May 17",
-      "alpine": 880,
+      "alpine": 878,
       "ocean": 715,
       "city": 515,
       "forest": 405,
-      "desert": 300,
+      "desert": 305,
       "country": 255
     },
     {
@@ -427,30 +427,30 @@
     },
     {
       "name": "2024 YTD",
-      "value": 6420,
+      "value": 32100,
       "color": "#789366"
     }
   ],
   "sentimentChartData": [
     {
       "name": "May 21",
-      "value": 2
+      "value": 2.8
     },
     {
       "name": "May 22",
-      "value": 3.5
+      "value": 3.2
     },
     {
       "name": "May 23",
-      "value": 2.5
+      "value": 3.6
     },
     {
       "name": "May 24",
-      "value": 4.5
+      "value": 4.1
     },
     {
       "name": "May 25",
-      "value": 3.5
+      "value": 4.8
     }
   ]
 }

@@ -33,10 +33,10 @@ function SemiCircleGauge({ value }: { value: number }) {
   );
 }
 
-const sparkData = [60, 65, 58, 72, 68, 75, 80, 78, 82, 88];
+const sparkData = [60, 63, 66, 69, 72, 75, 78, 81, 84, 88];
 
 function Sparkline({ color }: { color: string }) {
-  const data = sparkData.map((v, i) => ({ v: v + (Math.random() * 10 - 5), i }));
+  const data = sparkData.map((v, i) => ({ v: v + (Math.random() * 4 - 2), i }));
   return (
     <ResponsiveContainer width="100%" height={32}>
       <LineChart data={data}>
@@ -151,7 +151,7 @@ export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: stri
 
           <div className="flex flex-col items-center mt-auto">
             <div className={`text-[8.5px] font-bold tracking-wide ${kpi.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>
-              <span className="text-[#947b66] font-normal text-[7px] mr-1">vs yesterday</span> {kpi.trend}
+              {kpi.trend}
             </div>
           </div>
 

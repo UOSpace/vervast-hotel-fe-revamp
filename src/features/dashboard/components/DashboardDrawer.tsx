@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { CloseCircle, RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
-import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import dashboardData from '../../../data/dashboardData.json';
 
 const contactData = [
@@ -169,13 +169,13 @@ export function DashboardDrawer() {
               const base = cardVal !== null ? cardVal : 68;
               return {
                 data: [
-                  { day: 'Mon', value: Math.min(100, Math.max(0, Math.round(base - 5))) },
-                  { day: 'Tue', value: Math.min(100, Math.max(0, Math.round(base - 2))) },
-                  { day: 'Wed', value: Math.min(100, Math.max(0, Math.round(base - 6))) },
-                  { day: 'Thu', value: Math.min(100, Math.max(0, Math.round(base + 2))) },
-                  { day: 'Fri', value: Math.min(100, Math.max(0, Math.round(base + 8))) },
-                  { day: 'Sat', value: Math.min(100, Math.max(0, Math.round(base + 12))) },
-                  { day: 'Sun', value: Math.min(100, Math.max(0, Math.round(base + 6))) },
+                  { day: 'Mon', value: Math.min(100, Math.max(0, Math.round(base - 8))) },
+                  { day: 'Tue', value: Math.min(100, Math.max(0, Math.round(base - 4))) },
+                  { day: 'Wed', value: Math.min(100, Math.max(0, Math.round(base - 1))) },
+                  { day: 'Thu', value: Math.min(100, Math.max(0, Math.round(base + 3))) },
+                  { day: 'Fri', value: Math.min(100, Math.max(0, Math.round(base + 7))) },
+                  { day: 'Sat', value: Math.min(100, Math.max(0, Math.round(base + 10))) },
+                  { day: 'Sun', value: Math.min(100, Math.max(0, Math.round(base + 12))) },
                 ],
                 prefix: '',
                 suffix: '%',
@@ -187,15 +187,22 @@ export function DashboardDrawer() {
               };
             } else if (t.includes('REVENUE')) {
               const base = cardVal !== null ? cardVal : 10.21;
+              const revMon = parseFloat((base * 0.08).toFixed(2));
+              const revTue = parseFloat((base * 0.09).toFixed(2));
+              const revWed = parseFloat((base * 0.10).toFixed(2));
+              const revThu = parseFloat((base * 0.11).toFixed(2));
+              const revFri = parseFloat((base * 0.12).toFixed(2));
+              const revSat = parseFloat((base * 0.13).toFixed(2));
+              const revSun = parseFloat((base - (revMon + revTue + revWed + revThu + revFri + revSat)).toFixed(2));
               return {
                 data: [
-                  { day: 'Mon', value: parseFloat((base * 0.10).toFixed(2)) },
-                  { day: 'Tue', value: parseFloat((base * 0.11).toFixed(2)) },
-                  { day: 'Wed', value: parseFloat((base * 0.105).toFixed(2)) },
-                  { day: 'Thu', value: parseFloat((base * 0.125).toFixed(2)) },
-                  { day: 'Fri', value: parseFloat((base * 0.175).toFixed(2)) },
-                  { day: 'Sat', value: parseFloat((base * 0.20).toFixed(2)) },
-                  { day: 'Sun', value: parseFloat((base - (base * 0.815)).toFixed(2)) },
+                  { day: 'Mon', value: revMon },
+                  { day: 'Tue', value: revTue },
+                  { day: 'Wed', value: revWed },
+                  { day: 'Thu', value: revThu },
+                  { day: 'Fri', value: revFri },
+                  { day: 'Sat', value: revSat },
+                  { day: 'Sun', value: revSun },
                 ],
                 prefix: '$',
                 suffix: 'M',
@@ -209,13 +216,13 @@ export function DashboardDrawer() {
               const base = cardVal !== null ? cardVal : 895;
               return {
                 data: [
-                  { day: 'Mon', value: Math.round(base * 0.90) },
-                  { day: 'Tue', value: Math.round(base * 0.92) },
-                  { day: 'Wed', value: Math.round(base * 0.90) },
-                  { day: 'Thu', value: Math.round(base * 1.0) },
-                  { day: 'Fri', value: Math.round(base * 1.08) },
-                  { day: 'Sat', value: Math.round(base * 1.12) },
-                  { day: 'Sun', value: Math.round(base * 1.05) },
+                  { day: 'Mon', value: Math.round(base * 0.85) },
+                  { day: 'Tue', value: Math.round(base * 0.88) },
+                  { day: 'Wed', value: Math.round(base * 0.92) },
+                  { day: 'Thu', value: Math.round(base * 0.96) },
+                  { day: 'Fri', value: Math.round(base * 1.02) },
+                  { day: 'Sat', value: Math.round(base * 1.08) },
+                  { day: 'Sun', value: Math.round(base * 1.15) },
                 ],
                 prefix: '$',
                 suffix: '',
@@ -229,13 +236,13 @@ export function DashboardDrawer() {
               const base = cardVal !== null ? cardVal : 1316;
               return {
                 data: [
-                  { day: 'Mon', value: Math.round(base * 0.90) },
-                  { day: 'Tue', value: Math.round(base * 0.92) },
-                  { day: 'Wed', value: Math.round(base * 0.90) },
-                  { day: 'Thu', value: Math.round(base * 1.00) },
-                  { day: 'Fri', value: Math.round(base * 1.08) },
-                  { day: 'Sat', value: Math.round(base * 1.12) },
-                  { day: 'Sun', value: Math.round(base * 1.05) },
+                  { day: 'Mon', value: Math.round(base * 0.85) },
+                  { day: 'Tue', value: Math.round(base * 0.88) },
+                  { day: 'Wed', value: Math.round(base * 0.92) },
+                  { day: 'Thu', value: Math.round(base * 0.96) },
+                  { day: 'Fri', value: Math.round(base * 1.02) },
+                  { day: 'Sat', value: Math.round(base * 1.08) },
+                  { day: 'Sun', value: Math.round(base * 1.15) },
                 ],
                 prefix: '$',
                 suffix: '',
@@ -247,12 +254,12 @@ export function DashboardDrawer() {
               };
             } else if (t.includes('NIGHTS')) {
               const base = cardVal !== null ? cardVal : 7757;
-              const mon = Math.round(base * 0.10);
-              const tue = Math.round(base * 0.11);
-              const wed = Math.round(base * 0.105);
-              const thu = Math.round(base * 0.125);
-              const fri = Math.round(base * 0.175);
-              const sat = Math.round(base * 0.20);
+              const mon = Math.round(base * 0.08);
+              const tue = Math.round(base * 0.09);
+              const wed = Math.round(base * 0.10);
+              const thu = Math.round(base * 0.11);
+              const fri = Math.round(base * 0.12);
+              const sat = Math.round(base * 0.13);
               const sun = base - (mon + tue + wed + thu + fri + sat);
 
               return {
@@ -277,13 +284,13 @@ export function DashboardDrawer() {
               const base = cardVal !== null ? cardVal : 400;
               return {
                 data: [
-                  { day: 'Mon', value: Math.round(base * 0.90) },
-                  { day: 'Tue', value: Math.round(base * 0.85) },
-                  { day: 'Wed', value: Math.round(base * 0.95) },
-                  { day: 'Thu', value: Math.round(base * 1.00) },
-                  { day: 'Fri', value: Math.round(base * 1.05) },
-                  { day: 'Sat', value: Math.round(base * 1.10) },
-                  { day: 'Sun', value: Math.round(base * 1.00) },
+                  { day: 'Mon', value: Math.round(base * 0.85) },
+                  { day: 'Tue', value: Math.round(base * 0.88) },
+                  { day: 'Wed', value: Math.round(base * 0.92) },
+                  { day: 'Thu', value: Math.round(base * 0.96) },
+                  { day: 'Fri', value: Math.round(base * 1.02) },
+                  { day: 'Sat', value: Math.round(base * 1.08) },
+                  { day: 'Sun', value: Math.round(base * 1.15) },
                 ],
                 prefix: '',
                 suffix: '',
@@ -303,13 +310,15 @@ export function DashboardDrawer() {
               <p className="text-xs text-[#7d6b5e]">Daily {config.title}{config.title.toLocaleLowerCase() == 'number of guests' ? ' checked in' : ''}.</p>
               <div className="h-[200px] w-full mt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={metricData}>
+                  <LineChart data={metricData} margin={{ top: 5, right: 15, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.3} />
                     <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={3} dot={{ r: 4, fill: '#C8A050' }} />
                     <Tooltip
                       formatter={(value: any) => [`${prefix}${value.toLocaleString()}${suffix}`, 'Value']}
                       contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }}
                     />
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} dy={10} />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} dy={10} interval={0} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} tickFormatter={(v: number) => `${prefix}${v.toLocaleString()}${suffix}`} width={60} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

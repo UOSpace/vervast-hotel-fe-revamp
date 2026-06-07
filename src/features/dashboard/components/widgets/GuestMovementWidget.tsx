@@ -36,8 +36,8 @@ export function GuestMovementWidget() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.5} />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} dy={10} />
-              <YAxis hide domain={['dataMin - 100', 'dataMax + 100']} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} dy={10} interval={0} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} domain={['dataMin - 100', 'dataMax + 100']} width={35} />
               <Line type="natural" dataKey="alpine" stroke="#947b66" strokeWidth={2} dot={false} isAnimationActive={false} />
               <Line type="natural" dataKey="ocean" stroke="#657454" strokeWidth={2} dot={false} isAnimationActive={false} />
               <Line type="natural" dataKey="city" stroke="#586981" strokeWidth={2} dot={false} isAnimationActive={false} />

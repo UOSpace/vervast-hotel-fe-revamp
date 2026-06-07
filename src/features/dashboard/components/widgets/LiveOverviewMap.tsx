@@ -19,8 +19,8 @@ export function LiveOverviewMap() {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{ scale: 115, center: [15, 20] }}
-          width={800}
-          height={350}
+          width={880}
+          height={385}
           style={{ width: '100%', height: '100%' }}
         >
           <defs>

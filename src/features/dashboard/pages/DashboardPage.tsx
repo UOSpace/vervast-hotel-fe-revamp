@@ -9,7 +9,7 @@ import { SentimentScoreWidget } from '../components/widgets/SentimentScoreWidget
 import { GuestArrivalsWidget } from '../components/widgets/GuestArrivalsWidget';
 import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Plate, Snowflake, Bus } from '@solar-icons/react';
 import dashboardData from '../../../data/dashboardData.json';
-import { LineChart, Line, ResponsiveContainer, XAxis, BarChart, Bar, YAxis, Cell, LabelList } from 'recharts';
+import { LineChart, Line, ResponsiveContainer, XAxis, CartesianGrid, BarChart, Bar, YAxis, Cell, LabelList } from 'recharts';
 import {
   Select,
   SelectContent,
@@ -144,21 +144,26 @@ export function DashboardPage() {
       ) : (
         <div key="all" className="flex-1 min-h-0 grid grid-cols-12 auto-rows-max gap-4 overflow-y-auto pb-6 px-4 lg:px-6 text-[10px] custom-scrollbar">
 
-          {/* ROW 1: Map (col 1-5) & Metrics (col 6-12) */}
-          <div
-            className="col-span-5 row-span-2 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-            style={{ animationDelay: '0.1s' }}
-            onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
-          >
-            <div className="absolute top-4 left-4 z-10 flex items-center justify-between uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] w-[calc(100%-4rem)]">
-              <span>WORLD MAP</span>
-              <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
+          {/* ROW 1-2: Map (45.83%) + Right Column (54.17%) — using flex for precise 10% adjustment */}
+          <div className="col-span-12 flex gap-4">
+            {/* Map — 45.83% */}
+            <div
+              className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+              style={{ animationDelay: '0.1s', flex: '0 0 45.83%' }}
+              onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
+            >
+              <div className="absolute top-4 left-4 z-10 flex items-center justify-between uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] w-[calc(100%-4rem)]">
+                <span>WORLD MAP</span>
+                <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
+              </div>
+              <span className="absolute top-4 right-4 z-10 text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
+              <LiveOverviewMap />
             </div>
-            <span className="absolute top-4 right-4 z-10 text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
-            <LiveOverviewMap />
-          </div>
 
-          <div className="col-span-7 row-span-1 grid grid-cols-5 gap-2">
+            {/* Right Column — 54.17% */}
+            <div className="flex flex-col gap-4" style={{ flex: '0 0 54.17%' }}>
+              {/* Metrics Row */}
+              <div className="grid grid-cols-5 gap-2">
             {/* Number of Guests */}
             <div
               className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
@@ -216,13 +221,15 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {/* ROW 2 (Part of Right Column): Global Alerts */}
-          <div
-            className="relative col-span-7 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#a65e52]/50 hover:z-20 transition-all"
-            style={{ animationDelay: '0.35s' }}
-            onClick={() => openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' })}
-          >
-            <GlobalAlertsWidget />
+              {/* Global Alerts */}
+              <div
+                className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#a65e52]/50 hover:z-20 transition-all"
+                style={{ animationDelay: '0.35s' }}
+                onClick={() => openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' })}
+              >
+                <GlobalAlertsWidget />
+              </div>
+            </div>
           </div>
 
           {/* ROW 3 */}
@@ -353,9 +360,11 @@ export function DashboardPage() {
 
               <div className="flex-1 min-w-[120px] h-full mx-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={sentimentChartData} margin={{ top: 10, right: 10, left: 10, bottom: -5 }}>
+                  <LineChart data={sentimentChartData} margin={{ top: 10, right: 10, left: 0, bottom: -5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.3} />
                     <Line type="natural" dataKey="value" stroke="#947b66" strokeWidth={1.5} dot={{ r: 3, fill: '#d4c4b7', stroke: '#947b66', strokeWidth: 1.5 }} activeDot={{ r: 4 }} isAnimationActive={false} />
-                    <XAxis dataKey="name" axisLine={{ stroke: '#4a3c31' }} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} dy={5} />
+                    <XAxis dataKey="name" axisLine={{ stroke: '#4a3c31' }} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} dy={5} interval={0} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} domain={[0, 5]} width={20} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

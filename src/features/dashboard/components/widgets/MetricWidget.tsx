@@ -49,11 +49,10 @@ export function MetricWidget({ title, value, trendText, trendUp, icon, data, col
         <InfoTooltip text={getTooltipText(title)} />
       </div>
       <h3 className="text-2xl font-bold text-[#4a3c31]">{value}</h3>
-      <div className="flex items-center text-[10px] mt-1 space-x-1">
+      <div className="flex items-center text-[10px] mt-1">
         <span className={trendUp ? 'text-[#657454]' : 'text-[#a65e52]'}>
           {trendUp ? '↑' : '↓'} {trendText}
         </span>
-        <span className="text-[#7d6b5e]">yesterday</span>
       </div>
       <div className="h-10 mt-3 w-full">
         <ResponsiveContainer width="100%" height="100%">
