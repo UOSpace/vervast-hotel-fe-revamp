@@ -18,9 +18,9 @@ export function LiveOverviewMap() {
       <div className="flex-1 relative overflow-hidden rounded-md">
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ scale: 145, center: [15, 20] }}
+          projectionConfig={{ scale: 115, center: [15, 20] }}
           width={800}
-          height={440}
+          height={350}
           style={{ width: '100%', height: '100%' }}
         >
           <defs>

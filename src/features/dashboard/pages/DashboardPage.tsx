@@ -7,7 +7,7 @@ import { PortfolioPerformanceWidget } from '../components/widgets/PortfolioPerfo
 import { TopNationalitiesWidget } from '../components/widgets/TopNationalitiesWidget';
 import { SentimentScoreWidget } from '../components/widgets/SentimentScoreWidget';
 import { GuestArrivalsWidget } from '../components/widgets/GuestArrivalsWidget';
-import { UsersGroupTwoRounded, Bed, TagPrice, ClockCircle, Heart, Plate, Snowflake, Bus } from '@solar-icons/react';
+import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Plate, Snowflake, Bus } from '@solar-icons/react';
 import dashboardData from '../../../data/dashboardData.json';
 import { LineChart, Line, ResponsiveContainer, XAxis, BarChart, Bar, YAxis, Cell, LabelList } from 'recharts';
 import {
@@ -84,11 +84,42 @@ export function DashboardPage() {
 
   const isTransitioning = phase !== 'idle';
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Ohayō Alfonso!';
+    if (hour >= 12 && hour < 18) return 'Konnichiwa Alfonso!';
+    return 'Konbanwa Alfonso!';
+  };
+
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
       {/* Header */}
-      <header className="shrink-0 flex items-center mb-4 px-4 lg:px-6">
-        {/* Dropdown Filter on the left side */}
+      <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
+        {/* Welcome Card */}
+        {view === 'all' && (
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter" style={{ animationDelay: '0.05s' }}>
+            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
+              <span>Welcome to SOSEI Galaxy</span>
+            </h2>
+            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
+              Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
+            </p>
+          </div>
+        )}
+        {view === 'by_resort_type' && (
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter" style={{ animationDelay: '0.05s' }}>
+            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
+              <span>Resort & Destination Analytics</span>
+            </h2>
+            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
+              Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
+            </p>
+          </div>
+        )}
+
+        {/* Dropdown Filter */}
         <div className="flex items-center">
           <Select value={view} onValueChange={handleViewChange} disabled={isTransitioning}>
             <SelectTrigger className="w-[260px] bg-[#f3eae1]/90 backdrop-blur-sm border-[#d4c4b7] text-[#4a3c31] focus:ring-[#947b66] h-10 rounded-[8px] font-medium shadow-sm">
@@ -112,87 +143,82 @@ export function DashboardPage() {
         </div>
       ) : (
         <div key="all" className="flex-1 min-h-0 grid grid-cols-12 auto-rows-max gap-4 overflow-y-auto pb-6 px-4 lg:px-6 text-[10px] custom-scrollbar">
-          {/* Welcome Card inside the scrollable grid container */}
-          <div className="col-span-12 py-6 px-1 flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#d4c4b7]/40 animate-card-enter" style={{ animationDelay: '0.05s' }}>
-            <div className="flex gap-4 items-start">
-              {/* Traditional red stamp accent */}
-              <span className="w-2.5 h-2.5 rounded-full bg-[#a65e52] mt-2 shrink-0 opacity-80" />
-              <div>
-                <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">Welcome back, Curator</p>
-                <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
-                  <span>Welcome to Sosei Global Overview</span>
-                  <span className="text-[10px] font-sans text-[#7d6b5e]/60 tracking-wider font-light">| 蘇生</span>
-                </h2>
-                <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
-                  Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
-                </p>
-              </div>
-            </div>
-            <div className="shrink-0 text-[9px] text-[#a65e52] font-semibold tracking-widest uppercase border border-[#a65e52]/30 px-3 py-1 rounded-sm bg-[#a65e52]/5">
-              Live Operations
-            </div>
-          </div>
 
-          {/* ROW 1: Map (col 1-7) & Metrics (col 8-12) */}
-          <div 
-            className="col-span-7 row-span-2 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col relative animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          {/* ROW 1: Map (col 1-5) & Metrics (col 6-12) */}
+          <div
+            className="col-span-5 row-span-2 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.1s' }}
-            onClick={() => openDrawer({ type: 'PORTFOLIO_PERFORMANCE', title: 'Revenue Details' })}
+            onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
           >
             <div className="absolute top-4 left-4 z-10 flex items-center justify-between uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] w-[calc(100%-4rem)]">
-              <span>LIVE SNAPSHOT MAP</span>
-              <InfoTooltip text="Interactive world map showing real-time property status, occupancy, and active guest paths." />
+              <span>WORLD MAP</span>
+              <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
             </div>
             <span className="absolute top-4 right-4 z-10 text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
             <LiveOverviewMap />
           </div>
 
-          <div className="col-span-5 row-span-1 grid grid-cols-4 gap-4">
-            <div 
-              className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          <div className="col-span-7 row-span-1 grid grid-cols-5 gap-2">
+            {/* Number of Guests */}
+            <div
+              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
               style={{ animationDelay: '0.15s' }}
               onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.guestsToday.title, data: dashboardData.metrics.guestsToday.value })}
             >
               <MetricWidget
                 title={dashboardData.metrics.guestsToday.title} value={dashboardData.metrics.guestsToday.value} trendText={dashboardData.metrics.guestsToday.trendText} trendUp={dashboardData.metrics.guestsToday.trendUp}
-                icon={<UsersGroupTwoRounded size={16} />} data={dashboardData.metrics.guestsToday.data} color={dashboardData.metrics.guestsToday.color}
+                icon={<UsersGroupTwoRounded size={14} />} data={dashboardData.metrics.guestsToday.data} color={dashboardData.metrics.guestsToday.color}
               />
             </div>
-            <div 
-              className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+            {/* Occupancy */}
+            <div
+              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
               style={{ animationDelay: '0.2s' }}
               onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.occupancy.title, data: dashboardData.metrics.occupancy.value })}
             >
               <MetricWidget
                 title={dashboardData.metrics.occupancy.title} value={dashboardData.metrics.occupancy.value} trendText={dashboardData.metrics.occupancy.trendText} trendUp={dashboardData.metrics.occupancy.trendUp}
-                icon={<Bed size={16} />} data={dashboardData.metrics.occupancy.data} color={dashboardData.metrics.occupancy.color}
+                icon={<Bed size={14} />} data={dashboardData.metrics.occupancy.data} color={dashboardData.metrics.occupancy.color}
               />
             </div>
-            <div 
-              className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+            {/* ADR */}
+            <div
+              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
               style={{ animationDelay: '0.25s' }}
+              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.adr.title, data: dashboardData.metrics.adr.value })}
+            >
+              <MetricWidget
+                title={dashboardData.metrics.adr.title} value={dashboardData.metrics.adr.value} trendText={dashboardData.metrics.adr.trendText} trendUp={dashboardData.metrics.adr.trendUp}
+                icon={<TagPrice size={14} />} data={dashboardData.metrics.adr.data} color={dashboardData.metrics.adr.color}
+              />
+            </div>
+            {/* Revenue */}
+            <div
+              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+              style={{ animationDelay: '0.3s' }}
+              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revenue.title, data: dashboardData.metrics.revenue.value })}
+            >
+              <MetricWidget
+                title={dashboardData.metrics.revenue.title} value={dashboardData.metrics.revenue.value} trendText={dashboardData.metrics.revenue.trendText} trendUp={dashboardData.metrics.revenue.trendUp}
+                icon={<TagPrice size={14} />} data={dashboardData.metrics.revenue.data} color={dashboardData.metrics.revenue.color}
+              />
+            </div>
+            {/* RevPAR */}
+            <div
+              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+              style={{ animationDelay: '0.35s' }}
               onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revPar.title, data: dashboardData.metrics.revPar.value })}
             >
               <MetricWidget
                 title={dashboardData.metrics.revPar.title} value={dashboardData.metrics.revPar.value} trendText={dashboardData.metrics.revPar.trendText} trendUp={dashboardData.metrics.revPar.trendUp}
-                icon={<TagPrice size={16} />} data={dashboardData.metrics.revPar.data} color={dashboardData.metrics.revPar.color}
-              />
-            </div>
-            <div 
-              className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
-              style={{ animationDelay: '0.3s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.avgLengthOfStay.title, data: dashboardData.metrics.avgLengthOfStay.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.avgLengthOfStay.title} value={dashboardData.metrics.avgLengthOfStay.value} trendText={dashboardData.metrics.avgLengthOfStay.trendText} trendUp={dashboardData.metrics.avgLengthOfStay.trendUp}
-                icon={<ClockCircle size={16} />} data={dashboardData.metrics.avgLengthOfStay.data} color={dashboardData.metrics.avgLengthOfStay.color}
+                icon={<TagPrice size={14} />} data={dashboardData.metrics.revPar.data} color={dashboardData.metrics.revPar.color}
               />
             </div>
           </div>
 
           {/* ROW 2 (Part of Right Column): Global Alerts */}
-          <div 
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#a65e52]/50 hover:z-20 transition-all" 
+          <div
+            className="relative col-span-7 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#a65e52]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.35s' }}
             onClick={() => openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' })}
           >
@@ -200,29 +226,29 @@ export function DashboardPage() {
           </div>
 
           {/* ROW 3 */}
-          <div 
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          <div
+            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.4s' }}
-            onClick={() => openDrawer({ type: 'GUEST_MOVEMENT', title: 'Number Of Guest' })}
+            onClick={() => openDrawer({ type: 'GUEST_MOVEMENT', title: 'Daily number of guests checked in' })}
           >
             <GuestMovementWidget />
           </div>
-          <div 
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          <div
+            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.45s' }}
             onClick={() => openDrawer({ type: 'PORTFOLIO_PERFORMANCE', title: 'Portfolio Performance' })}
           >
             <PortfolioPerformanceWidget />
           </div>
-          <div 
-            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          <div
+            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.5s' }}
             onClick={() => openDrawer({ type: 'TOP_NATIONALITIES', title: 'Top Nationalities' })}
           >
             <TopNationalitiesWidget />
           </div>
-          <div 
-            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all" 
+          <div
+            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.55s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
           >
@@ -230,8 +256,8 @@ export function DashboardPage() {
           </div>
 
           {/* ROW 4 */}
-          <div 
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.6s' }}
             onClick={() => openDrawer({ type: 'GUEST_ARRIVALS', title: 'VVIP Arrivals' })}
           >
@@ -239,14 +265,14 @@ export function DashboardPage() {
           </div>
 
           {/* Top Guest Needs */}
-          <div 
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.65s' }}
             onClick={() => openDrawer({ type: 'GUEST_NEEDS', title: 'Top Guest Needs' })}
           >
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Top Guest Needs Today</h3>
-              <InfoTooltip text="Top requested guest amenities and room services logged today." />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Top Guest Needs</h3>
+              <InfoTooltip text="Top requested guest activities, amenities and services logged MTD." />
             </div>
             <div className="flex justify-between items-end px-2">
               {dashboardData.topGuestNeeds.map((need, idx) => (
@@ -261,8 +287,8 @@ export function DashboardPage() {
           </div>
 
           {/* Notes From Yesterday & Image */}
-          <div 
-            className="relative col-span-6 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex space-x-4 cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-6 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex space-x-4 cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.7s' }}
             onClick={() => openDrawer({ type: 'NOTES_YESTERDAY', title: 'Notes From Yesterday' })}
           >
@@ -282,16 +308,16 @@ export function DashboardPage() {
               <div className="text-[#d4c4b7] text-[10px]">Candlelight Photo</div>
             </div>
           </div>
- 
+
           {/* Journey Timeline */}
-          <div 
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.75s' }}
             onClick={() => openDrawer({ type: 'JOURNEY_TIMELINE', title: 'Journey Timeline' })}
           >
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Journey Timeline</h3>
-              <InfoTooltip text="Historical milestone timeline tracking the launch of each Sosei sanctuary." />
+              <InfoTooltip text="Historical milestone timeline tracking the launch of each SOSEI sanctuary." />
             </div>
             <div className="flex justify-between items-start mt-2 px-1">
               {[...journeyTimelineData1, ...journeyTimelineData2].map((j, i) => (
@@ -304,8 +330,8 @@ export function DashboardPage() {
             </div>
           </div>
 
-          <div 
-            className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.8s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
           >
@@ -344,8 +370,8 @@ export function DashboardPage() {
             <div className="text-[9px] text-[#947b66] cursor-pointer mt-1">View feedback history →</div>
           </div>
 
-          <div 
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter" 
+          <div
+            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.85s' }}
             onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Spend Over Time' })}
           >

@@ -25,7 +25,7 @@ export function PortfolioPerformanceWidget() {
             <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Portfolio Performance</h3>
             <p className="text-[10px] text-[#7d6b5e]">MTD (MONTH TO DATE)</p>
           </div>
-          <InfoTooltip text="Comparative month-to-date revenue performance and statistics per individual resort." />
+          <InfoTooltip text="MTD portfolio performance." />
         </div>
       </div>
 

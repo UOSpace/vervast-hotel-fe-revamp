@@ -6,6 +6,7 @@ export type DrawerType =
   | 'ALERTS' 
   | 'GUEST_MOVEMENT' 
   | 'PORTFOLIO_PERFORMANCE' 
+  | 'WORLD_MAP'
   | 'TOP_NATIONALITIES' 
   | 'SENTIMENT_SCORE'
   | 'GUEST_ARRIVALS'
@@ -45,7 +46,7 @@ export function DashboardDrawerProvider({ children }: { children: ReactNode }) {
   const closeDrawer = () => {
     setIsOpen(false);
     // Don't clear config immediately so exit animation looks smooth
-    setTimeout(() => setConfig(null), 300);
+    setTimeout(() => setConfig(null), 500);
   };
 
   return (

@@ -5,6 +5,7 @@ import { PropertyDashboardPage } from './features/dashboard/pages/PropertyDashbo
 import { MasterLayout } from './components/layouts/MasterLayout';
 import { UnderConstructionPage } from './features/common/pages/UnderConstructionPage';
 import { GuestsPage, GuestProfilePage } from './features/guests';
+import { PartnersPage } from './features/partners';
 
 export const routes: RouteObject[] = [
   {
@@ -34,6 +35,10 @@ export const routes: RouteObject[] = [
       {
         path: '/dashboard/guests/:id',
         element: <GuestProfilePage />,
+      },
+      {
+        path: '/dashboard/partners',
+        element: <PartnersPage />,
       },
       {
         path: '/dashboard/*',

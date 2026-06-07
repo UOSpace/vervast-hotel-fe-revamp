@@ -283,7 +283,7 @@ export function GuestProfilePage() {
                 <Heart size={20} className="text-[#947b66] shrink-0" />
                 <div>
                   <div className="font-bold text-[#4a3c31] text-[11px] mb-0.5">Meaningful Moments</div>
-                  <div className="text-[#7d6b5e] text-[10px] leading-snug">They loved the fondue experience and morning photography walk.</div>
+                  <div className="text-[#7d6b5e] text-[10px] leading-snug">They loved sunset yacth experience and morning photography walk.</div>
                 </div>
               </div>
             </div>

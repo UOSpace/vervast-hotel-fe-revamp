@@ -26,7 +26,7 @@ function InfoTooltip({ text }: { text: string }) {
 
 export function GlobalAlertsWidget() {
   const { openDrawer } = useDashboardDrawer();
-  
+
   // Show only first 4 alerts in the widget card
   const alerts = dashboardData.globalAlerts.slice(0, 4).map(a => ({
     ...a,
@@ -38,9 +38,9 @@ export function GlobalAlertsWidget() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center justify-between w-full">
           <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Global Alerts & Insights</h3>
-          <InfoTooltip text="Operational notifications and weather or service updates across all resorts." />
+          <InfoTooltip text="Important alerts and notifications across all properties." />
         </div>
-        <button 
+        <button
           className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] underline cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
@@ -57,13 +57,13 @@ export function GlobalAlertsWidget() {
             <div className="mb-2">{alert.icon}</div>
             <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#4a3c31] mb-1">{alert.title}</h4>
             <p className="text-[10px] text-[#4a3c31] flex-1 pr-2 leading-relaxed">{alert.text}</p>
-            <button 
+            <button
               className="text-[9px] text-[#a65e52] font-semibold border-b border-transparent hover:border-[#a65e52] self-start transition-colors outline-none focus:outline-none cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                openDrawer({ 
-                  type: 'ALERTS', 
-                  title: 'Alert Details', 
+                openDrawer({
+                  type: 'ALERTS',
+                  title: 'Alert Details',
                   data: alert
                 });
               }}

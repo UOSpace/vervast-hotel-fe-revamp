@@ -47,7 +47,7 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
             <th className="text-left pb-1">Channel</th>
             <th className="text-right pb-1">% Rnights</th>
             <th className="text-right pb-1">ADR (USD)</th>
-            <th className="text-right pb-1">Revenue (USD)</th>
+            <th className="text-right pb-1">Room Revenue (USD)</th>
           </tr>
         </thead>
         <tbody>

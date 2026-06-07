@@ -18,28 +18,28 @@ const resortProfiles: Record<string, { capacity: number; occupancy: number; adr:
 
 // Static breakdown configurations
 const geoConfigs = [
-  { region: 'Asia Pacific',  share: 35, adrFactor: 0.95 },
-  { region: 'Europe',        share: 25, adrFactor: 1.09 },
-  { region: 'America',       share: 20, adrFactor: 0.86 },
-  { region: 'Middle East',   share: 12, adrFactor: 0.77 },
-  { region: 'Africa',        share: 8,  adrFactor: 0.68 },
+  { region: 'Asia Pacific', share: 35, adrFactor: 0.95 },
+  { region: 'Europe', share: 25, adrFactor: 1.09 },
+  { region: 'America', share: 20, adrFactor: 0.86 },
+  { region: 'Middle East', share: 12, adrFactor: 0.77 },
+  { region: 'Africa', share: 8, adrFactor: 0.68 },
 ];
 
 const segmentConfigs = [
-  { segment: 'Leisure',  share: 55, adrFactor: 0.92, color: '#C8A050' },
+  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#C8A050' },
   { segment: 'Business', share: 25, adrFactor: 1.09, color: '#947b66' },
-  { segment: 'Social',   share: 10, adrFactor: 0.68, color: '#7d6b5e' },
-  { segment: 'MICE',     share: 7,  adrFactor: 0.97, color: '#d4c4b7' },
-  { segment: 'Others',   share: 3,  adrFactor: 0.61, color: '#e5d8cb' },
+  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#7d6b5e' },
+  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#d4c4b7' },
+  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#e5d8cb' },
 ];
 
 const channelConfigs = [
-  { channel: 'Direct',    share: 33, adrFactor: 1.11, color: '#C8A050' },
-  { channel: 'OTA',       share: 28, adrFactor: 0.81, color: '#947b66' },
+  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#C8A050' },
+  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#947b66' },
   { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#7d6b5e' },
-  { channel: 'Own Web',   share: 11, adrFactor: 1.06, color: '#d4c4b7' },
-  { channel: 'TO',        share: 8,  adrFactor: 0.73, color: '#b8a899' },
-  { channel: 'Trade',     share: 5,  adrFactor: 0.69, color: '#e5d8cb' },
+  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#d4c4b7' },
+  { channel: 'TO', share: 8, adrFactor: 0.73, color: '#b8a899' },
+  { channel: 'Trade', share: 5, adrFactor: 0.69, color: '#e5d8cb' },
 ];
 
 // Helper to distribute metrics to categories consistently
@@ -90,7 +90,7 @@ function distributeMetrics(
   // 3. Normalize revenues to match totalRevenue exactly and calculate final ADRs
   let finalRevSum = 0;
   const factor = revenueSum > 0 ? totalRevenue / revenueSum : 1;
-  
+
   return listWithRev.map((item, idx) => {
     let rev = item.rawRevenue * factor;
     if (idx === listWithRev.length - 1) {
@@ -99,7 +99,7 @@ function distributeMetrics(
     finalRevSum += rev;
 
     const adr = item.nights > 0 ? Math.round(rev / item.nights) : 0;
-    
+
     return {
       name: item.name,
       share: item.share,
@@ -112,7 +112,7 @@ function distributeMetrics(
 
 export function ResortTypeDashboard() {
   const [activeResorts, setActiveResorts] = useState<string[]>(['city']);
-  
+
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const prevMonthToday = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
@@ -140,7 +140,7 @@ export function ResortTypeDashboard() {
   // Calculate primary metrics for selected active resorts and days
   const { totalOccupiedNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
-    
+
     let totalAvail = 0;
     let totalOcc = 0;
     let totalRev = 0;
@@ -172,7 +172,7 @@ export function ResortTypeDashboard() {
   // Calculate comparison metrics to derive realistic and consistent trends
   const compMetrics = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
-    
+
     let totalAvail = 0;
     let totalOcc = 0;
     let totalRev = 0;
@@ -230,11 +230,11 @@ export function ResortTypeDashboard() {
     const nightsDiff = totalOccupiedNights - compMetrics.totalOccupiedNights;
 
     return [
-      { label: 'OCCUPANCY',         value: `${avgOcc}%`,     trend: formatPpChange(avgOcc, compMetrics.avgOcc), up: occDiff >= 0,  color: '#947b66' },
-      { label: 'REVENUE (USD)',     value: `$${(totalRevenue / 1000000).toFixed(2)}M`, trend: formatPctChange(totalRevenue, compMetrics.totalRevenue), up: revDiff >= 0,  color: '#586981' },
-      { label: 'RevPAR (USD)',      value: `$${avgRevpar}`,    trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0,  color: '#657454' },
-      { label: 'ADR (USD)',         value: `$${avgAdr.toLocaleString()}`,  trend: formatPctChange(avgAdr, compMetrics.avgAdr), up: adrDiff >= 0,  color: '#8b6b7a' },
-      { label: 'TOTAL ROOM NIGHTS', value: totalOccupiedNights.toLocaleString(),   trend: formatPctChange(totalOccupiedNights, compMetrics.totalOccupiedNights), up: nightsDiff >= 0,  color: '#a67138' },
+      { label: 'OCCUPANCY', value: `${avgOcc}%`, trend: formatPpChange(avgOcc, compMetrics.avgOcc), up: occDiff >= 0, color: '#947b66' },
+      { label: 'Room Revenue (USD)', value: `$${(totalRevenue / 1000000).toFixed(2)}M`, trend: formatPctChange(totalRevenue, compMetrics.totalRevenue), up: revDiff >= 0, color: '#586981' },
+      { label: 'RevPAR (USD)', value: `$${avgRevpar}`, trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0, color: '#657454' },
+      { label: 'ADR (USD)', value: `$${avgAdr.toLocaleString()}`, trend: formatPctChange(avgAdr, compMetrics.avgAdr), up: adrDiff >= 0, color: '#8b6b7a' },
+      { label: 'TOTAL ROOM NIGHTS', value: totalOccupiedNights.toLocaleString(), trend: formatPctChange(totalOccupiedNights, compMetrics.totalOccupiedNights), up: nightsDiff >= 0, color: '#a67138' },
     ];
   }, [avgOcc, totalRevenue, avgRevpar, avgAdr, totalOccupiedNights, compMetrics]);
 
@@ -350,36 +350,15 @@ export function ResortTypeDashboard() {
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
-      {/* Welcome Card inside the scrollable container */}
-      <div className="w-full py-6 px-1 flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-[#d4c4b7]/40 animate-card-enter animate-delay-75">
-        <div className="flex gap-4 items-start">
-          {/* Traditional red stamp accent */}
-          <span className="w-2.5 h-2.5 rounded-full bg-[#a65e52] mt-2 shrink-0 opacity-80" />
-          <div>
-            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">Welcome back, Curator</p>
-            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
-              <span>Resort & Destination Analytics</span>
-              <span className="text-[10px] font-sans text-[#7d6b5e]/60 tracking-wider font-light">| 分析</span>
-            </h2>
-            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
-              Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
-            </p>
-          </div>
-        </div>
-        <div className="shrink-0 text-[9px] text-[#a65e52] font-semibold tracking-widest uppercase border border-[#a65e52]/30 px-3 py-1 rounded-sm bg-[#a65e52]/5">
-          Resort Analytics
-        </div>
-      </div>
-
       <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
-      
-      <DateRangeWidget 
+
+      <DateRangeWidget
         startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}
         compStartDate={compStartDate} setCompStartDate={setCompStartDate} compEndDate={compEndDate} setCompEndDate={setCompEndDate}
       />
-      
+
       <ResortKPIWidget kpis={dynamicKpis} />
-      
+
       <div className="grid grid-cols-3 gap-4 flex-1">
         <ResortGeoMarketWidget geoData={dynamicGeoData} />
         <ResortMarketSegmentWidget segmentData={dynamicSegmentData} segmentTable={dynamicSegmentTable} totalRnights={dynamicTotal} />

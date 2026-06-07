@@ -27,11 +27,11 @@ function InfoTooltip({ text }: { text: string }) {
 
 function getTooltipText(title: string) {
   const l = title.toUpperCase();
-  if (l.includes('GUEST') || l.includes('CUSTOMER')) return "The total number of unique guests currently registered MTD.";
-  if (l.includes('OCCUPANCY')) return "Percentage of occupied rooms relative to total available rooms.";
-  if (l.includes('REVPAR')) return "Revenue Per Available Room, calculated as Occupancy rate multiplied by Average Daily Rate.";
-  if (l.includes('ADR')) return "Average Daily Rate, representing the average rental income per occupied room today.";
-  if (l.includes('STAY') || l.includes('LOS')) return "The average number of nights guests stay at the property.";
+  if (l.includes('GUEST') || l.includes('CUSTOMER')) return "Average daily number of guests checked in YTD.";
+  if (l.includes('OCCUPANCY')) return "Average occupancy rate YTD.";
+  if (l.includes('REVENUE')) return "Average daily revenue YTD.";
+  if (l.includes('REVPAR')) return "Average revenue per available room YTD.";
+  if (l.includes('ADR')) return "Average Daily Rate YTD.";
   return "Key performance indicator metric.";
 }
 

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
-import { CloseCircle } from '@solar-icons/react';
+import { CloseCircle, RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import dashboardData from '../../../data/dashboardData.json';
 
@@ -22,12 +22,104 @@ const contactData = [
   { name: 'Aditya Rao', country: 'India', email: 'aditya.rao@example.in', phone: '+91 80 5555 1234' }
 ];
 
+const propertiesPerformanceData = [
+  {
+    id: 'alpine',
+    name: 'Sosei Alpine',
+    location: 'Switzerland',
+    occ: '76%',
+    adr: '$2,700',
+    revenue: '$2.10M',
+    revpar: '$2,010',
+    children: [
+      { name: 'Sosei Nocturne', location: 'Switzerland', occ: '78%', adr: '$2,800', revenue: '$1.10M', revpar: '$2,080' },
+      { name: 'Sosei Aurora', location: 'Finland', occ: '74%', adr: '$2,600', revenue: '$1.00M', revpar: '$1,940' }
+    ]
+  },
+  {
+    id: 'ocean',
+    name: 'Sosei Ocean',
+    location: 'Maldives',
+    occ: '72%',
+    adr: '$2,200',
+    revenue: '$1.30M',
+    revpar: '$1,550',
+    children: [
+      { name: 'Sosei Maréa', location: 'Maldives', occ: '74%', adr: '$2,300', revenue: '$0.70M', revpar: '$1,620' },
+      { name: 'Sosei Pelagia', location: 'Indonesia', occ: '70%', adr: '$2,100', revenue: '$0.60M', revpar: '$1,480' }
+    ]
+  },
+  {
+    id: 'city',
+    name: 'Sosei City',
+    location: 'New York, USA',
+    occ: '68%',
+    adr: '$2,500',
+    revenue: '$0.60M',
+    revpar: '$1,680',
+    children: [
+      { name: 'Sosei Verper', location: 'New York, USA', occ: '70%', adr: '$2,600', revenue: '$0.35M', revpar: '$1,750' },
+      { name: 'Sosei Élan', location: 'New York, USA', occ: '66%', adr: '$2,400', revenue: '$0.25M', revpar: '$1,610' }
+    ]
+  },
+  {
+    id: 'forest',
+    name: 'Sosei Forest',
+    location: 'Tokyo, Japan',
+    occ: '60%',
+    adr: '$1,600',
+    revenue: '$0.70M',
+    revpar: '$950',
+    children: [
+      { name: 'Sosei Sylvan', location: 'Kyoto', occ: '62%', adr: '$1,700', revenue: '$0.40M', revpar: '$1,020' },
+      { name: 'Sosei Verdant', location: 'Thailand', occ: '58%', adr: '$1,500', revenue: '$0.30M', revpar: '$880' }
+    ]
+  },
+  {
+    id: 'countryside',
+    name: 'Sosei Countryside',
+    location: 'Melbourne, Australia',
+    occ: '72%',
+    adr: '$1,800',
+    revenue: '$1.00M',
+    revpar: '$1,290',
+    children: [
+      { name: 'Sosei Hearth', location: 'Tuscany, Italy', occ: '74%', adr: '$1,900', revenue: '$0.55M', revpar: '$1,360' },
+      { name: 'Sosei Pastoral', location: 'Provence, France', occ: '70%', adr: '$1,700', revenue: '$0.45M', revpar: '$1,220' }
+    ]
+  },
+  {
+    id: 'desert',
+    name: 'Sosei Desert',
+    location: 'Cairo, Egypt',
+    occ: '60%',
+    adr: '$1,800',
+    revenue: '$0.20M',
+    revpar: '$1,088',
+    children: [
+      { name: 'Sosei Mirage', location: 'Egypt', occ: '62%', adr: '$1,900', revenue: '$0.12M', revpar: '$1,148' },
+      { name: 'Sosei Solstice', location: 'Oman', occ: '58%', adr: '$1,700', revenue: '$0.08M', revpar: '$1,028' }
+    ]
+  }
+];
+
 export function DashboardDrawer() {
   const { isOpen, config, closeDrawer, openDrawer } = useDashboardDrawer();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState('All');
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [active, setActive] = useState(false);
 
-  if (!isOpen && !config) return null;
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => setActive(true), 20);
+      return () => clearTimeout(timer);
+    } else {
+      setActive(false);
+    }
+  }, [isOpen]);
+
+  if (!config) return null;
 
   const renderContent = () => {
     if (!config) return null;
@@ -196,9 +288,9 @@ export function DashboardDrawer() {
                 prefix: '',
                 suffix: '',
                 drivers: [
-                  'Strong weekend demand from domestic travelers.',
+                  'Strong demand for the weekend.',
                   'Group bookings up 15% across all properties.',
-                  'Corporate negotiated rates performing above target.'
+                  'Corporate market segment increased by 10% across all properties.'
                 ]
               };
             }
@@ -208,14 +300,14 @@ export function DashboardDrawer() {
 
           return (
             <div className="space-y-6 animate-fade-in">
-              <p className="text-xs text-[#7d6b5e]">Detailed historical trend for {config.title.toLowerCase()}.</p>
+              <p className="text-xs text-[#7d6b5e]">Daily {config.title}{config.title.toLocaleLowerCase() == 'number of guests' ? ' checked in' : ''}.</p>
               <div className="h-[200px] w-full mt-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={metricData}>
                     <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={3} dot={{ r: 4, fill: '#C8A050' }} />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value: any) => [`${prefix}${value.toLocaleString()}${suffix}`, 'Value']}
-                      contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }} 
+                      contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }}
                     />
                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#7d6b5e' }} dy={10} />
                   </LineChart>
@@ -351,46 +443,126 @@ export function DashboardDrawer() {
       case 'PORTFOLIO_PERFORMANCE':
         return (
           <div className="space-y-6 animate-fade-in">
-            <p className="text-xs text-[#7d6b5e]">Financial breakdown per property (MTD).</p>
+            <p className="text-xs text-[#7d6b5e]">Portfolio performance by properties type MTD.</p>
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-[#4a3c31]">
                 <thead>
                   <tr className="border-b border-[#d4c4b7] text-left">
-                    <th className="pb-2 font-bold">Property</th>
+                    <th className="pb-2 font-bold">Property Type</th>
+                    <th className="pb-2 font-bold text-right">Occupancy</th>
+                    <th className="pb-2 font-bold text-right">ADR</th>
                     <th className="pb-2 font-bold text-right">Revenue</th>
                     <th className="pb-2 font-bold text-right">RevPAR</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-[#d4c4b7]/50">
-                    <td className="py-3">Sosei Alpine</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$4.50M</td>
-                    <td className="py-3 text-right">$840</td>
+                  {propertiesPerformanceData.map((prop) => {
+                    const isExpanded = !!expandedRows[prop.id];
+                    return (
+                      <>
+                        <tr
+                          key={prop.id}
+                          className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
+                          onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
+                        >
+                          <td className="py-3 font-semibold flex items-center gap-1.5">
+                            {isExpanded ? (
+                              <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
+                            ) : (
+                              <RoundAltArrowRight size={14} className="text-[#7d6b5e] shrink-0" />
+                            )}
+                            {prop.name}
+                          </td>
+                          <td className="py-3 text-right">{prop.occ}</td>
+                          <td className="py-3 text-right">{prop.adr}</td>
+                          <td className="py-3 text-right font-bold text-[#a65e52]">{prop.revenue}</td>
+                          <td className="py-3 text-right font-semibold">{prop.revpar}</td>
+                        </tr>
+                        {isExpanded && prop.children.map((child, cIdx) => (
+                          <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-[#d4c4b7]/30 bg-[#f3eae1]/10 text-[#7d6b5e]">
+                            <td className="py-2.5 pl-7 italic font-medium">{child.name}</td>
+                            <td className="py-2.5 text-right">{child.occ}</td>
+                            <td className="py-2.5 text-right">{child.adr}</td>
+                            <td className="py-2.5 text-right font-semibold text-[#a65e52]/80">{child.revenue}</td>
+                            <td className="py-2.5 text-right">{child.revpar}</td>
+                          </tr>
+                        ))}
+                      </>
+                    );
+                  })}
+                  <tr className="font-bold border-t-2 border-[#d4c4b7] bg-[#f3eae1]/30">
+                    <td className="py-3">Total / Average</td>
+                    <td className="py-3 text-right">68%</td>
+                    <td className="py-3 text-right">$2,100</td>
+                    <td className="py-3 text-right text-[#a65e52]">$5.9M</td>
+                    <td className="py-3 text-right">$1,428</td>
                   </tr>
-                  <tr className="border-b border-[#d4c4b7]/50">
-                    <td className="py-3">Sosei Ocean</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$2.80M</td>
-                    <td className="py-3 text-right">$620</td>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+
+      case 'WORLD_MAP':
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <p className="text-xs text-[#7d6b5e]">Geographic distribution and properties status details.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-[#4a3c31]">
+                <thead>
+                  <tr className="border-b border-[#d4c4b7] text-left">
+                    <th className="pb-2 font-bold">Property Type</th>
+                    <th className="pb-2 font-bold">Region/Location</th>
+                    <th className="pb-2 font-bold text-right">Occupancy</th>
+                    <th className="pb-2 font-bold text-right">ADR</th>
+                    <th className="pb-2 font-bold text-right">Revenue</th>
+                    <th className="pb-2 font-bold text-right">RevPAR</th>
                   </tr>
-                  <tr className="border-b border-[#d4c4b7]/50">
-                    <td className="py-3">Sosei City</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$1.20M</td>
-                    <td className="py-3 text-right">$910</td>
-                  </tr>
-                  <tr className="border-b border-[#d4c4b7]/50">
-                    <td className="py-3">Sosei Forest</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$1.50M</td>
-                    <td className="py-3 text-right">$450</td>
-                  </tr>
-                  <tr className="border-b border-[#d4c4b7]/50">
-                    <td className="py-3">Sosei Countryside</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$2.10M</td>
-                    <td className="py-3 text-right">$530</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3">Sosei Desert</td>
-                    <td className="py-3 text-right font-bold text-[#a65e52]">$0.60M</td>
-                    <td className="py-3 text-right">$310</td>
+                </thead>
+                <tbody>
+                  {propertiesPerformanceData.map((prop) => {
+                    const isExpanded = !!expandedRows[prop.id];
+                    return (
+                      <>
+                        <tr
+                          key={prop.id}
+                          className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
+                          onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
+                        >
+                          <td className="py-3 font-semibold flex items-center gap-1.5">
+                            {isExpanded ? (
+                              <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
+                            ) : (
+                              <RoundAltArrowRight size={14} className="text-[#7d6b5e] shrink-0" />
+                            )}
+                            {prop.name}
+                          </td>
+                          <td className="py-3 text-[#7d6b5e]"></td>
+                          <td className="py-3 text-right">{prop.occ}</td>
+                          <td className="py-3 text-right">{prop.adr}</td>
+                          <td className="py-3 text-right font-bold text-[#a65e52]">{prop.revenue}</td>
+                          <td className="py-3 text-right font-semibold">{prop.revpar}</td>
+                        </tr>
+                        {isExpanded && prop.children.map((child, cIdx) => (
+                          <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-[#d4c4b7]/30 bg-[#f3eae1]/10 text-[#7d6b5e]">
+                            <td className="py-2.5 pl-7 italic font-medium">{child.name}</td>
+                            <td className="py-2.5 text-[#7d6b5e]/70">{child.location}</td>
+                            <td className="py-2.5 text-right">{child.occ}</td>
+                            <td className="py-2.5 text-right">{child.adr}</td>
+                            <td className="py-2.5 text-right font-semibold text-[#a65e52]/80">{child.revenue}</td>
+                            <td className="py-2.5 text-right">{child.revpar}</td>
+                          </tr>
+                        ))}
+                      </>
+                    );
+                  })}
+                  <tr className="font-bold border-t-2 border-[#d4c4b7] bg-[#f3eae1]/30">
+                    <td className="py-3">Total / Average</td>
+                    <td className="py-3"></td>
+                    <td className="py-3 text-right">68%</td>
+                    <td className="py-3 text-right">$2,100</td>
+                    <td className="py-3 text-right text-[#a65e52]">$5.9M</td>
+                    <td className="py-3 text-right">$1,428</td>
                   </tr>
                 </tbody>
               </table>
@@ -694,7 +866,7 @@ export function DashboardDrawer() {
                       <th className="p-2.5">Region</th>
                       <th className="p-2.5 text-right">% Rnights</th>
                       <th className="p-2.5 text-right">ADR (USD)</th>
-                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5 text-right">Room Revenue (USD)</th>
                       <th className="p-2.5">Top Markets</th>
                     </tr>
                   </thead>
@@ -756,7 +928,7 @@ export function DashboardDrawer() {
                       <th className="p-2.5">Segment</th>
                       <th className="p-2.5 text-right">% Rnights</th>
                       <th className="p-2.5 text-right">ADR (USD)</th>
-                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5 text-right">Room Revenue (USD)</th>
                       <th className="p-2.5">Description</th>
                     </tr>
                   </thead>
@@ -819,7 +991,7 @@ export function DashboardDrawer() {
                       <th className="p-2.5">Channel</th>
                       <th className="p-2.5 text-right">% Rnights</th>
                       <th className="p-2.5 text-right">ADR (USD)</th>
-                      <th className="p-2.5 text-right">Revenue (USD)</th>
+                      <th className="p-2.5 text-right">Room Revenue (USD)</th>
                       <th className="p-2.5">Channel Info</th>
                     </tr>
                   </thead>
@@ -846,18 +1018,19 @@ export function DashboardDrawer() {
   };
 
   const getDrawerWidth = () => {
-    if (!config) return 'w-[350px] sm:w-[400px]';
+    if (!config) return 'w-[420px] sm:w-[480px]';
     switch (config.type) {
       case 'SPEND_OVERTIME':
-        return 'w-[95vw] sm:w-[620px]'; // Extra wide for 7 columns
+      case 'WORLD_MAP':
+        return 'w-[95vw] sm:w-[750px]'; // Extra wide for more columns
       case 'TOP_NATIONALITIES':
       case 'PORTFOLIO_PERFORMANCE':
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
-        return 'w-[90vw] sm:w-[520px]';
+        return 'w-[90vw] sm:w-[620px]';
       default:
-        return 'w-[350px] sm:w-[400px]';
+        return 'w-[420px] sm:w-[480px]';
     }
   };
 
@@ -865,13 +1038,13 @@ export function DashboardDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity duration-300 ${active ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={closeDrawer}
       />
 
-      {/* Sliding Panel */}
+      {/* Centered Modal Panel */}
       <div
-        className={`fixed top-0 right-0 h-full ${getDrawerWidth()} bg-[#fdfaf7] shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-[70] transform transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-l border-[#d4c4b7] flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-1/2 left-1/2 z-[70] max-h-[85vh] ${getDrawerWidth()} bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform -translate-x-1/2 ${active ? 'opacity-100 scale-100 -translate-y-1/2' : 'opacity-0 scale-50 -translate-y-[20%] pointer-events-none'}`}
       >
         <div className="shrink-0 p-6 flex justify-between items-center border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/50 to-transparent">
           <h2 className="font-serif text-2xl text-[#4a3c31]">{config?.title || 'Details'}</h2>

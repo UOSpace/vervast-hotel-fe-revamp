@@ -103,7 +103,7 @@ export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: stri
   const data = kpiDataMap[propertyId] || kpiDataMap['alpine'];
   const kpis = [
     { label: 'OCCUPANCY', value: data.occ, trend: '↑ 6%', up: true, color: '#657454' },
-    { label: 'REVENUE (USD)', value: data.rev, trend: '↑ 8%', up: true, color: '#586981' },
+    { label: 'Room Revenue (USD)', value: data.rev, trend: '↑ 8%', up: true, color: '#586981' },
     { label: 'RevPAR (USD)', value: data.revpar, trend: '↑ 8%', up: true, color: '#C8A050' },
     { label: 'ADR (USD)', value: data.adr, trend: '↑ 4%', up: true, color: '#9d7c67' },
     { label: 'AVG LENGTH OF STAY', value: data.los, trend: '↑ 5%', up: true, color: '#586981' },
@@ -112,7 +112,7 @@ export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: stri
   return (
     <div className="grid grid-cols-6 gap-3">
       {/* Today at a glance */}
-      <div 
+      <div
         className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter min-h-[140px]"
         onClick={() => openDrawer({ type: 'LIVE_OVERVIEW', title: 'Today at a Glance' })}
       >

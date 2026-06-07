@@ -110,7 +110,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
             <th className="text-left pb-1">Region</th>
             <th className="text-right pb-1">% Rnights</th>
             <th className="text-right pb-1">ADR (USD)</th>
-            <th className="text-right pb-1">Revenue (USD)</th>
+            <th className="text-right pb-1">Room Revenue (USD)</th>
           </tr>
         </thead>
         <tbody>

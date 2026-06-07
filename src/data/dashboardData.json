@@ -1,7 +1,7 @@
 {
   "metrics": {
     "guestsToday": {
-      "title": "Number Of Guest",
+      "title": "Number of Guests",
       "value": "2,847",
       "trendText": "12%",
       "trendUp": true,
@@ -32,37 +32,53 @@
       ],
       "color": "#586981"
     },
-    "revPar": {
-      "title": "RevPAR (USD)",
-      "value": "742",
+    "adr": {
+      "title": "ADR (USD)",
+      "value": "$2,100",
       "trendText": "8%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        650,
-        680,
-        690,
-        710,
-        730,
-        742
+        1800,
+        1900,
+        2000,
+        2000,
+        2100,
+        2100
+      ],
+      "color": "#8b6b7a"
+    },
+    "revenue": {
+      "title": "Room Revenue (USD)",
+      "value": "$5.9M",
+      "trendText": "14%",
+      "trendUp": true,
+      "icon": "price",
+      "data": [
+        5.0,
+        5.2,
+        5.5,
+        5.6,
+        5.8,
+        5.9
       ],
       "color": "#657454"
     },
-    "avgLengthOfStay": {
-      "title": "Avg Length of Stay",
-      "value": "4.2",
-      "trendText": "5%",
+    "revPar": {
+      "title": "RevPAR (USD)",
+      "value": "$1,428",
+      "trendText": "7%",
       "trendUp": true,
-      "icon": "clock",
+      "icon": "price",
       "data": [
-        3.8,
-        3.9,
-        4.0,
-        4.0,
-        4.1,
-        4.2
+        1200,
+        1300,
+        1350,
+        1380,
+        1400,
+        1428
       ],
-      "color": "#8b6b7a"
+      "color": "#a67138"
     }
   },
   "globalAlerts": [
@@ -73,7 +89,7 @@
       "text": "High wellness demand in Alpine and Ocean.",
       "action": "See details →",
       "priority": "Low",
-      "detail": "Spa and massage bookings have increased by 42% over the last 48 hours in Sosei Alpine and Sosei Ocean. We recommend extending spa opening hours and calling in on-call therapists to maximize capture rate."
+      "detail": "Spa and massage bookings have increased by 42% over the last 48 hours in SOSEI Alpine and SOSEI Ocean. We recommend extending spa opening hours and calling in on-call therapists to maximize capture rate."
     },
     {
       "id": "staffing",
@@ -82,7 +98,7 @@
       "text": "Rising in 2 properties due to seasonal demand.",
       "action": "See details →",
       "priority": "Medium",
-      "detail": "F&B departments in Sosei City and Sosei Forest are reporting staffing deficits of 15% due to sudden occupancy spikes. HR is coordinating temporary staff transfers from surrounding properties."
+      "detail": "F&B departments in SOSEI City and SOSEI Forest are reporting staffing deficits of 15% due to sudden occupancy spikes. HR is coordinating temporary staff transfers from surrounding properties."
     },
     {
       "id": "arrival",
@@ -100,22 +116,22 @@
       "text": "Snow expected in Alpine. Plan activities accordingly.",
       "action": "See details →",
       "priority": "High",
-      "detail": "Blizzard warning active for Sosei Alpine region. Expected accumulation of 30cm snow. All outdoor excursions have been rerouted to indoor fireplace events. Snow clearance team has been standby."
+      "detail": "Blizzard warning active for SOSEI Alpine region. Expected accumulation of 30cm snow. All outdoor excursions have been rerouted to indoor fireplace events. Snow clearance team has been standby."
     },
     {
       "id": "occupancy",
       "icon": "users",
       "title": "OCCUPANCY SPIKE",
-      "text": "Sosei City at 94% capacity this weekend.",
+      "text": "SOSEI City at 94% capacity this weekend.",
       "action": "See details →",
       "priority": "Medium",
-      "detail": "Last-minute weekend reservations have pushed occupancy to 94% in Sosei City. Implementing dynamic room rates and offering complimentary high-floor upgrades to loyalty program members."
+      "detail": "Last-minute weekend reservations have pushed occupancy to 94% in SOSEI City. Implementing dynamic room rates and offering complimentary high-floor upgrades to loyalty program members."
     },
     {
       "id": "supply",
       "icon": "weather",
       "title": "SUPPLY CHAIN DELAY",
-      "text": "Linen supply delayed in Sosei Desert.",
+      "text": "Linen supply delayed in SOSEI Desert.",
       "action": "See details →",
       "priority": "Medium",
       "detail": "Local logistics delay has postponed linen delivery by 24 hours. Housekeeping has initiated linen reuse protocols and requested emergency stock from the regional hub."
@@ -127,16 +143,16 @@
       "text": "Hosting 3 VIP delegation guests tomorrow.",
       "action": "See details →",
       "priority": "High",
-      "detail": "Three high-profile international delegation guests are checking into Sosei Countryside. Exec Lounge has prepared custom amenities. General Manager will personally greet upon arrival."
+      "detail": "Three high-profile international delegation guests are checking into SOSEI Countryside. Exec Lounge has prepared custom amenities. General Manager will personally greet upon arrival."
     },
     {
       "id": "maintenance",
       "icon": "plane",
       "title": "MAINTENANCE SCHEDULE",
-      "text": "Generator service scheduled at Sosei Ocean.",
+      "text": "Generator service scheduled at SOSEI Ocean.",
       "action": "See details →",
       "priority": "Low",
-      "detail": "Routine annual testing of backup generators is scheduled for Sosei Ocean on Monday at 02:00 AM local time. Minimal guest impact expected; notification letters have been distributed."
+      "detail": "Routine annual testing of backup generators is scheduled for SOSEI Ocean on Monday at 02:00 AM local time. Minimal guest impact expected; notification letters have been distributed."
     }
   ],
   "guestMovementChart": [
@@ -206,42 +222,42 @@
   ],
   "guestMovement": [
     {
-      "name": "Sosei Alpine",
+      "name": "SOSEI Alpine",
       "current": 892,
       "trend": "+ 11%",
       "up": true,
       "color": "#947b66"
     },
     {
-      "name": "Sosei Ocean",
+      "name": "SOSEI Ocean",
       "current": 721,
       "trend": "+ 7%",
       "up": true,
       "color": "#657454"
     },
     {
-      "name": "Sosei City",
+      "name": "SOSEI City",
       "current": 518,
       "trend": "+ 6%",
       "up": true,
       "color": "#586981"
     },
     {
-      "name": "Sosei Forest",
+      "name": "SOSEI Forest",
       "current": 410,
       "trend": "+ 5%",
       "up": true,
       "color": "#8b6b7a"
     },
     {
-      "name": "Sosei Desert",
+      "name": "SOSEI Desert",
       "current": 306,
       "trend": "↓ 3%",
       "up": false,
       "color": "#a65e52"
     },
     {
-      "name": "Sosei Countryside",
+      "name": "SOSEI Countryside",
       "current": 257,
       "trend": "+ 11%",
       "up": true,
@@ -250,7 +266,7 @@
   ],
   "portfolioPerformance": [
     {
-      "label": "Total Revenue (USD)",
+      "label": "Total Room Revenue (USD)",
       "value": "$ 18.7M",
       "trend": "↑ 10%",
       "up": true
@@ -305,21 +321,21 @@
     {
       "id": 1,
       "name": "The Anderson Family",
-      "property": "Sosei Alpine",
+      "property": "SOSEI Alpine",
       "time": "2:30 PM",
       "vip": true
     },
     {
       "id": 2,
       "name": "Mr. James Wilson",
-      "property": "Sosei Forest",
+      "property": "SOSEI Forest",
       "time": "7:00 PM",
       "vip": true
     },
     {
       "id": 3,
       "name": "The Parker Family",
-      "property": "Sosei Desert",
+      "property": "SOSEI Desert",
       "time": "5:30 PM",
       "vip": false
     }
@@ -352,28 +368,89 @@
     }
   ],
   "notesFromYesterday": {
-    "text": "The family loved the fondue experience and the morning photography walk. They mentioned the team felt incredibly attentive.",
-    "author": "Front Office"
+    "text": "The family loved the sunset yacht experience and the morning photography walk. They mentioned the team felt incredibly attentive.",
+    "author": "General Manager"
   },
   "journeyTimeline": [
-    { "imgKey": "alpine", "date": "November 2021", "name": "SOSEI Alpine", "location": "Switzerland" },
-    { "imgKey": "ocean", "date": "January 2022", "name": "SOSEI Ocean", "location": "Maldives" },
-    { "imgKey": "city", "date": "June 2023", "name": "SOSEI City", "location": "New York" },
-    { "imgKey": "forest", "date": "August 2024", "name": "SOSEI Forest", "location": "Tokyo" },
-    { "imgKey": "desert", "date": "October 2025", "name": "SOSEI Desert", "location": "Cairo" },
-    { "imgKey": "country", "date": "May 2026", "name": "SOSEI Countryside", "location": "Melbourne" }
+    {
+      "imgKey": "alpine",
+      "date": "November 2021",
+      "name": "SOSEI Alpine",
+      "location": "Switzerland"
+    },
+    {
+      "imgKey": "ocean",
+      "date": "January 2022",
+      "name": "SOSEI Ocean",
+      "location": "Maldives"
+    },
+    {
+      "imgKey": "city",
+      "date": "June 2023",
+      "name": "SOSEI City",
+      "location": "New York"
+    },
+    {
+      "imgKey": "forest",
+      "date": "August 2024",
+      "name": "SOSEI Forest",
+      "location": "Tokyo"
+    },
+    {
+      "imgKey": "desert",
+      "date": "October 2025",
+      "name": "SOSEI Desert",
+      "location": "Cairo"
+    },
+    {
+      "imgKey": "country",
+      "date": "May 2026",
+      "name": "SOSEI Countryside",
+      "location": "Melbourne"
+    }
   ],
   "spendOverTime": [
-    { "name": "2021", "value": 18650, "color": "#e5b976" },
-    { "name": "2022", "value": 23640, "color": "#c28c46" },
-    { "name": "2023", "value": 29850, "color": "#a67138" },
-    { "name": "2024 YTD", "value": 6420, "color": "#789366" }
+    {
+      "name": "2021",
+      "value": 18650,
+      "color": "#e5b976"
+    },
+    {
+      "name": "2022",
+      "value": 23640,
+      "color": "#c28c46"
+    },
+    {
+      "name": "2023",
+      "value": 29850,
+      "color": "#a67138"
+    },
+    {
+      "name": "2024 YTD",
+      "value": 6420,
+      "color": "#789366"
+    }
   ],
   "sentimentChartData": [
-    { "name": "May 21", "value": 2 },
-    { "name": "May 22", "value": 3.5 },
-    { "name": "May 23", "value": 2.5 },
-    { "name": "May 24", "value": 4.5 },
-    { "name": "May 25", "value": 3.5 }
+    {
+      "name": "May 21",
+      "value": 2
+    },
+    {
+      "name": "May 22",
+      "value": 3.5
+    },
+    {
+      "name": "May 23",
+      "value": 2.5
+    },
+    {
+      "name": "May 24",
+      "value": 4.5
+    },
+    {
+      "name": "May 25",
+      "value": 3.5
+    }
   ]
 }
