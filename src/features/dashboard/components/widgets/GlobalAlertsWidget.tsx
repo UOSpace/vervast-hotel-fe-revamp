@@ -36,12 +36,12 @@ export function GlobalAlertsWidget() {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-1">
           <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Global Alerts & Insights</h3>
           <InfoTooltip text="Important alerts and notifications across all properties." />
         </div>
         <button
-          className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] underline cursor-pointer"
+          className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] underline cursor-pointer whitespace-nowrap shrink-0"
           onClick={(e) => {
             e.stopPropagation();
             openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' });

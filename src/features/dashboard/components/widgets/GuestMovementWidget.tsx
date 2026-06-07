@@ -51,13 +51,13 @@ export function GuestMovementWidget() {
         <div className="w-1/2 pl-4 flex flex-col justify-center space-y-1.5">
           {legend.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[10px]">
-              <div className="flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></span>
-                <span className="text-[#4a3c31]">{item.name}</span>
+              <div className="leading-[0]">
+                <span className="inline-block w-2 h-2 rounded-full align-[-1px]" style={{ backgroundColor: item.color }}></span>
+                <span className="text-[#4a3c31] ml-1.5">{item.name}</span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <span className="text-[#4a3c31] font-semibold">{item.current}</span>
-                <span className={`w-8 text-right ${item.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{item.trend}</span>
+                <span className={`w-8 text-right flex items-center ${item.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{item.trend}</span>
               </div>
             </div>
           ))}

@@ -40,7 +40,7 @@ export function GuestsPage() {
   };
 
   const handlePreview = (id: string) => {
-    navigate(`/dashboard/guests/${id}`);
+    navigate(`/dashboard/guests/family/${id}`);
   };
 
   const filteredGuests = mockGuests.filter(guest => {

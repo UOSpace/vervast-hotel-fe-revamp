@@ -9,7 +9,7 @@ import { SentimentScoreWidget } from '../components/widgets/SentimentScoreWidget
 import { GuestArrivalsWidget } from '../components/widgets/GuestArrivalsWidget';
 import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Plate, Snowflake, Bus } from '@solar-icons/react';
 import dashboardData from '../../../data/dashboardData.json';
-import { LineChart, Line, ResponsiveContainer, XAxis, CartesianGrid, BarChart, Bar, YAxis, Cell, LabelList } from 'recharts';
+import { LineChart, Line, ResponsiveContainer, XAxis, BarChart, Bar, YAxis, Cell, LabelList, PieChart, Pie, Tooltip } from 'recharts';
 import {
   Select,
   SelectContent,
@@ -42,8 +42,24 @@ import forestImg from '../../../assets/contents/forest.png';
 import desertImg from '../../../assets/contents/desert.png';
 import countryImg from '../../../assets/contents/country.png';
 
-const sentimentChartData = dashboardData.sentimentChartData;
 const spendChartData = dashboardData.spendOverTime;
+
+// Generate last 8 days for Sentiment Over Time (today + 7 days back)
+const generateLast8Days = () => {
+  const days: { name: string; value: number }[] = [];
+  const values = [3.5, 4.7, 3.8, 4.0, 4.3, 4.5, 4.6, 4.8];
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push({
+      name: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      value: values[7 - i],
+    });
+  }
+  return days;
+};
+
+const last8DaysChartData = generateLast8Days();
 
 const imageMap: Record<string, string> = {
   alpine: alpineImg,
@@ -91,31 +107,53 @@ export function DashboardPage() {
     return 'Konbanwa Alfonso!';
   };
 
+  const getFormattedDateTime = () => {
+    const now = new Date();
+    const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return { date, time, tz };
+  };
+
+  const { date, time, tz } = getFormattedDateTime();
+
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
       {/* Header */}
       <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
         {/* Welcome Card */}
         {view === 'all' && (
-          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter" style={{ animationDelay: '0.05s' }}>
-            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
-            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
-              <span>Welcome to SOSEI Galaxy</span>
-            </h2>
-            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
-              Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
-            </p>
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-start" style={{ animationDelay: '0.05s' }}>
+            <div>
+              <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+              <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
+                <span>Welcome to SOSEI Galaxy</span>
+              </h2>
+              <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
+                Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
+              </p>
+            </div>
+            <div className="text-right shrink-0 ml-4 pt-0.5">
+              <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
+              <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
+            </div>
           </div>
         )}
         {view === 'by_resort_type' && (
-          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter" style={{ animationDelay: '0.05s' }}>
-            <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
-            <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
-              <span>Resort & Destination Analytics</span>
-            </h2>
-            <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
-              Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
-            </p>
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-start" style={{ animationDelay: '0.05s' }}>
+            <div>
+              <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+              <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
+                <span>Resort & Destination Analytics</span>
+              </h2>
+              <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
+                Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
+              </p>
+            </div>
+            <div className="text-right shrink-0 ml-4 pt-0.5">
+              <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
+              <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
+            </div>
           </div>
         )}
 
@@ -329,9 +367,10 @@ export function DashboardPage() {
             <div className="flex justify-between items-start mt-2 px-1">
               {[...journeyTimelineData1, ...journeyTimelineData2].map((j, i) => (
                 <div key={i} className="flex flex-col items-center">
-                  <img src={j.img} alt={j.name} className="w-10 h-10 rounded-full border-2 border-[#f3eae1] object-cover mb-2 shadow-sm" />
-                  <div className="text-[8px] font-bold text-[#4a3c31] text-center">{j.date}</div>
-                  <div className="text-[7px] text-[#7d6b5e] text-center">{j.name}</div>
+                  <img src={j.img} alt={j.name} className="size-[66px] rounded-full border-2 border-[#f3eae1] object-cover mb-2 shadow-sm" />
+                  <div className="text-[9px] font-bold text-[#4a3c31] text-center">{j.date}</div>
+                  <div className="text-[8px] text-[#7d6b5e] text-center">{j.name}</div>
+                  <div className="text-[7px] text-[#947b66] text-center italic mt-0.5">{j.location}</div>
                 </div>
               ))}
             </div>
@@ -340,7 +379,7 @@ export function DashboardPage() {
           <div
             className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.8s' }}
-            onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
+            onClick={() => openDrawer({ type: 'SENTIMENT_OVER_TIME', title: 'Sentiment Over Time' })}
           >
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -350,29 +389,53 @@ export function DashboardPage() {
               <InfoTooltip text="Visual trend rating of customer feedback logs over the past eight guest stays." />
             </div>
 
-            <div className="flex justify-between items-center flex-1 my-2">
-              <div className="text-[8px] text-[#947b66] space-y-1.5 shrink-0">
-                <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#d4c4b7]"></span>Excellent</div>
-                <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#d4c4b7]"></span>Very Good</div>
-                <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#947b66]"></span>Good</div>
-                <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#d4c4b7]"></span>Fair</div>
+            <div className="flex items-center gap-4 flex-1 my-1">
+              {/* Legend with values */}
+              <div className="text-[7px] space-y-1 shrink-0">
+                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#657454]"></span><span className="text-[#4a3c31]">Excellent</span> <span className="text-[#947b66]">3</span></div>
+                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#C8A050]"></span><span className="text-[#4a3c31]">Very Good</span> <span className="text-[#947b66]">2</span></div>
+                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#947b66]"></span><span className="text-[#4a3c31]">Good</span> <span className="text-[#947b66]">2</span></div>
+                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#a65e52]"></span><span className="text-[#4a3c31]">Fair</span> <span className="text-[#947b66]">1</span></div>
               </div>
 
-              <div className="flex-1 min-w-[120px] h-full mx-4">
+              {/* Line Chart */}
+              <div className="flex-1 h-[80px] min-w-[80px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={sentimentChartData} margin={{ top: 10, right: 10, left: 0, bottom: -5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.3} />
-                    <Line type="natural" dataKey="value" stroke="#947b66" strokeWidth={1.5} dot={{ r: 3, fill: '#d4c4b7', stroke: '#947b66', strokeWidth: 1.5 }} activeDot={{ r: 4 }} isAnimationActive={false} />
-                    <XAxis dataKey="name" axisLine={{ stroke: '#4a3c31' }} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} dy={5} interval={0} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} domain={[0, 5]} width={20} />
+                  <LineChart data={last8DaysChartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+                    <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
+                    <Line type="natural" dataKey="value" name="Sentiment" stroke="#947b66" strokeWidth={1.5} dot={{ r: 2, fill: '#d4c4b7', stroke: '#947b66', strokeWidth: 1 }} isAnimationActive={false} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 6, fill: '#7d6b5e' }} interval={0} />
+                    <YAxis hide domain={[0, 5]} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="flex flex-col items-center justify-center shrink-0 w-14 h-14 rounded-full border-[3px] border-[#d4c4b7] relative shadow-inner bg-gradient-to-br from-[#f3eae1] to-[#e5d8cb]">
-                <div className="absolute inset-0 rounded-full border-[3px] border-[#a67138] border-t-transparent border-l-transparent rotate-45"></div>
-                <div className="text-lg font-bold text-[#4a3c31] leading-none mt-1">4.8<span className="text-[8px]">/5</span></div>
-                <div className="text-[6px] text-[#4a3c31]">Excellent</div>
+              {/* Donut */}
+              <div className="relative w-[72px] h-[72px] shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Excellent', value: 3, color: '#657454' },
+                        { name: 'Very Good', value: 2, color: '#C8A050' },
+                        { name: 'Good', value: 2, color: '#947b66' },
+                        { name: 'Fair', value: 1, color: '#a65e52' },
+                      ]}
+                      cx="50%" cy="50%" innerRadius={24} outerRadius={30} paddingAngle={2}
+                      dataKey="value" stroke="none"
+                    >
+                      <Cell fill="#657454" />
+                      <Cell fill="#C8A050" />
+                      <Cell fill="#947b66" />
+                      <Cell fill="#a65e52" />
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-sm font-bold text-[#4a3c31] leading-none">4.8</span>
+                  <span className="text-[7px] text-[#7d6b5e]">/5</span>
+                </div>
               </div>
             </div>
 

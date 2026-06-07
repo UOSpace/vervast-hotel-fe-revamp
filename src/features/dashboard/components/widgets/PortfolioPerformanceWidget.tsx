@@ -23,7 +23,7 @@ export function PortfolioPerformanceWidget() {
         <div className="flex items-center justify-between w-full">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Portfolio Performance</h3>
-            <p className="text-[10px] text-[#7d6b5e]">MTD (MONTH TO DATE)</p>
+            <p className="text-[10px] text-[#7d6b5e]">MTD</p>
           </div>
           <InfoTooltip text="MTD portfolio performance." />
         </div>

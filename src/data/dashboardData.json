@@ -293,23 +293,23 @@
   "topNationalities": [
     {
       "country": "United States",
-      "percentage": "24%"
+      "percentage": "72%"
     },
     {
       "country": "United Kingdom",
-      "percentage": "12%"
+      "percentage": "68%"
     },
     {
       "country": "Germany",
-      "percentage": "9%"
+      "percentage": "65%"
     },
     {
       "country": "India",
-      "percentage": "8%"
+      "percentage": "70%"
     },
     {
       "country": "Australia",
-      "percentage": "7%"
+      "percentage": "63%"
     }
   ],
   "sentimentScore": {
@@ -411,22 +411,22 @@
   ],
   "spendOverTime": [
     {
-      "name": "2021",
+      "name": "2023",
       "value": 18650,
       "color": "#e5b976"
     },
     {
-      "name": "2022",
+      "name": "2024",
       "value": 23640,
       "color": "#c28c46"
     },
     {
-      "name": "2023",
+      "name": "2025",
       "value": 29850,
       "color": "#a67138"
     },
     {
-      "name": "2024 YTD",
+      "name": "2026 YTD",
       "value": 32100,
       "color": "#789366"
     }
