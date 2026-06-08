@@ -29,7 +29,7 @@ export function PropertyRhythmWidget() {
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'JOURNEY_TIMELINE', title: 'Property Rhythm' })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-2 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-2 flex items-center justify-between">
         <span>PROPERTY RHYTHM</span>
         <InfoTooltip text="Sanctuary activity flow comparing arrivals, departures, F&B, spa, and housekeeping peak loads throughout the day." />
       </div>

@@ -79,7 +79,7 @@ const getNeedIcon = (label: string) => {
 
 export function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const view = searchParams.get('view') === 'by_resort_type' ? 'by_resort_type' : 'all';
+  const view = searchParams.get('view') === 'by_property_type' ? 'by_property_type' : 'all';
 
   const { phase, trigger } = useSakuraTransition();
   const { openDrawer } = useDashboardDrawer();
@@ -132,7 +132,7 @@ export function DashboardPage() {
             </div>
           </div>
         )}
-        {view === 'by_resort_type' && (
+        {view === 'by_property_type' && (
           <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-start" style={{ animationDelay: '0.05s' }}>
             <div>
               <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
@@ -158,7 +158,7 @@ export function DashboardPage() {
             </SelectTrigger>
             <SelectContent className="bg-[#f3eae1] border-[#d4c4b7] text-[#4a3c31]">
               <SelectItem value="all" className="focus:bg-[#e5d8cb] focus:text-[#4a3c31] cursor-pointer">Global Snapshot All</SelectItem>
-              <SelectItem value="by_resort_type" className="focus:bg-[#e5d8cb] focus:text-[#4a3c31] cursor-pointer">Global Snapshot by Resort Type</SelectItem>
+              <SelectItem value="by_property_type" className="focus:bg-[#e5d8cb] focus:text-[#4a3c31] cursor-pointer">Global Snapshot by Property Type</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -168,7 +168,7 @@ export function DashboardPage() {
       <SakuraTransition isActive={isTransitioning} phase={phase} />
 
       {/* Conditional View Rendering */}
-      {view === 'by_resort_type' ? (
+      {view === 'by_property_type' ? (
         <div key="resort" className="flex-1 min-h-0 flex flex-col">
           <ResortTypeDashboard />
         </div>
@@ -191,7 +191,7 @@ export function DashboardPage() {
               </div>
               <LiveOverviewMap />
               <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-1 self-start cursor-pointer"
-                  onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
+                onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
               >
                 See details →
               </div>
@@ -201,62 +201,62 @@ export function DashboardPage() {
             <div className="flex flex-col gap-4" style={{ flex: '0 0 54.17%' }}>
               {/* Metrics Row */}
               <div className="grid grid-cols-5 gap-2">
-            {/* Number of Guests */}
-            <div
-              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-              style={{ animationDelay: '0.15s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.guestsToday.title, data: dashboardData.metrics.guestsToday.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.guestsToday.title} value={dashboardData.metrics.guestsToday.value} trendText={dashboardData.metrics.guestsToday.trendText} trendUp={dashboardData.metrics.guestsToday.trendUp}
-                icon={<UsersGroupTwoRounded size={14} />} data={dashboardData.metrics.guestsToday.data} color={dashboardData.metrics.guestsToday.color}
-              />
-            </div>
-            {/* Occupancy */}
-            <div
-              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-              style={{ animationDelay: '0.2s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.occupancy.title, data: dashboardData.metrics.occupancy.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.occupancy.title} value={dashboardData.metrics.occupancy.value} trendText={dashboardData.metrics.occupancy.trendText} trendUp={dashboardData.metrics.occupancy.trendUp}
-                icon={<Bed size={14} />} data={dashboardData.metrics.occupancy.data} color={dashboardData.metrics.occupancy.color}
-              />
-            </div>
-            {/* ADR */}
-            <div
-              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-              style={{ animationDelay: '0.25s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.adr.title, data: dashboardData.metrics.adr.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.adr.title} value={dashboardData.metrics.adr.value} trendText={dashboardData.metrics.adr.trendText} trendUp={dashboardData.metrics.adr.trendUp}
-                icon={<TagPrice size={14} />} data={dashboardData.metrics.adr.data} color={dashboardData.metrics.adr.color}
-              />
-            </div>
-            {/* Revenue */}
-            <div
-              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-              style={{ animationDelay: '0.3s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revenue.title, data: dashboardData.metrics.revenue.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.revenue.title} value={dashboardData.metrics.revenue.value} trendText={dashboardData.metrics.revenue.trendText} trendUp={dashboardData.metrics.revenue.trendUp}
-                icon={<TagPrice size={14} />} data={dashboardData.metrics.revenue.data} color={dashboardData.metrics.revenue.color}
-              />
-            </div>
-            {/* RevPAR */}
-            <div
-              className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
-              style={{ animationDelay: '0.35s' }}
-              onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revPar.title, data: dashboardData.metrics.revPar.value })}
-            >
-              <MetricWidget
-                title={dashboardData.metrics.revPar.title} value={dashboardData.metrics.revPar.value} trendText={dashboardData.metrics.revPar.trendText} trendUp={dashboardData.metrics.revPar.trendUp}
-                icon={<TagPrice size={14} />} data={dashboardData.metrics.revPar.data} color={dashboardData.metrics.revPar.color}
-              />
-            </div>
-          </div>
+                {/* Number of Guests */}
+                <div
+                  className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+                  style={{ animationDelay: '0.15s' }}
+                  onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.guestsToday.title, data: dashboardData.metrics.guestsToday.value })}
+                >
+                  <MetricWidget
+                    title={dashboardData.metrics.guestsToday.title} value={dashboardData.metrics.guestsToday.value} trendText={dashboardData.metrics.guestsToday.trendText} trendUp={dashboardData.metrics.guestsToday.trendUp}
+                    icon={<UsersGroupTwoRounded size={14} />} data={dashboardData.metrics.guestsToday.data} color={dashboardData.metrics.guestsToday.color}
+                  />
+                </div>
+                {/* Occupancy */}
+                <div
+                  className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+                  style={{ animationDelay: '0.2s' }}
+                  onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.occupancy.title, data: dashboardData.metrics.occupancy.value })}
+                >
+                  <MetricWidget
+                    title={dashboardData.metrics.occupancy.title} value={dashboardData.metrics.occupancy.value} trendText={dashboardData.metrics.occupancy.trendText} trendUp={dashboardData.metrics.occupancy.trendUp}
+                    icon={<Bed size={14} />} data={dashboardData.metrics.occupancy.data} color={dashboardData.metrics.occupancy.color}
+                  />
+                </div>
+                {/* ADR */}
+                <div
+                  className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+                  style={{ animationDelay: '0.25s' }}
+                  onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.adr.title, data: dashboardData.metrics.adr.value })}
+                >
+                  <MetricWidget
+                    title={dashboardData.metrics.adr.title} value={dashboardData.metrics.adr.value} trendText={dashboardData.metrics.adr.trendText} trendUp={dashboardData.metrics.adr.trendUp}
+                    icon={<TagPrice size={14} />} data={dashboardData.metrics.adr.data} color={dashboardData.metrics.adr.color}
+                  />
+                </div>
+                {/* Revenue */}
+                <div
+                  className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+                  style={{ animationDelay: '0.3s' }}
+                  onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revenue.title, data: dashboardData.metrics.revenue.value })}
+                >
+                  <MetricWidget
+                    title={dashboardData.metrics.revenue.title} value={dashboardData.metrics.revenue.value} trendText={dashboardData.metrics.revenue.trendText} trendUp={dashboardData.metrics.revenue.trendUp}
+                    icon={<TagPrice size={14} />} data={dashboardData.metrics.revenue.data} color={dashboardData.metrics.revenue.color}
+                  />
+                </div>
+                {/* RevPAR */}
+                <div
+                  className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+                  style={{ animationDelay: '0.35s' }}
+                  onClick={() => openDrawer({ type: 'METRIC', title: dashboardData.metrics.revPar.title, data: dashboardData.metrics.revPar.value })}
+                >
+                  <MetricWidget
+                    title={dashboardData.metrics.revPar.title} value={dashboardData.metrics.revPar.value} trendText={dashboardData.metrics.revPar.trendText} trendUp={dashboardData.metrics.revPar.trendUp}
+                    icon={<TagPrice size={14} />} data={dashboardData.metrics.revPar.data} color={dashboardData.metrics.revPar.color}
+                  />
+                </div>
+              </div>
 
               {/* Global Alerts */}
               <div
@@ -315,7 +315,7 @@ export function DashboardPage() {
             onClick={() => openDrawer({ type: 'GUEST_NEEDS', title: 'Top Guest Needs' })}
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Top Guest Needs</h3>
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Top Guest Needs</h3>
               <InfoTooltip text="Top requested guest activities, amenities and services logged MTD." />
             </div>
             <div className="flex justify-between items-end px-2">
@@ -332,23 +332,23 @@ export function DashboardPage() {
 
           {/* Notes From Yesterday & Image */}
           <div
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex gap-3 items-start cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex gap-3 items-stretch cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.7s' }}
             onClick={() => openDrawer({ type: 'NOTES_YESTERDAY', title: 'Notes From Yesterday' })}
           >
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Notes From Yesterday</h3>
+            <div className="flex-1 flex flex-col overflow-hidden justify-between">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Notes From Yesterday</h3>
                 <InfoTooltip text="Diary log entries and comments submitted by resort general managers." />
               </div>
-              <p className="text-[11px] text-[#4a3c31] italic leading-relaxed">
-                <span className="text-[#947b66] text-5xl font-serif leading-[0.6] float-left mr-1.5 -mt-0.5">&ldquo;</span>
+              <p className="text-[13px] text-[#4a3c31] italic leading-relaxed my-auto py-2">
+                <span className="text-[#947b66] text-5xl font-serif leading-[0.6] float-left mr-1.5 -mt-0.5 not-italic">&ldquo;</span>
                 {dashboardData.notesFromYesterday.text}
               </p>
-              <p className="text-[10px] text-[#947b66] text-right mt-auto">— {dashboardData.notesFromYesterday.author}</p>
+              <p className="text-[11px] text-[#947b66] text-right">— {dashboardData.notesFromYesterday.author}</p>
             </div>
-            <div className="w-[160px] h-[96] rounded-lg overflow-hidden shrink-0">
-              <img src={cityImg} alt="Candlelight dinner" className="w-full h-full object-cover rounded-lg" />
+            <div className="w-[160px] relative shrink-0">
+              <img src={cityImg} alt="Candlelight dinner" className="absolute inset-0 w-full h-full object-cover rounded-lg" />
             </div>
           </div>
 
@@ -358,7 +358,7 @@ export function DashboardPage() {
             style={{ animationDelay: '0.75s' }}
             onClick={() => openDrawer({ type: 'JOURNEY_TIMELINE', title: 'Journey Timeline' })}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex justify-between mb-2">
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Journey Timeline</h3>
               <InfoTooltip text="Historical milestone timeline tracking the launch of each SOSEI sanctuary." />
             </div>
@@ -379,9 +379,9 @@ export function DashboardPage() {
             style={{ animationDelay: '0.8s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_OVER_TIME', title: 'Sentiment Over Time' })}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex justify-between mb-2">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Over Time</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Over Time</h3>
                 <p className="text-[9px] text-[#7d6b5e] mb-0">Last 8 stays</p>
               </div>
               <InfoTooltip text="Visual trend rating of customer feedback logs over the past eight guest stays." />
@@ -389,7 +389,7 @@ export function DashboardPage() {
 
             <div className="flex items-center gap-4 flex-1 my-1">
               {/* Legend with values */}
-              <div className="text-[7px] space-y-1 shrink-0">
+              <div className="text-[8px] space-y-1 shrink-0 whitespace-nowrap">
                 <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#657454]"></span><span className="text-[#4a3c31]">Excellent</span> <span className="text-[#947b66]">3</span></div>
                 <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#C8A050]"></span><span className="text-[#4a3c31]">Very Good</span> <span className="text-[#947b66]">2</span></div>
                 <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#947b66]"></span><span className="text-[#4a3c31]">Good</span> <span className="text-[#947b66]">2</span></div>
@@ -436,8 +436,6 @@ export function DashboardPage() {
                 </div>
               </div>
             </div>
-
-            <div className="text-[9px] text-[#947b66] cursor-pointer mt-1">View feedback history →</div>
           </div>
 
           <div
@@ -447,10 +445,12 @@ export function DashboardPage() {
           >
             <div className="flex justify-between items-baseline mb-4">
               <div className="flex items-center gap-1.5">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Spend Over Time <span className="text-[#947b66]">(USD)</span></h3>
-                <InfoTooltip text="Annual guest expenditure trends compared side-by-side (MTD)." />
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Spend Over Time <span className="text-[#947b66]">(USD)</span></h3>
               </div>
-              <span className="text-[8px] text-[#4a3c31]">Year to date</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[8px] font-sans text-[#947b66]/70 tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-1.5 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
+                <InfoTooltip text="Annual guest expenditure trends compared side-by-side (YTD)." />
+              </div>
             </div>
             <div className="flex-1 min-h-[90px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -466,7 +466,6 @@ export function DashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="text-[9px] text-[#947b66] cursor-pointer mt-2">View spending analytics →</div>
           </div>
         </div>
       )}

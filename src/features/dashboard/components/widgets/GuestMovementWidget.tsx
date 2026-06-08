@@ -11,7 +11,7 @@ export function GuestMovementWidget() {
       <div className="flex justify-between items-start mb-2">
         <div className="flex justify-between w-full">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Number Of Guests</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Number Of Guests</h3>
             <p className="text-[10px] text-[#7d6b5e]">7-DAYS OVERVIEW</p>
           </div>
           <InfoTooltip text="Historical overview of checked in & in-house guest across SOSEI properties over the past 7 days." />

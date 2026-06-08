@@ -19,7 +19,7 @@ export function OccupancyByRoomTypeWidget() {
       style={{ animationDelay: '0.2s' }}
       onClick={() => openDrawer({ type: 'METRIC', title: 'Occupancy by Room Type', data: `${totals.occ}%` })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>OCCUPANCY BY ROOM TYPE</span>
         <InfoTooltip text="Detailed room type occupancy count and percentage breakdown." />
       </div>

@@ -72,7 +72,7 @@ export function ResortKPIWidget({ kpis }: { kpis: any[] }) {
           style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
           onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
         >
-          <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] flex items-center justify-between">
+          <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] flex items-center justify-between">
             <span>{kpi.label}</span>
             <InfoTooltip text={getTooltipText(kpi.label)} />
           </div>

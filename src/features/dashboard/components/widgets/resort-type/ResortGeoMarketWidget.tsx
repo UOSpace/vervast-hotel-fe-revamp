@@ -52,7 +52,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#4a3c31] flex items-center justify-between">
         <span>Geo Market Stats</span>
         <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
       </div>

@@ -10,7 +10,7 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
       style={{ animationDelay: '0.45s' }}
       onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Stats', data: segmentTable })}
     >
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#4a3c31] flex items-center justify-between">
         <span>Market Segment Stats</span>
         <InfoTooltip text="Customer segment breakdown showing leisure, business, social, and MICE groups." />
       </div>

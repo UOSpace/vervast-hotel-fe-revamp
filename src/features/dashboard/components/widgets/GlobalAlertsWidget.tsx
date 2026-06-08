@@ -23,7 +23,7 @@ export function GlobalAlertsWidget() {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Global Alerts & Insights</h3>
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Global Alerts & Insights</h3>
         <InfoTooltip text="Important alerts and notifications across all properties." />
       </div>
 

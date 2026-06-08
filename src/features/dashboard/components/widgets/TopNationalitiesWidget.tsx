@@ -9,7 +9,7 @@ export function TopNationalitiesWidget() {
       <div className="mb-4">
         <div className="flex justify-between w-full">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Top Nationalities</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Top Nationalities</h3>
             <p className="text-[10px] text-[#7d6b5e]">MTD</p>
           </div>
           <InfoTooltip text="The distribution of guest origin countries based on check-ins MTD." />

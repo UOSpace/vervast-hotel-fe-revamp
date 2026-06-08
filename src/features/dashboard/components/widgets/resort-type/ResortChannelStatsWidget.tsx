@@ -10,7 +10,7 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable })}
     >
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#4a3c31] flex items-center justify-between">
         <span>Channel Distribution Stats</span>
         <InfoTooltip text="Booking channel distribution comparing Direct bookings, OTAs, and Travel Agents." />
       </div>

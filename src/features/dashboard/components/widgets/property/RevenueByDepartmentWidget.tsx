@@ -18,7 +18,7 @@ export function RevenueByDepartmentWidget() {
       style={{ animationDelay: '0.25s' }}
       onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Revenue by Department', data: totals.today })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>REVENUE BY DEPARTMENT (USD)</span>
         <InfoTooltip text="Income breakdown across rooms, food & beverage, spa, and miscellaneous departments." />
       </div>

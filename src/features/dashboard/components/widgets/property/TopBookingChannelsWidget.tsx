@@ -17,7 +17,7 @@ export function TopBookingChannelsWidget() {
       style={{ animationDelay: '0.35s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>TOP BOOKING CHANNELS</span>
         <InfoTooltip text="Performance of main distribution sources (Direct vs OTAs) by percentage of total bookings." />
       </div>

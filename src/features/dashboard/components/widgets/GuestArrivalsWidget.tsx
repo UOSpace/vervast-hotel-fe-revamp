@@ -8,7 +8,7 @@ export function GuestArrivalsWidget() {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">
           VVIP Arrivals <span className="text-[#947b66] font-normal lowercase">Today</span>
         </h3>
         <InfoTooltip text="Real-time ETA and special request itinerary tracker for today's arriving VVIP guests." />

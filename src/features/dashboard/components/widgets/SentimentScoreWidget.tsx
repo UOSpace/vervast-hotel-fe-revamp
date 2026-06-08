@@ -15,7 +15,7 @@ export function SentimentScoreWidget() {
       <div className="mb-2">
         <div className="flex justify-between w-full">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Score</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Score</h3>
             <p className="text-[10px] text-[#7d6b5e]">MTD AVERAGE</p>
           </div>
           <InfoTooltip text="Average score based on guest survey feedback across Rooms, Value, Cleanliness, Service, and Sleep Quality." />

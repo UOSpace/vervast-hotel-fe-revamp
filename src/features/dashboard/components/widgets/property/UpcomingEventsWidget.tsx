@@ -17,7 +17,7 @@ export function UpcomingEventsWidget() {
       onClick={() => openDrawer({ type: 'GUEST_ARRIVALS', title: 'Upcoming Events' })}
     >
       <div className="flex justify-between items-center mb-4">
-        <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e]">
+        <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e]">
           <span>UPCOMING EVENTS</span>
         </div>
         <div className="flex items-center gap-2">

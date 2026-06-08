@@ -6,7 +6,7 @@ import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortG
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
 
-// Resort type configurations with capacity, baseline occupancy, and baseline ADR
+// Property type configurations with capacity, baseline occupancy, and baseline ADR
 const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
   desert: { capacity: 200, occupancy: 58, adr: 250 },
   ocean: { capacity: 300, occupancy: 72, adr: 290 },

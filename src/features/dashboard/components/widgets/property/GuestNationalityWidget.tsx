@@ -17,7 +17,7 @@ export function GuestNationalityWidget() {
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'TOP_NATIONALITIES', title: 'Top Nationalities', data })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>GUEST NATIONALITY (TOP 5)</span>
         <InfoTooltip text="The distribution of guest origin countries based on check-ins MTD." />
       </div>

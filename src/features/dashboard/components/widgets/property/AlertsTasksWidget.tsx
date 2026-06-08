@@ -17,7 +17,7 @@ export function AlertsTasksWidget() {
       onClick={() => openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' })}
     >
       <div className="flex justify-between items-center mb-4">
-        <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e]">
+        <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e]">
           <span>ALERTS & TASKS</span>
         </div>
         <div className="flex items-center gap-2">

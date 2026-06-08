@@ -18,7 +18,7 @@ export function GuestSatisfactionWidget() {
       style={{ animationDelay: '0.45s' }}
       onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>GUEST SATISFACTION (MTD)</span>
         <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining." />
       </div>

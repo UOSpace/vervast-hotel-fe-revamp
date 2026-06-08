@@ -19,7 +19,7 @@ export function MarketSegmentMixWidget() {
       style={{ animationDelay: '0.3s' }}
       onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Mix', data })}
     >
-      <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
         <span>MARKET SEGMENT MIX</span>
         <InfoTooltip text="Visual breakdown of guest reservations grouped by key customer categories." />
       </div>

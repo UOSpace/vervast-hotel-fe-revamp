@@ -103,7 +103,7 @@ export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: stri
         className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter min-h-[140px]"
         onClick={() => openDrawer({ type: 'LIVE_OVERVIEW', title: 'Today at a Glance' })}
       >
-        <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] mb-3 flex items-center justify-between">
+        <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-3 flex items-center justify-between">
           <span>TODAY AT A GLANCE</span>
           <InfoTooltip text="Real-time summary of today's key guest arrivals, departures, occupancy, and in-house count." />
         </div>
@@ -123,7 +123,7 @@ export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: stri
           style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
           onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
         >
-          <div className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] flex items-center justify-between">
+          <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] flex items-center justify-between">
             <span>{kpi.label}</span>
             <InfoTooltip text={getTooltipText(kpi.label)} />
           </div>
