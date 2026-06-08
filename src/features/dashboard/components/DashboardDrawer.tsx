@@ -457,7 +457,7 @@ export function DashboardDrawer() {
                           className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
                           onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
                         >
-                          <td className="py-3 font-semibold flex items-center gap-1.5">
+                          <td className="py-3 font-semibold flex items-center gap-1">
                             {isExpanded ? (
                               <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
                             ) : (
@@ -521,7 +521,7 @@ export function DashboardDrawer() {
                           className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
                           onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
                         >
-                          <td className="py-3 font-semibold flex items-center gap-1.5">
+                          <td className="py-3 font-semibold flex items-center gap-1">
                             {isExpanded ? (
                               <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
                             ) : (
@@ -683,7 +683,7 @@ export function DashboardDrawer() {
                             className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
                             onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
                           >
-                            <td className="py-3 font-semibold flex items-center gap-1.5">
+                            <td className="py-3 font-semibold flex items-center gap-1">
                               {isExpanded ? (
                                 <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
                               ) : (
@@ -869,7 +869,7 @@ export function DashboardDrawer() {
                             className="border-b border-[#d4c4b7]/50 hover:bg-[#f3eae1]/30 cursor-pointer transition-colors"
                             onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
                           >
-                            <td className="py-3 font-semibold flex items-center gap-1.5">
+                            <td className="py-3 font-semibold flex items-center gap-1">
                               {isExpanded ? (
                                 <RoundAltArrowDown size={14} className="text-[#7d6b5e] shrink-0" />
                               ) : (
@@ -953,54 +953,66 @@ export function DashboardDrawer() {
       case 'SPEND_OVERTIME':
         {
           const spendByProperty = [
-            { id: 'alpine', name: 'Sosei Alpine', total: '$8.2M', avg: '$2,140', years: [
-              { year: '2026 YTD', avg: '$2,140', total: '$8.2M' }, { year: '2025', avg: '$2,080', total: '$7.8M' }, { year: '2024', avg: '$1,950', total: '$6.9M' }, { year: '2023', avg: '$1,820', total: '$5.8M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$1,280', avg2025: '$1,240', avg2024: '$1,170', avg2023: '$1,090' },
-              { cat: 'F&B', avg2026: '$420', avg2025: '$405', avg2024: '$380', avg2023: '$355' },
-              { cat: 'Spa', avg2026: '$255', avg2025: '$248', avg2024: '$230', avg2023: '$215' },
-              { cat: 'Excursion', avg2026: '$185', avg2025: '$187', avg2024: '$170', avg2023: '$160' },
-            ]},
-            { id: 'ocean', name: 'Sosei Ocean', total: '$7.1M', avg: '$1,980', years: [
-              { year: '2026 YTD', avg: '$1,980', total: '$7.1M' }, { year: '2025', avg: '$1,920', total: '$6.8M' }, { year: '2024', avg: '$1,840', total: '$6.1M' }, { year: '2023', avg: '$1,750', total: '$5.2M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$1,200', avg2025: '$1,160', avg2024: '$1,110', avg2023: '$1,050' },
-              { cat: 'F&B', avg2026: '$390', avg2025: '$378', avg2024: '$360', avg2023: '$340' },
-              { cat: 'Spa', avg2026: '$238', avg2025: '$230', avg2024: '$215', avg2023: '$200' },
-              { cat: 'Excursion', avg2026: '$152', avg2025: '$152', avg2024: '$155', avg2023: '$160' },
-            ]},
-            { id: 'city', name: 'Sosei City', total: '$6.4M', avg: '$1,850', years: [
-              { year: '2026 YTD', avg: '$1,850', total: '$6.4M' }, { year: '2025', avg: '$1,790', total: '$6.1M' }, { year: '2024', avg: '$1,720', total: '$5.5M' }, { year: '2023', avg: '$1,650', total: '$4.8M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$1,100', avg2025: '$1,060', avg2024: '$1,020', avg2023: '$980' },
-              { cat: 'F&B', avg2026: '$435', avg2025: '$420', avg2024: '$405', avg2023: '$385' },
-              { cat: 'Spa', avg2026: '$178', avg2025: '$172', avg2024: '$160', avg2023: '$150' },
-              { cat: 'Excursion', avg2026: '$137', avg2025: '$138', avg2024: '$135', avg2023: '$135' },
-            ]},
-            { id: 'forest', name: 'Sosei Forest', total: '$4.8M', avg: '$1,620', years: [
-              { year: '2026 YTD', avg: '$1,620', total: '$4.8M' }, { year: '2025', avg: '$1,570', total: '$4.5M' }, { year: '2024', avg: '$1,490', total: '$4.0M' }, { year: '2023', avg: '$1,420', total: '$3.3M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$980', avg2025: '$950', avg2024: '$900', avg2023: '$860' },
-              { cat: 'F&B', avg2026: '$320', avg2025: '$310', avg2024: '$295', avg2023: '$280' },
-              { cat: 'Spa', avg2026: '$195', avg2025: '$188', avg2024: '$175', avg2023: '$165' },
-              { cat: 'Excursion', avg2026: '$125', avg2025: '$122', avg2024: '$120', avg2023: '$115' },
-            ]},
-            { id: 'desert', name: 'Sosei Desert', total: '$3.2M', avg: '$1,450', years: [
-              { year: '2026 YTD', avg: '$1,450', total: '$3.2M' }, { year: '2025', avg: '$1,400', total: '$3.0M' }, { year: '2024', avg: '$1,330', total: '$2.6M' }, { year: '2023', avg: '$1,260', total: '$2.1M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$860', avg2025: '$830', avg2024: '$790', avg2023: '$750' },
-              { cat: 'F&B', avg2026: '$290', avg2025: '$280', avg2024: '$265', avg2023: '$250' },
-              { cat: 'Spa', avg2026: '$155', avg2025: '$150', avg2024: '$140', avg2023: '$130' },
-              { cat: 'Excursion', avg2026: '$145', avg2025: '$140', avg2024: '$135', avg2023: '$130' },
-            ]},
-            { id: 'countryside', name: 'Sosei Countryside', total: '$2.3M', avg: '$1,380', years: [
-              { year: '2026 YTD', avg: '$1,380', total: '$2.3M' }, { year: '2025', avg: '$1,330', total: '$2.1M' }, { year: '2024', avg: '$1,260', total: '$1.8M' }, { year: '2023', avg: '$1,200', total: '$1.5M' },
-            ], categories: [
-              { cat: 'Room', avg2026: '$840', avg2025: '$810', avg2024: '$770', avg2023: '$730' },
-              { cat: 'F&B', avg2026: '$275', avg2025: '$265', avg2024: '$250', avg2023: '$235' },
-              { cat: 'Spa', avg2026: '$138', avg2025: '$133', avg2024: '$125', avg2023: '$118' },
-              { cat: 'Excursion', avg2026: '$127', avg2025: '$122', avg2024: '$115', avg2023: '$117' },
-            ]},
+            {
+              id: 'alpine', name: 'Sosei Alpine', total: '$8.2M', avg: '$2,140', years: [
+                { year: '2026 YTD', avg: '$2,140', total: '$8.2M' }, { year: '2025', avg: '$2,080', total: '$7.8M' }, { year: '2024', avg: '$1,950', total: '$6.9M' }, { year: '2023', avg: '$1,820', total: '$5.8M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$1,280', avg2025: '$1,240', avg2024: '$1,170', avg2023: '$1,090' },
+                { cat: 'F&B', avg2026: '$420', avg2025: '$405', avg2024: '$380', avg2023: '$355' },
+                { cat: 'Spa', avg2026: '$255', avg2025: '$248', avg2024: '$230', avg2023: '$215' },
+                { cat: 'Excursion', avg2026: '$185', avg2025: '$187', avg2024: '$170', avg2023: '$160' },
+              ]
+            },
+            {
+              id: 'ocean', name: 'Sosei Ocean', total: '$7.1M', avg: '$1,980', years: [
+                { year: '2026 YTD', avg: '$1,980', total: '$7.1M' }, { year: '2025', avg: '$1,920', total: '$6.8M' }, { year: '2024', avg: '$1,840', total: '$6.1M' }, { year: '2023', avg: '$1,750', total: '$5.2M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$1,200', avg2025: '$1,160', avg2024: '$1,110', avg2023: '$1,050' },
+                { cat: 'F&B', avg2026: '$390', avg2025: '$378', avg2024: '$360', avg2023: '$340' },
+                { cat: 'Spa', avg2026: '$238', avg2025: '$230', avg2024: '$215', avg2023: '$200' },
+                { cat: 'Excursion', avg2026: '$152', avg2025: '$152', avg2024: '$155', avg2023: '$160' },
+              ]
+            },
+            {
+              id: 'city', name: 'Sosei City', total: '$6.4M', avg: '$1,850', years: [
+                { year: '2026 YTD', avg: '$1,850', total: '$6.4M' }, { year: '2025', avg: '$1,790', total: '$6.1M' }, { year: '2024', avg: '$1,720', total: '$5.5M' }, { year: '2023', avg: '$1,650', total: '$4.8M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$1,100', avg2025: '$1,060', avg2024: '$1,020', avg2023: '$980' },
+                { cat: 'F&B', avg2026: '$435', avg2025: '$420', avg2024: '$405', avg2023: '$385' },
+                { cat: 'Spa', avg2026: '$178', avg2025: '$172', avg2024: '$160', avg2023: '$150' },
+                { cat: 'Excursion', avg2026: '$137', avg2025: '$138', avg2024: '$135', avg2023: '$135' },
+              ]
+            },
+            {
+              id: 'forest', name: 'Sosei Forest', total: '$4.8M', avg: '$1,620', years: [
+                { year: '2026 YTD', avg: '$1,620', total: '$4.8M' }, { year: '2025', avg: '$1,570', total: '$4.5M' }, { year: '2024', avg: '$1,490', total: '$4.0M' }, { year: '2023', avg: '$1,420', total: '$3.3M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$980', avg2025: '$950', avg2024: '$900', avg2023: '$860' },
+                { cat: 'F&B', avg2026: '$320', avg2025: '$310', avg2024: '$295', avg2023: '$280' },
+                { cat: 'Spa', avg2026: '$195', avg2025: '$188', avg2024: '$175', avg2023: '$165' },
+                { cat: 'Excursion', avg2026: '$125', avg2025: '$122', avg2024: '$120', avg2023: '$115' },
+              ]
+            },
+            {
+              id: 'desert', name: 'Sosei Desert', total: '$3.2M', avg: '$1,450', years: [
+                { year: '2026 YTD', avg: '$1,450', total: '$3.2M' }, { year: '2025', avg: '$1,400', total: '$3.0M' }, { year: '2024', avg: '$1,330', total: '$2.6M' }, { year: '2023', avg: '$1,260', total: '$2.1M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$860', avg2025: '$830', avg2024: '$790', avg2023: '$750' },
+                { cat: 'F&B', avg2026: '$290', avg2025: '$280', avg2024: '$265', avg2023: '$250' },
+                { cat: 'Spa', avg2026: '$155', avg2025: '$150', avg2024: '$140', avg2023: '$130' },
+                { cat: 'Excursion', avg2026: '$145', avg2025: '$140', avg2024: '$135', avg2023: '$130' },
+              ]
+            },
+            {
+              id: 'countryside', name: 'Sosei Countryside', total: '$2.3M', avg: '$1,380', years: [
+                { year: '2026 YTD', avg: '$1,380', total: '$2.3M' }, { year: '2025', avg: '$1,330', total: '$2.1M' }, { year: '2024', avg: '$1,260', total: '$1.8M' }, { year: '2023', avg: '$1,200', total: '$1.5M' },
+              ], categories: [
+                { cat: 'Room', avg2026: '$840', avg2025: '$810', avg2024: '$770', avg2023: '$730' },
+                { cat: 'F&B', avg2026: '$275', avg2025: '$265', avg2024: '$250', avg2023: '$235' },
+                { cat: 'Spa', avg2026: '$138', avg2025: '$133', avg2024: '$125', avg2023: '$118' },
+                { cat: 'Excursion', avg2026: '$127', avg2025: '$122', avg2024: '$115', avg2023: '$117' },
+              ]
+            },
           ];
 
           const revenueTrend = [

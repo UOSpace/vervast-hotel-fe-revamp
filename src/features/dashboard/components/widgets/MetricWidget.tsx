@@ -29,7 +29,7 @@ export function MetricWidget({ title, value, trendText, trendUp, icon, data, col
     <div className="flex flex-col relative w-full h-full">
       <div className="flex items-center justify-between mb-2">
         <div className="text-[#947b66]">{icon}</div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <span className="text-[8px] font-sans text-[#947b66]/70 tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-1.5 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
           <InfoTooltip text={getTooltipText(title)} />
         </div>

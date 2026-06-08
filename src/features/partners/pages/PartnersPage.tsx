@@ -870,7 +870,7 @@ export function PartnersPage() {
             {/* Top Strengths */}
             <div className="mb-4">
               <h4 className="text-[8.5px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">TOP STRENGTHS</h4>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {selectedPartner.strengths.map((str, idx) => (
                   <span key={idx} className="px-3.5 py-1 rounded-full bg-white border border-[#d4c4b7] text-[#4a3c31] text-[9px] font-semibold shadow-sm">
                     {str}
@@ -941,7 +941,7 @@ export function PartnersPage() {
             <div className="flex-1 space-y-1 text-[9px] pl-2 font-medium">
               {CONTRIBUTION_DATA.map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
                     <span className="text-[#7d6b5e] truncate max-w-[75px]">{item.name}</span>
                   </div>
@@ -1081,7 +1081,7 @@ export function PartnersPage() {
 
           <div className="flex-1 flex flex-col gap-2.5 justify-center">
             {/* Op 1 */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-[#d4c4b7]/20 pb-2">
+            <div className="flex items-center justify-between gap-1 border-b border-[#d4c4b7]/20 pb-2">
               <div className="min-w-0">
                 <h4 className="text-[9.5px] font-bold text-[#4a3c31] leading-tight truncate">Expand Alpine portfolio with Virtuoso</h4>
                 <p className="text-[8.5px] text-[#7d6b5e] truncate leading-tight">High demand for winter wellness experiences.</p>
@@ -1092,7 +1092,7 @@ export function PartnersPage() {
             </div>
 
             {/* Op 2 */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-[#d4c4b7]/20 pb-2">
+            <div className="flex items-center justify-between gap-1 border-b border-[#d4c4b7]/20 pb-2">
               <div className="min-w-0">
                 <h4 className="text-[9.5px] font-bold text-[#4a3c31] leading-tight truncate">Co-brand summer campaign with Serandipians</h4>
                 <p className="text-[8.5px] text-[#7d6b5e] truncate leading-tight">Strong alignment with family travel segment.</p>
@@ -1103,7 +1103,7 @@ export function PartnersPage() {
             </div>
 
             {/* Op 3 */}
-            <div className="flex items-center justify-between gap-1.5 border-b border-[#d4c4b7]/20 pb-2">
+            <div className="flex items-center justify-between gap-1 border-b border-[#d4c4b7]/20 pb-2">
               <div className="min-w-0">
                 <h4 className="text-[9.5px] font-bold text-[#4a3c31] leading-tight truncate">Develop exclusive itineraries with Remote Lands</h4>
                 <p className="text-[8.5px] text-[#7d6b5e] truncate leading-tight">Opportunity for off-the-beaten-path experiences.</p>
@@ -1114,7 +1114,7 @@ export function PartnersPage() {
             </div>
 
             {/* Op 4 */}
-            <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center justify-between gap-1">
               <div className="min-w-0">
                 <h4 className="text-[9.5px] font-bold text-[#4a3c31] leading-tight truncate">Develop sweet getaway with Global Escapes</h4>
                 <p className="text-[8.5px] text-[#7d6b5e] truncate leading-tight">Uprising demand for summer escape plan.</p>

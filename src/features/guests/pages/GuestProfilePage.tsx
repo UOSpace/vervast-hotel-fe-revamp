@@ -58,44 +58,44 @@ export function GuestProfilePage() {
       <div className="flex flex-col gap-4 text-xs">
 
         {/* ROW 1 */}
-        <div className="grid grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.1s' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.1s' }}>
 
           {/* Profile & Contact (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] overflow-hidden backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] overflow-hidden backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <img src={forestImg} alt="Anderson Family" className="w-full h-36 object-cover" />
             <div className="p-4 grid grid-cols-2 gap-4 flex-1">
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <User size={12} /> Primary Contact
                 </div>
                 <div className="text-[#4a3c31] font-medium">John Anderson</div>
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <MapPoint size={12} /> Location
                 </div>
                 <div className="text-[#4a3c31] font-medium">New York, USA</div>
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <Letter size={12} /> Email
                 </div>
                 <div className="text-[#4a3c31] font-medium truncate" title="john.anderson@vervast.com">john.anderson@vervast.com</div>
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <Phone size={12} /> Phone
                 </div>
                 <div className="text-[#4a3c31] font-medium">+1 (212) 555-7842</div>
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <ChatDots size={12} /> Preferred Communication
                 </div>
                 <div className="text-[#4a3c31] font-medium">Email, WhatsApp</div>
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
+                <div className="flex items-center gap-1 text-[#7d6b5e] font-bold uppercase tracking-widest text-[9px] mb-1">
                   <Global size={12} /> Language
                 </div>
                 <div className="text-[#4a3c31] font-medium">English, Indonesian</div>
@@ -109,7 +109,7 @@ export function GuestProfilePage() {
           </div>
 
           {/* Family Rhythm & Preferences (col-span-4) */}
-          <div className="col-span-4 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-4 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Family Rhythm & Preferences</h3>
             <div className="grid grid-cols-2 gap-y-4 gap-x-4 flex-1">
               <div className="flex flex-col gap-4">
@@ -162,15 +162,15 @@ export function GuestProfilePage() {
           </div>
 
           {/* Upcoming Stay (col-span-5) */}
-          <div className="col-span-5 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col justify-between">
+          <div className="col-span-1 lg:col-span-5 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center border-b border-[#d4c4b7] pb-3 mb-4">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Upcoming Stay</h3>
                 <span className="text-[9px] font-bold text-[#C8A050] tracking-widest uppercase">Confirmed</span>
               </div>
 
-              <div className="flex gap-5">
-                <img src={oceanImg} alt="Upcoming Stay" className="w-[220px] h-[130px] object-cover rounded-lg" />
+              <div className="flex flex-col md:flex-row gap-5">
+                <img src={oceanImg} alt="Upcoming Stay" className="w-full md:w-[220px] h-[130px] object-cover rounded-lg" />
                 <div className="flex flex-col justify-center gap-2">
                   <div>
                     <h4 className="text-xl font-serif text-[#4a3c31] leading-none mb-1">SOSEI Mizu</h4>
@@ -189,7 +189,7 @@ export function GuestProfilePage() {
               </div>
             </div>
 
-            <div className="flex border border-[#d4c4b7] rounded-lg mt-5 bg-[#f3eae1]/10">
+            <div className="flex overflow-x-auto custom-scrollbar border border-[#d4c4b7] rounded-lg mt-5 bg-[#f3eae1]/10 gap-2 md:gap-0 pb-1 md:pb-0">
               {[
                 { icon: <Bus size={32} strokeWidth={1} />, label: "Airport Transfer", desc: "Confirmed" },
                 { icon: <HomeAngle size={32} strokeWidth={1} />, label: "Villa Preference", desc: "Ocean Pavilion" },
@@ -197,7 +197,7 @@ export function GuestProfilePage() {
                 { icon: <Plate size={32} strokeWidth={1} />, label: "Dining Request", desc: "Private dinner\nMay 26" },
                 { icon: <Gift size={32} strokeWidth={1} />, label: "Special Occasion", desc: "Anniversary\nJune 12" },
               ].map((item, idx) => (
-                <div key={idx} className="flex-1 flex items-center">
+                <div key={idx} className="flex-1 flex items-center shrink-0 min-w-[85px] md:min-w-0">
                   <div className="flex-1 py-4 px-1 flex flex-col items-center justify-center text-center group">
                     <div className="text-[#947b66] mb-2">{item.icon}</div>
                     <div className="text-[9px] font-bold text-[#4a3c31] leading-tight mb-1">
@@ -214,10 +214,10 @@ export function GuestProfilePage() {
         </div>
 
         {/* ROW 2 */}
-        <div className="grid grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.2s' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.2s' }}>
 
           {/* Journey Timeline (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Journey Timeline</h3>
             <div className="flex flex-col gap-4 flex-1 relative before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-[1px] before:bg-[#d4c4b7]">
               {[
@@ -245,7 +245,7 @@ export function GuestProfilePage() {
           </div>
 
           {/* Moments that Matter (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Moments That Matter</h3>
             <div className="flex flex-col gap-4 flex-1">
               <div className="flex gap-3">
@@ -293,7 +293,7 @@ export function GuestProfilePage() {
           </div>
 
           {/* Intelligent Recommendations (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Intelligent Recommendations</h3>
             <div className="flex flex-col gap-4 flex-1">
               {[
@@ -317,7 +317,7 @@ export function GuestProfilePage() {
           </div>
 
           {/* Family Evolution (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Family Evolution</h3>
 
             <div className="flex justify-between mb-4 border-b border-[#d4c4b7] pb-3 text-center">
@@ -346,19 +346,19 @@ export function GuestProfilePage() {
             <div className="flex flex-col gap-2 flex-1">
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-[#7d6b5e]">Travel Frequency</span>
-                <span className="text-[#4a3c31] font-medium flex items-center gap-1 text-[#4a3c31]">↑ Increasing</span>
+                <span className="text-[#4a3c31] font-medium flex items-center gap-1">↑ Increasing</span>
               </div>
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-[#7d6b5e]">Wellness Focus</span>
-                <span className="text-[#4a3c31] font-medium flex items-center gap-1 text-[#4a3c31]">↑ Increasing</span>
+                <span className="text-[#4a3c31] font-medium flex items-center gap-1">↑ Increasing</span>
               </div>
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-[#7d6b5e]">Adventure & Nature</span>
-                <span className="text-[#4a3c31] font-medium flex items-center gap-1 text-[#4a3c31]">↑ Increasing</span>
+                <span className="text-[#4a3c31] font-medium flex items-center gap-1">↑ Increasing</span>
               </div>
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-[#7d6b5e]">Cultural Experiences</span>
-                <span className="text-[#4a3c31] font-medium flex items-center gap-1 text-[#4a3c31]">↑ Increasing</span>
+                <span className="text-[#4a3c31] font-medium flex items-center gap-1">↑ Increasing</span>
               </div>
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-[#7d6b5e]">Multi-generational</span>
@@ -373,10 +373,10 @@ export function GuestProfilePage() {
         </div>
 
         {/* ROW 3 */}
-        <div className="grid grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.3s' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 animate-card-enter" style={{ animationDelay: '0.3s' }}>
 
           {/* Relationship Notes (col-span-3) */}
-          <div className="col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-3 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Relationship Notes</h3>
             <div className="text-[#C8A050] text-3xl font-serif leading-none mt-2 h-4">"</div>
             <p className="text-[11px] text-[#4a3c31] italic px-2 mb-2 leading-relaxed flex-1">
@@ -387,9 +387,9 @@ export function GuestProfilePage() {
           </div>
 
           {/* Stay Summary & Spend Overview (col-span-4) */}
-          <div className="col-span-4 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-4 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Stay Summary and Spend Overview</h3>
-            <div className="flex justify-between w-full text-center flex-1 py-2">
+            <div className="grid grid-cols-2 sm:flex sm:justify-between w-full text-center flex-1 py-2 gap-4 sm:gap-0">
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-[8px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Total Stays</div>
                 <div className="text-3xl font-serif text-[#4a3c31]">6</div>
@@ -417,15 +417,15 @@ export function GuestProfilePage() {
           </div>
 
           {/* Booking Profile & Communication Preference (col-span-5) */}
-          <div className="col-span-5 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
+          <div className="col-span-1 lg:col-span-5 border border-[#d4c4b7] rounded-[12px] p-4 backdrop-blur-sm bg-[#f3eae1]/0  flex flex-col">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] border-b border-[#d4c4b7] pb-3 mb-4">Booking Profile & Communication Preference</h3>
-            <div className="flex flex-1 items-center">
-              <div className="w-[120px] text-center border-r border-[#d4c4b7] pr-6 flex flex-col justify-center shrink-0">
+            <div className="flex flex-col sm:flex-row flex-1 items-stretch gap-4 sm:gap-0 sm:items-center">
+              <div className="w-full sm:w-[120px] text-center border-b sm:border-b-0 sm:border-r border-[#d4c4b7] pb-4 sm:pb-0 sm:pr-6 flex flex-col justify-center shrink-0">
                 <div className="text-[9px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Booking Window</div>
                 <div className="text-3xl font-serif text-[#4a3c31] font-medium">94</div>
                 <div className="text-[9px] text-[#7d6b5e] mt-1">Days average</div>
               </div>
-              <div className="flex-1 pl-6 flex flex-col justify-center gap-4">
+              <div className="flex-1 pl-0 sm:pl-6 flex flex-col justify-center gap-4">
                 <div className="grid grid-cols-[130px_1fr] items-center text-[10px]">
                   <span className="text-[#4a3c31] font-bold">Booking Channel</span>
                   <span className="text-[#4a3c31]">Virtuoso Travel Advisor</span>

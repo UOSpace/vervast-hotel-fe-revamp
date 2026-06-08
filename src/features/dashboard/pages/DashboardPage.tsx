@@ -458,10 +458,10 @@ export function DashboardPage() {
             onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Spend Over Time' })}
           >
             <div className="flex justify-between items-baseline mb-4">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Spend Over Time <span className="text-[#947b66]">(USD)</span></h3>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 <span className="text-[8px] font-sans text-[#947b66]/70 tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-1.5 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
                 <InfoTooltip text="Annual guest expenditure trends compared side-by-side (YTD)." />
               </div>

@@ -70,21 +70,21 @@ export function PropertyDashboardPage() {
         <PropertyKPIWidget propertyId={selectedProperty.id} />
 
         {/* Row 2 */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <OccupancyByRoomTypeWidget />
           <RevenueByDepartmentWidget />
           <MarketSegmentMixWidget />
         </div>
 
         {/* Row 3 */}
-        <div className="grid grid-cols-[28fr_40fr_32fr] gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[28fr_40fr_32fr] gap-4">
           <TopBookingChannelsWidget />
           <GuestNationalityWidget />
           <GuestSatisfactionWidget />
         </div>
 
         {/* Row 4 */}
-        <div className="grid grid-cols-[2fr_1fr_1fr] gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-4">
           <PropertyRhythmWidget />
           <UpcomingEventsWidget />
           <AlertsTasksWidget />
