@@ -39,7 +39,7 @@ export function MetricWidget({ title, value, trendText, trendUp, icon, data, col
       </div>
       <h3 className="text-2xl font-bold text-[#4a3c31]">{value}</h3>
       <div className="flex items-center text-[10px] mt-1">
-        <span className={trendUp ? 'text-[#657454]' : 'text-[#a65e52]'}>
+        <span className={trendUp ? 'text-[#15803d]' : 'text-[#b91c1c]'}>
           {trendUp ? '↑' : '↓'} {trendText}
         </span>
       </div>

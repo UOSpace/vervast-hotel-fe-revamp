@@ -394,9 +394,9 @@ export function DashboardDrawer() {
                     </div>
                     <button
                       onClick={() => openDrawer({ type: 'ALERTS', title: 'Alert Details', data: alert })}
-                      className="text-[9px] text-[#a65e52] font-semibold border-b border-transparent hover:border-[#a65e52] self-start transition-colors outline-none focus:outline-none cursor-pointer mt-3"
+                      className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-auto self-end flex items-center gap-1 cursor-pointer"
                     >
-                      See details →
+                      See details <RoundAltArrowRight size={10} />
                     </button>
                   </div>
                 );

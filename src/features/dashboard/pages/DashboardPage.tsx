@@ -7,7 +7,7 @@ import { PortfolioPerformanceWidget } from '../components/widgets/PortfolioPerfo
 import { TopNationalitiesWidget } from '../components/widgets/TopNationalitiesWidget';
 import { SentimentScoreWidget } from '../components/widgets/SentimentScoreWidget';
 import { GuestArrivalsWidget } from '../components/widgets/GuestArrivalsWidget';
-import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Snowflake, Plain } from '@solar-icons/react';
+import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Snowflake, Plain, RoundAltArrowRight } from '@solar-icons/react';
 import dashboardData from '../../../data/dashboardData.json';
 import { LineChart, Line, ResponsiveContainer, XAxis, BarChart, Bar, YAxis, Cell, LabelList, PieChart, Pie, Tooltip } from 'recharts';
 import {
@@ -184,16 +184,16 @@ export function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <span className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e]">WORLD MAP</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50 leading-none">YTD</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[8px] font-sans text-[#947b66]/70 tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-1.5 py-0.5 rounded border border-[#d4c4b7]/50 leading-none">YTD</span>
                   <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
                 </div>
               </div>
               <LiveOverviewMap />
-              <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-1 self-start cursor-pointer"
+              <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-auto self-end flex items-center gap-1 cursor-pointer"
                 onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
               >
-                See details →
+                See details <RoundAltArrowRight size={10} />
               </div>
             </div>
 
@@ -379,63 +379,77 @@ export function DashboardPage() {
             style={{ animationDelay: '0.8s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_OVER_TIME', title: 'Sentiment Over Time' })}
           >
-            <div className="flex justify-between mb-2">
-              <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Over Time</h3>
-                <p className="text-[9px] text-[#7d6b5e] mb-0">Last 8 stays</p>
-              </div>
-              <InfoTooltip text="Visual trend rating of customer feedback logs over the past eight guest stays." />
-            </div>
-
-            <div className="flex items-center gap-4 flex-1 my-1">
-              {/* Legend with values */}
-              <div className="text-[8px] space-y-1 shrink-0 whitespace-nowrap">
-                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#657454]"></span><span className="text-[#4a3c31]">Excellent</span> <span className="text-[#947b66]">3</span></div>
-                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#C8A050]"></span><span className="text-[#4a3c31]">Very Good</span> <span className="text-[#947b66]">2</span></div>
-                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#947b66]"></span><span className="text-[#4a3c31]">Good</span> <span className="text-[#947b66]">2</span></div>
-                <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#a65e52]"></span><span className="text-[#4a3c31]">Fair</span> <span className="text-[#947b66]">1</span></div>
-              </div>
-
-              {/* Line Chart */}
-              <div className="flex-1 h-[80px] min-w-[80px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={last8DaysChartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
-                    <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
-                    <Line type="natural" dataKey="value" name="Sentiment" stroke="#947b66" strokeWidth={1.5} dot={{ r: 2, fill: '#d4c4b7', stroke: '#947b66', strokeWidth: 1 }} isAnimationActive={false} />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 6, fill: '#7d6b5e' }} interval={0} />
-                    <YAxis hide domain={[0, 5]} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Donut */}
-              <div className="relative w-[72px] h-[72px] shrink-0">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Excellent', value: 3, color: '#657454' },
-                        { name: 'Very Good', value: 2, color: '#C8A050' },
-                        { name: 'Good', value: 2, color: '#947b66' },
-                        { name: 'Fair', value: 1, color: '#a65e52' },
-                      ]}
-                      cx="50%" cy="50%" innerRadius={24} outerRadius={30} paddingAngle={2}
-                      dataKey="value" stroke="none"
-                    >
-                      <Cell fill="#657454" />
-                      <Cell fill="#C8A050" />
-                      <Cell fill="#947b66" />
-                      <Cell fill="#a65e52" />
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-sm font-bold text-[#4a3c31] leading-none">4.8</span>
-                  <span className="text-[7px] text-[#7d6b5e]">/5</span>
+            <div className="flex flex-col justify-between mb-2">
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Sentiment Over Time</h3>
+                  <p className="text-[9px] text-[#7d6b5e] mb-0">Last 8 stays</p>
                 </div>
+                <InfoTooltip text="Visual trend rating of customer feedback logs over the past eight guest stays." />
               </div>
-            </div>
+              <div className="flex flex-col gap-2 flex-1 my-1">
+                <div className="flex items-center gap-4 flex-1">
+                  {/* Line Chart */}
+                  <div className="flex-1 h-[76px] min-w-[120px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={last8DaysChartData} margin={{ top: 5, right: 15, left: 15, bottom: 5 }}>
+                        <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
+                        <Line type="natural" dataKey="value" name="Sentiment" stroke="#947b66" strokeWidth={1.5} dot={{ r: 2, fill: '#d4c4b7', stroke: '#947b66', strokeWidth: 1 }} isAnimationActive={false} />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 7, fill: '#7d6b5e' }} dy={8} interval={0} />
+                        <YAxis hide domain={[0, 5]} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Donut */}
+                  <div className="relative w-[72px] h-[72px] shrink-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Excellent', value: 3, color: '#657454' },
+                            { name: 'Very Good', value: 2, color: '#C8A050' },
+                            { name: 'Good', value: 2, color: '#947b66' },
+                            { name: 'Fair', value: 1, color: '#a65e52' },
+                          ]}
+                          cx="50%" cy="50%" innerRadius={24} outerRadius={30} paddingAngle={2}
+                          dataKey="value" stroke="none"
+                        >
+                          <Cell fill="#657454" />
+                          <Cell fill="#C8A050" />
+                          <Cell fill="#947b66" />
+                          <Cell fill="#a65e52" />
+                        </Pie>
+                        <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <span className="text-sm font-bold text-[#4a3c31] leading-none">4.8</span>
+                      <span className="text-[7px] text-[#7d6b5e]">/5</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legend with values below the chart */}
+                <div className="flex justify-center gap-3 text-[8px] whitespace-nowrap border-t border-[#d4c4b7]/30 pt-1.5 mt-1">
+                  <div className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#657454]"></span>
+                    <span className="text-[#4a3c31]">Excellent <span className="text-[#947b66]">(3)</span></span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C8A050]"></span>
+                    <span className="text-[#4a3c31]">Very Good <span className="text-[#947b66]">(2)</span></span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#947b66]"></span>
+                    <span className="text-[#4a3c31]">Good <span className="text-[#947b66]">(2)</span></span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#a65e52]"></span>
+                    <span className="text-[#4a3c31]">Fair <span className="text-[#947b66]">(1)</span></span>
+                  </div>
+                </div>
+              </div>       </div>
           </div>
 
           <div

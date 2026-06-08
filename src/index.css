@@ -316,3 +316,24 @@
 .react-datepicker-popper {
   z-index: 100 !important;
 }
+
+@keyframes map-pulse {
+  0% {
+    r: 3.5;
+    opacity: 0.8;
+    stroke-width: 0.5px;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    r: 20;
+    opacity: 0;
+    stroke-width: 1.5px;
+  }
+}
+
+.map-beacon {
+  animation: map-pulse 2s infinite ease-out;
+  transform-origin: center;
+}

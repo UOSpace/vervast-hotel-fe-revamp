@@ -1,5 +1,5 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { Heart, UsersGroupTwoRounded, Wineglass, ArrowRight } from '@solar-icons/react';
+import { Heart, UsersGroupTwoRounded, Wineglass, RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function UpcomingEventsWidget() {
@@ -22,9 +22,6 @@ export function UpcomingEventsWidget() {
         </div>
         <div className="flex items-center gap-2">
           <InfoTooltip text="Highlights of upcoming retreats, group private buyouts, and guest activities." />
-          <button className="flex items-center gap-1 text-[#4a3c31] text-[9px] font-bold hover:opacity-80 transition-opacity uppercase tracking-wider">
-            View all <ArrowRight size={10} />
-          </button>
         </div>
       </div>
 
@@ -42,6 +39,10 @@ export function UpcomingEventsWidget() {
           );
         })}
       </div>
+
+      <button className="flex items-center gap-1 text-[#4a3c31] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider">
+        View all <RoundAltArrowRight size={10} />
+      </button>
     </div>
   );
 }

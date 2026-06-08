@@ -1,5 +1,6 @@
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
 import dashboardData from '../../../../data/dashboardData.json';
+import { RoundAltArrowRight } from '@solar-icons/react';
 
 export function TopNationalitiesWidget() {
   const data = dashboardData.topNationalities;
@@ -25,8 +26,8 @@ export function TopNationalitiesWidget() {
         ))}
       </div>
       
-      <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-2 self-start cursor-pointer">
-        See details →
+      <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-auto self-end flex items-center gap-1 cursor-pointer">
+        See details <RoundAltArrowRight size={10} />
       </div>
     </div>
   );

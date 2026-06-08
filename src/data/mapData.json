@@ -1,56 +1,110 @@
 [
   { 
-    "id": "alpine", 
-    "name": "SOSEI ALPINE", 
+    "id": "sosei-nocturne", 
+    "name": "SOSEI NOCTURNE", 
     "city": "Switzerland", 
-    "coordinates": [7.7492540, 46.0212076], 
-    "status": "high",
-    "revenue": "$4.5M",
+    "coordinates": [8.2275, 46.8182], 
+    "status": "low",
+    "revenue": "$1.10M",
     "labelOffset": [6, -32]
   },
   { 
-    "id": "city", 
-    "name": "SOSEI CITY", 
-    "city": "New York", 
-    "coordinates": [-74.0060152, 40.7127281], 
+    "id": "sosei-aurora", 
+    "name": "SOSEI AURORA", 
+    "city": "Finland", 
+    "coordinates": [25.7208, 66.5039], 
     "status": "low",
-    "revenue": "$1.2M",
-    "labelOffset": [-125, 6]
+    "revenue": "$1.00M",
+    "labelOffset": [6, -15]
   },
   { 
-    "id": "desert", 
-    "name": "SOSEI DESERT", 
-    "city": "Cairo", 
-    "coordinates": [31.2357257, 30.0443879], 
-    "status": "limited",
-    "revenue": "$0.6M",
-    "labelOffset": [6, 6]
-  },
-  { 
-    "id": "ocean", 
-    "name": "SOSEI OCEAN", 
+    "id": "sosei-marea", 
+    "name": "SOSEI MARÉA", 
     "city": "Maldives", 
-    "coordinates": [73.5107387, 4.1779879], 
-    "status": "moderate",
-    "revenue": "$2.8M",
+    "coordinates": [73.5089, 4.1755], 
+    "status": "limited",
+    "revenue": "$0.70M",
     "labelOffset": [-110, 6]
   },
   { 
-    "id": "forest", 
-    "name": "SOSEI FOREST", 
-    "city": "Tokyo", 
-    "coordinates": [139.7638947, 35.6768601], 
-    "status": "low",
-    "revenue": "$1.5M",
+    "id": "sosei-pelagia", 
+    "name": "SOSEI PELAGIA", 
+    "city": "Indonesia", 
+    "coordinates": [115.1889, -8.4095], 
+    "status": "limited",
+    "revenue": "$0.60M",
     "labelOffset": [6, 6]
   },
   { 
-    "id": "countryside", 
-    "name": "SOSEI COUNTRYSIDE", 
-    "city": "Melbourne", 
-    "coordinates": [144.9631732, -37.8142454], 
-    "status": "moderate",
-    "revenue": "$2.1M",
-    "labelOffset": [-130, 6]
+    "id": "sosei-verper", 
+    "name": "SOSEI VERPER", 
+    "city": "New York, USA", 
+    "coordinates": [-74.0060, 40.7128], 
+    "status": "limited",
+    "revenue": "$0.35M",
+    "labelOffset": [-125, -25]
+  },
+  { 
+    "id": "sosei-elan", 
+    "name": "SOSEI ÉLAN", 
+    "city": "Los Angeles, USA", 
+    "coordinates": [-118.2437, 34.0522], 
+    "status": "limited",
+    "revenue": "$0.25M",
+    "labelOffset": [6, 6]
+  },
+  { 
+    "id": "sosei-sylvan", 
+    "name": "SOSEI SYLVAN", 
+    "city": "Kyoto", 
+    "coordinates": [135.7681, 35.0116], 
+    "status": "limited",
+    "revenue": "$0.40M",
+    "labelOffset": [6, -20]
+  },
+  { 
+    "id": "sosei-verdant", 
+    "name": "SOSEI VERDANT", 
+    "city": "Thailand", 
+    "coordinates": [98.9853, 18.7883], 
+    "status": "limited",
+    "revenue": "$0.30M",
+    "labelOffset": [6, 6]
+  },
+  { 
+    "id": "sosei-hearth", 
+    "name": "SOSEI HEARTH", 
+    "city": "Tuscany, Italy", 
+    "coordinates": [11.2558, 43.7696], 
+    "status": "limited",
+    "revenue": "$0.55M",
+    "labelOffset": [-120, 15]
+  },
+  { 
+    "id": "sosei-pastoral", 
+    "name": "SOSEI PASTORAL", 
+    "city": "Provence, France", 
+    "coordinates": [5.2684, 43.7151], 
+    "status": "limited",
+    "revenue": "$0.45M",
+    "labelOffset": [-120, -15]
+  },
+  { 
+    "id": "sosei-mirage", 
+    "name": "SOSEI MIRAGE", 
+    "city": "Egypt", 
+    "coordinates": [31.13, 29.97], 
+    "status": "limited",
+    "revenue": "$0.12M",
+    "labelOffset": [6, 6]
+  },
+  { 
+    "id": "sosei-solstice", 
+    "name": "SOSEI SOLSTICE", 
+    "city": "Oman", 
+    "coordinates": [58.4059, 23.5859], 
+    "status": "limited",
+    "revenue": "$0.08M",
+    "labelOffset": [6, -15]
   }
 ]

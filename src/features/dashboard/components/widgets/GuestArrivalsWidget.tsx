@@ -6,7 +6,7 @@ export function GuestArrivalsWidget() {
   const arrivals = dashboardData.guestArrivals.filter(guest => guest.vip);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full flex-1 flex flex-col">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">
           VVIP Arrivals <span className="text-[#947b66] font-normal lowercase">Today</span>
@@ -35,10 +35,6 @@ export function GuestArrivalsWidget() {
           </div>
         ))}
       </div>
-
-      <button className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] underline cursor-pointer self-start mt-2">
-        View all →
-      </button>
     </div>
   );
 }

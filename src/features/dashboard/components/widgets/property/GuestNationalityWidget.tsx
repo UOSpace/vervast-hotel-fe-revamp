@@ -1,5 +1,5 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { ArrowRight } from '@solar-icons/react';
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function GuestNationalityWidget() {
@@ -39,15 +39,15 @@ export function GuestNationalityWidget() {
                   <span className="truncate">{row.country}</span>
                 </div>
                 <div className="text-right">{row.pct}</div>
-                <div className={`text-right ${row.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{row.trend}</div>
+                <div className={`text-right ${row.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{row.trend}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-4 hover:opacity-80 transition-opacity uppercase tracking-wider">
-        View all nationalities <ArrowRight size={10} />
+      <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider">
+        View all nationalities <RoundAltArrowRight size={10} />
       </button>
     </div>
   );

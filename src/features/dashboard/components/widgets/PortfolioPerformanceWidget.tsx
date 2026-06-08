@@ -22,7 +22,7 @@ export function PortfolioPerformanceWidget() {
             <span className="text-[#4a3c31]">{item.label}</span>
             <div className="flex space-x-4 w-24 justify-end">
               <span className="font-semibold text-[#4a3c31]">{item.value}</span>
-              <span className={`w-8 text-right ${item.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{item.trend}</span>
+              <span className={`w-8 text-right ${item.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{item.trend}</span>
             </div>
           </div>
         ))}

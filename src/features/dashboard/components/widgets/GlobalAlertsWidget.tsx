@@ -1,5 +1,5 @@
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
-import { Heart, UsersGroupTwoRounded, Plain, CloudRain } from '@solar-icons/react';
+import { Heart, UsersGroupTwoRounded, Plain, CloudRain, RoundAltArrowRight } from '@solar-icons/react';
 
 import dashboardData from '../../../../data/dashboardData.json';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
@@ -21,7 +21,7 @@ export function GlobalAlertsWidget() {
   }));
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full flex-1 flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Global Alerts & Insights</h3>
         <InfoTooltip text="Important alerts and notifications across all properties." />
@@ -29,12 +29,14 @@ export function GlobalAlertsWidget() {
 
       <div className="grid grid-cols-4 gap-4 flex-1">
         {alerts.map((alert, i) => (
-          <div key={i} className="flex flex-col">
-            <div className="mb-2">{alert.icon}</div>
-            <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#4a3c31] mb-1">{alert.title}</h4>
-            <p className="text-[10px] text-[#4a3c31] flex-1 pr-2 leading-relaxed">{alert.text}</p>
+          <div key={i} className="flex flex-col h-full justify-between">
+            <div className="flex flex-col">
+              <div className="mb-2">{alert.icon}</div>
+              <h4 className="text-[10px] font-bold uppercase tracking-wide text-[#4a3c31] mb-1">{alert.title}</h4>
+              <p className="text-[10px] text-[#4a3c31] pr-2 leading-relaxed">{alert.text}</p>
+            </div>
             <button
-              className="text-[9px] text-[#a65e52] font-semibold border-b border-transparent hover:border-[#a65e52] self-start transition-colors outline-none focus:outline-none cursor-pointer"
+              className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-auto self-end flex items-center gap-1 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 openDrawer({
@@ -44,21 +46,11 @@ export function GlobalAlertsWidget() {
                 });
               }}
             >
-              {alert.action}
+              {alert.action.replace(' →', '')} <RoundAltArrowRight size={10} />
             </button>
           </div>
         ))}
       </div>
-
-      <button
-        className="text-[10px] text-[#7d6b5e] hover:text-[#4a3c31] underline cursor-pointer self-start mt-3"
-        onClick={(e) => {
-          e.stopPropagation();
-          openDrawer({ type: 'ALERTS', title: 'Global Alerts & Insights' });
-        }}
-      >
-        View all →
-      </button>
     </div>
   );
 }

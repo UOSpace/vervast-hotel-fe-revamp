@@ -1,5 +1,5 @@
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import dashboardData from '../../../../data/dashboardData.json';
 
 export function GuestMovementWidget() {
@@ -19,12 +19,13 @@ export function GuestMovementWidget() {
       </div>
 
       <div className="flex-1 flex items-center">
-        <div className="w-1/2 h-[120px]">
+        <div className="w-[58%] h-[120px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ top: 5, right: 15, left: -10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.5} />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} dy={10} interval={0} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} domain={['dataMin - 100', 'dataMax + 100']} width={35} />
+              <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
               <Line type="natural" dataKey="alpine" stroke="#947b66" strokeWidth={2} dot={false} isAnimationActive={false} />
               <Line type="natural" dataKey="ocean" stroke="#657454" strokeWidth={2} dot={false} isAnimationActive={false} />
               <Line type="natural" dataKey="city" stroke="#586981" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -35,7 +36,7 @@ export function GuestMovementWidget() {
           </ResponsiveContainer>
         </div>
 
-        <div className="w-1/2 pl-4 flex flex-col justify-center space-y-1.5">
+        <div className="w-[42%] pl-4 flex flex-col justify-center space-y-1.5">
           {legend.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[10px]">
               <div className="leading-[0]">
@@ -44,7 +45,7 @@ export function GuestMovementWidget() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-[#4a3c31] font-semibold">{item.current}</span>
-                <span className={`w-8 text-right flex items-center ${item.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{item.trend}</span>
+                <span className={`w-8 text-right flex items-center ${item.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{item.trend}</span>
               </div>
             </div>
           ))}

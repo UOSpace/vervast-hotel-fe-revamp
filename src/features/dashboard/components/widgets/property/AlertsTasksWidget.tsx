@@ -1,5 +1,5 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { UserId, Box, Settings, ArrowRight } from '@solar-icons/react';
+import { UserId, Box, Settings, RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function AlertsTasksWidget() {
@@ -22,9 +22,6 @@ export function AlertsTasksWidget() {
         </div>
         <div className="flex items-center gap-2">
           <InfoTooltip text="High priority operation alerts and housekeeping or maintenance reminders." />
-          <button className="flex items-center gap-1 text-[#4a3c31] text-[9px] font-bold hover:opacity-80 transition-opacity uppercase tracking-wider">
-            View all <ArrowRight size={10} />
-          </button>
         </div>
       </div>
 
@@ -40,11 +37,15 @@ export function AlertsTasksWidget() {
                 <span className="text-xs font-bold text-[#4a3c31]">{alert.title}</span>
                 <span className="text-[10px] text-[#6A5848]">{alert.desc}</span>
               </div>
-              <ArrowRight size={14} className="text-[#d4c4b7] group-hover:text-[#8c6b4f] transition-colors" />
+              <RoundAltArrowRight size={14} className="text-[#d4c4b7] group-hover:text-[#8c6b4f] transition-colors" />
             </div>
           );
         })}
       </div>
+
+      <button className="flex items-center gap-1 text-[#4a3c31] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider">
+        View all <RoundAltArrowRight size={10} />
+      </button>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import mapData from '../../../../data/mapData.json';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
-const ALPINE_COORDS: [number, number] = [8.2275, 46.8182];
+
 
 const statusColors: Record<string, string> = {
   high: '#C8A050',
@@ -98,18 +98,18 @@ export function LiveOverviewMap() {
             }
           </Geographies>
 
-          {/* Connection lines from Alpine hub */}
+          {/* Connection lines from Nocturne hub */}
           {mapData
-            .filter(d => d.id !== 'alpine')
+            .filter(d => d.id !== 'sosei-nocturne')
             .map((location) => (
               <Line
                 key={`line-${location.id}`}
-                from={ALPINE_COORDS}
+                from={[8.2275, 46.8182]}
                 to={location.coordinates as [number, number]}
                 stroke="#C8A050"
-                strokeWidth={1.1}
+                strokeWidth={1.6}
                 strokeLinecap="round"
-                style={{ opacity: 0.65 }}
+                style={{ opacity: 0.85 }}
               />
             ))}
 
@@ -120,6 +120,8 @@ export function LiveOverviewMap() {
               <Marker key={id} coordinates={coordinates as [number, number]}>
                 {/* Outer radial gradient glow */}
                 <circle r={14} fill={`url(#dotGradient-${status})`} />
+                {/* Pulse beacon effect */}
+                <circle className="map-beacon" fill="none" stroke={markerColor} />
                 {/* Inner solid dot */}
                 <circle r={3.5} fill={markerColor} stroke="#fff" strokeWidth={1} />
 

@@ -86,7 +86,7 @@ export function ResortKPIWidget({ kpis }: { kpis: any[] }) {
           )}
 
           <div className="flex flex-col items-center mt-auto">
-            <div className={`text-[8.5px] font-bold tracking-wide ${kpi.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>
+            <div className={`text-[8.5px] font-bold tracking-wide ${kpi.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>
               {kpi.trend}
             </div>
           </div>

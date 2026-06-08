@@ -1,6 +1,6 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { ArrowRight } from '@solar-icons/react';
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function MarketSegmentMixWidget() {
@@ -67,8 +67,8 @@ export function MarketSegmentMixWidget() {
         </div>
       </div>
 
-      <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-2 hover:opacity-80 transition-opacity uppercase tracking-wider">
-        View market insights <ArrowRight size={10} />
+      <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider">
+        View market insights <RoundAltArrowRight size={10} />
       </button>
     </div>
   );

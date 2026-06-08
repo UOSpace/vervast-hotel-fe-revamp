@@ -37,7 +37,7 @@ export function RevenueByDepartmentWidget() {
               <div key={row.dept} className="grid grid-cols-[45%_35%_20%] items-center">
                 <div>{row.dept}</div>
                 <div className="text-right">{row.today}</div>
-                <div className={`text-right ${row.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{row.trend}</div>
+                <div className={`text-right ${row.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{row.trend}</div>
               </div>
             ))}
           </div>
@@ -47,7 +47,7 @@ export function RevenueByDepartmentWidget() {
         <div className="grid grid-cols-[45%_35%_20%] items-center mt-4 pt-3 border-t border-[#d4c4b7]/50 font-bold">
           <div>Total</div>
           <div className="text-right">{totals.today}</div>
-          <div className={`text-right ${totals.up ? 'text-[#657454]' : 'text-[#a65e52]'}`}>{totals.trend}</div>
+          <div className={`text-right ${totals.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{totals.trend}</div>
         </div>
       </div>
     </div>
