@@ -7,7 +7,7 @@ import { PortfolioPerformanceWidget } from '../components/widgets/PortfolioPerfo
 import { TopNationalitiesWidget } from '../components/widgets/TopNationalitiesWidget';
 import { SentimentScoreWidget } from '../components/widgets/SentimentScoreWidget';
 import { GuestArrivalsWidget } from '../components/widgets/GuestArrivalsWidget';
-import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Plate, Snowflake, Bus } from '@solar-icons/react';
+import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Snowflake, Plain } from '@solar-icons/react';
 import dashboardData from '../../../data/dashboardData.json';
 import { LineChart, Line, ResponsiveContainer, XAxis, BarChart, Bar, YAxis, Cell, LabelList, PieChart, Pie, Tooltip } from 'recharts';
 import {
@@ -20,20 +20,7 @@ import {
 import { ResortTypeDashboard } from './ResortTypeDashboard';
 import { SakuraTransition, useSakuraTransition } from '../components/SakuraTransition';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
-
-function InfoTooltip({ text }: { text: string }) {
-  return (
-    <div className="group relative inline-block ml-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-      <span className="cursor-help text-[#7d6b5e]/60 hover:text-[#C8A050] transition-colors text-[9px] border border-[#7d6b5e]/30 rounded-full w-3.5 h-3.5 inline-flex items-center justify-center font-bold font-sans">
-        ?
-      </span>
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 hidden group-hover:block bg-[#4a3c31] text-[#fdfaf7] text-[9.5px] rounded p-2 shadow-xl z-[90] pointer-events-none leading-normal font-normal normal-case tracking-normal text-left">
-        {text}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#4a3c31]" />
-      </div>
-    </div>
-  );
-}
+import { InfoTooltip } from '../../common/components/InfoTooltip';
 
 import alpineImg from '../../../assets/contents/alpine.png';
 import oceanImg from '../../../assets/contents/ocean.png';
@@ -75,11 +62,17 @@ const journeyTimelineData2 = dashboardData.journeyTimeline.slice(3, 6).map((j: a
 
 const getNeedIcon = (label: string) => {
   switch (label.toLowerCase()) {
-    case 'wellness': return <Heart size={16} />;
-    case 'family': return <UsersGroupTwoRounded size={16} />;
-    case 'dining': return <Plate size={16} />;
-    case 'ski': return <Snowflake size={16} />;
-    case 'transport': return <Bus size={16} />;
+    case 'wellness': return <Heart size={28} />;
+    case 'family': return <UsersGroupTwoRounded size={28} />;
+    case 'dining': return (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+        <path d="M7 2v20" />
+        <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+      </svg>
+    );
+    case 'ski': return <Snowflake size={28} />;
+    case 'transport': return <Plain size={28} />;
     default: return <span>{label.charAt(0)}</span>;
   }
 };
@@ -186,16 +179,22 @@ export function DashboardPage() {
           <div className="col-span-12 flex gap-4">
             {/* Map — 45.83% */}
             <div
-              className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+              className="border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm transition-all z-10 hover:z-30"
               style={{ animationDelay: '0.1s', flex: '0 0 45.83%' }}
-              onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
             >
-              <div className="absolute top-4 left-4 z-10 flex items-center justify-between uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e] w-[calc(100%-4rem)]">
-                <span>WORLD MAP</span>
-                <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
+              <div className="flex items-center justify-between">
+                <span className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e]">WORLD MAP</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50 leading-none">YTD</span>
+                  <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR." />
+                </div>
               </div>
-              <span className="absolute top-4 right-4 z-10 text-[8px] font-sans text-[#a65e52] tracking-widest font-semibold uppercase bg-[#e5d8cb]/30 px-2 py-0.5 rounded border border-[#d4c4b7]/50">YTD</span>
               <LiveOverviewMap />
+              <div className="text-[9px] text-[#a65e52] font-semibold hover:underline mt-1 self-start cursor-pointer"
+                  onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
+              >
+                See details →
+              </div>
             </div>
 
             {/* Right Column — 54.17% */}
@@ -302,7 +301,7 @@ export function DashboardPage() {
 
           {/* ROW 4 */}
           <div
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.6s' }}
             onClick={() => openDrawer({ type: 'GUEST_ARRIVALS', title: 'VVIP Arrivals' })}
           >
@@ -311,46 +310,45 @@ export function DashboardPage() {
 
           {/* Top Guest Needs */}
           <div
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.65s' }}
             onClick={() => openDrawer({ type: 'GUEST_NEEDS', title: 'Top Guest Needs' })}
           >
-            <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Top Guest Needs</h3>
               <InfoTooltip text="Top requested guest activities, amenities and services logged MTD." />
             </div>
             <div className="flex justify-between items-end px-2">
               {dashboardData.topGuestNeeds.map((need, idx) => (
-                <div key={idx} className="text-center">
+                <div key={idx} className={`text-center flex-1 border-r border-[#d4c4b7]/40 last:border-r-0 ${idx > 0 ? 'pl-2' : ''}`}>
                   <div className="text-[#947b66] mb-1 flex justify-center">{getNeedIcon(need.label)}</div>
-                  <div className="font-bold">{need.percentage}</div>
-                  <div className="text-[9px]">{need.label}</div>
+                  <div className="font-bold text-[11px]">{need.percentage}</div>
+                  <div className="text-[10px]">{need.label}</div>
                 </div>
               ))}
             </div>
-            <p className="text-[8px] text-[#7d6b5e] mt-2">Based on in-house guests</p>
+            <p className="text-[8px] text-[#7d6b5e]">Based on in-house guests</p>
           </div>
 
           {/* Notes From Yesterday & Image */}
           <div
-            className="relative col-span-6 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex space-x-4 cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex gap-3 items-start cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.7s' }}
             onClick={() => openDrawer({ type: 'NOTES_YESTERDAY', title: 'Notes From Yesterday' })}
           >
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Notes From Yesterday</h3>
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31]">Notes From Yesterday</h3>
                 <InfoTooltip text="Diary log entries and comments submitted by resort general managers." />
               </div>
-              <div className="text-[#947b66] text-xl font-serif leading-none">"</div>
-              <p className="text-[10px] text-[#4a3c31] italic px-2">
+              <p className="text-[11px] text-[#4a3c31] italic leading-relaxed">
+                <span className="text-[#947b66] text-5xl font-serif leading-[0.6] float-left mr-1.5 -mt-0.5">&ldquo;</span>
                 {dashboardData.notesFromYesterday.text}
               </p>
-              <p className="text-[9px] text-[#947b66] text-right mt-1">— {dashboardData.notesFromYesterday.author}</p>
+              <p className="text-[10px] text-[#947b66] text-right mt-auto">— {dashboardData.notesFromYesterday.author}</p>
             </div>
-            <div className="w-[180px] h-full rounded-lg bg-[#3b2f2f] overflow-hidden flex items-center justify-center">
-              {/* Candlelight dinner image placeholder */}
-              <div className="text-[#d4c4b7] text-[10px]">Candlelight Photo</div>
+            <div className="w-[160px] h-[96] rounded-lg overflow-hidden shrink-0">
+              <img src={cityImg} alt="Candlelight dinner" className="w-full h-full object-cover rounded-lg" />
             </div>
           </div>
 

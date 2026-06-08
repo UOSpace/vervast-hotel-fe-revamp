@@ -1,5 +1,5 @@
 import {
-  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Bell
+  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Bell, Buildings
 } from '@solar-icons/react';
 
 export interface MenuItem {
@@ -57,4 +57,5 @@ export const sidebarMenu: MenuItem[] = [
   },
   { name: 'Finance', icon: PieChart, path: '/dashboard/finance' },
   { name: 'Alerts', icon: Bell, path: '/dashboard/alerts' },
+  { name: 'Development', icon: Buildings, path: '/dashboard/development' },
 ];

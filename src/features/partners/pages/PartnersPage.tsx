@@ -687,7 +687,7 @@ export function PartnersPage() {
           style={{ animationDelay: '0.1s' }}
         >
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-0">TOP DESTINATIONS BY PARTNER</h3>
               <div className="flex items-center gap-1 text-[8px] text-[#7d6b5e] font-semibold">
                 <span>High</span>

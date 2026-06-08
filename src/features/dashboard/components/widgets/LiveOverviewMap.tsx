@@ -1,4 +1,5 @@
-import { ComposableMap, Geographies, Geography, Marker, Line } from 'react-simple-maps';
+import { useState } from 'react';
+import { ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup } from 'react-simple-maps';
 import mapData from '../../../../data/mapData.json';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
@@ -13,6 +14,24 @@ const statusColors: Record<string, string> = {
 };
 
 export function LiveOverviewMap() {
+  const [position, setPosition] = useState({ coordinates: [15, 20] as [number, number], zoom: 1 });
+
+  const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
+    setPosition(newPosition);
+  };
+
+  const handleZoomIn = () => {
+    setPosition(prev => ({ ...prev, zoom: Math.min(prev.zoom * 1.5, 8) }));
+  };
+
+  const handleZoomOut = () => {
+    setPosition(prev => ({ ...prev, zoom: Math.max(prev.zoom / 1.5, 0.5) }));
+  };
+
+  const handleReset = () => {
+    setPosition({ coordinates: [15, 20], zoom: 1 });
+  };
+
   return (
     <div className="w-full h-full relative flex flex-col">
       <div className="flex-1 relative overflow-hidden rounded-md">
@@ -21,8 +40,15 @@ export function LiveOverviewMap() {
           projectionConfig={{ scale: 115, center: [15, 20] }}
           width={880}
           height={385}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', cursor: 'grab' }}
         >
+          <ZoomableGroup
+            zoom={position.zoom}
+            center={position.coordinates}
+            onMoveEnd={handleMoveEnd}
+            minZoom={0.5}
+            maxZoom={8}
+          >
           <defs>
             {/* Paper texture */}
             <filter id="paper" x="0%" y="0%" width="100%" height="100%">
@@ -123,7 +149,62 @@ export function LiveOverviewMap() {
               </Marker>
             );
           })}
+          </ZoomableGroup>
         </ComposableMap>
+
+        {/* Zoom Controls */}
+        <div className="absolute bottom-3 right-3 flex flex-col gap-0.5">
+          <button
+            onClick={handleZoomIn}
+            className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
+            style={{
+              background: 'rgba(240,232,220,0.88)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(200,180,160,0.4)',
+              color: '#4a3c31',
+              cursor: 'pointer',
+            }}
+            title="Zoom In"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+          <button
+            onClick={handleZoomOut}
+            className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
+            style={{
+              background: 'rgba(240,232,220,0.88)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(200,180,160,0.4)',
+              color: '#4a3c31',
+              cursor: 'pointer',
+            }}
+            title="Zoom Out"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+          <button
+            onClick={handleReset}
+            className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
+            style={{
+              background: 'rgba(240,232,220,0.88)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(200,180,160,0.4)',
+              color: '#4a3c31',
+              cursor: 'pointer',
+            }}
+            title="Reset View"
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+          </button>
+        </div>
 
         {/* Legend */}
         <div className="absolute bottom-3 left-3 px-3 py-2.5 rounded-lg" style={{
