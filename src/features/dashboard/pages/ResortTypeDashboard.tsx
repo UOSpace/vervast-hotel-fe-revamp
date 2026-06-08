@@ -349,7 +349,7 @@ export function ResortTypeDashboard() {
   }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
+    <div className="w-full flex flex-col gap-4 px-4 lg:px-6 pb-8 text-[10px]">
       <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
 
       <DateRangeWidget
@@ -359,7 +359,7 @@ export function ResortTypeDashboard() {
 
       <ResortKPIWidget kpis={dynamicKpis} />
 
-      <div className="grid grid-cols-3 gap-4 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <ResortGeoMarketWidget geoData={dynamicGeoData} />
         <ResortMarketSegmentWidget segmentData={dynamicSegmentData} segmentTable={dynamicSegmentTable} totalRnights={dynamicTotal} />
         <ResortChannelStatsWidget channelData={dynamicChannelData} channelTable={dynamicChannelTable} totalRnights={dynamicTotal} />

@@ -111,12 +111,12 @@ export function DashboardPage() {
   const { date, time, tz } = getFormattedDateTime();
 
   return (
-    <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col pt-4 lg:pt-6">
       {/* Header */}
       <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
         {/* Welcome Card */}
         {view === 'all' && (
-          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-start" style={{ animationDelay: '0.05s' }}>
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-end" style={{ animationDelay: '0.05s' }}>
             <div>
               <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
               <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
@@ -126,14 +126,14 @@ export function DashboardPage() {
                 Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
               </p>
             </div>
-            <div className="text-right shrink-0 ml-4 pt-0.5">
+            <div className="text-right shrink-0 ml-4 pt-0.5 pb-0.5">
               <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
               <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
             </div>
           </div>
         )}
         {view === 'by_property_type' && (
-          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-start" style={{ animationDelay: '0.05s' }}>
+          <div className="w-full py-4 border-b border-[#d4c4b7]/40 animate-card-enter flex justify-between items-end" style={{ animationDelay: '0.05s' }}>
             <div>
               <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
               <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
@@ -143,7 +143,7 @@ export function DashboardPage() {
                 Observing the unique flow of our sanctuaries, from mountain winds to ocean breeze.
               </p>
             </div>
-            <div className="text-right shrink-0 ml-4 pt-0.5">
+            <div className="text-right shrink-0 ml-4 pt-0.5 pb-0.5">
               <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
               <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
             </div>
@@ -169,18 +169,18 @@ export function DashboardPage() {
 
       {/* Conditional View Rendering */}
       {view === 'by_property_type' ? (
-        <div key="resort" className="flex-1 min-h-0 flex flex-col">
+        <div key="resort" className="flex-1 flex flex-col">
           <ResortTypeDashboard />
         </div>
       ) : (
-        <div key="all" className="flex-1 min-h-0 grid grid-cols-12 auto-rows-max gap-4 overflow-y-auto pb-6 px-4 lg:px-6 text-[10px] custom-scrollbar">
+        <div key="all" className="grid grid-cols-12 auto-rows-max gap-4 pb-6 px-4 lg:px-6 text-[10px]">
 
           {/* ROW 1-2: Map (45.83%) + Right Column (54.17%) — using flex for precise 10% adjustment */}
-          <div className="col-span-12 flex gap-4">
+          <div className="col-span-12 flex flex-col lg:flex-row gap-4">
             {/* Map — 45.83% */}
             <div
-              className="border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm transition-all z-10 hover:z-30"
-              style={{ animationDelay: '0.1s', flex: '0 0 45.83%' }}
+              className="w-full lg:w-[45.83%] shrink-0 border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col relative animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm transition-all z-10 hover:z-30"
+              style={{ animationDelay: '0.1s' }}
             >
               <div className="flex items-center justify-between">
                 <span className="uppercase tracking-widest text-[8px] font-bold text-[#7d6b5e]">WORLD MAP</span>
@@ -198,9 +198,9 @@ export function DashboardPage() {
             </div>
 
             {/* Right Column — 54.17% */}
-            <div className="flex flex-col gap-4" style={{ flex: '0 0 54.17%' }}>
+            <div className="w-full lg:w-[54.17%] flex flex-col gap-4">
               {/* Metrics Row */}
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {/* Number of Guests */}
                 <div
                   className="relative border border-[#d4c4b7] rounded-[12px] p-2 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
@@ -271,28 +271,28 @@ export function DashboardPage() {
 
           {/* ROW 3 */}
           <div
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+            className="relative col-span-12 lg:col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.4s' }}
             onClick={() => openDrawer({ type: 'GUEST_MOVEMENT', title: 'Daily number of guests checked in' })}
           >
             <GuestMovementWidget />
           </div>
           <div
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+            className="relative col-span-12 lg:col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.45s' }}
             onClick={() => openDrawer({ type: 'PORTFOLIO_PERFORMANCE', title: 'Portfolio Performance' })}
           >
             <PortfolioPerformanceWidget />
           </div>
           <div
-            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+            className="relative col-span-12 lg:col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.5s' }}
             onClick={() => openDrawer({ type: 'TOP_NATIONALITIES', title: 'Top Nationalities' })}
           >
             <TopNationalitiesWidget />
           </div>
           <div
-            className="relative col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
+            className="relative col-span-12 lg:col-span-2 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all"
             style={{ animationDelay: '0.55s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
           >
@@ -301,7 +301,7 @@ export function DashboardPage() {
 
           {/* ROW 4 */}
           <div
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.6s' }}
             onClick={() => openDrawer({ type: 'GUEST_ARRIVALS', title: 'VVIP Arrivals' })}
           >
@@ -310,7 +310,7 @@ export function DashboardPage() {
 
           {/* Top Guest Needs */}
           <div
-            className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.65s' }}
             onClick={() => openDrawer({ type: 'GUEST_NEEDS', title: 'Top Guest Needs' })}
           >
@@ -332,7 +332,7 @@ export function DashboardPage() {
 
           {/* Notes From Yesterday & Image */}
           <div
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex gap-3 items-stretch cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-3 flex flex-col sm:flex-row gap-3 items-stretch cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.7s' }}
             onClick={() => openDrawer({ type: 'NOTES_YESTERDAY', title: 'Notes From Yesterday' })}
           >
@@ -354,7 +354,7 @@ export function DashboardPage() {
 
           {/* Journey Timeline */}
           <div
-            className="relative col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-5 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.75s' }}
             onClick={() => openDrawer({ type: 'JOURNEY_TIMELINE', title: 'Journey Timeline' })}
           >
@@ -362,10 +362,10 @@ export function DashboardPage() {
               <h3 className="text-xs font-bold uppercase tracking-widest text-[#4a3c31] mb-0">Journey Timeline</h3>
               <InfoTooltip text="Historical milestone timeline tracking the launch of each SOSEI sanctuary." />
             </div>
-            <div className="flex justify-between items-start mt-2 px-1">
+            <div className="flex justify-between items-start mt-2 px-1 overflow-x-auto custom-scrollbar gap-4 md:gap-0 pb-2 md:pb-0">
               {[...journeyTimelineData1, ...journeyTimelineData2].map((j, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <img src={j.img} alt={j.name} className="size-[66px] rounded-full border-2 border-[#f3eae1] object-cover mb-2 shadow-sm" />
+                <div key={i} className="flex flex-col items-center shrink-0 min-w-[72px] md:min-w-0">
+                  <img src={j.img} alt={j.name} className="w-[50px] h-[50px] md:w-[66px] md:h-[66px] rounded-full border-2 border-[#f3eae1] object-cover mb-2 shadow-sm" />
                   <div className="text-[9px] font-bold text-[#4a3c31] text-center">{j.date}</div>
                   <div className="text-[8px] text-[#7d6b5e] text-center">{j.name}</div>
                   <div className="text-[7px] text-[#947b66] text-center italic mt-0.5">{j.location}</div>
@@ -375,7 +375,7 @@ export function DashboardPage() {
           </div>
 
           <div
-            className="relative col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-4 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.8s' }}
             onClick={() => openDrawer({ type: 'SENTIMENT_OVER_TIME', title: 'Sentiment Over Time' })}
           >
@@ -453,7 +453,7 @@ export function DashboardPage() {
           </div>
 
           <div
-            className="relative col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
+            className="relative col-span-12 lg:col-span-3 row-span-1 border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all animate-card-enter bg-[#f3eae1]/30 backdrop-blur-sm"
             style={{ animationDelay: '0.85s' }}
             onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Spend Over Time' })}
           >

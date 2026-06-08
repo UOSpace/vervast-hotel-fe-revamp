@@ -1309,7 +1309,7 @@ export function DashboardDrawer() {
   };
 
   const getDrawerWidth = () => {
-    if (!config) return 'w-[480px] sm:w-[520px]';
+    if (!config) return 'w-[92vw] sm:w-[520px]';
     switch (config.type) {
       case 'SPEND_OVERTIME':
       case 'WORLD_MAP':
@@ -1319,9 +1319,9 @@ export function DashboardDrawer() {
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
-        return 'w-[90vw] sm:w-[660px]';
+        return 'w-[92vw] sm:w-[660px]';
       default:
-        return 'w-[460px] sm:w-[520px]';
+        return 'w-[92vw] sm:w-[520px]';
     }
   };
 

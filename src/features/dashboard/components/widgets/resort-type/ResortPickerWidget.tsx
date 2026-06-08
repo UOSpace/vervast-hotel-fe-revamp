@@ -16,7 +16,7 @@ const resorts = [
 
 export function ResortPickerWidget({ activeResorts, setActiveResorts }: { activeResorts: string[], setActiveResorts: (ids: string[]) => void }) {
   return (
-    <div className="flex items-end gap-10 px-2 py-4 animate-card-enter" style={{ animationDelay: '0.05s' }}>
+    <div className="flex items-end gap-6 md:gap-10 px-2 py-4 animate-card-enter overflow-x-auto custom-scrollbar" style={{ animationDelay: '0.05s' }}>
       {resorts.map(r => {
         const isActive = activeResorts.includes(r.id);
         return (
@@ -31,9 +31,9 @@ export function ResortPickerWidget({ activeResorts, setActiveResorts }: { active
                 setActiveResorts([...activeResorts, r.id]);
               }
             }}
-            className="flex flex-col items-center gap-2 transition-all"
+            className="flex flex-col items-center gap-2 transition-all shrink-0"
           >
-            <div className={`rounded-full overflow-hidden border-2 transition-all w-[104px] h-[104px] ${
+            <div className={`rounded-full overflow-hidden border-2 transition-all w-[72px] h-[72px] md:w-[104px] md:h-[104px] ${
               isActive
                 ? 'border-[#C8A050] shadow-lg shadow-[#C8A050]/30 opacity-100'
                 : 'border-[#d4c4b7] opacity-40 hover:opacity-75'
@@ -41,8 +41,8 @@ export function ResortPickerWidget({ activeResorts, setActiveResorts }: { active
               <img src={r.img} alt={r.name} className={`w-full h-full object-cover transition-all ${isActive ? '' : 'grayscale'}`} />
             </div>
             <div className={`uppercase tracking-wider leading-[1.1] text-center transition-all ${
-              isActive ? 'text-[10px] font-bold text-[#4a3c31]' : 'text-[9px] text-[#7d6b5e]'
-            }`} style={{ maxWidth: 104 }}>
+              isActive ? 'text-[9px] md:text-[10px] font-bold text-[#4a3c31]' : 'text-[8px] md:text-[9px] text-[#7d6b5e]'
+            }`} style={{ maxWidth: 72 }}>
               {r.name.split(' ').map((word, i) => (
                 <div key={i}>{word}</div>
               ))}
