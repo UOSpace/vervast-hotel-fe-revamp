@@ -18,8 +18,8 @@ export function GuestMovementWidget() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center">
-        <div className="w-[58%] h-[120px]">
+      <div className="flex-1 flex flex-col md:flex-row md:items-center mt-2">
+        <div className="w-full md:w-[60%] h-[140px] md:h-[120px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 15, left: -10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.5} />
@@ -36,16 +36,16 @@ export function GuestMovementWidget() {
           </ResponsiveContainer>
         </div>
 
-        <div className="w-[42%] pl-4 flex flex-col justify-center space-y-1.5">
+        <div className="w-full md:w-[40%] pl-0 md:pl-4 mt-4 md:mt-0 grid grid-cols-2 md:flex md:flex-col justify-center gap-x-4 gap-y-1.5 md:space-y-1.5">
           {legend.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[10px]">
-              <div className="leading-[0]">
-                <span className="inline-block w-2 h-2 rounded-full align-[-1px]" style={{ backgroundColor: item.color }}></span>
-                <span className="text-[#4a3c31] ml-1.5">{item.name}</span>
+              <div className="leading-[0] flex items-center">
+                <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
+                <span className="text-[#4a3c31] ml-1.5 whitespace-nowrap">{item.name}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <span className="text-[#4a3c31] font-semibold">{item.current}</span>
-                <span className={`w-8 text-right flex items-center ${item.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{item.trend}</span>
+                <span className={`w-8 text-right flex items-center justify-end ${item.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{item.trend}</span>
               </div>
             </div>
           ))}
