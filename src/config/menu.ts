@@ -28,6 +28,7 @@ export const sidebarMenu: MenuItem[] = [
       { name: 'Corporate', path: '/dashboard/partners/corporate' },
     ],
   },
+  { name: 'Spa', icon: LotusIcon, path: '/dashboard/spa' },
   {
     name: 'Experience', icon: Compass, path: '/dashboard/experience',
     children: [
@@ -35,7 +36,6 @@ export const sidebarMenu: MenuItem[] = [
       { name: 'Activities', path: '/dashboard/experience/activities' },
     ],
   },
-  { name: 'Spa', icon: LotusIcon, path: '/dashboard/spa' },
   { name: 'Revenue', icon: Wallet, path: '/dashboard/revenue' },
   {
     name: 'Reservations', icon: Calendar, path: '/dashboard/reservations',
@@ -57,11 +57,6 @@ export const sidebarMenu: MenuItem[] = [
   },
   {
     name: 'Operations', icon: Bed, path: '/dashboard/operations',
-    children: [
-      { name: 'Housekeeping', path: '/dashboard/operations/housekeeping' },
-      { name: 'F&B', path: '/dashboard/operations/fnb' },
-      { name: 'Activities', path: '/dashboard/operations/activities' },
-    ],
   },
   { name: 'Finance', icon: PieChart, path: '/dashboard/finance' },
   { name: 'Development', icon: Buildings, path: '/dashboard/development' },

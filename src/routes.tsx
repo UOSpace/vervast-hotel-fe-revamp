@@ -6,7 +6,7 @@ import { MasterLayout } from './components/layouts/MasterLayout';
 import { UnderConstructionPage } from './features/common/pages/UnderConstructionPage';
 import { NotFoundPage } from './features/common/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
-import { PartnersPage, TravelAgenciesPage } from './features/partners';
+import { PartnersPage, TravelAgenciesPage, CorporatePage } from './features/partners';
 
 export const routes: RouteObject[] = [
   {
@@ -63,7 +63,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/partners/corporate',
-        element: <UnderConstructionPage />,
+        element: <CorporatePage />,
       },
       {
         path: '/dashboard/experience/fnb',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HandShake, Magnifer, Filter, MenuDots, Eye, TrashBinTrash, CloseCircle, Buildings } from '@solar-icons/react';
+import { Buildings, Magnifer, Filter, MenuDots, Eye, TrashBinTrash, CloseCircle } from '@solar-icons/react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import {
@@ -12,146 +12,157 @@ import {
 } from '../../../components/ui/select';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
-const mockAgencies = [
+const mockCorporates = [
   {
-    id: 'TA-001',
-    name: 'Horizon Voyages',
-    email: 'partnership@horizonvoyages.co',
-    source: 'Referral',
+    id: 'CP-001',
+    name: 'Vantage Capital Group',
+    email: 'partnerships@vantagecg.com',
+    phone: '+1 212 555 0142',
+    category: 'Financial Services',
+    source: 'Email Marketing',
     owner: 'vervast',
-    status: 'Active',
-    region: 'Europe',
-    createdAt: 'January 12, 2025 09:14',
   },
   {
-    id: 'TA-002',
-    name: 'Aurora Escapes',
-    email: 'hello@auroraescapes.com',
-    source: 'Direct',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'North America',
-    createdAt: 'February 3, 2025 11:30',
-  },
-  {
-    id: 'TA-003',
-    name: 'Meridian Travel Group',
-    email: 'accounts@meridiantg.net',
-    source: 'Trade Show',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'February 20, 2025 14:05',
-  },
-  {
-    id: 'TA-004',
-    name: 'Celestial Journeys',
-    email: 'reservations@celestialjourneys.com',
+    id: 'CP-002',
+    name: 'Meridian Global Solutions',
+    email: 'travel@meridianglobal.net',
+    phone: '+44 20 7946 0831',
+    category: 'Consulting',
     source: 'Referral',
     owner: 'Alpha',
-    status: 'Active',
-    region: 'Middle East',
-    createdAt: 'March 8, 2025 10:22',
   },
   {
-    id: 'TA-005',
-    name: 'Pinnacle Retreats',
-    email: 'info@pinnacleretreats.co',
-    source: 'Direct',
-    owner: 'Alpha',
-    status: 'Inactive',
-    region: 'Europe',
-    createdAt: 'March 16, 2025 16:48',
-  },
-  {
-    id: 'TA-006',
-    name: 'Solstice Travel Bureau',
-    email: 'ops@solsticetb.com',
-    source: 'Online',
-    owner: 'Alpha',
-    status: 'Active',
-    region: 'Latin America',
-    createdAt: 'April 2, 2025 08:55',
-  },
-  {
-    id: 'TA-007',
-    name: 'Nomadic Luxe',
-    email: 'partnerships@nomadicluxe.io',
-    source: 'Referral',
+    id: 'CP-003',
+    name: 'Axiom Technologies',
+    email: 'events@axiomtech.io',
+    phone: '+65 6310 4200',
+    category: 'Technology',
+    source: 'Social Media',
     owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'April 10, 2025 13:20',
   },
   {
-    id: 'TA-008',
-    name: 'The Voyage Co.',
-    email: 'contact@thevoyageco.travel',
+    id: 'CP-004',
+    name: 'Crestline Pharmaceuticals',
+    email: 'corp.travel@crestlinepharma.com',
+    phone: '+41 44 550 0390',
+    category: 'Healthcare',
     source: 'Trade Show',
     owner: 'Alpha',
-    status: 'Pending',
-    region: 'Africa',
-    createdAt: 'April 18, 2025 09:40',
   },
   {
-    id: 'TA-009',
-    name: 'Elevate Destinations',
-    email: 'hello@elevatedestinations.com',
+    id: 'CP-005',
+    name: 'Orion Asset Management',
+    email: 'admin@orionassets.co',
+    phone: '',
+    category: 'Financial Services',
     source: 'Direct',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'North America',
-    createdAt: 'May 5, 2025 11:10',
-  },
-  {
-    id: 'TA-010',
-    name: 'Grand Circuit Travels',
-    email: 'info@grandcircuit.travel',
-    source: 'Online',
     owner: 'Alpha',
-    status: 'Inactive',
-    region: 'Europe',
-    createdAt: 'May 22, 2025 14:33',
   },
   {
-    id: 'TA-011',
-    name: 'Luminary Expeditions',
-    email: 'luminary@expeditions.co',
+    id: 'CP-006',
+    name: 'Solis Energy International',
+    email: 'meetings@solisenergyintl.com',
+    phone: '+971 4 381 6000',
+    category: 'Energy',
+    source: 'Email Marketing',
+    owner: 'vervast',
+  },
+  {
+    id: 'CP-007',
+    name: 'Beacon Media Group',
+    email: 'travel@beaconmedia.com',
+    phone: '+1 310 555 0267',
+    category: 'Media & Entertainment',
+    source: 'Social Media',
+    owner: 'Alpha',
+  },
+  {
+    id: 'CP-008',
+    name: 'Hallmark Logistics',
+    email: '',
+    phone: '',
+    category: 'Logistics',
+    source: '',
+    owner: 'Unknown',
+  },
+  {
+    id: 'CP-009',
+    name: 'Pinnacle Aerospace',
+    email: 'corp@pinnacleaero.com',
+    phone: '+33 1 4400 7820',
+    category: 'Aerospace & Defense',
     source: 'Referral',
     owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'June 1, 2025 10:00',
   },
   {
-    id: 'TA-012',
-    name: 'Arcadia Travel Partners',
-    email: 'arcadia@travelpartners.net',
-    source: 'Trade Show',
+    id: 'CP-010',
+    name: 'Verdant Retail Holdings',
+    email: 'events@verdantretail.co',
+    phone: '+62 21 5088 1400',
+    category: 'Retail',
+    source: 'Direct',
     owner: 'Alpha',
-    status: 'Pending',
-    region: 'Middle East',
-    createdAt: 'June 7, 2025 15:45',
+  },
+  {
+    id: 'CP-011',
+    name: 'Harlow Insurance Partners',
+    email: '',
+    phone: '',
+    category: 'Insurance',
+    source: '',
+    owner: 'Unknown',
+  },
+  {
+    id: 'CP-012',
+    name: 'Citadel Architecture Studio',
+    email: 'travel@citadelarch.design',
+    phone: '+39 02 8735 6100',
+    category: 'Architecture & Design',
+    source: 'Trade Show',
+    owner: 'vervast',
+  },
+  {
+    id: 'CP-013',
+    name: 'Pacific Rim Trading Co.',
+    email: 'corp@pacificrimtc.com',
+    phone: '+852 2100 8830',
+    category: 'Trading',
+    source: 'Social Media',
+    owner: 'Alpha',
+  },
+  {
+    id: 'CP-014',
+    name: 'Summit Education Group',
+    email: 'admin@summitedugroup.org',
+    phone: '+61 2 9310 5500',
+    category: 'Education',
+    source: 'Email Marketing',
+    owner: 'Alpha',
+  },
+  {
+    id: 'CP-015',
+    name: 'Quantum Research Institute',
+    email: 'travel@quantumri.edu',
+    phone: '',
+    category: 'Research & Development',
+    source: 'Referral',
+    owner: 'vervast',
   },
 ];
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Active':   return 'bg-[#657454]/15 text-[#3b4a2e] border-[#657454]/30';
-    case 'Inactive': return 'bg-[#7d6b5e]/15 text-[#4a3c31] border-[#7d6b5e]/30';
-    case 'Pending':  return 'bg-[#C8A050]/15 text-[#7a5e2a] border-[#C8A050]/30';
-    default:         return 'bg-gray-100 text-gray-700 border-gray-200';
-  }
-};
+const ALL_CATEGORIES = [
+  'Financial Services', 'Consulting', 'Technology', 'Healthcare', 'Energy',
+  'Media & Entertainment', 'Logistics', 'Aerospace & Defense', 'Retail',
+  'Insurance', 'Architecture & Design', 'Trading', 'Education', 'Research & Development',
+];
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export function TravelAgenciesPage() {
-  const [searchTerm, setSearchTerm]         = useState('');
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [isFilterOpen, setIsFilterOpen]     = useState(false);
-  const [statusFilter, setStatusFilter]     = useState('All');
-  const [regionFilter, setRegionFilter]     = useState('All');
+export function CorporatePage() {
+  const [searchTerm, setSearchTerm]           = useState('');
+  const [openDropdownId, setOpenDropdownId]   = useState<string | null>(null);
+  const [isFilterOpen, setIsFilterOpen]       = useState(false);
+  const [categoryFilter, setCategoryFilter]   = useState('All');
+  const [sourceFilter, setSourceFilter]       = useState('All');
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [currentPage, setCurrentPage]         = useState(1);
   const PAGE_SIZE = 10;
@@ -167,21 +178,21 @@ export function TravelAgenciesPage() {
     setShowDetailModal(true);
   };
 
-  const filteredAgencies = mockAgencies.filter(ag => {
+  const filteredCorporates = mockCorporates.filter(cp => {
     const matchesSearch =
-      ag.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ag.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ag.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || ag.status === statusFilter;
-    const matchesRegion = regionFilter === 'All' || ag.region === regionFilter;
-    return matchesSearch && matchesStatus && matchesRegion;
+      cp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cp.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === 'All' || cp.category === categoryFilter;
+    const matchesSource   = sourceFilter === 'All' || cp.source === sourceFilter;
+    return matchesSearch && matchesCategory && matchesSource;
   });
 
   // Reset to page 1 whenever filters/search change
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, statusFilter, regionFilter]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, categoryFilter, sourceFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredAgencies.length / PAGE_SIZE));
-  const pagedData  = filteredAgencies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const totalPages   = Math.max(1, Math.ceil(filteredCorporates.length / PAGE_SIZE));
+  const pagedData    = filteredCorporates.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
@@ -190,17 +201,17 @@ export function TravelAgenciesPage() {
       <header className="shrink-0 flex justify-between items-start mb-6 px-4 lg:px-6 animate-card-enter">
         <div>
           <h1 className="text-4xl font-serif text-[#4a3c31] mb-1 flex items-center gap-3">
-            <HandShake size={36} className="text-[#947b66]" />
-            Travel Agencies.
+            <Buildings size={36} className="text-[#947b66]" />
+            Corporate Partners.
           </h1>
           <p className="text-[#7d6b5e] text-sm italic font-serif">
-            Manage and view all registered travel agency partnerships.
+            Manage and view all registered corporate accounts and company partners.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold px-4 py-2 rounded-[10px] transition-all shadow-sm cursor-pointer">
             <Buildings size={14} />
-            Add Travel Agency
+            Add Company
           </button>
         </div>
       </header>
@@ -226,7 +237,7 @@ export function TravelAgenciesPage() {
 
             <div className="flex items-center gap-2 relative">
               <span className="text-xs text-[#7d6b5e]">
-                <span className="font-semibold text-[#4a3c31]">{filteredAgencies.length}</span> agencies
+                <span className="font-semibold text-[#4a3c31]">{filteredCorporates.length}</span> companies
               </span>
               <Button
                 variant="outline"
@@ -238,38 +249,37 @@ export function TravelAgenciesPage() {
               </Button>
 
               {isFilterOpen && (
-                <div className="absolute right-0 top-11 z-50 w-52 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute right-0 top-11 z-50 w-56 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
                   <div className="mb-3">
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Status</label>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Category</label>
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                       <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
-                        <SelectValue placeholder="All Statuses" />
+                        <SelectValue placeholder="All Categories" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="All">All Statuses</SelectItem>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="All">All Categories</SelectItem>
+                          {ALL_CATEGORIES.map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Region</label>
-                    <Select value={regionFilter} onValueChange={setRegionFilter}>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Source</label>
+                    <Select value={sourceFilter} onValueChange={setSourceFilter}>
                       <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
-                        <SelectValue placeholder="All Regions" />
+                        <SelectValue placeholder="All Sources" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="All">All Regions</SelectItem>
-                          <SelectItem value="Europe">Europe</SelectItem>
-                          <SelectItem value="North America">North America</SelectItem>
-                          <SelectItem value="Asia Pacific">Asia Pacific</SelectItem>
-                          <SelectItem value="Middle East">Middle East</SelectItem>
-                          <SelectItem value="Latin America">Latin America</SelectItem>
-                          <SelectItem value="Africa">Africa</SelectItem>
+                          <SelectItem value="All">All Sources</SelectItem>
+                          <SelectItem value="Direct">Direct</SelectItem>
+                          <SelectItem value="Referral">Referral</SelectItem>
+                          <SelectItem value="Email Marketing">Email Marketing</SelectItem>
+                          <SelectItem value="Social Media">Social Media</SelectItem>
+                          <SelectItem value="Trade Show">Trade Show</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -284,58 +294,79 @@ export function TravelAgenciesPage() {
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 bg-[#f3eae1] border-b border-[#d4c4b7] z-10 shadow-sm">
                 <tr>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Agency ID</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Agency Name</th>
+                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Name</th>
                   <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">E-Mail Address</th>
+                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Phone</th>
+                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Categories</th>
                   <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Source</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Region</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Status</th>
                   <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Owner</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Created At</th>
                   <th className="px-6 py-3 w-10" />
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-[#d4c4b7]/50 text-xs text-[#4a3c31]">
                 {pagedData.length > 0 ? (
-                  pagedData.map(agency => (
+                  pagedData.map(cp => (
                     <tr
-                      key={agency.id}
+                      key={cp.id}
                       onClick={() => handleDetail()}
                       className="hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group"
                     >
-                      <td className="px-6 py-4 font-mono text-[11px] text-[#947b66] group-hover:text-[#4a3c31] transition-colors">
-                        {agency.id}
+                      {/* Name */}
+                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors min-w-[200px]">
+                        {cp.name}
                       </td>
-                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors">
-                        {agency.name}
+
+                      {/* Email */}
+                      <td className="px-6 py-4 text-[#586981] min-w-[220px]">
+                        {cp.email || <span className="text-[#d4c4b7]">—</span>}
                       </td>
-                      <td className="px-6 py-4 text-[#586981]">{agency.email}</td>
-                      <td className="px-6 py-4 text-[#7d6b5e] italic">{agency.source}</td>
-                      <td className="px-6 py-4 text-[#7d6b5e]">{agency.region}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-[10px] font-medium border ${getStatusColor(agency.status)}`}>
-                          {agency.status}
-                        </span>
+
+                      {/* Phone */}
+                      <td className="px-6 py-4 text-[#7d6b5e] min-w-[160px]">
+                        {cp.phone || <span className="text-[#d4c4b7]">—</span>}
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-4 h-4 rounded-full bg-[#947b66]/20 border border-[#947b66]/30 flex items-center justify-center text-[8px] font-bold text-[#947b66]">
-                            {agency.owner.charAt(0).toUpperCase()}
+
+                      {/* Category */}
+                      <td className="px-6 py-4 min-w-[180px]">
+                        {cp.category ? (
+                          <span className="px-2 py-1 rounded-full text-[10px] font-medium border bg-[#947b66]/10 text-[#4a3c31] border-[#947b66]/20">
+                            {cp.category}
                           </span>
-                          <span className="text-[11px] text-[#7d6b5e]">{agency.owner}</span>
-                        </span>
+                        ) : (
+                          <span className="text-[#d4c4b7]">—</span>
+                        )}
                       </td>
-                      <td className="px-6 py-4 text-[#7d6b5e]">{agency.createdAt}</td>
+
+                      {/* Source */}
+                      <td className="px-6 py-4 text-[#7d6b5e] italic min-w-[140px]">
+                        {cp.source || <span className="text-[#d4c4b7] not-italic">—</span>}
+                      </td>
+
+                      {/* Owner */}
+                      <td className="px-6 py-4 min-w-[110px]">
+                        {cp.owner === 'Unknown' ? (
+                          <span className="text-[#d4c4b7] text-[11px]">Unknown</span>
+                        ) : (
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-4 h-4 rounded-full bg-[#947b66]/20 border border-[#947b66]/30 flex items-center justify-center text-[8px] font-bold text-[#947b66]">
+                              {cp.owner.charAt(0).toUpperCase()}
+                            </span>
+                            <span className="text-[11px] text-[#7d6b5e]">{cp.owner}</span>
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
                       <td className="px-6 py-4 text-right relative" onClick={e => e.stopPropagation()}>
                         <button
-                          onClick={e => toggleDropdown(agency.id, e)}
+                          onClick={e => toggleDropdown(cp.id, e)}
                           className="p-1.5 rounded-full hover:bg-[#d4c4b7]/50 text-[#7d6b5e] hover:text-[#4a3c31] transition-colors"
                         >
                           <MenuDots size={18} />
                         </button>
 
-                        {openDropdownId === agency.id && (
+                        {openDropdownId === cp.id && (
                           <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
                             <button
                               onClick={e => handleDetail(e)}
@@ -355,8 +386,8 @@ export function TravelAgenciesPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-[#7d6b5e] text-sm italic">
-                      No travel agencies found matching your criteria.
+                    <td colSpan={7} className="px-6 py-12 text-center text-[#7d6b5e] text-sm italic">
+                      No corporate partners found matching your criteria.
                     </td>
                   </tr>
                 )}
@@ -370,9 +401,9 @@ export function TravelAgenciesPage() {
               Showing{' '}
               <span className="font-medium text-[#4a3c31]">{(currentPage - 1) * PAGE_SIZE + 1}</span>
               {' '}–{' '}
-              <span className="font-medium text-[#4a3c31]">{Math.min(currentPage * PAGE_SIZE, filteredAgencies.length)}</span>
+              <span className="font-medium text-[#4a3c31]">{Math.min(currentPage * PAGE_SIZE, filteredCorporates.length)}</span>
               {' '}of{' '}
-              <span className="font-medium text-[#4a3c31]">{filteredAgencies.length}</span> agencies
+              <span className="font-medium text-[#4a3c31]">{filteredCorporates.length}</span> companies
               {totalPages > 1 && (
                 <span className="ml-2 text-[#d4c4b7]">· Page {currentPage} of {totalPages}</span>
               )}
@@ -402,16 +433,13 @@ export function TravelAgenciesPage() {
       {/* ── Under Development Modal ────────────────────────────────────── */}
       {showDetailModal && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity duration-200"
             onClick={() => setShowDetailModal(false)}
           />
-          {/* Modal */}
           <div className="fixed top-1/2 left-1/2 z-[70] -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[420px] bg-[#fdfaf7] border border-[#d4c4b7] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Header */}
             <div className="flex justify-between items-center px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent">
-              <h2 className="font-serif text-xl text-[#4a3c31]">Agency Detail</h2>
+              <h2 className="font-serif text-xl text-[#4a3c31]">Company Detail</h2>
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="p-2 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors"
@@ -419,10 +447,7 @@ export function TravelAgenciesPage() {
                 <CloseCircle size={20} />
               </button>
             </div>
-
-            {/* Body */}
             <div className="px-6 py-10 flex flex-col items-center gap-4 text-center">
-              {/* Icon */}
               <div className="w-16 h-16 rounded-full bg-[#efe7d5] border border-[#d4c4b7] flex items-center justify-center mb-2">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#947b66" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />

@@ -247,7 +247,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
         {/* 1. Utilization Over Time */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Spa Utilization', data: { key: 'SPA_UTILIZATION' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization Over Time', data: { key: 'UTILIZATION_OVER_TIME' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <div className="flex justify-between items-start mb-2">
@@ -268,7 +268,7 @@ export function SpaDashboardPage() {
 
         {/* 2. Utilization By Time of Day */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Spa Utilization', data: { key: 'SPA_UTILIZATION' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization By Time of Day', data: { key: 'UTILIZATION_TIME_OF_DAY' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Utilization By Time of Day</span>
@@ -313,7 +313,7 @@ export function SpaDashboardPage() {
 
         {/* 3. Utilization By Area */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Spa Utilization', data: { key: 'SPA_UTILIZATION' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization By Area', data: { key: 'UTILIZATION_BY_AREA' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Utilization By Area</span>
@@ -357,7 +357,7 @@ export function SpaDashboardPage() {
 
         {/* 4. Today's Schedule Overview */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Total Treatments', data: { key: 'TOTAL_TREATMENTS' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: "Today's Schedule Overview", data: { key: 'SCHEDULE_OVERVIEW' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Today's Schedule Overview <span className="text-[8px] not-italic text-[#7d6b5e]/70">Based on future bookings</span></span>
@@ -387,7 +387,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
         {/* 1. Top Treatments */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Total Treatments', data: { key: 'TOTAL_TREATMENTS' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Top Treatments', data: { key: 'TOP_TREATMENTS_DETAIL' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Top Treatments <span className="text-[8px] not-italic text-[#7d6b5e]/70">By number of treatments</span></span>
@@ -404,7 +404,7 @@ export function SpaDashboardPage() {
 
         {/* 2. Revenue By Category */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Treatment Revenue (USD)', data: { key: 'TREATMENT_REVENUE' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Revenue By Category', data: { key: 'REVENUE_BY_CATEGORY' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Revenue By Category <span className="text-[8px] not-italic text-[#7d6b5e]/70">Share of total treatment revenue</span></span>
@@ -448,7 +448,7 @@ export function SpaDashboardPage() {
 
         {/* 4. Upcoming Peak Times */}
         <div
-          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Spa Utilization', data: { key: 'SPA_UTILIZATION' } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Upcoming Peak Times', data: { key: 'UPCOMING_PEAK_TIMES' } })}
           className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
         >
           <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Upcoming Peak Times</span>
