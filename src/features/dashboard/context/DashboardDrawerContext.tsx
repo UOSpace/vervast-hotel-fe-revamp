@@ -19,6 +19,8 @@ export type DrawerType =
   | 'GEO_MARKET'
   | 'MARKET_SEGMENT'
   | 'CHANNEL_DISTRIBUTION'
+  | 'FNB_DETAIL'
+  | 'SPA_DETAIL'
   | null;
 
 export interface DrawerConfig {

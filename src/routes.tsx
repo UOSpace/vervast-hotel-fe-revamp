@@ -1,12 +1,12 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { LoginPage } from './features/auth';
-import { DashboardPage } from './features/dashboard';
+import { DashboardPage, FnbDashboardPage, SpaDashboardPage } from './features/dashboard';
 import { PropertyDashboardPage } from './features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from './components/layouts/MasterLayout';
 import { UnderConstructionPage } from './features/common/pages/UnderConstructionPage';
 import { NotFoundPage } from './features/common/pages/NotFoundPage';
-import { GuestsPage, GuestProfilePage } from './features/guests';
-import { PartnersPage } from './features/partners';
+import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
+import { PartnersPage, TravelAgenciesPage } from './features/partners';
 
 export const routes: RouteObject[] = [
   {
@@ -35,7 +35,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/guests/family',
-        element: <GuestsPage />,
+        element: <FamilyGuestsPage />,
       },
       {
         path: '/dashboard/guests/family/:uuid',
@@ -43,11 +43,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/guests/individual',
-        element: <GuestsPage />,
+        element: <IndividualGuestsPage />,
       },
       {
         path: '/dashboard/guests/individual/:uuid',
-        element: <GuestProfilePage />,
+        element: <IndividualGuestProfilePage />,
       },
       {
         path: '/dashboard/partners',
@@ -59,10 +59,18 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/partners/agencies',
-        element: <UnderConstructionPage />,
+        element: <TravelAgenciesPage />,
       },
       {
         path: '/dashboard/partners/corporate',
+        element: <UnderConstructionPage />,
+      },
+      {
+        path: '/dashboard/experience/fnb',
+        element: <FnbDashboardPage />,
+      },
+      {
+        path: '/dashboard/experience/activities',
         element: <UnderConstructionPage />,
       },
       {
@@ -98,8 +106,13 @@ export const routes: RouteObject[] = [
         element: <UnderConstructionPage />,
       },
       {
+        path: '/dashboard/spa',
+        element: <SpaDashboardPage />,
+      },
+      {
+        // Redirect old wellness path to new /spa route
         path: '/dashboard/operations/wellness',
-        element: <UnderConstructionPage />,
+        element: <Navigate to="/dashboard/spa" replace />,
       },
       {
         path: '/dashboard/operations/housekeeping',

@@ -13,7 +13,7 @@ import {
 } from '../../../components/ui/select';
 import { useToast } from '../../../components/ui/toast';
 
-// Mock data for guests table
+// Mock data for families
 const mockGuests = [
   { id: 'GST-001', name: 'John Anderson (The Anderson Family)', status: 'Confirmed', room: 'TBD', type: 'Gold', arrival: '2027-05-24', departure: '2027-05-30', spend: '$78,460' },
   { id: 'GST-002', name: 'Theodore Laurence', status: 'Arriving', room: '201', type: 'Member', arrival: '2023-10-26', departure: '2023-10-30', spend: '$800' },
@@ -27,7 +27,7 @@ const mockGuests = [
   { id: 'GST-010', name: 'Laura Fairlie', status: 'In House', room: '110', type: 'VIP', arrival: '2023-10-20', departure: '2023-10-26', spend: '$2,100' },
 ];
 
-export function GuestsPage() {
+export function FamilyGuestsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -43,7 +43,7 @@ export function GuestsPage() {
 
   const handlePreview = (id: string) => {
     if (id === 'GST-001') {
-      navigate(`${window.location.pathname}/${id}`);
+      navigate(`/dashboard/guests/family/${id}`);
     } else {
       toast.error(
         'Data Not Found',
@@ -54,9 +54,6 @@ export function GuestsPage() {
   };
 
   const formatGuestName = (name: string) => {
-    if (!window.location.pathname.includes('/family')) {
-      return name;
-    }
     if (name.includes('Family')) {
       return name;
     }
@@ -90,12 +87,9 @@ export function GuestsPage() {
         <div>
           <h1 className="text-4xl font-serif text-[#4a3c31] mb-1 flex items-center gap-3">
             <UsersGroupTwoRounded size={36} className="text-[#947b66]" />
-            Guest Directory.
+            Family Directory.
           </h1>
-          <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all guest interactions.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Additional actions like "New Guest" could go here */}
+          <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all guest family profiles.</p>
         </div>
       </header>
 

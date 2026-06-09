@@ -1315,6 +1315,1007 @@ export function DashboardDrawer() {
           );
         }
 
+      case 'FNB_DETAIL':
+        {
+          const detailKey = config.data?.key || '';
+          
+          if (detailKey === 'EXP_BOOKINGS_OVER_TIME') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Daily trend of experience bookings and guest satisfaction MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Date</th>
+                        <th className="p-2.5 text-right">Bookings Count</th>
+                        <th className="p-2.5 text-right">Completion Rate</th>
+                        <th className="p-2.5 text-right">Guest Rating</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { date: 'May 1', val: 380, pct: '95%', rate: '4.8 / 5' },
+                        { date: 'May 8', val: 530, pct: '97%', rate: '4.7 / 5' },
+                        { date: 'May 15', val: 410, pct: '94%', rate: '4.8 / 5' },
+                        { date: 'May 22', val: 680, pct: '96%', rate: '4.9 / 5' },
+                        { date: 'May 29', val: 610, pct: '95%', rate: '4.7 / 5' },
+                        { date: 'May 31', val: 892, pct: '98%', rate: '4.9 / 5' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.date}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.val}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.pct}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rate}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'EXP_BY_CATEGORY') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Experience categories popularity and revenue share MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Category</th>
+                        <th className="p-2.5 text-right">Active Items</th>
+                        <th className="p-2.5 text-right">Total Bookings</th>
+                        <th className="p-2.5 text-right">Revenue Share</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { cat: 'Water & Marine', items: 8, bookings: 596, share: '32%', rev: '$89,400' },
+                        { cat: 'Nature & Adventure', items: 12, bookings: 447, share: '24%', rev: '$37,995' },
+                        { cat: 'Cultural & Local', items: 6, bookings: 317, share: '17%', rev: '$31,700' },
+                        { cat: 'Wellness & Mindfulness', items: 10, bookings: 280, share: '15%', rev: '$33,600' },
+                        { cat: 'Private & Bespoke', items: 4, bookings: 149, share: '8%', rev: '$37,250' },
+                        { cat: 'Other', items: 5, bookings: 75, share: '4%', rev: '$4,500' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.items}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.bookings}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.share}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'TOP_EXPERIENCES_DETAIL' || detailKey === 'TOTAL_EXPERIENCES') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Top experiences rankings based on booking numbers MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Rank</th>
+                        <th className="p-2.5">Experience Name</th>
+                        <th className="p-2.5">Category</th>
+                        <th className="p-2.5 text-right">Avg Ticket</th>
+                        <th className="p-2.5 text-right">Bookings</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { rank: 1, name: 'Sunset Cruise', cat: 'Water & Marine', ticket: '$150', bookings: 312, rev: '$46,800' },
+                        { rank: 2, name: 'Private Island Picnic', cat: 'Water & Marine', ticket: '$150', bookings: 278, rev: '$41,700' },
+                        { rank: 3, name: 'Guided Forest Hike', cat: 'Nature & Adventure', ticket: '$50', bookings: 246, rev: '$12,300' },
+                        { rank: 4, name: 'Wellness Journey', cat: 'Wellness & Mindfulness', ticket: '$150', bookings: 212, rev: '$31,800' },
+                        { rank: 5, name: 'Cultural Village Visit', cat: 'Cultural & Local', ticket: '$100', bookings: 184, rev: '$18,400' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold text-[#7d6b5e]">{row.rank}</td>
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-[#7d6b5e]">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.ticket}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.bookings}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'EXP_REVENUE_PROPERTY') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Experiences revenue breakdown across all resort properties.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Property</th>
+                        <th className="p-2.5 text-right">Active Items</th>
+                        <th className="p-2.5 text-right">MTD Bookings</th>
+                        <th className="p-2.5 text-right">Avg Ticket Size</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { prop: 'SOSEI Ocean', items: 12, bookings: 780, ticket: '$100.79', rev: '$78,620' },
+                        { prop: 'SOSEI Alpine', items: 15, bookings: 510, ticket: '$106.49', rev: '$54,310' },
+                        { prop: 'SOSEI Forest', items: 8, bookings: 320, ticket: '$98.12', rev: '$31,400' },
+                        { prop: 'SOSEI Desert', items: 10, bookings: 180, ticket: '$84.61', rev: '$15,230' },
+                        { prop: 'SOSEI City', items: 5, bookings: 110, ticket: '$88.00', rev: '$9,680' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.prop}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.items}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.bookings}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.ticket}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'FNB_REVENUE_OVER_TIME') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">F&B weekly revenue trend and channel breakdown MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Date Period</th>
+                        <th className="p-2.5 text-right">Fine Dining</th>
+                        <th className="p-2.5 text-right">Casual Dining</th>
+                        <th className="p-2.5 text-right">Bars & Lounges</th>
+                        <th className="p-2.5 text-right">In-Villa Dining</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { date: 'May 1 - May 7', fine: '$35,400', casual: '$22,100', bar: '$18,400', room: '$10,200', total: '$86,100' },
+                        { date: 'May 8 - May 14', fine: '$40,200', casual: '$24,500', bar: '$19,200', room: '$11,500', total: '$95,400' },
+                        { date: 'May 15 - May 21', fine: '$38,700', casual: '$21,800', bar: '$17,900', room: '$9,800', total: '$88,200' },
+                        { date: 'May 22 - May 28', fine: '$45,800', casual: '$28,300', bar: '$22,400', room: '$14,100', total: '$110,600' },
+                        { date: 'May 29 - May 31', fine: '$52,100', casual: '$32,400', bar: '$26,800', room: '$20,800', total: '$132,100' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.date}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.fine}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.casual}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.bar}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.room}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.total}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'FNB_REVENUE_OUTLET' || detailKey === 'TOTAL_FNB_REVENUE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">F&B outlet metrics breakdown MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Outlet Name</th>
+                        <th className="p-2.5 text-right">Covers</th>
+                        <th className="p-2.5 text-right">Average Check</th>
+                        <th className="p-2.5 text-right">Beverage Share</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Seascape Restaurant (SOSEI Ocean)', covers: '3,200', check: '$58.25', share: '35%', rev: '$186,420' },
+                        { name: 'Terra Pavilion (SOSEI Alpine)', covers: '2,840', check: '$39.57', share: '20%', rev: '$112,380' },
+                        { name: 'Alpine Grill (SOSEI Alpine)', covers: '1,980', check: '$42.80', share: '45%', rev: '$84,760' },
+                        { name: 'The Tea Lounge (SOSEI City)', covers: '1,540', check: '$39.76', share: '55%', rev: '$61,240' },
+                        { name: 'In-Villa Dining (All Properties)', covers: '980', check: '$47.76', share: '15%', rev: '$46,810' },
+                        { name: 'Poolside Bar (SOSEI Ocean)', covers: '1,200', check: '$17.36', share: '70%', rev: '$20,840' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.covers}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.check}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.share}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'TOP_OUTLETS_PERFORMANCE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Top performing F&B outlets based on RevPAS (Revenue per Available Seat) MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Outlet Name</th>
+                        <th className="p-2.5">Property</th>
+                        <th className="p-2.5 text-right">Capacity (Seats)</th>
+                        <th className="p-2.5 text-right">RevPAS</th>
+                        <th className="p-2.5 text-right">Avg Occupancy</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Seascape Restaurant', prop: 'SOSEI Ocean', cap: 80, revpas: '$245', occ: '88%' },
+                        { name: 'Terra Pavilion', prop: 'SOSEI Alpine', cap: 120, revpas: '$198', occ: '74%' },
+                        { name: 'Alpine Grill', prop: 'SOSEI Alpine', cap: 90, revpas: '$176', occ: '70%' },
+                        { name: 'The Tea Lounge', prop: 'SOSEI City', cap: 60, revpas: '$142', occ: '62%' },
+                        { name: 'Poolside Bar', prop: 'SOSEI Ocean', cap: 100, revpas: '$118', occ: '65%' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-[#7d6b5e]">{row.prop}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.cap}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.revpas}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.occ}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'FNB_MIX_BREAKDOWN_DETAIL') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">F&B product mix contribution breakdown MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Category</th>
+                        <th className="p-2.5 text-right">Covers</th>
+                        <th className="p-2.5 text-right">Average Spend</th>
+                        <th className="p-2.5 text-right">Food Rev</th>
+                        <th className="p-2.5 text-right">Beverage Rev</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { cat: 'Food (62%)', covers: '8,400', check: '$37.82', food: '$317,719', bev: '$0', total: '$317,719' },
+                        { cat: 'Beverage (23%)', covers: '5,200', check: '$22.66', food: '$0', bev: '$117,863', total: '$117,863' },
+                        { cat: 'In-Villa Dining (10%)', covers: '980', check: '$52.30', food: '$41,000', bev: '$10,245', total: '$51,245' },
+                        { cat: 'Events & Private Dining (5%)', covers: '320', check: '$80.08', food: '$20,500', bev: '$5,123', total: '$25,623' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.covers}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.check}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.food}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.bev}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.total}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'PEAK_HOURS_OUTLET') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Average covers serviced during peak hours across outlets.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Outlet Name</th>
+                        <th className="p-2.5 text-right">Breakfast Peak</th>
+                        <th className="p-2.5 text-right">Lunch Peak</th>
+                        <th className="p-2.5 text-right">Dinner Peak</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Seascape Restaurant', bfast: '120 covers (9 AM)', lunch: '280 covers (12 PM)', dinner: '340 covers (7 PM)' },
+                        { name: 'Terra Pavilion', bfast: '350 covers (8 AM)', lunch: '410 covers (1 PM)', dinner: '480 covers (7 PM)' },
+                        { name: 'Alpine Grill', bfast: 'N/A', lunch: '180 covers (1 PM)', dinner: '320 covers (8 PM)' },
+                        { name: 'The Tea Lounge', bfast: '80 covers (9 AM)', lunch: '120 covers (3 PM)', dinner: '150 covers (5 PM)' },
+                        { name: 'Poolside Bar', bfast: 'N/A', lunch: '220 covers (1 PM)', dinner: '180 covers (6 PM)' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.bfast}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.lunch}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.dinner}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'EXP_CONVERSION_FUNNEL') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Conversion rates from digital experience previews to bookings.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Conversion Funnel Step</th>
+                        <th className="p-2.5 text-right">Volume</th>
+                        <th className="p-2.5 text-right">Step Conversion Rate</th>
+                        <th className="p-2.5 text-right">Industry Benchmark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { step: 'Experiences Viewed', vol: '3,842 views', conv: '100%', bench: '100% (Baseline)' },
+                        { step: 'Added to Wishlist', vol: '1,926 additions', conv: '50%', bench: '45%' },
+                        { step: 'Inquiries', vol: '1,102 inquiries', conv: '57%', bench: '48%' },
+                        { step: 'Bookings Confirmed', vol: '1,864 bookings', conv: '49%', bench: '40%' },
+                        { step: 'Completed & Attended', vol: '1,720 completed', conv: '92%', bench: '95%' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.step}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.vol}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.conv}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.bench}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'EXP_TYPE_PERFORMANCE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Performance matrix and NPS satisfaction score by category.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Experience Category</th>
+                        <th className="p-2.5 text-right">Avg Rating</th>
+                        <th className="p-2.5 text-right">Net Promoter Score (NPS)</th>
+                        <th className="p-2.5 text-right">Active Guides</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Water & Marine', score: '4.8 / 5.0', nps: '82', guides: 12 },
+                        { name: 'Nature & Adventure', score: '4.7 / 5.0', nps: '78', guides: 8 },
+                        { name: 'Cultural & Local', score: '4.6 / 5.0', nps: '75', guides: 6 },
+                        { name: 'Wellness & Mindfulness', score: '4.8 / 5.0', nps: '84', guides: 10 },
+                        { name: 'Private & Bespoke', score: '4.9 / 5.0', nps: '88', guides: 4 },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.score}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.nps}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.guides}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'UPCOMING_HIGHLIGHTS_DETAIL') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Scheduled high-profile group bookings and special events.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Date & Time</th>
+                        <th className="p-2.5">Highlight Event Name</th>
+                        <th className="p-2.5">Resort Location</th>
+                        <th className="p-2.5 text-right">Confirmed / Capacity</th>
+                        <th className="p-2.5 text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { date: 'Jun 2, 7:00 PM', name: 'Full Moon Dinner', location: 'SOSEI Ocean', cap: '24 / 24 seats', status: 'SOLD OUT' },
+                        { date: 'Jun 4, 6:30 AM', name: 'Sunrise Yoga Experience', location: 'SOSEI Alpine', cap: '18 / 20 seats', status: 'Almost Full' },
+                        { date: 'Jun 7, 7:00 PM', name: 'Chef\'s Table Experience', location: 'SOSEI Ocean', cap: '12 / 12 seats', status: 'SOLD OUT' },
+                        { date: 'Jun 12, 10:00 AM', name: 'Reef Clean-up Safari', location: 'SOSEI Ocean', cap: '15 / 30 seats', status: 'Open' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 text-[#7d6b5e]">{row.date}</td>
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-[#7d6b5e]">{row.location}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.cap}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.status === 'SOLD OUT' ? 'text-[#a65e52]' : 'text-[#C8A050]'}`}>{row.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'AVERAGE_SPEND') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Average spend per guest by property MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Property Name</th>
+                        <th className="p-2.5 text-right">F&B Average Spend</th>
+                        <th className="p-2.5 text-right">Activities Average Spend</th>
+                        <th className="p-2.5 text-right">Combined Average Spend</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'SOSEI Ocean', fnb: '$165', act: '$112', combined: '$277' },
+                        { name: 'SOSEI Alpine', fnb: '$150', act: '$98', combined: '$248' },
+                        { name: 'SOSEI Desert', fnb: '$135', act: '$85', combined: '$220' },
+                        { name: 'SOSEI Forest', fnb: '$120', act: '$72', combined: '$192' },
+                        { name: 'SOSEI City', fnb: '$110', act: '$48', combined: '$158' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.fnb}</td>
+                          <td className="p-2.5 text-right text-[#9d7c67]">{row.act}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.combined}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'EXPERIENCE_REVENUE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Experience MTD revenue contribution by category.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Category</th>
+                        <th className="p-2.5 text-right">% Bookings</th>
+                        <th className="p-2.5 text-right">Average Ticket Size</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { cat: 'Water & Marine', pct: '32%', avg: '$150', rev: '$60,580' },
+                        { cat: 'Nature & Adventure', pct: '24%', avg: '$85', rev: '$45,430' },
+                        { cat: 'Cultural & Local', pct: '17%', avg: '$100', rev: '$32,180' },
+                        { cat: 'Wellness & Mindfulness', pct: '15%', avg: '$120', rev: '$25,440' },
+                        { cat: 'Private & Bespoke', pct: '8%', avg: '$250', rev: '$19,890' },
+                        { cat: 'Other', pct: '4%', avg: '$60', rev: '$5,800' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.pct}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.avg}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'REPEAT_RATE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Repeat experience booking rate breakdown by loyalty tier.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Loyalty Tier</th>
+                        <th className="p-2.5 text-right">Active Members</th>
+                        <th className="p-2.5 text-right">Repeat Bookings</th>
+                        <th className="p-2.5 text-right">Repeat Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { tier: 'VIP / Platinum', members: 480, bookings: 312, rate: '65%' },
+                        { tier: 'Gold', members: 1200, bookings: 540, rate: '45%' },
+                        { tier: 'Silver', members: 1800, bookings: 450, rate: '25%' },
+                        { tier: 'Member', members: 2400, bookings: 360, rate: '15%' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.tier}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.members}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.bookings}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rate}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'SATISFACTION') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Guest experience satisfaction rating breakdown by segment.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Guest Segment</th>
+                        <th className="p-2.5 text-right">F&B Rating</th>
+                        <th className="p-2.5 text-right">Experiences Rating</th>
+                        <th className="p-2.5 text-right">Combined Satisfaction</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { segment: 'Leisure Couples', fnb: '4.8 / 5', exp: '4.9 / 5', score: '4.85 / 5' },
+                        { segment: 'Family Stays', fnb: '4.7 / 5', exp: '4.8 / 5', score: '4.75 / 5' },
+                        { segment: 'Solo Travelers', fnb: '4.5 / 5', exp: '4.7 / 5', score: '4.60 / 5' },
+                        { segment: 'Wellness Seekers', fnb: '4.6 / 5', exp: '4.9 / 5', score: '4.75 / 5' },
+                        { segment: 'Corporate Groups', fnb: '4.4 / 5', exp: '4.2 / 5', score: '4.30 / 5' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.segment}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.fnb}</td>
+                          <td className="p-2.5 text-right text-[#9d7c67]">{row.exp}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.score}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'SUNSET_INSIGHT') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Sunset experiences analysis: Driving 34% of total experience revenue.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Sunset Cruise Performance</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Sunset cruise continues to be the highest performing single experience item in the Sosei portfolio.
+                      Average ticket price of $150 per person with a 92% capacity load factor on weekends.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'INVILLA_INSIGHT') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">In-villa dining analysis: 21% increase vs last month.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Growth Drivers</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      The growth is driven by the introduction of the digital order system in villas and personalized late-night supper options.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'WELLNESS_INSIGHT') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Wellness & nature experiences satisfaction analysis.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Satisfaction Highlight</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Wellness journeys and forest walks score average ratings of 4.8 and 4.7 respectively. Guest reviews highlight the high expertise level of wellness instructors.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'ADVANCE_INSIGHT') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Booking lead time impact analysis: Advance bookings &gt;14 days.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Spend Correlation</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Guests booking their experiences more than 14 days in advance show a 28% higher total spend on F&B and retail.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'WEEKEND_INSIGHT') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Weekend dining analysis: Weekend dinners remain the peak.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Revenue Contribution</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Saturday dinner service contributes 42% of total weekly fine-dining revenue across all resort outlets.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+          
+          return (
+            <div className="text-xs text-[#7d6b5e] italic">
+              Detailed statistics and analytics reports for {config.title}.
+            </div>
+          );
+        }
+
+      case 'SPA_DETAIL':
+        {
+          const detailKey = config.data?.key || '';
+          
+          if (detailKey === 'TOTAL_TREATMENTS') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Detailed distribution of spa treatments MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Treatment Name</th>
+                        <th className="p-2.5 text-right">Treatments Conducted</th>
+                        <th className="p-2.5 text-right">Avg Rating</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Deep Tissue Massage', count: 312, rating: '4.8 / 5', rev: '$71,448' },
+                        { name: 'Aromatherapy Massage', count: 248, rating: '4.7 / 5', rev: '$56,792' },
+                        { name: 'Facial Signature', count: 196, rating: '4.9 / 5', rev: '$44,884' },
+                        { name: 'Hot Stone Therapy', count: 154, rating: '4.6 / 5', rev: '$35,266' },
+                        { name: 'Detox Body Wrap', count: 98, rating: '4.5 / 5', rev: '$22,442' },
+                        { name: 'Balinese Healing Ritual', count: 70, rating: '4.9 / 5', rev: '$16,030' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.count}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.rating}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'TREATMENT_REVENUE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Treatment MTD revenue contribution breakdown by property.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Property Name</th>
+                        <th className="p-2.5 text-right">Treatments</th>
+                        <th className="p-2.5 text-right">Average Rate</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'SOSEI Ocean (Maldives)', count: 480, rate: '$240', rev: '$115,200' },
+                        { name: 'SOSEI Alpine (Switzerland)', count: 390, rate: '$235', rev: '$91,650' },
+                        { name: 'SOSEI Forest (Kyoto)', count: 180, rate: '$210', rev: '$37,800' },
+                        { name: 'SOSEI Desert (Cairo)', count: 110, rate: '$200', rev: '$22,000' },
+                        { name: 'SOSEI City (New York)', count: 88, rate: '$225', rev: '$19,800' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.count}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.rate}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'AVERAGE_REVENUE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Average revenue per treatment details by property.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Property Name</th>
+                        <th className="p-2.5 text-right">Standard Rate</th>
+                        <th className="p-2.5 text-right">Peak Rate</th>
+                        <th className="p-2.5 text-right">Average Realized Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'SOSEI Ocean', standard: '$220', peak: '$260', realized: '$240' },
+                        { name: 'SOSEI Alpine', standard: '$215', peak: '$255', realized: '$235' },
+                        { name: 'SOSEI City', standard: '$210', peak: '$245', realized: '$225' },
+                        { name: 'SOSEI Forest', standard: '$195', peak: '$230', realized: '$210' },
+                        { name: 'SOSEI Desert', standard: '$180', peak: '$220', realized: '$200' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.standard}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.peak}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.realized}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'SPA_UTILIZATION') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Utilization rates by spa zones MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Spa Zone</th>
+                        <th className="p-2.5 text-right">Capacity (Hours/Day)</th>
+                        <th className="p-2.5 text-right">Utilized Hours MTD</th>
+                        <th className="p-2.5 text-right">Utilization Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { zone: 'Treatment Rooms', capacity: 96, hours: 2246, rate: '78%' },
+                        { zone: 'Hydro Facilities', capacity: 48, hours: 936, rate: '65%' },
+                        { zone: 'Relaxation Lounge', capacity: 64, hours: 1190, rate: '62%' },
+                        { zone: 'Movement Studio', capacity: 32, hours: 460, rate: '48%' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.zone}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.capacity}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.hours}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rate}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'THERAPIST_HOURS') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Therapist performance and hour tracking MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Therapist Name</th>
+                        <th className="p-2.5 text-right">Treatments</th>
+                        <th className="p-2.5 text-right">Hours Clocked</th>
+                        <th className="p-2.5 text-right">Utilization</th>
+                        <th className="p-2.5 text-right">Revenue Generated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Ananda', count: 152, hours: 180, util: '82%', rev: '$36,480' },
+                        { name: 'Maya', count: 148, hours: 190, util: '78%', rev: '$34,120' },
+                        { name: 'Suri', count: 137, hours: 182, util: '75%', rev: '$31,750' },
+                        { name: 'Lina', count: 130, hours: 180, util: '72%', rev: '$28,910' },
+                        { name: 'Pema', count: 124, hours: 182, util: '68%', rev: '$27,560' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.count}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.hours}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.util}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'RETAIL_REVENUE') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Retail performance breakdown MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Product Name</th>
+                        <th className="p-2.5 text-right">Units Sold</th>
+                        <th className="p-2.5 text-right">Average Price</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { name: 'Sosei Signature Oil', units: 120, price: '$78.50', rev: '$9,420' },
+                        { name: 'Calm & Restore Balm', units: 148, price: '$41.95', rev: '$6,210' },
+                        { name: 'Mineral Soak', units: 162, price: '$30.00', rev: '$4,860' },
+                        { name: 'Sosei Silk Eye Pillow', units: 88, price: '$45.20', rev: '$3,980' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.units}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.price}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'MEMBERSHIP_REPORT') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Wellness membership and packages sales analysis.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Membership Category</th>
+                        <th className="p-2.5 text-right">Active Members</th>
+                        <th className="p-2.5 text-right">MTD Sales</th>
+                        <th className="p-2.5 text-right">Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { cat: 'Wellness Elite Club', members: 48, sales: 8, rev: '$32,000' },
+                        { cat: 'Signature Package (10 Sessions)', members: 120, sales: 34, rev: '$34,000' },
+                        { cat: 'Half-Day Escape Package', members: 160, sales: 30, rev: '$20,240' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.members}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.sales}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'GUEST_WELLNESS_INSIGHTS') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Wellness seekers represent 38% of total guests this month.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Stay Correlation</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Wellness guests stay an average of 4.5 nights compared to 2.8 nights for non-wellness guests, resulting in a significantly higher ancillary spend per room.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'RETAIL_SELLERS_INSIGHTS') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Retail Top Sellers Analysis: Sosei Signature Oil leading.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Signature Oil Performance</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      The launch of the smaller 50ml travel bottle of Sosei Signature Oil has boosted retail volumes by 34% this month.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'WELLNESS_FEEDBACK_INSIGHTS') {
+            return (
+              <div className="space-y-4 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Wellness Experience Index: 4.8 / 5 stars satisfaction rating.</p>
+                <div className="p-4 border border-[#d4c4b7] rounded-lg bg-[#efe7d5]/10 space-y-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-[#4a3c31]">Ambience & Quality</h4>
+                    <p className="text-xs text-[#7d6b5e] mt-1">
+                      Treatment quality and therapist professionalism continue to rank the highest, scoring 4.9 and 4.8 respectively. Guest survey feedback specifically praises the peaceful layout and temperature control of the treatment rooms.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+          
+          return (
+            <div className="text-xs text-[#7d6b5e] italic">
+              Detailed statistics and analytics reports for {config.title}.
+            </div>
+          );
+        }
+
       default:
         return null;
     }
@@ -1331,6 +2332,8 @@ export function DashboardDrawer() {
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
+      case 'FNB_DETAIL':
+      case 'SPA_DETAIL':
         return 'w-[92vw] sm:w-[660px]';
       default:
         return 'w-[92vw] sm:w-[520px]';

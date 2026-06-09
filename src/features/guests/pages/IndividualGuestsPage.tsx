@@ -13,9 +13,9 @@ import {
 } from '../../../components/ui/select';
 import { useToast } from '../../../components/ui/toast';
 
-// Mock data for guests table
+// Mock data for individual guests (cleaned of family references)
 const mockGuests = [
-  { id: 'GST-001', name: 'John Anderson (The Anderson Family)', status: 'Confirmed', room: 'TBD', type: 'Gold', arrival: '2027-05-24', departure: '2027-05-30', spend: '$78,460' },
+  { id: 'GST-001', name: 'John Anderson', status: 'Confirmed', room: 'TBD', type: 'Gold', arrival: '2027-05-24', departure: '2027-05-30', spend: '$78,460' },
   { id: 'GST-002', name: 'Theodore Laurence', status: 'Arriving', room: '201', type: 'Member', arrival: '2023-10-26', departure: '2023-10-30', spend: '$800' },
   { id: 'GST-003', name: 'Josephine March', status: 'Departed', room: '305', type: 'Standard', arrival: '2023-10-20', departure: '2023-10-25', spend: '$450' },
   { id: 'GST-004', name: 'Amy Curtis', status: 'In House', room: '412', type: 'VIP', arrival: '2023-10-25', departure: '2023-11-02', spend: '$3,100' },
@@ -27,7 +27,7 @@ const mockGuests = [
   { id: 'GST-010', name: 'Laura Fairlie', status: 'In House', room: '110', type: 'VIP', arrival: '2023-10-20', departure: '2023-10-26', spend: '$2,100' },
 ];
 
-export function GuestsPage() {
+export function IndividualGuestsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -43,7 +43,7 @@ export function GuestsPage() {
 
   const handlePreview = (id: string) => {
     if (id === 'GST-001') {
-      navigate(`${window.location.pathname}/${id}`);
+      navigate(`/dashboard/guests/individual/${id}`);
     } else {
       toast.error(
         'Data Not Found',
@@ -53,21 +53,8 @@ export function GuestsPage() {
     }
   };
 
-  const formatGuestName = (name: string) => {
-    if (!window.location.pathname.includes('/family')) {
-      return name;
-    }
-    if (name.includes('Family')) {
-      return name;
-    }
-    const parts = name.split(' ');
-    const lastName = parts[parts.length - 1];
-    return `${name} (The ${lastName} Family)`;
-  };
-
   const filteredGuests = mockGuests.filter(guest => {
-    const displayName = formatGuestName(guest.name);
-    const matchesSearch = displayName.toLowerCase().includes(searchTerm.toLowerCase()) || guest.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = guest.name.toLowerCase().includes(searchTerm.toLowerCase()) || guest.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || guest.status === statusFilter;
     const matchesType = typeFilter === 'All' || guest.type === typeFilter;
     return matchesSearch && matchesStatus && matchesType;
@@ -90,12 +77,9 @@ export function GuestsPage() {
         <div>
           <h1 className="text-4xl font-serif text-[#4a3c31] mb-1 flex items-center gap-3">
             <UsersGroupTwoRounded size={36} className="text-[#947b66]" />
-            Guest Directory.
+            Individual Directory.
           </h1>
-          <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all guest interactions.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Additional actions like "New Guest" could go here */}
+          <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all individual guest profiles.</p>
         </div>
       </header>
 
@@ -192,7 +176,7 @@ export function GuestsPage() {
                       className="hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group"
                     >
                       <td className="px-6 py-4 font-mono text-[11px] text-[#947b66] group-hover:text-[#4a3c31] transition-colors">{guest.id}</td>
-                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors">{formatGuestName(guest.name)}</td>
+                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors">{guest.name}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-full text-[10px] font-medium border ${getStatusColor(guest.status)}`}>
                           {guest.status}

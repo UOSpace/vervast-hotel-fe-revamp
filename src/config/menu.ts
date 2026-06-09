@@ -1,6 +1,7 @@
 import {
-  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Bell, Buildings
+  Globus, City, UsersGroupTwoRounded, HandShake, Wallet, Calendar, Bed, TagPrice, PieChart, Bell, Buildings, Compass
 } from '@solar-icons/react';
+import { LotusIcon } from '../components/icons/LotusIcon';
 
 export interface MenuItem {
   name: string;
@@ -27,6 +28,14 @@ export const sidebarMenu: MenuItem[] = [
       { name: 'Corporate', path: '/dashboard/partners/corporate' },
     ],
   },
+  {
+    name: 'Experience', icon: Compass, path: '/dashboard/experience',
+    children: [
+      { name: 'F&B', path: '/dashboard/experience/fnb' },
+      { name: 'Activities', path: '/dashboard/experience/activities' },
+    ],
+  },
+  { name: 'Spa', icon: LotusIcon, path: '/dashboard/spa' },
   { name: 'Revenue', icon: Wallet, path: '/dashboard/revenue' },
   {
     name: 'Reservations', icon: Calendar, path: '/dashboard/reservations',
@@ -49,7 +58,6 @@ export const sidebarMenu: MenuItem[] = [
   {
     name: 'Operations', icon: Bed, path: '/dashboard/operations',
     children: [
-      { name: 'Wellness', path: '/dashboard/operations/wellness' },
       { name: 'Housekeeping', path: '/dashboard/operations/housekeeping' },
       { name: 'F&B', path: '/dashboard/operations/fnb' },
       { name: 'Activities', path: '/dashboard/operations/activities' },
