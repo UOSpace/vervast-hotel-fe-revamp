@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeClosed } from '@solar-icons/react';
 import { useLogin } from '../hooks/useLogin';
+import { Logo } from '@/components/ui/Logo';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,10 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <div className="space-y-2 mb-8 text-center lg:text-left">
+      <div className="flex justify-center mb-6">
+        <Logo className="w-24 h-auto" />
+      </div>
+      <div className="space-y-2 mb-8 text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Welcome Back</h1>
         <p className="text-muted-foreground">
           Sign in to your account to continue

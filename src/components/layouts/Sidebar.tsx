@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { sidebarMenu } from '../../config/menu';
 import { AltArrowDown } from '@solar-icons/react';
+import { Logo } from '../ui/Logo';
 
 export function Sidebar({ 
   onNavigate, 
@@ -38,6 +39,10 @@ export function Sidebar({
             <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
           </svg>
         </button>
+      </div>
+
+      <div className="px-4 pb-3 flex justify-center">
+        <Logo className="w-10 h-auto" />
       </div>
 
       <div className="flex-1 overflow-y-auto px-2 pb-4">
