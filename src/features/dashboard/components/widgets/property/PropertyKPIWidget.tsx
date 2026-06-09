@@ -58,36 +58,65 @@ function getTooltipText(label: string) {
   return "Key performance indicator metrics.";
 }
 
-export function PropertyKPIWidget({ propertyId = 'alpine' }: { propertyId?: string }) {
+export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
   const { openDrawer } = useDashboardDrawer();
   const kpiDataMap: Record<string, any> = {
-    'alpine': {
-      occ: '68', rev: '$78,460', revpar: '$742', adr: '$1,091', los: '4.2',
+    // ── Europe ──────────────────────────────────────────────────────────
+    'sosei-nocturne': {
+      occ: '68', rev: '$78,460',  revpar: '$742',  adr: '$1,091', los: '4.2',
       arrivals: 24, deps: 18, inhouse: 186, vip: 14
     },
-    'ocean': {
-      occ: '85', rev: '$125,300', revpar: '$980', adr: '$1,152', los: '6.5',
-      arrivals: 45, deps: 30, inhouse: 310, vip: 28
+    'sosei-aurora': {
+      occ: '61', rev: '$72,100',  revpar: '$680',  adr: '$1,115', los: '4.8',
+      arrivals: 20, deps: 15, inhouse: 162, vip: 11
     },
-    'city': {
-      occ: '92', rev: '$210,000', revpar: '$680', adr: '$739', los: '2.1',
-      arrivals: 120, deps: 105, inhouse: 450, vip: 40
+    'sosei-hearth': {
+      occ: '74', rev: '$88,200',  revpar: '$610',  adr: '$824',   los: '3.9',
+      arrivals: 28, deps: 22, inhouse: 204, vip: 9
     },
-    'forest': {
-      occ: '54', rev: '$45,200', revpar: '$450', adr: '$833', los: '3.4',
-      arrivals: 15, deps: 12, inhouse: 98, vip: 5
+    'sosei-pastoral': {
+      occ: '70', rev: '$81,400',  revpar: '$570',  adr: '$814',   los: '3.6',
+      arrivals: 26, deps: 20, inhouse: 188, vip: 7
     },
-    'desert': {
-      occ: '40', rev: '$62,100', revpar: '$620', adr: '$1,550', los: '5.0',
-      arrivals: 8, deps: 6, inhouse: 72, vip: 12
+    // ── Americas ────────────────────────────────────────────────────────
+    'sosei-verper': {
+      occ: '88', rev: '$198,000', revpar: '$620',  adr: '$704',   los: '2.3',
+      arrivals: 110, deps: 98, inhouse: 418, vip: 36
     },
-    'country': {
-      occ: '78', rev: '$95,400', revpar: '$530', adr: '$679', los: '3.8',
-      arrivals: 32, deps: 28, inhouse: 150, vip: 8
-    }
+    'sosei-elan': {
+      occ: '91', rev: '$215,000', revpar: '$660',  adr: '$725',   los: '2.1',
+      arrivals: 118, deps: 104, inhouse: 442, vip: 40
+    },
+    // ── Asia Pacific ────────────────────────────────────────────────────
+    'sosei-marea': {
+      occ: '82', rev: '$118,600', revpar: '$940',  adr: '$1,146', los: '6.2',
+      arrivals: 42, deps: 28, inhouse: 298, vip: 25
+    },
+    'sosei-pelagia': {
+      occ: '79', rev: '$104,200', revpar: '$870',  adr: '$1,101', los: '5.8',
+      arrivals: 38, deps: 26, inhouse: 272, vip: 22
+    },
+    'sosei-sylvan': {
+      occ: '57', rev: '$51,800',  revpar: '$480',  adr: '$842',   los: '3.6',
+      arrivals: 18, deps: 14, inhouse: 112, vip: 6
+    },
+    'sosei-verdant': {
+      occ: '53', rev: '$44,600',  revpar: '$440',  adr: '$830',   los: '3.3',
+      arrivals: 15, deps: 12, inhouse: 96, vip: 5
+    },
+    // ── Middle East & Africa ─────────────────────────────────────────────
+    'sosei-mirage': {
+      occ: '42', rev: '$65,300',  revpar: '$630',  adr: '$1,500', los: '5.2',
+      arrivals: 9, deps: 7, inhouse: 76, vip: 13
+    },
+    'sosei-solstice': {
+      occ: '38', rev: '$58,800',  revpar: '$590',  adr: '$1,553', los: '4.9',
+      arrivals: 7, deps: 6, inhouse: 68, vip: 10
+    },
   };
 
-  const data = kpiDataMap[propertyId] || kpiDataMap['alpine'];
+  const data = kpiDataMap[propertyId] ?? kpiDataMap['sosei-nocturne'];
+
   const kpis = [
     { label: 'OCCUPANCY', value: data.occ, trend: '↑ 6%', up: true, color: '#657454' },
     { label: 'Room Revenue (USD)', value: data.rev, trend: '↑ 8%', up: true, color: '#586981' },

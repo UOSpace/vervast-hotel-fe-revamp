@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CloseCircle } from '@solar-icons/react';
 
 interface UnderDevelopmentModalProps {
@@ -7,21 +9,42 @@ interface UnderDevelopmentModalProps {
 }
 
 export function UnderDevelopmentModal({ open, onClose, featureName }: UnderDevelopmentModalProps) {
-  if (!open) return null;
+  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      const t = setTimeout(() => setVisible(true), 10);
+      return () => clearTimeout(t);
+    } else {
+      setVisible(false);
+      // Unmount after transition completes
+      const t = setTimeout(() => setMounted(false), 350);
+      return () => clearTimeout(t);
+    }
+  }, [open]);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <>
-      {/* Backdrop */}
+      {/* Backdrop — renders at document.body level, covers everything including sidebar */}
       <div
-        className="fixed inset-0 bg-black/25 backdrop-blur-sm z-[60] transition-opacity duration-200"
+        className={`fixed inset-0 bg-black/25 backdrop-blur-sm z-[9998] transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 z-[70] -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[460px] bg-[#fdfaf7] border border-[#d4c4b7] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-
+      {/* Modal — centered, above backdrop */}
+      <div
+        className={`fixed top-1/2 left-1/2 z-[9999] w-[92vw] max-w-[460px] max-h-[85vh] bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform -translate-x-1/2 ${
+          visible
+            ? 'opacity-100 scale-100 -translate-y-1/2'
+            : 'opacity-0 scale-75 -translate-y-[30%] pointer-events-none'
+        }`}
+      >
         {/* Header badge */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent">
+        <div className="shrink-0 flex justify-between items-center px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent">
           <span className="inline-flex items-center gap-1.5 bg-[#C8A050]/15 border border-[#C8A050]/25 text-[#7a5e2a] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-[#C8A050] animate-pulse" />
             Coming Soon
@@ -35,9 +58,9 @@ export function UnderDevelopmentModal({ open, onClose, featureName }: UnderDevel
         </div>
 
         {/* Body */}
-        <div className="px-6 py-8 flex flex-col items-center gap-4 text-center">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-8 flex flex-col items-center gap-4 text-center">
           {/* Icon */}
-          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#f3eae1] to-[#efe7d5] border border-[#d4c4b7] flex items-center justify-center mb-1 shadow-inner">
+          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#f3eae1] to-[#efe7d5] border border-[#d4c4b7] flex items-center justify-center mb-1 shadow-inner shrink-0">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C8A050" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
@@ -94,6 +117,7 @@ export function UnderDevelopmentModal({ open, onClose, featureName }: UnderDevel
           </p>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }

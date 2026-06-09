@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -38,10 +39,44 @@ const mockBookingsData = [
   { id: 'BK-904', name: 'SOSEI City Weekend Escapade', stage: 'Cancelled', value: '$3,200', created: '2026-04-18', ref: 'CFM-609102' },
 ];
 
+// ─── Detail Modal ────────────────────────────────────────────────────────────
+interface ModalContent { title: string; subtitle?: string; body: React.ReactNode; }
+
+function DetailModal({ content, onClose }: { content: ModalContent; onClose: () => void }) {
+  return createPortal(
+    <>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] transition-opacity duration-200"
+        onClick={onClose}
+      />
+      <div className="fixed top-1/2 left-1/2 z-[9999] w-[92vw] max-w-[520px] max-h-[85vh] bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-95 fade-in duration-200">
+        {/* Header */}
+        <div className="shrink-0 px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent flex justify-between items-start">
+          <div>
+            <h3 className="font-serif text-xl text-[#4a3c31]">{content.title}</h3>
+            {content.subtitle && <p className="text-[10px] text-[#947b66] uppercase tracking-wider font-semibold mt-0.5">{content.subtitle}</p>}
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors shrink-0">✕</button>
+        </div>
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-5 text-[#4a3c31] text-xs">
+          {content.body}
+        </div>
+      </div>
+    </>,
+    document.body
+  );
+}
+
+// ─── Page Component ───────────────────────────────────────────────────────────
 export function IndividualGuestProfilePage() {
   const { uuid } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+
+  // Detail modal state
+  const [modalContent, setModalContent] = useState<ModalContent | null>(null);
+  const closeModal = () => setModalContent(null);
   
   // State for active tab in "Leads & Bookings"
   const [leadTab, setLeadTab] = useState<'leads' | 'bookings'>('leads');
@@ -322,7 +357,54 @@ export function IndividualGuestProfilePage() {
                 <tbody>
                   {filteredItems.length > 0 ? (
                     filteredItems.map((item, idx) => (
-                      <tr key={idx} className="text-[#4a3c31] text-[11px] hover:bg-[#e5d8cb]/30 border-b border-[#d4c4b7]/30 transition-colors">
+                      <tr
+                        key={idx}
+                        className="text-[#4a3c31] text-[11px] hover:bg-[#e5d8cb]/30 border-b border-[#d4c4b7]/30 transition-colors cursor-pointer"
+                        onClick={() => setModalContent({
+                          title: item.name,
+                          subtitle: leadTab === 'leads' ? `Lead · ${item.stage}` : `Booking · ${item.stage}`,
+                          body: (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-3">
+                                <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                  <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">{leadTab === 'leads' ? 'Lead ID' : 'Booking ID'}</div>
+                                  <div className="font-mono font-bold text-[#4a3c31]">{item.id}</div>
+                                </div>
+                                <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                  <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Revenue</div>
+                                  <div className="font-bold text-[#4a3c31] text-base font-serif">{item.value}</div>
+                                </div>
+                                <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                  <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Status</div>
+                                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                                    item.stage === 'Confirmed' || item.stage === 'Proposal Sent' ? 'bg-[#657454]/15 text-[#4e5a45] border-[#657454]/20'
+                                    : item.stage === 'Cancelled' ? 'bg-[#a65e52]/15 text-[#61271f] border-[#a65e52]/20'
+                                    : 'bg-[#C8A050]/15 text-[#7a5e2a] border-[#C8A050]/20'
+                                  }`}>{item.stage}</span>
+                                </div>
+                                <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                  <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Created Date</div>
+                                  <div className="text-[#4a3c31]">{item.created}</div>
+                                </div>
+                              </div>
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Reference / Confirmation #</div>
+                                <div className="font-mono text-[#947b66] font-semibold">{item.ref}</div>
+                              </div>
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Guest</div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xs font-bold">JG</div>
+                                  <div>
+                                    <div className="font-bold">Jennifer Green</div>
+                                    <div className="text-[10px] text-[#7d6b5e]">jennifer@yahoo.com · GST-001</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      >
                         <td className="px-4 py-3 font-medium">{item.name}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
@@ -1070,6 +1152,38 @@ export function IndividualGuestProfilePage() {
                     <div 
                       key={idx} 
                       className="p-4 border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col justify-between shadow-2xs hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+                      onClick={() => setModalContent({
+                        title: comp.name,
+                        subtitle: comp.type,
+                        body: (
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Reference Code</div>
+                                <div className="font-mono font-bold text-[#4a3c31]">{comp.ref}</div>
+                              </div>
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Status</div>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#947b66]/15 text-[#4a3c31] border border-[#947b66]/20">{comp.status}</span>
+                              </div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Company Type</div>
+                              <div className="text-[#4a3c31]">{comp.type}</div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Associated Guest</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xs font-bold">JG</div>
+                                <div>
+                                  <div className="font-bold">Jennifer Green</div>
+                                  <div className="text-[10px] text-[#7d6b5e]">Gold Loyalty · GST-001</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
                     >
                       <div>
                         <div className="flex justify-between items-start mb-1">
@@ -1080,7 +1194,7 @@ export function IndividualGuestProfilePage() {
                       </div>
                       <div className="flex justify-between items-center mt-3 pt-2 border-t border-[#d4c4b7]/40 text-[9px] text-[#7d6b5e]">
                         <span>Code: <strong className="font-mono text-[#4a3c31]">{comp.ref}</strong></span>
-                        <button className="text-[#947b66] hover:text-[#4a3c31] font-bold">Manage</button>
+                        <span className="text-[#947b66] font-bold">View Details →</span>
                       </div>
                     </div>
                   ))}
@@ -1104,6 +1218,40 @@ export function IndividualGuestProfilePage() {
                     <div 
                       key={idx} 
                       className="p-4 border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col justify-between shadow-2xs hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+                      onClick={() => setModalContent({
+                        title: evt.name,
+                        subtitle: `Event · ${evt.type}`,
+                        body: (
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Date</div>
+                                <div className="font-bold text-[#4a3c31] flex items-center gap-1"><Calendar size={12} className="text-[#947b66]" /> {evt.date}</div>
+                              </div>
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Status</div>
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                                  evt.type === 'Active' ? 'bg-[#657454]/15 text-[#35432c] border-[#657454]/20' : 'bg-[#947b66]/15 text-[#4a3c31] border-[#947b66]/20'
+                                }`}>{evt.type}</span>
+                              </div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Location / Venue</div>
+                              <div className="text-[#4a3c31]">{evt.location}</div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Participant</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xs font-bold">JG</div>
+                                <div>
+                                  <div className="font-bold">Jennifer Green</div>
+                                  <div className="text-[10px] text-[#7d6b5e]">Gold Loyalty · GST-001</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
                     >
                       <div>
                         <div className="flex justify-between items-start mb-1.5">
@@ -1116,7 +1264,7 @@ export function IndividualGuestProfilePage() {
                         <p className="text-[9px] text-[#7d6b5e]/80 mt-1 italic">{evt.location}</p>
                       </div>
                       <div className="flex justify-end mt-3 pt-2 border-t border-[#d4c4b7]/40 text-[9px]">
-                        <button className="text-[#947b66] hover:text-[#4a3c31] font-bold">Details</button>
+                        <span className="text-[#947b66] font-bold">View Details →</span>
                       </div>
                     </div>
                   ))}
@@ -1220,6 +1368,38 @@ export function IndividualGuestProfilePage() {
                     <div 
                       key={idx} 
                       className="p-4 border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col justify-between shadow-2xs hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+                      onClick={() => setModalContent({
+                        title: act.action,
+                        subtitle: 'CRM Sales Activity',
+                        body: (
+                          <div className="space-y-3">
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-4 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Activity Description</div>
+                              <p className="text-[#4a3c31] leading-relaxed">{act.desc}</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Date</div>
+                                <div className="font-bold text-[#4a3c31] flex items-center gap-1"><Calendar size={12} className="text-[#947b66]" /> {act.date}</div>
+                              </div>
+                              <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Performed By</div>
+                                <div className="text-[#4a3c31] italic">{act.agent}</div>
+                              </div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Guest Profile</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xs font-bold">JG</div>
+                                <div>
+                                  <div className="font-bold">Jennifer Green</div>
+                                  <div className="text-[10px] text-[#7d6b5e]">Gold Loyalty · GST-001</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
                     >
                       <div>
                         <h4 className="font-bold text-[#4a3c31] text-xs mb-1 leading-tight">{act.action}</h4>
@@ -1263,6 +1443,34 @@ export function IndividualGuestProfilePage() {
                     <div 
                       key={idx} 
                       className="p-4 border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col justify-between shadow-2xs hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+                      onClick={() => setModalContent({
+                        title: note.title,
+                        subtitle: `Staff Note · ${note.source}`,
+                        body: (
+                          <div className="space-y-3">
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-4 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Note Content</div>
+                              <blockquote className="italic text-[#4a3c31] leading-relaxed border-l-2 border-[#C8A050] pl-3">
+                                "{note.note}"
+                              </blockquote>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Source Department</div>
+                              <div className="font-bold text-[#4a3c31]">{note.source}</div>
+                            </div>
+                            <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-2">Regarding Guest</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xs font-bold">JG</div>
+                                <div>
+                                  <div className="font-bold">Jennifer Green</div>
+                                  <div className="text-[10px] text-[#7d6b5e]">Gold Loyalty · GST-001</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
                     >
                       <div>
                         <h4 className="font-bold text-[#4a3c31] text-xs mb-1 leading-tight">{note.title}</h4>
@@ -1283,6 +1491,9 @@ export function IndividualGuestProfilePage() {
         </div>
 
       </div>
+
+      {/* Detail Modal */}
+      {modalContent && <DetailModal content={modalContent} onClose={closeModal} />}
     </div>
   );
 }

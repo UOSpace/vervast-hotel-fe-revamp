@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { DateRangeWidget } from '../../dashboard/components/widgets/resort-type/DateRangeWidget';
 import {
   HandShake,
@@ -1331,42 +1332,48 @@ export function PartnersPage() {
 
       </div>
 
-      {/* Drawer Overlay */}
-      {drawerOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition-opacity animate-fade-in"
-          onClick={() => setDrawerOpen(false)}
-        />
+      {createPortal(
+        <>
+          {/* Backdrop — portal to document.body, truly covers sidebar */}
+          <div
+            className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] transition-opacity duration-300 ${drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={() => setDrawerOpen(false)}
+          />
+
+          {/* Centered Modal Panel */}
+          <div
+            className={`fixed top-1/2 left-1/2 z-[9999] max-h-[85vh] w-[92vw] sm:w-[660px] bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform -translate-x-1/2 ${
+              drawerOpen
+                ? 'opacity-100 scale-100 -translate-y-1/2'
+                : 'opacity-0 scale-50 -translate-y-[20%] pointer-events-none'
+            }`}
+          >
+            {drawerContent && (
+              <>
+                {/* Header */}
+                <div className="shrink-0 p-6 flex justify-between items-center border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/50 to-transparent">
+                  <div>
+                    <h2 className="font-serif text-2xl text-[#4a3c31]">{drawerContent.title}</h2>
+                    <p className="text-[10px] text-[#7d6b5e] uppercase tracking-wider font-semibold mt-0.5">{drawerContent.description}</p>
+                  </div>
+                  <button
+                    onClick={() => setDrawerOpen(false)}
+                    className="p-2 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Scrollable Body */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 text-[#4a3c31]">
+                  {drawerContent.children}
+                </div>
+              </>
+            )}
+          </div>
+        </>,
+        document.body
       )}
-
-      {/* Drawer Side Panel */}
-      <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#fdfaf7] border-l border-[#d4c4b7] shadow-2xl z-50 transform transition-transform duration-300 ease-out flex flex-col ${drawerOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-      >
-        {drawerContent && (
-          <>
-            {/* Header */}
-            <div className="p-6 border-b border-[#d4c4b7] flex justify-between items-start bg-[#f3eae1]/50">
-              <div>
-                <h3 className="text-xl font-serif text-[#4a3c31] mb-1">{drawerContent.title}</h3>
-                <p className="text-[10px] text-[#7d6b5e] uppercase tracking-wider font-semibold">{drawerContent.description}</p>
-              </div>
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="w-8 h-8 rounded-full border border-[#d4c4b7] flex items-center justify-center text-[#4a3c31] hover:bg-[#e5d8cb] transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Scrollable Body */}
-            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar text-[#4a3c31]">
-              {drawerContent.children}
-            </div>
-          </>
-        )}
-      </div>
 
     </div>
   );
