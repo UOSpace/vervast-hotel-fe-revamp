@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Buildings, Magnifer, Filter, MenuDots, Eye, TrashBinTrash, CloseCircle } from '@solar-icons/react';
+import { Buildings, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
+import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
 import {
   Select,
   SelectContent,
@@ -163,9 +164,15 @@ export function CorporatePage() {
   const [isFilterOpen, setIsFilterOpen]       = useState(false);
   const [categoryFilter, setCategoryFilter]   = useState('All');
   const [sourceFilter, setSourceFilter]       = useState('All');
-  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showDevModal, setShowDevModal]       = useState(false);
+  const [devFeatureName, setDevFeatureName]   = useState<string | undefined>(undefined);
   const [currentPage, setCurrentPage]         = useState(1);
   const PAGE_SIZE = 10;
+
+  const openDevModal = (name?: string) => {
+    setDevFeatureName(name);
+    setShowDevModal(true);
+  };
 
   const toggleDropdown = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -175,7 +182,7 @@ export function CorporatePage() {
   const handleDetail = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setOpenDropdownId(null);
-    setShowDetailModal(true);
+    openDevModal('Company Detail');
   };
 
   const filteredCorporates = mockCorporates.filter(cp => {
@@ -209,7 +216,9 @@ export function CorporatePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold px-4 py-2 rounded-[10px] transition-all shadow-sm cursor-pointer">
+          <button
+            onClick={() => openDevModal('Add Company')}
+            className="flex items-center gap-2 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold px-4 py-2 rounded-[10px] transition-all shadow-sm cursor-pointer">
             <Buildings size={14} />
             Add Company
           </button>
@@ -375,7 +384,9 @@ export function CorporatePage() {
                               <Eye size={14} className="text-[#947b66]" />
                               View Detail
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
+                            <button
+                              onClick={e => { e.stopPropagation(); setOpenDropdownId(null); openDevModal('Delete Company'); }}
+                              className="w-full px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
                               <TrashBinTrash size={14} className="text-red-500" />
                               Delete
                             </button>
@@ -430,46 +441,11 @@ export function CorporatePage() {
         </div>
       </div>
 
-      {/* ── Under Development Modal ────────────────────────────────────── */}
-      {showDetailModal && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] transition-opacity duration-200"
-            onClick={() => setShowDetailModal(false)}
-          />
-          <div className="fixed top-1/2 left-1/2 z-[70] -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[420px] bg-[#fdfaf7] border border-[#d4c4b7] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-center px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent">
-              <h2 className="font-serif text-xl text-[#4a3c31]">Company Detail</h2>
-              <button
-                onClick={() => setShowDetailModal(false)}
-                className="p-2 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors"
-              >
-                <CloseCircle size={20} />
-              </button>
-            </div>
-            <div className="px-6 py-10 flex flex-col items-center gap-4 text-center">
-              <div className="w-16 h-16 rounded-full bg-[#efe7d5] border border-[#d4c4b7] flex items-center justify-center mb-2">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#947b66" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-              </div>
-              <h3 className="font-serif text-2xl text-[#4a3c31]">Under Development</h3>
-              <p className="text-sm text-[#7d6b5e] leading-relaxed max-w-[300px]">
-                Sorry, this detail view is currently under development.<br />
-                Please check back soon.
-              </p>
-              <button
-                onClick={() => setShowDetailModal(false)}
-                className="mt-4 px-6 py-2 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-sm font-semibold rounded-[10px] transition-all"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      <UnderDevelopmentModal
+        open={showDevModal}
+        onClose={() => setShowDevModal(false)}
+        featureName={devFeatureName}
+      />
     </div>
   );
 }

@@ -2309,11 +2309,283 @@ export function DashboardDrawer() {
             );
           }
           
+          if (detailKey === 'UTILIZATION_OVER_TIME') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Weekly spa utilization rate across all treatment rooms, MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Week</th>
+                        <th className="p-2.5 text-right">Utilization Rate</th>
+                        <th className="p-2.5 text-right">Appointments</th>
+                        <th className="p-2.5 text-right">vs Prior Week</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { week: 'May 1 – May 7',   util: '65%', appts: 186, delta: '—' },
+                        { week: 'May 8 – May 14',  util: '72%', appts: 214, delta: '+7pp' },
+                        { week: 'May 15 – May 21', util: '68%', appts: 198, delta: '-4pp' },
+                        { week: 'May 22 – May 28', util: '74%', appts: 232, delta: '+6pp' },
+                        { week: 'May 29 – May 31', util: '71%', appts: 418, delta: '-3pp' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.week}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.util}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.appts}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.delta.startsWith('+') ? 'text-[#15803d]' : row.delta === '—' ? 'text-[#7d6b5e]' : 'text-[#a65e52]'}`}>{row.delta}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'UTILIZATION_TIME_OF_DAY') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Average treatment room occupancy by time slot across weekdays and weekends.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Time Slot</th>
+                        <th className="p-2.5 text-right">Mon – Thu</th>
+                        <th className="p-2.5 text-right">Fri</th>
+                        <th className="p-2.5 text-right">Sat – Sun</th>
+                        <th className="p-2.5 text-right">Peak Level</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { slot: '6:00 AM – 9:00 AM',   wday: '28%', fri: '42%', wend: '55%', peak: 'Low' },
+                        { slot: '9:00 AM – 12:00 PM',  wday: '52%', fri: '68%', wend: '82%', peak: 'Medium' },
+                        { slot: '12:00 PM – 3:00 PM',  wday: '65%', fri: '74%', wend: '88%', peak: 'High' },
+                        { slot: '3:00 PM – 6:00 PM',   wday: '78%', fri: '92%', wend: '95%', peak: 'Peak' },
+                        { slot: '6:00 PM – 9:00 PM',   wday: '58%', fri: '80%', wend: '74%', peak: 'High' },
+                        { slot: '9:00 PM – 11:00 PM',  wday: '22%', fri: '38%', wend: '40%', peak: 'Low' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.slot}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.wday}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.fri}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.wend}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.peak === 'Peak' ? 'text-[#a65e52]' : row.peak === 'High' ? 'text-[#C8A050]' : 'text-[#7d6b5e]'}`}>{row.peak}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'UTILIZATION_BY_AREA') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Treatment room and facility utilization breakdown by area, MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Spa Area</th>
+                        <th className="p-2.5 text-right">Capacity (Rooms / Slots)</th>
+                        <th className="p-2.5 text-right">MTD Sessions</th>
+                        <th className="p-2.5 text-right">Utilization Rate</th>
+                        <th className="p-2.5 text-right">vs Apr</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { area: 'Treatment Rooms',    cap: '8 rooms × 10 slots',  sessions: 1248, util: '78%', delta: '+5pp' },
+                        { area: 'Hydro Facilities',   cap: '4 pools × 6 slots',   sessions: 312,  util: '65%', delta: '+3pp' },
+                        { area: 'Relaxation Lounge',  cap: '20 seats × 8 slots',  sessions: 496,  util: '62%', delta: '+8pp' },
+                        { area: 'Movement Studio',    cap: '1 studio × 6 classes', sessions: 144,  util: '48%', delta: '-2pp' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.area}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.cap}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.sessions.toLocaleString()}</td>
+                          <td className="p-2.5 text-right font-bold text-[#4a3c31]">{row.util}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.delta.startsWith('+') ? 'text-[#15803d]' : 'text-[#a65e52]'}`}>{row.delta}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'SCHEDULE_OVERVIEW') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Today's appointment status breakdown across all treatment areas.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Status</th>
+                        <th className="p-2.5 text-right">Appointments</th>
+                        <th className="p-2.5 text-right">% of Total</th>
+                        <th className="p-2.5 text-right">Avg Duration</th>
+                        <th className="p-2.5 text-right">Revenue Impact</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { status: 'Completed',          count: 32, pct: '47%', dur: '82 min', rev: '$7,232' },
+                        { status: 'In Progress',         count: 14, pct: '21%', dur: '72 min', rev: '$3,206' },
+                        { status: 'Scheduled',           count: 22, pct: '32%', dur: '75 min', rev: '$5,016' },
+                        { status: 'Cancelled / No Show', count: 0,  pct: '0%',  dur: '—',      rev: '$0' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.status}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.count}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.pct}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.dur}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'TOP_TREATMENTS_DETAIL') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Top performing spa treatments by volume and revenue, MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Rank</th>
+                        <th className="p-2.5">Treatment Name</th>
+                        <th className="p-2.5 text-right">Sessions</th>
+                        <th className="p-2.5 text-right">Avg Rating</th>
+                        <th className="p-2.5 text-right">Avg Ticket</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { rank: 1, name: 'Deep Tissue Massage',    count: 312, rating: '4.8', ticket: '$229', rev: '$71,448' },
+                        { rank: 2, name: 'Aromatherapy Massage',   count: 248, rating: '4.7', ticket: '$229', rev: '$56,792' },
+                        { rank: 3, name: 'Facial Signature',       count: 196, rating: '4.9', ticket: '$199', rev: '$39,004' },
+                        { rank: 4, name: 'Hot Stone Therapy',      count: 154, rating: '4.8', ticket: '$259', rev: '$39,886' },
+                        { rank: 5, name: 'Detox Body Wrap',        count: 98,  rating: '4.6', ticket: '$249', rev: '$24,402' },
+                        { rank: 6, name: 'Couples Retreat',        count: 72,  rating: '4.9', ticket: '$399', rev: '$28,728' },
+                        { rank: 7, name: 'Himalayan Salt Scrub',   count: 68,  rating: '4.7', ticket: '$219', rev: '$14,892' },
+                        { rank: 8, name: 'Prenatal Massage',       count: 44,  rating: '4.9', ticket: '$219', rev: '$9,636' },
+                        { rank: 9, name: 'Sound Healing Session',  count: 36,  rating: '4.8', ticket: '$179', rev: '$6,444' },
+                        { rank: 10, name: 'Reflexology',           count: 20,  rating: '4.6', ticket: '$149', rev: '$2,980' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 text-[#7d6b5e] font-bold">{row.rank}</td>
+                          <td className="p-2.5 font-bold">{row.name}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.count}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.rating} / 5</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.ticket}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'REVENUE_BY_CATEGORY') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Treatment revenue breakdown by service category, MTD.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Category</th>
+                        <th className="p-2.5 text-right">Sessions</th>
+                        <th className="p-2.5 text-right">Revenue Share</th>
+                        <th className="p-2.5 text-right">Avg Ticket</th>
+                        <th className="p-2.5 text-right">Total Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { cat: 'Massages',          sessions: 692, share: '54%', ticket: '$224', rev: '$154,808' },
+                        { cat: 'Facials',            sessions: 270, share: '22%', ticket: '$192', rev: '$51,840' },
+                        { cat: 'Body Treatments',   sessions: 180, share: '14%', ticket: '$238', rev: '$42,840' },
+                        { cat: 'Wellness Rituals',  sessions: 82,  share: '7%',  ticket: '$249', rev: '$20,418' },
+                        { cat: 'Other',             sessions: 24,  share: '3%',  ticket: '$143', rev: '$3,432' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.cat}</td>
+                          <td className="p-2.5 text-right text-[#657454] font-semibold">{row.sessions}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.share}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.ticket}</td>
+                          <td className="p-2.5 text-right font-bold text-[#a65e52]">{row.rev}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
+          if (detailKey === 'UPCOMING_PEAK_TIMES') {
+            return (
+              <div className="space-y-6 animate-fade-in text-[#4a3c31]">
+                <p className="text-xs text-[#7d6b5e]">Forecasted high-demand periods with therapist availability and pre-booking rate.</p>
+                <div className="overflow-x-auto border border-[#d4c4b7]/60 rounded-lg bg-white/40">
+                  <table className="w-full text-[10px] text-[#4a3c31]">
+                    <thead>
+                      <tr className="border-b border-[#d4c4b7] bg-[#f3eae1]/50 text-left font-bold">
+                        <th className="p-2.5">Date</th>
+                        <th className="p-2.5">Peak Window</th>
+                        <th className="p-2.5 text-right">Demand Level</th>
+                        <th className="p-2.5 text-right">Therapists Available</th>
+                        <th className="p-2.5 text-right">Pre-Booked</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { date: 'May 31 (Fri)', window: '3:00 PM – 6:00 PM', level: 'High',   avail: '6 / 8', booked: '78%' },
+                        { date: 'Jun 1 (Sat)', window: '10:00 AM – 1:00 PM', level: 'High',   avail: '8 / 8', booked: '91%' },
+                        { date: 'Jun 2 (Sun)', window: '11:00 AM – 2:00 PM', level: 'Medium', avail: '7 / 8', booked: '62%' },
+                        { date: 'Jun 7 (Fri)', window: '4:00 PM – 7:00 PM',  level: 'High',   avail: '6 / 8', booked: '74%' },
+                        { date: 'Jun 8 (Sat)', window: '2:00 PM – 5:00 PM',  level: 'Medium', avail: '8 / 8', booked: '55%' },
+                        { date: 'Jun 14 (Fri)', window: '3:00 PM – 6:00 PM', level: 'Medium', avail: '7 / 8', booked: '48%' },
+                      ].map((row, idx) => (
+                        <tr key={idx} className="border-b border-[#d4c4b7]/30 last:border-0 hover:bg-[#f3eae1]/20 transition-colors">
+                          <td className="p-2.5 font-bold">{row.date}</td>
+                          <td className="p-2.5 text-[#7d6b5e]">{row.window}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.level === 'High' ? 'text-[#a65e52]' : 'text-[#C8A050]'}`}>{row.level}</td>
+                          <td className="p-2.5 text-right text-[#7d6b5e]">{row.avail}</td>
+                          <td className="p-2.5 text-right font-bold text-[#657454]">{row.booked}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div className="text-xs text-[#7d6b5e] italic">
               Detailed statistics and analytics reports for {config.title}.
             </div>
           );
+
         }
 
       default:

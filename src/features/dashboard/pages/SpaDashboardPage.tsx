@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar, Wallet, Bag, Bed, Sunrise, Heart, Settings, UsersGroupTwoRounded, Star } from '@solar-icons/react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
+import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
 
 // Custom icons
 const LotusIcon = () => (
@@ -104,6 +105,13 @@ export function SpaDashboardPage() {
   const [startDate, setStartDate] = useState<Date | null>(new Date('2024-05-01'));
   const [endDate, setEndDate] = useState<Date | null>(new Date('2024-05-31'));
   const { openDrawer } = useDashboardDrawer();
+  const [showDevModal, setShowDevModal] = useState(false);
+  const [devFeatureName, setDevFeatureName] = useState<string | undefined>(undefined);
+
+  const openDevModal = (name?: string) => {
+    setDevFeatureName(name);
+    setShowDevModal(true);
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
@@ -131,7 +139,9 @@ export function SpaDashboardPage() {
             />
             <Calendar size={12} className="text-[#947b66] ml-1.5" />
           </div>
-          <button className="bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] px-4 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
+          <button
+            onClick={() => openDevModal('Export Report')}
+            className="bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] px-4 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             Export
           </button>
@@ -399,7 +409,7 @@ export function SpaDashboardPage() {
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all treatments →</button>
+          <button onClick={() => openDevModal('All Treatments')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all treatments →</button>
         </div>
 
         {/* 2. Revenue By Category */}
@@ -443,7 +453,7 @@ export function SpaDashboardPage() {
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all therapists →</button>
+          <button onClick={() => openDevModal('Therapist Profiles')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all therapists →</button>
         </div>
 
         {/* 4. Upcoming Peak Times */}
@@ -465,7 +475,7 @@ export function SpaDashboardPage() {
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full forecast →</button>
+          <button onClick={() => openDevModal('Demand Forecast')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full forecast →</button>
         </div>
       </div>
 
@@ -482,7 +492,7 @@ export function SpaDashboardPage() {
             <div className="flex justify-between items-center"><span className="text-[#7d6b5e]">Packages Sold</span><span className="font-bold text-[#4a3c31]">72 <span className="text-[8px] text-[#15803d] font-bold ml-1">+15%</span></span></div>
             <div className="flex justify-between items-center"><span className="text-[#7d6b5e]">Package Revenue</span><span className="font-bold text-[#4a3c31]">$86,240 <span className="text-[8px] text-[#15803d] font-bold ml-1">+21%</span></span></div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View membership report →</button>
+          <button onClick={() => openDevModal('Membership Report')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View membership report →</button>
         </div>
 
         {/* 2. Guest Wellness Insights */}
@@ -496,7 +506,7 @@ export function SpaDashboardPage() {
             <div className="flex items-start gap-2"><Bed size={14} className="text-[#947b66] shrink-0 mt-0.5" /> <span>Guests staying <strong>3+ nights</strong> are <strong>2.3x</strong> more likely to book a spa treatment.</span></div>
             <div className="flex items-start gap-2"><Sunrise size={14} className="text-[#C8A050] shrink-0 mt-0.5" /> <span>Sunset hours (4 - 7 PM) are the most popular for spa bookings.</span></div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full insights →</button>
+          <button onClick={() => openDevModal('Guest Wellness Insights')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full insights →</button>
         </div>
 
         {/* 3. Retail Top Sellers */}
@@ -513,7 +523,7 @@ export function SpaDashboardPage() {
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all products →</button>
+          <button onClick={() => openDevModal('Retail Products')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all products →</button>
         </div>
 
         {/* 4. Wellness Experience Index */}
@@ -535,7 +545,7 @@ export function SpaDashboardPage() {
               <div className="flex justify-between"><span>Booking Experience</span><span className="font-bold text-[#4a3c31]">4.8</span></div>
             </div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full feedback →</button>
+          <button onClick={() => openDevModal('Guest Feedback')} className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full feedback →</button>
         </div>
       </div>
 
@@ -558,6 +568,12 @@ export function SpaDashboardPage() {
           </div>
         ))}
       </div>
+
+      <UnderDevelopmentModal
+        open={showDevModal}
+        onClose={() => setShowDevModal(false)}
+        featureName={devFeatureName}
+      />
     </div>
   );
 }
