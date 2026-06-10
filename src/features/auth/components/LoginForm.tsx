@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeClosed } from '@solar-icons/react';
 import { useLogin } from '../hooks/useLogin';
-import { Logo } from '@/components/ui/Logo';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -20,45 +19,39 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
-      <div className="flex justify-center mb-6">
-        <Logo className="w-24 h-auto" />
-      </div>
-      <div className="space-y-2 mb-8 text-center">
+      <div className="space-y-2 mb-4 text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Welcome Back</h1>
-        <p className="text-muted-foreground">
-          Sign in to your account to continue
-        </p>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
           <div className="p-3 text-sm text-red-600 bg-red-100/50 rounded-md border border-red-200/50">
             {error}
           </div>
         )}
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email address</Label>
-            <Input 
-              id="email" 
-              type="email" 
-              placeholder="you@example.com" 
-              required 
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              required
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               className="bg-transparent border-border/60"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Input 
-                id="password" 
+              <Input
+                id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="••••••••" 
-                required 
+                placeholder="••••••••"
+                required
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 className="bg-transparent border-border/60 pr-10"
@@ -78,7 +71,7 @@ export function LoginForm() {
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Checkbox id="remember-me" className="border-border/60" />
