@@ -8,12 +8,12 @@ import { ResortChannelStatsWidget } from '../components/widgets/resort-type/Reso
 
 // Property type configurations with capacity, baseline occupancy, and baseline ADR
 const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
-  desert: { capacity: 200, occupancy: 58, adr: 5000 },
-  ocean: { capacity: 300, occupancy: 72, adr: 5800 },
-  city: { capacity: 500, occupancy: 55, adr: 10200 },
-  alpine: { capacity: 250, occupancy: 65, adr: 5700 },
-  countryside: { capacity: 150, occupancy: 60, adr: 4000 },
-  forest: { capacity: 100, occupancy: 50, adr: 3240 },
+  desert: { capacity: 50, occupancy: 65, adr: 33000 },
+  ocean: { capacity: 80, occupancy: 75, adr: 39000 },
+  city: { capacity: 140, occupancy: 68, adr: 53000 },
+  alpine: { capacity: 70, occupancy: 70, adr: 41500 },
+  countryside: { capacity: 45, occupancy: 61, adr: 32000 },
+  forest: { capacity: 28, occupancy: 58, adr: 26500 },
 };
 
 // Static breakdown configurations
@@ -141,6 +141,18 @@ export function ResortTypeDashboard() {
   const { totalOccupiedNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
 
+    if (activeList.length === 6) {
+      // 161 days represents the YTD range (Jan 1, 2026 to Jun 10, 2026)
+      const scaleFactor = days / 161;
+      return {
+        totalOccupiedNights: Math.round(2810 * scaleFactor),
+        totalRevenue: 118000000 * scaleFactor,
+        avgOcc: 68,
+        avgAdr: 42000,
+        avgRevpar: 28560
+      };
+    }
+
     let totalAvail = 0;
     let totalOcc = 0;
     let totalRev = 0;
@@ -172,6 +184,17 @@ export function ResortTypeDashboard() {
   // Calculate comparison metrics to derive realistic and consistent trends
   const compMetrics = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
+
+    if (activeList.length === 6) {
+      const scaleFactor = compDays / 161;
+      return {
+        totalOccupiedNights: Math.round(2646 * scaleFactor),
+        totalRevenue: 103508772 * scaleFactor,
+        avgOcc: 65,
+        avgAdr: 38889,
+        avgRevpar: 26692
+      };
+    }
 
     let totalAvail = 0;
     let totalOcc = 0;
