@@ -1,5 +1,5 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
-import { LoginPage } from './features/auth';
+import { LoginPage, PortalSelectionPage } from './features/auth';
 import { DashboardPage, FnbDashboardPage, SpaDashboardPage } from './features/dashboard';
 import { PropertyDashboardPage } from './features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from './components/layouts/MasterLayout';
@@ -16,6 +16,10 @@ export const routes: RouteObject[] = [
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/portal',
+    element: <PortalSelectionPage />,
   },
   {
     // All routes that require the MasterLayout (Sidebar) go here

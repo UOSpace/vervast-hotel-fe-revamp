@@ -14,8 +14,8 @@ export function useLogin() {
     try {
       const response = await authService.login(payload);
       localStorage.setItem('auth_token', response.token);
-      // Redirect to dashboard or home after successful login
-      navigate('/dashboard');
+      // Redirect to portal selection after successful login
+      navigate('/portal');
       return true;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to login. Please try again.');
