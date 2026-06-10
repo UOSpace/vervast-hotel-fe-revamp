@@ -21,21 +21,21 @@ export function PortalSelectionPage() {
       id: 'sanctuary',
       label: 'Sanctuary',
       image: sanctuaryPortalImg,
-      path: '/dashboard/spa',
+      path: '/dashboard',
       glowColor: 'rgba(166, 94, 82, 0.5)'
     },
     {
       id: 'design',
       label: 'Design',
       image: designPortalImg,
-      path: '/dashboard/property',
+      path: '/dashboard',
       glowColor: 'rgba(88, 105, 129, 0.5)'
     },
     {
       id: 'fnb-experience',
       label: 'F&B & Experience',
       image: fnbPortalImg,
-      path: '/dashboard/experience/fnb',
+      path: '/dashboard',
       glowColor: 'rgba(101, 116, 84, 0.5)'
     }
   ];
