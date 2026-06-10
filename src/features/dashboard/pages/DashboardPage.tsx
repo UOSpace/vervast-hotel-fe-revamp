@@ -120,7 +120,7 @@ export function DashboardPage() {
             <div>
               <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
               <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide mb-1.5 flex items-center gap-2">
-                <span>Welcome to SOSEI Galaxy</span>
+                <span>Welcome to SOSEI Hospitality</span>
               </h2>
               <p className="text-[#7d6b5e] text-xs font-serif italic max-w-2xl leading-relaxed">
                 Crafting moments of serene hospitality, balancing seasonal rhythms, and welcoming the world with gentle grace.
