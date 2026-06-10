@@ -8,12 +8,12 @@ import { ResortChannelStatsWidget } from '../components/widgets/resort-type/Reso
 
 // Property type configurations with capacity, baseline occupancy, and baseline ADR
 const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
-  desert: { capacity: 50, occupancy: 65, adr: 33000 },
-  ocean: { capacity: 80, occupancy: 75, adr: 39000 },
-  city: { capacity: 140, occupancy: 68, adr: 53000 },
-  alpine: { capacity: 70, occupancy: 70, adr: 41500 },
-  countryside: { capacity: 45, occupancy: 61, adr: 32000 },
-  forest: { capacity: 28, occupancy: 58, adr: 26500 },
+  desert: { capacity: 3, occupancy: 65, adr: 33000 },
+  ocean: { capacity: 5, occupancy: 75, adr: 39000 },
+  city: { capacity: 9, occupancy: 68, adr: 53000 },
+  alpine: { capacity: 4, occupancy: 70, adr: 41500 },
+  countryside: { capacity: 3, occupancy: 61, adr: 32000 },
+  forest: { capacity: 2, occupancy: 58, adr: 26500 },
 };
 
 // Static breakdown configurations
@@ -142,8 +142,8 @@ export function ResortTypeDashboard() {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
 
     if (activeList.length === 6) {
-      // 161 days represents the YTD range (Jan 1, 2026 to Jun 10, 2026)
-      const scaleFactor = days / 161;
+      // 160 days represents the calculated difference for YTD range (Jan 1, 2026 to Jun 10, 2026)
+      const scaleFactor = days / 160;
       return {
         totalOccupiedNights: Math.round(2810 * scaleFactor),
         totalRevenue: 118000000 * scaleFactor,
@@ -186,7 +186,7 @@ export function ResortTypeDashboard() {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
 
     if (activeList.length === 6) {
-      const scaleFactor = compDays / 161;
+      const scaleFactor = compDays / 160;
       return {
         totalOccupiedNights: Math.round(2646 * scaleFactor),
         totalRevenue: 103508772 * scaleFactor,
