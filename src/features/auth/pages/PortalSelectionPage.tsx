@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
 import bgImage from '../../../assets/bg/background.png';
-import { Bed, Heart, TagPrice, WineglassTriangle } from '@solar-icons/react';
+import hospitalityPortalImg from '../../../assets/contents/hospitality_portal.png';
+import sanctuaryPortalImg from '../../../assets/contents/sanctuary_portal.png';
+import designPortalImg from '../../../assets/contents/design_portal.png';
+import fnbPortalImg from '../../../assets/contents/fnb_portal.png';
 
 export function PortalSelectionPage() {
   const navigate = useNavigate();
@@ -10,39 +13,35 @@ export function PortalSelectionPage() {
     {
       id: 'hospitality',
       label: 'Hospitality',
-      icon: <Bed size={40} className="text-[#C8A050]" />,
+      image: hospitalityPortalImg,
       path: '/dashboard',
-      desc: 'Sanctuary operations, reservations, and guest data analytics.',
-      glowColor: 'rgba(200, 160, 80, 0.4)'
+      glowColor: 'rgba(200, 160, 80, 0.5)'
     },
     {
       id: 'sanctuary',
       label: 'Sanctuary',
-      icon: <Heart size={40} className="text-[#a65e52]" />,
+      image: sanctuaryPortalImg,
       path: '/dashboard/spa',
-      desc: 'Spa bookings, wellness programs, and holistic amenities logs.',
-      glowColor: 'rgba(166, 94, 82, 0.4)'
+      glowColor: 'rgba(166, 94, 82, 0.5)'
     },
     {
       id: 'design',
       label: 'Design',
-      icon: <TagPrice size={40} className="text-[#586981]" />,
+      image: designPortalImg,
       path: '/dashboard/property',
-      desc: 'Architectural rhythms, destination profiles, and layouts.',
-      glowColor: 'rgba(88, 105, 129, 0.4)'
+      glowColor: 'rgba(88, 105, 129, 0.5)'
     },
     {
       id: 'fnb-experience',
       label: 'F&B & Experience',
-      icon: <WineglassTriangle size={40} className="text-[#657454]" />,
+      image: fnbPortalImg,
       path: '/dashboard/experience/fnb',
-      desc: 'Dining outlets, curations, events, and repeat satisfaction insights.',
-      glowColor: 'rgba(101, 116, 84, 0.4)'
+      glowColor: 'rgba(101, 116, 84, 0.5)'
     }
   ];
 
   return (
-    <div
+    <div 
       className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden text-[#4a3c31] select-none"
       style={{
         backgroundImage: `url(${bgImage})`,
@@ -57,50 +56,45 @@ export function PortalSelectionPage() {
       <div className="z-10 flex flex-col items-center w-full max-w-5xl text-center">
         {/* Header Logo & Title */}
         <div className="flex flex-col items-center mb-16 animate-fade-in">
-          <div className="w-20 h-20 mb-4 p-2 flex items-center justify-center">
-            <Logo className="w-50 h-auto" />
-          </div>
+          <Logo className="w-44 h-auto" />
         </div>
 
         {/* Portal Circles Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full px-4">
           {portals.map((portal, idx) => (
-            <div
+            <div 
               key={portal.id}
               onClick={() => navigate(portal.path)}
               className="flex flex-col items-center cursor-pointer group transition-all duration-300"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
-              {/* Glowing Interactive Circle */}
-              <div
-                className="w-32 h-32 md:w-36 md:h-36 rounded-full border-2 border-[#d4c4b7]/70 bg-[#fbf8f3]/80 backdrop-blur-xs flex items-center justify-center shadow-lg transition-all duration-500 ease-out group-hover:scale-110 group-hover:border-transparent"
+              {/* Glowing Interactive Circle with Background Image */}
+              <div 
+                className="w-44 h-44 md:w-48 md:h-48 rounded-full border-2 border-[#d4c4b7] overflow-hidden relative shadow-lg transition-all duration-500 ease-out group-hover:scale-105"
                 style={{
-                  '--glow-shadow': portal.glowColor
-                } as any}
+                  backgroundImage: `url(${portal.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                }}
               >
-                {/* Glow container */}
-                <div
+                {/* Glow & Overlay container */}
+                <div 
                   className="absolute inset-0 rounded-full transition-all duration-500 opacity-0 group-hover:opacity-100"
                   style={{
-                    boxShadow: `0 0 30px 6px ${portal.glowColor}`,
-                    background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(251,246,240,0.4) 100%)',
-                    border: `2px solid ${portal.glowColor.replace('0.4', '1')}`
+                    boxShadow: `inset 0 0 20px 4px ${portal.glowColor}, 0 0 25px 6px ${portal.glowColor}`,
+                    border: `2px solid ${portal.glowColor.replace('0.5', '1')}`
                   }}
                 />
-
-                {/* Icon wrapper */}
-                <div className="relative z-10 transform transition-transform duration-500 group-hover:scale-110">
-                  {portal.icon}
-                </div>
+                
+                {/* Subtle dark tint overlay */}
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
               </div>
 
-              {/* Title & Description underneath */}
-              <h3 className="mt-6 text-base font-serif font-bold tracking-wider text-[#4a3c31] group-hover:text-[#a65e52] transition-colors duration-300">
+              {/* Title label underneath */}
+              <h3 className="mt-6 text-sm font-sans tracking-[0.15em] uppercase text-[#4a3c31] font-bold group-hover:text-[#a65e52] transition-colors duration-300">
                 {portal.label}
               </h3>
-              <p className="mt-2 text-[10px] text-[#7d6b5e] font-sans leading-relaxed max-w-[200px] opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-                {portal.desc}
-              </p>
             </div>
           ))}
         </div>
