@@ -34,49 +34,49 @@
     },
     "adr": {
       "title": "ADR (USD)",
-      "value": "$2,100",
+      "value": "$42,000",
       "trendText": "8%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        1800,
-        1860,
-        1920,
-        1980,
-        2040,
-        2100
+        36000,
+        37200,
+        38400,
+        39600,
+        40800,
+        42000
       ],
       "color": "#8b6b7a"
     },
     "revenue": {
       "title": "Room Revenue (USD)",
-      "value": "$5.9M",
+      "value": "$118.0M",
       "trendText": "14%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        5.0,
-        5.2,
-        5.4,
-        5.6,
-        5.75,
-        5.9
+        100.0,
+        104.0,
+        108.0,
+        112.0,
+        115.0,
+        118.0
       ],
       "color": "#657454"
     },
     "revPar": {
       "title": "RevPAR (USD)",
-      "value": "$1,428",
+      "value": "$28,560",
       "trendText": "7%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        1200,
-        1245,
-        1295,
-        1345,
-        1390,
-        1428
+        24000,
+        24900,
+        25900,
+        26900,
+        27800,
+        28560
       ],
       "color": "#a67138"
     }
@@ -267,13 +267,13 @@
   "portfolioPerformance": [
     {
       "label": "Total Room Revenue (USD)",
-      "value": "$ 18.7M",
+      "value": "$ 374.0M",
       "trend": "↑ 10%",
       "up": true
     },
     {
       "label": "RevPAR (USD)",
-      "value": "$ 742",
+      "value": "$ 14,840",
       "trend": "↑ 8%",
       "up": true
     },
@@ -285,7 +285,7 @@
     },
     {
       "label": "ADR (USD)",
-      "value": "$ 1,091",
+      "value": "$ 21,820",
       "trend": "↑ 4%",
       "up": true
     }
@@ -412,22 +412,22 @@
   "spendOverTime": [
     {
       "name": "2023",
-      "value": 18650,
+      "value": 373000,
       "color": "#e5b976"
     },
     {
       "name": "2024",
-      "value": 23640,
+      "value": 472800,
       "color": "#c28c46"
     },
     {
       "name": "2025",
-      "value": 29850,
+      "value": 597000,
       "color": "#a67138"
     },
     {
       "name": "2026",
-      "value": 32100,
+      "value": 642000,
       "color": "#789366"
     }
   ],

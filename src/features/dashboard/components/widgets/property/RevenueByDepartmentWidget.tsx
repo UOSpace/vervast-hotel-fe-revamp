@@ -4,13 +4,13 @@ import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 export function RevenueByDepartmentWidget() {
   const { openDrawer } = useDashboardDrawer();
   const data = [
-    { dept: 'Rooms', today: '$52,340', trend: '↑ 9%', up: true },
-    { dept: 'F&B', today: '$18,720', trend: '↑ 7%', up: true },
-    { dept: 'Spa & Wellness', today: '$5,980', trend: '↑ 12%', up: true },
-    { dept: 'Other Income', today: '$1,420', trend: '↑ 5%', up: true },
+    { dept: 'Rooms', today: '$1,046,800', trend: '↑ 9%', up: true },
+    { dept: 'F&B', today: '$374,400', trend: '↑ 7%', up: true },
+    { dept: 'Spa & Wellness', today: '$119,600', trend: '↑ 12%', up: true },
+    { dept: 'Other Income', today: '$28,400', trend: '↑ 5%', up: true },
   ];
 
-  const totals = { today: '$78,460', trend: '↑ 8%', up: true };
+  const totals = { today: '$1,569,200', trend: '↑ 8%', up: true };
 
   return (
     <div 

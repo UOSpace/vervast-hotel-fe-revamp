@@ -216,10 +216,10 @@ export function LiveOverviewMap() {
         }}>
           <div className="space-y-1.5">
             {[
-              { label: 'High Revenue (≥ $4.0M)', color: '#C8A050' },
-              { label: 'Moderate Revenue ($2.0M - $3.9M)', color: '#829C64' },
-              { label: 'Low Revenue ($1.0M - $1.9M)', color: '#477684' },
-              { label: 'Underperforming (< $1.0M)', color: '#71558C' },
+               { label: 'High Revenue (≥ $80.0M)', color: '#C8A050' },
+               { label: 'Moderate Revenue ($40.0M - $79.9M)', color: '#829C64' },
+               { label: 'Low Revenue ($20.0M - $39.9M)', color: '#477684' },
+               { label: 'Underperforming (< $20.0M)', color: '#71558C' },
             ].map(({ label, color }) => (
               <div key={label} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />

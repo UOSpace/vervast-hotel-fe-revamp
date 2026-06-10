@@ -63,54 +63,54 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
   const kpiDataMap: Record<string, any> = {
     // ── Europe ──────────────────────────────────────────────────────────
     'sosei-nocturne': {
-      occ: '68', rev: '$78,460',  revpar: '$742',  adr: '$1,091', los: '4.2',
+      occ: '68', rev: '$1,569,200',  revpar: '$14,840',  adr: '$21,820', los: '4.2',
       arrivals: 24, deps: 18, inhouse: 186, vip: 14
     },
     'sosei-aurora': {
-      occ: '61', rev: '$72,100',  revpar: '$680',  adr: '$1,115', los: '4.8',
+      occ: '61', rev: '$1,442,000',  revpar: '$13,600',  adr: '$22,300', los: '4.8',
       arrivals: 20, deps: 15, inhouse: 162, vip: 11
     },
     'sosei-hearth': {
-      occ: '74', rev: '$88,200',  revpar: '$610',  adr: '$824',   los: '3.9',
+      occ: '74', rev: '$1,764,000',  revpar: '$12,200',  adr: '$16,480',   los: '3.9',
       arrivals: 28, deps: 22, inhouse: 204, vip: 9
     },
     'sosei-pastoral': {
-      occ: '70', rev: '$81,400',  revpar: '$570',  adr: '$814',   los: '3.6',
+      occ: '70', rev: '$1,628,000',  revpar: '$11,400',  adr: '$16,280',   los: '3.6',
       arrivals: 26, deps: 20, inhouse: 188, vip: 7
     },
     // ── Americas ────────────────────────────────────────────────────────
     'sosei-verper': {
-      occ: '88', rev: '$198,000', revpar: '$620',  adr: '$704',   los: '2.3',
+      occ: '88', rev: '$3,960,000', revpar: '$12,400',  adr: '$14,080',   los: '2.3',
       arrivals: 110, deps: 98, inhouse: 418, vip: 36
     },
     'sosei-elan': {
-      occ: '91', rev: '$215,000', revpar: '$660',  adr: '$725',   los: '2.1',
+      occ: '91', rev: '$4,300,000', revpar: '$13,200',  adr: '$14,500',   los: '2.1',
       arrivals: 118, deps: 104, inhouse: 442, vip: 40
     },
     // ── Asia Pacific ────────────────────────────────────────────────────
     'sosei-marea': {
-      occ: '82', rev: '$118,600', revpar: '$940',  adr: '$1,146', los: '6.2',
+      occ: '82', rev: '$2,372,000', revpar: '$18,800',  adr: '$22,920', los: '6.2',
       arrivals: 42, deps: 28, inhouse: 298, vip: 25
     },
     'sosei-pelagia': {
-      occ: '79', rev: '$104,200', revpar: '$870',  adr: '$1,101', los: '5.8',
+      occ: '79', rev: '$2,084,000', revpar: '$17,400',  adr: '$22,020', los: '5.8',
       arrivals: 38, deps: 26, inhouse: 272, vip: 22
     },
     'sosei-sylvan': {
-      occ: '57', rev: '$51,800',  revpar: '$480',  adr: '$842',   los: '3.6',
+      occ: '57', rev: '$1,036,000',  revpar: '$9,600',  adr: '$16,840',   los: '3.6',
       arrivals: 18, deps: 14, inhouse: 112, vip: 6
     },
     'sosei-verdant': {
-      occ: '53', rev: '$44,600',  revpar: '$440',  adr: '$830',   los: '3.3',
+      occ: '53', rev: '$892,000',  revpar: '$8,800',  adr: '$16,600',   los: '3.3',
       arrivals: 15, deps: 12, inhouse: 96, vip: 5
     },
     // ── Middle East & Africa ─────────────────────────────────────────────
     'sosei-mirage': {
-      occ: '42', rev: '$65,300',  revpar: '$630',  adr: '$1,500', los: '5.2',
+      occ: '42', rev: '$1,306,000',  revpar: '$12,600',  adr: '$30,000', los: '5.2',
       arrivals: 9, deps: 7, inhouse: 76, vip: 13
     },
     'sosei-solstice': {
-      occ: '38', rev: '$58,800',  revpar: '$590',  adr: '$1,553', los: '4.9',
+      occ: '38', rev: '$1,176,000',  revpar: '$11,800',  adr: '$31,060', los: '4.9',
       arrivals: 7, deps: 6, inhouse: 68, vip: 10
     },
   };

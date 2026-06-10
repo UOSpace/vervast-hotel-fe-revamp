@@ -8,12 +8,12 @@ import { ResortChannelStatsWidget } from '../components/widgets/resort-type/Reso
 
 // Property type configurations with capacity, baseline occupancy, and baseline ADR
 const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
-  desert: { capacity: 200, occupancy: 58, adr: 250 },
-  ocean: { capacity: 300, occupancy: 72, adr: 290 },
-  city: { capacity: 500, occupancy: 55, adr: 510 },
-  alpine: { capacity: 250, occupancy: 65, adr: 285 },
-  countryside: { capacity: 150, occupancy: 60, adr: 200 },
-  forest: { capacity: 100, occupancy: 50, adr: 162 },
+  desert: { capacity: 200, occupancy: 58, adr: 5000 },
+  ocean: { capacity: 300, occupancy: 72, adr: 5800 },
+  city: { capacity: 500, occupancy: 55, adr: 10200 },
+  alpine: { capacity: 250, occupancy: 65, adr: 5700 },
+  countryside: { capacity: 150, occupancy: 60, adr: 4000 },
+  forest: { capacity: 100, occupancy: 50, adr: 3240 },
 };
 
 // Static breakdown configurations
