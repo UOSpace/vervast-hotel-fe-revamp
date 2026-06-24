@@ -270,7 +270,7 @@ export function LeadDetailPage() {
   }, [id, leadData.leadStatus]);
 
   const [activeTimelineTab, setActiveTimelineTab] = useState<TabType>('All');
-  
+
   // Expanded timelines for field changes view
   const [expandedTimelineId, setExpandedTimelineId] = useState<string | null>(null);
 
@@ -314,8 +314,8 @@ export function LeadDetailPage() {
     }
 
     if (isCanceledActive) {
-      return stageIndex < 3 
-        ? 'bg-[#2b3c4d]/85 text-[#efe7d5]/90 border-[#202e3b]/80 shadow-xs' 
+      return stageIndex < 3
+        ? 'bg-[#2b3c4d]/85 text-[#efe7d5]/90 border-[#202e3b]/80 shadow-xs'
         : 'bg-[#efe7d5]/40 text-[#7d6b5e] border-[#d4c4b7]/30';
     }
 
@@ -339,14 +339,14 @@ export function LeadDetailPage() {
       </div>
 
       <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
-        
+
         {/* Profile / Details Summary Header */}
         <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 backdrop-blur-sm border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
               {leadName.substring(0, 2).toUpperCase()}
             </div>
-            
+
             <div className="flex flex-col gap-1">
               <h2 className="text-2xl font-serif text-[#4a3c31] font-bold">{leadName}</h2>
               <div className="flex items-center gap-2 text-[#7d6b5e] text-[11px]">
@@ -383,11 +383,11 @@ export function LeadDetailPage() {
               const isCanceledActive = activeStage === 'Canceled';
               const activeIndex = stages.indexOf(activeStage);
               const isCompleted = idx <= activeIndex && !isCanceledActive;
-              
+
               // Circle style
               let circleClass = '';
               let circleContent: React.ReactNode = idx + 1;
-              
+
               if (stage === 'Completed' && isCompleted) {
                 circleContent = '✔';
               } else if (stage === 'Canceled' && isCanceledActive) {
@@ -403,7 +403,7 @@ export function LeadDetailPage() {
               } else {
                 circleClass = 'bg-transparent text-[#6a5848] border-[#d4c4b7]/70';
               }
-              
+
               return (
                 <button
                   key={stage}
@@ -416,7 +416,7 @@ export function LeadDetailPage() {
                     </span>
                     {stage}
                   </span>
-                  
+
                   {idx < stages.length - 1 && (
                     <span className="opacity-55 text-xs font-mono font-bold select-none">&gt;&gt;</span>
                   )}
@@ -428,13 +428,13 @@ export function LeadDetailPage() {
 
         {/* Two-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 items-start">
-          
+
           {/* LEFT COLUMN: Details Card & Attachments */}
           <div className="space-y-6">
-            
+
             {/* Details Card */}
             <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs overflow-hidden">
-              <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7] flex justify-between items-center">
+              <div className="bg-[#947b66]/10 backdrop-blur-sm px-5 py-4 border-b border-[#d4c4b7] flex justify-between items-center">
                 <h3 className="text-sm font-bold font-serif text-[#4a3c31]">Details</h3>
                 <div className="flex gap-2">
                   <button type="button" className="p-1 hover:bg-black/5 rounded text-[#7d6b5e] transition-colors"><DoubleAltArrowRight size={14} /></button>
@@ -561,7 +561,7 @@ export function LeadDetailPage() {
 
             {/* Attachments Card */}
             <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs overflow-hidden">
-              <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7]">
+              <div className="bg-[#947b66]/10 backdrop-blur-sm px-5 py-4 border-b border-[#d4c4b7]">
                 <h3 className="text-sm font-bold font-serif text-[#4a3c31]">Attachments</h3>
               </div>
               <div className="p-5 flex flex-col items-center justify-center gap-3">
@@ -583,7 +583,7 @@ export function LeadDetailPage() {
                     ))}
                   </div>
                 )}
-                
+
                 <label className="bg-[#efe7d5]/80 hover:bg-[#e5d8cb] border border-[#d4c4b7] text-[#4a3c31] px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
                   <Upload size={14} className="text-[#947b66]" />
                   Select File
@@ -600,7 +600,7 @@ export function LeadDetailPage() {
 
           {/* RIGHT COLUMN: Timeline Tabs & Activities Feed */}
           <div className="border border-[#d4c4b7] rounded-[12px] overflow-hidden bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs flex flex-col">
-            
+
             {/* Timeline Tabs */}
             <div className="flex overflow-x-auto custom-scrollbar border-b border-[#d4c4b7] bg-[#f3eae1]/60 p-1">
               {([
@@ -616,11 +616,10 @@ export function LeadDetailPage() {
                 <button
                   key={tab.name}
                   onClick={() => setActiveTimelineTab(tab.name)}
-                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
-                    activeTimelineTab === tab.name
-                      ? 'bg-[#947b66] text-[#efe7d5] shadow-xs'
-                      : 'text-[#7d6b5e] hover:bg-[#e5d8cb]/50 hover:text-[#4a3c31]'
-                  }`}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${activeTimelineTab === tab.name
+                    ? 'bg-[#947b66] text-[#efe7d5] shadow-xs'
+                    : 'text-[#7d6b5e] hover:bg-[#e5d8cb]/50 hover:text-[#4a3c31]'
+                    }`}
                 >
                   {tab.icon}
                   {tab.name}
@@ -636,7 +635,7 @@ export function LeadDetailPage() {
                     const isExpanded = expandedTimelineId === act.id;
                     return (
                       <div key={act.id} className="relative group">
-                        
+
                         {/* Timeline Bullet Icon */}
                         <span className="absolute -left-[35px] top-0 w-[18px] h-[18px] rounded-full bg-[#fdfaf7] border border-[#d4c4b7] flex items-center justify-center text-[#947b66] shadow-2xs">
                           {act.iconType === 'plus' && <span className="text-[11px] font-bold">+</span>}
@@ -656,7 +655,7 @@ export function LeadDetailPage() {
                               <span className="text-[#7d6b5e]">{act.details}</span>
                             )}
                             <span className="text-[10px] text-[#7d6b5e] ml-2">• {act.timestamp}</span>
-                            
+
                             {/* Expandable Field Updates */}
                             {act.iconType === 'edit' && act.updatedFields && (
                               <div className="mt-1">

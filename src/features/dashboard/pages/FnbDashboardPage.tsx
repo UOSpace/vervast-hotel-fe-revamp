@@ -155,7 +155,7 @@ export function FnbDashboardPage() {
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
-      
+
       {/* Header Widget */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#d4c4b7]/40 pb-4 mt-2 gap-4">
         <div>
@@ -180,7 +180,7 @@ export function FnbDashboardPage() {
             <Calendar size={12} className="text-[#947b66] ml-1.5" />
           </div>
           <button className="bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] px-4 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
             Export
           </button>
         </div>
@@ -369,7 +369,7 @@ export function FnbDashboardPage() {
             {topExperiences.map((exp, idx) => (
               <div key={idx} className="flex justify-between items-center py-1.5 border-b border-[#d4c4b7]/25 last:border-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-[#947b66]/10 flex items-center justify-center font-bold text-[9px] text-[#947b66]">
+                  <div className="w-6 h-6 rounded-md bg-[#947b66]/10 backdrop-blur-sm flex items-center justify-center font-bold text-[9px] text-[#947b66]">
                     {idx + 1}
                   </div>
                   <div>

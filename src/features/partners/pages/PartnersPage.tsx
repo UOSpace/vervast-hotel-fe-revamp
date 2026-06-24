@@ -831,7 +831,7 @@ export function PartnersPage() {
                 </div>
               </div>
 
-              <span className="px-2 py-0.5 rounded bg-[#947b66]/10 border border-[#947b66]/30 text-[#4a3c31] text-[8px] font-bold tracking-wider">
+              <span className="px-2 py-0.5 rounded bg-[#947b66]/10 backdrop-blur-sm border border-[#947b66]/30 text-[#4a3c31] text-[8px] font-bold tracking-wider">
                 {selectedPartner.tier}
               </span>
             </div>
@@ -1186,7 +1186,7 @@ export function PartnersPage() {
 
             <div className="flex items-center justify-between border-b border-[#d4c4b7]/20 pb-2">
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#947b66]/20 flex items-center justify-center text-[#947b66] shrink-0">
+                <div className="w-5 h-5 rounded-full bg-[#947b66]/20 backdrop-blur-sm flex items-center justify-center text-[#947b66] shrink-0">
                   <HandShake size={12} />
                 </div>
                 <div>
@@ -1342,11 +1342,10 @@ export function PartnersPage() {
 
           {/* Centered Modal Panel */}
           <div
-            className={`fixed top-1/2 left-1/2 z-[9999] max-h-[85vh] w-[92vw] sm:w-[660px] bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform -translate-x-1/2 ${
-              drawerOpen
-                ? 'opacity-100 scale-100 -translate-y-1/2'
-                : 'opacity-0 scale-50 -translate-y-[20%] pointer-events-none'
-            }`}
+            className={`fixed top-1/2 left-1/2 z-[9999] max-h-[85vh] w-[92vw] sm:w-[660px] bg-[#fdfaf7] shadow-2xl rounded-2xl border border-[#d4c4b7] flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform -translate-x-1/2 ${drawerOpen
+              ? 'opacity-100 scale-100 -translate-y-1/2'
+              : 'opacity-0 scale-50 -translate-y-[20%] pointer-events-none'
+              }`}
           >
             {drawerContent && (
               <>

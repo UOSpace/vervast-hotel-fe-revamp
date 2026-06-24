@@ -159,14 +159,14 @@ const ALL_CATEGORIES = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function CorporatePage() {
-  const [searchTerm, setSearchTerm]           = useState('');
-  const [openDropdownId, setOpenDropdownId]   = useState<string | null>(null);
-  const [isFilterOpen, setIsFilterOpen]       = useState(false);
-  const [categoryFilter, setCategoryFilter]   = useState('All');
-  const [sourceFilter, setSourceFilter]       = useState('All');
-  const [showDevModal, setShowDevModal]       = useState(false);
-  const [devFeatureName, setDevFeatureName]   = useState<string | undefined>(undefined);
-  const [currentPage, setCurrentPage]         = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [sourceFilter, setSourceFilter] = useState('All');
+  const [showDevModal, setShowDevModal] = useState(false);
+  const [devFeatureName, setDevFeatureName] = useState<string | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 10;
 
   const openDevModal = (name?: string) => {
@@ -191,15 +191,15 @@ export function CorporatePage() {
       cp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cp.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || cp.category === categoryFilter;
-    const matchesSource   = sourceFilter === 'All' || cp.source === sourceFilter;
+    const matchesSource = sourceFilter === 'All' || cp.source === sourceFilter;
     return matchesSearch && matchesCategory && matchesSource;
   });
 
   // Reset to page 1 whenever filters/search change
   useEffect(() => { setCurrentPage(1); }, [searchTerm, categoryFilter, sourceFilter]);
 
-  const totalPages   = Math.max(1, Math.ceil(filteredCorporates.length / PAGE_SIZE));
-  const pagedData    = filteredCorporates.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filteredCorporates.length / PAGE_SIZE));
+  const pagedData = filteredCorporates.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
@@ -339,7 +339,7 @@ export function CorporatePage() {
                       {/* Category */}
                       <td className="px-6 py-4 min-w-[180px]">
                         {cp.category ? (
-                          <span className="px-2 py-1 rounded-full text-[10px] font-medium border bg-[#947b66]/10 text-[#4a3c31] border-[#947b66]/20">
+                          <span className="px-2 py-1 rounded-full text-[10px] font-medium border bg-[#947b66]/10 backdrop-blur-sm text-[#4a3c31] border-[#947b66]/20">
                             {cp.category}
                           </span>
                         ) : (
@@ -358,7 +358,7 @@ export function CorporatePage() {
                           <span className="text-[#d4c4b7] text-[11px]">Unknown</span>
                         ) : (
                           <span className="flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-[#947b66]/20 border border-[#947b66]/30 flex items-center justify-center text-[8px] font-bold text-[#947b66]">
+                            <span className="w-4 h-4 rounded-full bg-[#947b66]/20 backdrop-blur-sm border border-[#947b66]/30 flex items-center justify-center text-[8px] font-bold text-[#947b66]">
                               {cp.owner.charAt(0).toUpperCase()}
                             </span>
                             <span className="text-[11px] text-[#7d6b5e]">{cp.owner}</span>
@@ -422,7 +422,7 @@ export function CorporatePage() {
             <div className="flex gap-1">
               <Button
                 variant="ghost" size="sm"
-                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${ currentPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer' }`}
+                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${currentPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage <= 1}
               >
@@ -430,7 +430,7 @@ export function CorporatePage() {
               </Button>
               <Button
                 variant="ghost" size="sm"
-                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${ currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer' }`}
+                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage >= totalPages}
               >

@@ -262,7 +262,7 @@ export function ActivitiesPage() {
   // Selected Activity Detail States
   const [selectedActId, setSelectedActId] = useState<string | null>(null);
   const [detailTab, setDetailTab] = useState<'details' | 'comments'>('details');
-  
+
   // Action menu state
   const [isActionsOpen, setIsActionsOpen] = useState(false);
 
@@ -296,10 +296,10 @@ export function ActivitiesPage() {
       act.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       act.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
       act.type.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesType = typeFilter === 'All' || act.type === typeFilter;
     const matchesOwner = ownerFilter === 'All' || act.owner === ownerFilter;
-    
+
     return matchesSearch && matchesType && matchesOwner;
   });
 
@@ -477,10 +477,10 @@ export function ActivitiesPage() {
 
       {/* Main Split Layout Container */}
       <div className="flex-1 min-h-0 flex gap-6 px-4 lg:px-6 pb-6 items-stretch relative">
-        
+
         {/* LEFT COLUMN: Table List */}
         <div className={`flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] backdrop-blur-sm bg-transparent overflow-hidden transition-all duration-300 animate-card-enter`}>
-          
+
           {/* Toolbar */}
           <div className="p-4 border-b border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/50">
             <div className="relative w-80">
@@ -569,16 +569,14 @@ export function ActivitiesPage() {
                       <tr
                         key={act.id}
                         onClick={() => handleRowClick(act)}
-                        className={`hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group ${
-                          isSelected ? 'bg-[#947b66]/20 font-bold' : ''
-                        } ${act.completed ? 'opacity-65' : ''}`}
+                        className={`hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group ${isSelected ? 'bg-[#947b66]/20 backdrop-blur-sm font-bold' : ''
+                          } ${act.completed ? 'opacity-65' : ''}`}
                       >
                         <td className="px-4 py-4 text-center font-medium text-[#7d6b5e] whitespace-nowrap">
                           {act.completed ? '✓' : startIndex + index + 1}
                         </td>
-                        <td className={`px-4 py-4 font-medium transition-colors whitespace-nowrap ${
-                          isSelected ? 'text-[#947b66]' : 'group-hover:text-[#947b66]'
-                        } ${act.completed ? 'line-through text-[#7d6b5e]' : ''}`}>{act.title}</td>
+                        <td className={`px-4 py-4 font-medium transition-colors whitespace-nowrap ${isSelected ? 'text-[#947b66]' : 'group-hover:text-[#947b66]'
+                          } ${act.completed ? 'line-through text-[#7d6b5e]' : ''}`}>{act.title}</td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-medium border whitespace-nowrap inline-flex items-center justify-center ${getTypeStyle(act.type)}`}>
                             {act.type === 'Call' ? <Phone size={11} className="mr-1 inline" /> : <Letter size={11} className="mr-1 inline" />}
@@ -630,11 +628,10 @@ export function ActivitiesPage() {
                   key={pageNum}
                   variant={currentPage === pageNum ? 'default' : 'ghost'}
                   size="sm"
-                  className={`h-7 w-7 p-0 text-xs rounded-full ${
-                    currentPage === pageNum
-                      ? 'bg-[#947b66] text-white hover:bg-[#7d6b5e]'
-                      : 'text-[#4a3c31] hover:bg-[#d4c4b7]/30'
-                  }`}
+                  className={`h-7 w-7 p-0 text-xs rounded-full ${currentPage === pageNum
+                    ? 'bg-[#947b66] text-white hover:bg-[#7d6b5e]'
+                    : 'text-[#4a3c31] hover:bg-[#d4c4b7]/30'
+                    }`}
                   onClick={() => setCurrentPage(pageNum)}
                 >
                   {pageNum}
@@ -654,17 +651,16 @@ export function ActivitiesPage() {
         </div>
 
         {/* RIGHT COLUMN: Slide-out Detail Panel */}
-        <div className={`shrink-0 rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${
-          selectedActId 
-            ? 'w-[450px] opacity-100 translate-x-0 scale-100 ml-4 border border-[#d4c4b7]' 
-            : 'w-0 opacity-0 translate-x-[100px] scale-95 pointer-events-none ml-0 border-0'
-        }`}>
-          
+        <div className={`shrink-0 rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${selectedActId
+          ? 'w-[450px] opacity-100 translate-x-0 scale-100 ml-4 border border-[#d4c4b7]'
+          : 'w-0 opacity-0 translate-x-[100px] scale-95 pointer-events-none ml-0 border-0'
+          }`}>
+
           {/* Detail Header */}
-          <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7] shrink-0">
+          <div className="bg-[#947b66]/10 backdrop-blur-sm px-5 py-4 border-b border-[#d4c4b7] shrink-0">
             <div className="flex justify-between items-start mb-1">
               <h3 className="text-[13px] font-bold font-serif text-[#4a3c31] truncate pr-4">{selectedActivity ? selectedActivity.title : editTitle}</h3>
-              <button 
+              <button
                 onClick={() => setSelectedActId(null)}
                 className="text-[#7d6b5e] hover:text-[#4a3c31] transition-colors p-0.5 rounded-full hover:bg-black/5"
               >
@@ -682,9 +678,8 @@ export function ActivitiesPage() {
               <button
                 type="button"
                 onClick={() => setDetailTab('details')}
-                className={`py-2.5 text-xs font-semibold relative transition-colors ${
-                  detailTab === 'details' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
-                }`}
+                className={`py-2.5 text-xs font-semibold relative transition-colors ${detailTab === 'details' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
+                  }`}
               >
                 Sales Activity
                 {detailTab === 'details' && (
@@ -694,9 +689,8 @@ export function ActivitiesPage() {
               <button
                 type="button"
                 onClick={() => setDetailTab('comments')}
-                className={`py-2.5 text-xs font-semibold relative transition-colors ${
-                  detailTab === 'comments' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
-                }`}
+                className={`py-2.5 text-xs font-semibold relative transition-colors ${detailTab === 'comments' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
+                  }`}
               >
                 Comments ({editComments.length})
                 {detailTab === 'comments' && (
@@ -738,7 +732,7 @@ export function ActivitiesPage() {
 
           {/* Scrollable Form/Comments Area */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
-            
+
             {/* TAB 1: DETAILS */}
             {detailTab === 'details' && (
               <form onSubmit={handleSave} className="space-y-4">
@@ -776,22 +770,20 @@ export function ActivitiesPage() {
                     <button
                       type="button"
                       onClick={() => setEditType('Call')}
-                      className={`flex-1 py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                        editType === 'Call'
-                          ? 'bg-amber-500/10 text-amber-800 border-amber-500/30 shadow-xs'
-                          : 'bg-white/30 text-[#7d6b5e] border-[#d4c4b7]/60'
-                      }`}
+                      className={`flex-1 py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${editType === 'Call'
+                        ? 'bg-amber-500/10 text-amber-800 border-amber-500/30 shadow-xs'
+                        : 'bg-white/30 text-[#7d6b5e] border-[#d4c4b7]/60'
+                        }`}
                     >
                       <Phone size={13} /> Call
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditType('Email')}
-                      className={`flex-1 py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                        editType === 'Email'
-                          ? 'bg-sky-500/10 text-sky-800 border-sky-500/30 shadow-xs'
-                          : 'bg-white/30 text-[#7d6b5e] border-[#d4c4b7]/60'
-                      }`}
+                      className={`flex-1 py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${editType === 'Email'
+                        ? 'bg-sky-500/10 text-sky-800 border-sky-500/30 shadow-xs'
+                        : 'bg-white/30 text-[#7d6b5e] border-[#d4c4b7]/60'
+                        }`}
                     >
                       <Letter size={13} /> Email
                     </button>
@@ -919,8 +911,8 @@ export function ActivitiesPage() {
                       <option value="Yuhuu Corp">Yuhuu Corp</option>
                       <option value="Travel Genius">Travel Genius</option>
                     </select>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => setEditCompany('New Company Ltd')}
                       className="text-left text-[10px] text-[#947b66] hover:underline hover:text-[#7d6b5e] w-fit font-semibold mt-1"
                     >
@@ -939,7 +931,7 @@ export function ActivitiesPage() {
                       {editAttachments.map((file, i) => (
                         <div key={i} className="flex justify-between items-center p-2.5 bg-white/20 border border-[#d4c4b7]/50 rounded-lg text-xs">
                           <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-8 h-8 rounded-lg bg-[#947b66]/20 flex items-center justify-center font-bold text-[9px] text-[#4a3c31] shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-[#947b66]/20 backdrop-blur-sm flex items-center justify-center font-bold text-[9px] text-[#4a3c31] shrink-0">
                               JPG
                             </div>
                             <div className="min-w-0 flex flex-col">
@@ -1003,7 +995,7 @@ export function ActivitiesPage() {
                       if (e.key === 'Enter') handleAddComment();
                     }}
                   />
-                  <Button 
+                  <Button
                     onClick={handleAddComment}
                     className="h-9 px-4 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold rounded-lg"
                   >
@@ -1018,7 +1010,7 @@ export function ActivitiesPage() {
                       <div key={comment.id} className="p-3 border border-[#d4c4b7]/50 rounded-xl bg-white/25 flex flex-col gap-2">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[9px] font-bold text-[#4a3c31]">
+                            <div className="w-6 h-6 rounded-full bg-[#947b66]/20 backdrop-blur-sm border border-[#947b66] flex items-center justify-center text-[9px] font-bold text-[#4a3c31]">
                               {comment.avatar}
                             </div>
                             <div className="flex flex-col">
@@ -1026,7 +1018,7 @@ export function ActivitiesPage() {
                               <span className="text-[9px] text-[#7d6b5e]">{comment.date}</span>
                             </div>
                           </div>
-                          
+
                           {/* Comment options if author is vervast */}
                           {comment.author === 'vervast' && (
                             <div className="flex items-center gap-1">

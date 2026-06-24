@@ -75,7 +75,7 @@ export function GuestsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'In House': return 'bg-[#947b66]/20 text-[#4a3c31] border-[#947b66]/30';
+      case 'In House': return 'bg-[#947b66]/20 backdrop-blur-sm text-[#4a3c31] border-[#947b66]/30';
       case 'Arriving': return 'bg-[#C8A050]/20 text-[#7a5e2a] border-[#C8A050]/30';
       case 'Departed': return 'bg-[#7d6b5e]/20 text-[#4a3c31] border-[#7d6b5e]/30';
       case 'Confirmed': return 'bg-blue-500/10 text-blue-800 border-blue-500/20';

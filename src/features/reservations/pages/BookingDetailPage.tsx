@@ -357,7 +357,7 @@ const mockBookings = [
 
 const getBookingDetail = (id: string) => {
   const base = mockBookings.find(b => b.id === id) || mockBookings[0];
-  
+
   if (base.id === 'BK-001') {
     return {
       ...base,
@@ -430,7 +430,7 @@ export function BookingDetailPage() {
   const [arrival, setArrival] = useState<Date | null>(new Date(initialData.arrival));
   const [departure, setDeparture] = useState<Date | null>(new Date(initialData.departure));
   const [mapLocation, setMapLocation] = useState(initialData.mapLocation);
-  
+
   const [crsNo, setCrsNo] = useState(initialData.crsNo);
   const [originOfBooking, setOriginOfBooking] = useState(initialData.originOfBooking);
   const [cancelationReason, setCancelationReason] = useState(initialData.cancelationReason);
@@ -546,14 +546,14 @@ export function BookingDetailPage() {
       </div>
 
       <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
-        
+
         {/* Profile Header */}
         <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 backdrop-blur-sm border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
               {bookingName.substring(0, 2).toUpperCase()}
             </div>
-            
+
             <div className="flex flex-col gap-1">
               <h2 className="text-2xl font-serif text-[#4a3c31] font-bold">{bookingName}</h2>
               <div className="flex items-center gap-2 text-[#7d6b5e] text-[11px]">
@@ -589,7 +589,7 @@ export function BookingDetailPage() {
             {stages.map((stage, idx) => {
               const status = getStageStatus(stage);
               let circleContent: React.ReactNode = idx + 1;
-              
+
               if (status === 'completed') {
                 circleContent = '✔';
               } else if (stage === 'Cancelled' && bookingStatus === 'Cancelled') {
@@ -637,11 +637,10 @@ export function BookingDetailPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 border-b-2 font-serif text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${
-                activeTab === tab
+              className={`px-4 py-2 border-b-2 font-serif text-sm font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap ${activeTab === tab
                   ? 'border-[#947b66] text-[#4a3c31]'
                   : 'border-transparent text-[#7d6b5e] hover:text-[#4a3c31]'
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -660,14 +659,14 @@ export function BookingDetailPage() {
 
             {/* Grid Form Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              
+
               {/* Left Form Section */}
               <div className="space-y-6">
-                
+
                 {/* Booking Information */}
                 <div className="space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#947b66] border-b border-[#d4c4b7]/30 pb-1">Booking Information</h4>
-                  
+
                   <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                     <label className="text-[#7d6b5e] font-semibold"><span className="text-red-500">*</span> Lead</label>
                     <div className="flex items-center gap-1.5 px-3 py-1 bg-[#efe7d5]/40 border border-[#d4c4b7] rounded-lg text-xs w-fit">
@@ -720,7 +719,7 @@ export function BookingDetailPage() {
                 {/* Associate With Records */}
                 <div className="space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#947b66] border-b border-[#d4c4b7]/30 pb-1">Associate With Records</h4>
-                  
+
                   <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                     <label className="text-[#7d6b5e] font-semibold"><span className="text-red-500">*</span> Travel Agency</label>
                     <div className="flex items-center gap-1.5 px-3 py-1 bg-[#efe7d5]/40 border border-[#d4c4b7] rounded-lg text-xs w-fit">
@@ -733,7 +732,7 @@ export function BookingDetailPage() {
                 {/* Stay Dates */}
                 <div className="space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#947b66] border-b border-[#d4c4b7]/30 pb-1">Stay Dates</h4>
-                  
+
                   <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                     <label className="text-[#7d6b5e] font-semibold">Arrival Date</label>
                     <div className="relative flex items-center w-full max-w-[280px]">
@@ -792,7 +791,7 @@ export function BookingDetailPage() {
                 {/* Location */}
                 <div className="space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#947b66] border-b border-[#d4c4b7]/30 pb-1">Location</h4>
-                  
+
                   <div className="grid grid-cols-[120px_1fr] items-center gap-4">
                     <label className="text-[#7d6b5e] font-semibold">Map Location</label>
                     <input
@@ -808,7 +807,7 @@ export function BookingDetailPage() {
 
               {/* Right Form Section: Vertical input fields */}
               <div className="space-y-4 border-l border-[#d4c4b7]/35 pl-0 lg:pl-8">
-                
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[#7d6b5e] font-semibold">CRS No.</label>
                   <input
@@ -989,7 +988,7 @@ export function BookingDetailPage() {
           <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-6 shadow-xs flex flex-col gap-4 animate-card-enter">
             <h3 className="text-sm font-bold font-serif text-[#4a3c31] border-b border-[#d4c4b7]/50 pb-2">Registered Contacts</h3>
             <div className="flex items-center gap-4 p-4 border border-[#d4c4b7]/60 rounded-xl bg-[#f3eae1]/20">
-              <div className="w-12 h-12 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] font-bold text-sm">
+              <div className="w-12 h-12 rounded-full bg-[#947b66]/20 backdrop-blur-sm border border-[#947b66] flex items-center justify-center text-[#4a3c31] font-bold text-sm">
                 {initialData.contacts.substring(0, 2).toUpperCase()}
               </div>
               <div className="flex-1">

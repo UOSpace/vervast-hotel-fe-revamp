@@ -208,9 +208,9 @@ export function EmailMarketingPage() {
       email.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       email.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
       email.type.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesOwner = ownerFilter === 'All' || email.owner === ownerFilter;
-    
+
     return matchesSearch && matchesOwner;
   });
 
@@ -434,16 +434,14 @@ export function EmailMarketingPage() {
                       <tr
                         key={email.id}
                         onClick={() => handleRowClick(email)}
-                        className={`hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group ${
-                          isSelected ? 'bg-[#947b66]/20 font-bold' : ''
-                        } ${email.completed ? 'opacity-65' : ''}`}
+                        className={`hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group ${isSelected ? 'bg-[#947b66]/20 backdrop-blur-sm font-bold' : ''
+                          } ${email.completed ? 'opacity-65' : ''}`}
                       >
                         <td className="px-4 py-4 text-center font-medium text-[#7d6b5e] whitespace-nowrap">
                           {email.completed ? '✓' : startIndex + index + 1}
                         </td>
-                        <td className={`px-4 py-4 font-medium transition-colors whitespace-nowrap ${
-                          isSelected ? 'text-[#947b66]' : 'group-hover:text-[#947b66]'
-                        } ${email.completed ? 'line-through text-[#7d6b5e]' : ''}`}>{email.title}</td>
+                        <td className={`px-4 py-4 font-medium transition-colors whitespace-nowrap ${isSelected ? 'text-[#947b66]' : 'group-hover:text-[#947b66]'
+                          } ${email.completed ? 'line-through text-[#7d6b5e]' : ''}`}>{email.title}</td>
                         <td className="px-4 py-4 whitespace-nowrap">{email.owner}</td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-medium border border-sky-500/20 bg-sky-500/10 text-sky-800 whitespace-nowrap inline-flex items-center justify-center">
@@ -495,11 +493,10 @@ export function EmailMarketingPage() {
                   key={pageNum}
                   variant={currentPage === pageNum ? 'default' : 'ghost'}
                   size="sm"
-                  className={`h-7 w-7 p-0 text-xs rounded-full ${
-                    currentPage === pageNum
-                      ? 'bg-[#947b66] text-white hover:bg-[#7d6b5e]'
-                      : 'text-[#4a3c31] hover:bg-[#d4c4b7]/30'
-                  }`}
+                  className={`h-7 w-7 p-0 text-xs rounded-full ${currentPage === pageNum
+                    ? 'bg-[#947b66] text-white hover:bg-[#7d6b5e]'
+                    : 'text-[#4a3c31] hover:bg-[#d4c4b7]/30'
+                    }`}
                   onClick={() => setCurrentPage(pageNum)}
                 >
                   {pageNum}
@@ -519,17 +516,16 @@ export function EmailMarketingPage() {
         </div>
 
         {/* RIGHT COLUMN: Slide-out Detail Panel */}
-        <div className={`shrink-0 rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${
-          selectedCampId 
-            ? 'w-[450px] opacity-100 translate-x-0 scale-100 ml-4 border border-[#d4c4b7]' 
-            : 'w-0 opacity-0 translate-x-[100px] scale-95 pointer-events-none ml-0 border-0'
-        }`}>
-          
+        <div className={`shrink-0 rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${selectedCampId
+          ? 'w-[450px] opacity-100 translate-x-0 scale-100 ml-4 border border-[#d4c4b7]'
+          : 'w-0 opacity-0 translate-x-[100px] scale-95 pointer-events-none ml-0 border-0'
+          }`}>
+
           {/* Detail Header */}
-          <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7] shrink-0">
+          <div className="bg-[#947b66]/10 backdrop-blur-sm px-5 py-4 border-b border-[#d4c4b7] shrink-0">
             <div className="flex justify-between items-start mb-1">
               <h3 className="text-[13px] font-bold font-serif text-[#4a3c31] truncate pr-4">{selectedCampaign ? selectedCampaign.title : editTitle}</h3>
-              <button 
+              <button
                 onClick={() => setSelectedCampId(null)}
                 className="text-[#7d6b5e] hover:text-[#4a3c31] transition-colors p-0.5 rounded-full hover:bg-black/5"
               >
@@ -547,9 +543,8 @@ export function EmailMarketingPage() {
               <button
                 type="button"
                 onClick={() => setDetailTab('details')}
-                className={`py-2.5 text-xs font-semibold relative transition-colors ${
-                  detailTab === 'details' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
-                }`}
+                className={`py-2.5 text-xs font-semibold relative transition-colors ${detailTab === 'details' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
+                  }`}
               >
                 Campaign Details
                 {detailTab === 'details' && (
@@ -559,9 +554,8 @@ export function EmailMarketingPage() {
               <button
                 type="button"
                 onClick={() => setDetailTab('comments')}
-                className={`py-2.5 text-xs font-semibold relative transition-colors ${
-                  detailTab === 'comments' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
-                }`}
+                className={`py-2.5 text-xs font-semibold relative transition-colors ${detailTab === 'comments' ? 'text-[#947b66]' : 'text-[#7d6b5e] hover:text-[#4a3c31]'
+                  }`}
               >
                 Comments ({editComments.length})
                 {detailTab === 'comments' && (
@@ -603,7 +597,7 @@ export function EmailMarketingPage() {
 
           {/* Scrollable Form/Comments Area */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
-            
+
             {/* TAB 1: DETAILS */}
             {detailTab === 'details' && (
               <form onSubmit={handleSave} className="space-y-4">
@@ -687,7 +681,7 @@ export function EmailMarketingPage() {
                       {editAttachments.map((file, i) => (
                         <div key={i} className="flex justify-between items-center p-2.5 bg-white/20 border border-[#d4c4b7]/50 rounded-lg text-xs">
                           <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-8 h-8 rounded-lg bg-[#947b66]/20 flex items-center justify-center font-bold text-[9px] text-[#4a3c31] shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-[#947b66]/20 backdrop-blur-sm flex items-center justify-center font-bold text-[9px] text-[#4a3c31] shrink-0">
                               JPG
                             </div>
                             <div className="min-w-0 flex flex-col">
@@ -751,7 +745,7 @@ export function EmailMarketingPage() {
                       if (e.key === 'Enter') handleAddComment();
                     }}
                   />
-                  <Button 
+                  <Button
                     onClick={handleAddComment}
                     className="h-9 px-4 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold rounded-lg"
                   >
@@ -766,7 +760,7 @@ export function EmailMarketingPage() {
                       <div key={comment.id} className="p-3 border border-[#d4c4b7]/50 rounded-xl bg-white/25 flex flex-col gap-2">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[9px] font-bold text-[#4a3c31]">
+                            <div className="w-6 h-6 rounded-full bg-[#947b66]/20 backdrop-blur-sm border border-[#947b66] flex items-center justify-center text-[9px] font-bold text-[#4a3c31]">
                               {comment.avatar}
                             </div>
                             <div className="flex flex-col">
@@ -774,7 +768,7 @@ export function EmailMarketingPage() {
                               <span className="text-[9px] text-[#7d6b5e]">{comment.date}</span>
                             </div>
                           </div>
-                          
+
                           {/* Comment options if author is vervast */}
                           {comment.author === 'vervast' && (
                             <div className="flex items-center gap-1">
