@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Buildings, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
@@ -159,6 +160,7 @@ const ALL_CATEGORIES = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function CorporatePage() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -179,10 +181,10 @@ export function CorporatePage() {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-  const handleDetail = (e?: React.MouseEvent) => {
+  const handleDetail = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
     setOpenDropdownId(null);
-    openDevModal('Company Detail');
+    navigate(`/dashboard/partners/corporate/${id}`);
   };
 
   const filteredCorporates = mockCorporates.filter(cp => {
@@ -318,7 +320,7 @@ export function CorporatePage() {
                   pagedData.map(cp => (
                     <tr
                       key={cp.id}
-                      onClick={() => handleDetail()}
+                      onClick={() => handleDetail(cp.id)}
                       className="hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group"
                     >
                       {/* Name */}
@@ -378,7 +380,7 @@ export function CorporatePage() {
                         {openDropdownId === cp.id && (
                           <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
                             <button
-                              onClick={e => handleDetail(e)}
+                              onClick={e => handleDetail(cp.id, e)}
                               className="w-full px-3 py-2 text-left text-xs text-[#4a3c31] hover:bg-[#e5d8cb] flex items-center gap-2 transition-colors"
                             >
                               <Eye size={14} className="text-[#947b66]" />

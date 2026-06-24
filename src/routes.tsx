@@ -6,7 +6,7 @@ import { MasterLayout } from './components/layouts/MasterLayout';
 import { UnderConstructionPage } from './features/common/pages/UnderConstructionPage';
 import { NotFoundPage } from './features/common/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
-import { PartnersPage, TravelAgenciesPage, CorporatePage } from './features/partners';
+import { PartnersPage, TravelAgenciesPage, CorporatePage, CorporateDetailPage } from './features/partners';
 import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from './features/reservations';
 import { ActivitiesPage, EmailMarketingPage } from './features/sales';
 
@@ -70,6 +70,10 @@ export const routes: RouteObject[] = [
       {
         path: '/dashboard/partners/corporate',
         element: <CorporatePage />,
+      },
+      {
+        path: '/dashboard/partners/corporate/:id',
+        element: <CorporateDetailPage />,
       },
       {
         path: '/dashboard/experience/fnb',
