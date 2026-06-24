@@ -36,7 +36,6 @@ export const sidebarMenu: MenuItem[] = [
       { name: 'Activities', path: '/dashboard/experience/activities' },
     ],
   },
-  { name: 'Revenue', icon: Wallet, path: '/dashboard/revenue' },
   {
     name: 'Reservations', icon: Calendar, path: '/dashboard/reservations',
     children: [
@@ -58,6 +57,7 @@ export const sidebarMenu: MenuItem[] = [
   {
     name: 'Operations', icon: Bed, path: '/dashboard/operations',
   },
+  { name: 'Revenue', icon: Wallet, path: '/dashboard/revenue' },
   { name: 'Finance', icon: PieChart, path: '/dashboard/finance' },
   { name: 'Development', icon: Buildings, path: '/dashboard/development' },
   { name: 'Alerts', icon: Bell, path: '/dashboard/alerts' },
