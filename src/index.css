@@ -339,13 +339,15 @@
 }
 
 .glass-panel {
-  background-color: rgba(243, 234, 225, 0.25) !important;
-  backdrop-filter: blur(24px) !important;
-  border-color: rgba(148, 123, 102, 0.3) !important;
+  background-color: rgba(243, 234, 225, 0.3) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border-color: #d4c4b7 !important;
 }
 
 .glass-input {
   background-color: rgba(255, 255, 255, 0.2) !important;
-  backdrop-filter: blur(12px) !important;
-  border-color: rgba(148, 123, 102, 0.25) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border-color: rgba(212, 196, 183, 0.5) !important;
 }
