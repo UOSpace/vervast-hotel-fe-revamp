@@ -8,6 +8,7 @@ import { NotFoundPage } from './features/common/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
 import { PartnersPage, TravelAgenciesPage, CorporatePage } from './features/partners';
 import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from './features/reservations';
+import { ActivitiesPage } from './features/sales';
 
 export const routes: RouteObject[] = [
   {
@@ -108,7 +109,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/sales/activities',
-        element: <UnderConstructionPage />,
+        element: <ActivitiesPage />,
       },
       {
         path: '/dashboard/sales/email',
