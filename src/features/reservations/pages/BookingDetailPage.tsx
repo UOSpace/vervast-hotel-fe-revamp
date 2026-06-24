@@ -548,7 +548,7 @@ export function BookingDetailPage() {
       <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
         
         {/* Profile Header */}
-        <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 glass-panel flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
+        <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-[#947b66]/20 border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
               {bookingName.substring(0, 2).toUpperCase()}
@@ -584,7 +584,7 @@ export function BookingDetailPage() {
         </div>
 
         {/* Progress Tracker Chevron Timeline */}
-        <div className="w-full border border-[#d4c4b7] rounded-[12px] glass-panel p-3 overflow-x-auto shadow-xs">
+        <div className="w-full border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-3 overflow-x-auto shadow-xs">
           <div className="flex items-center min-w-[750px] w-full">
             {stages.map((stage, idx) => {
               const status = getStageStatus(stage);
@@ -650,7 +650,7 @@ export function BookingDetailPage() {
 
         {/* Tab Content Panel */}
         {activeTab === 'Details' && (
-          <form onSubmit={handleSave} className="border border-[#d4c4b7] rounded-[12px] glass-panel p-6 shadow-xs flex flex-col gap-6 animate-card-enter">
+          <form onSubmit={handleSave} className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-6 shadow-xs flex flex-col gap-6 animate-card-enter">
             {/* Top Toolbar inside Details */}
             <div className="flex justify-between items-center border-b border-[#d4c4b7]/50 pb-4">
               <h3 className="text-sm font-bold font-serif text-[#4a3c31] flex items-center gap-2">
@@ -986,7 +986,7 @@ export function BookingDetailPage() {
         )}
 
         {activeTab === 'Contacts' && (
-          <div className="border border-[#d4c4b7] rounded-[12px] glass-panel p-6 shadow-xs flex flex-col gap-4 animate-card-enter">
+          <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-6 shadow-xs flex flex-col gap-4 animate-card-enter">
             <h3 className="text-sm font-bold font-serif text-[#4a3c31] border-b border-[#d4c4b7]/50 pb-2">Registered Contacts</h3>
             <div className="flex items-center gap-4 p-4 border border-[#d4c4b7]/60 rounded-xl bg-[#f3eae1]/20">
               <div className="w-12 h-12 rounded-full bg-[#947b66]/20 border border-[#947b66] flex items-center justify-center text-[#4a3c31] font-bold text-sm">
@@ -1006,7 +1006,7 @@ export function BookingDetailPage() {
         )}
 
         {(activeTab === 'All' || activeTab === 'Sales Activities' || activeTab === 'Marcom Activities' || activeTab === 'Emails' || activeTab === 'Calls') && (
-          <div className="border border-[#d4c4b7] rounded-[12px] glass-panel p-6 shadow-xs flex flex-col gap-4 animate-card-enter">
+          <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-6 shadow-xs flex flex-col gap-4 animate-card-enter">
             <h3 className="text-sm font-bold font-serif text-[#4a3c31] border-b border-[#d4c4b7]/50 pb-2">
               History of Changes & Activities ({activeTab})
             </h3>
@@ -1053,7 +1053,7 @@ export function BookingDetailPage() {
 
         {/* Catch-all under construction fallback for other tabs */}
         {!['Details', 'Contacts', 'All', 'Sales Activities', 'Marcom Activities', 'Emails', 'Calls'].includes(activeTab) && (
-          <div className="border border-[#d4c4b7] rounded-[12px] glass-panel p-8 text-center text-[#7d6b5e] font-serif text-sm italic shadow-xs animate-card-enter">
+          <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-8 text-center text-[#7d6b5e] font-serif text-sm italic shadow-xs animate-card-enter">
             {activeTab} tab content is currently under construction.
           </div>
         )}

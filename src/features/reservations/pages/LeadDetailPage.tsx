@@ -341,7 +341,7 @@ export function LeadDetailPage() {
       <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
         
         {/* Profile / Details Summary Header */}
-        <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 glass-panel flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
+        <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-[#947b66]/20 border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
               {leadName.substring(0, 2).toUpperCase()}
@@ -377,7 +377,7 @@ export function LeadDetailPage() {
         </div>
 
         {/* Progress Tracker (Chevron Stage Timeline) */}
-        <div className="w-full border border-[#d4c4b7] rounded-[12px] glass-panel p-3 overflow-x-auto shadow-xs">
+        <div className="w-full border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm p-3 overflow-x-auto shadow-xs">
           <div className="flex items-center min-w-[600px] w-full">
             {stages.map((stage, idx) => {
               const isCanceledActive = activeStage === 'Canceled';
@@ -433,7 +433,7 @@ export function LeadDetailPage() {
           <div className="space-y-6">
             
             {/* Details Card */}
-            <div className="border border-[#d4c4b7] rounded-[12px] glass-panel shadow-xs overflow-hidden">
+            <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs overflow-hidden">
               <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7] flex justify-between items-center">
                 <h3 className="text-sm font-bold font-serif text-[#4a3c31]">Details</h3>
                 <div className="flex gap-2">
@@ -560,7 +560,7 @@ export function LeadDetailPage() {
             </div>
 
             {/* Attachments Card */}
-            <div className="border border-[#d4c4b7] rounded-[12px] glass-panel shadow-xs overflow-hidden">
+            <div className="border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs overflow-hidden">
               <div className="bg-[#947b66]/10 px-5 py-4 border-b border-[#d4c4b7]">
                 <h3 className="text-sm font-bold font-serif text-[#4a3c31]">Attachments</h3>
               </div>
@@ -599,7 +599,7 @@ export function LeadDetailPage() {
           </div>
 
           {/* RIGHT COLUMN: Timeline Tabs & Activities Feed */}
-          <div className="border border-[#d4c4b7] rounded-[12px] overflow-hidden glass-panel shadow-xs flex flex-col">
+          <div className="border border-[#d4c4b7] rounded-[12px] overflow-hidden bg-[#f3eae1]/30 backdrop-blur-sm shadow-xs flex flex-col">
             
             {/* Timeline Tabs */}
             <div className="flex overflow-x-auto custom-scrollbar border-b border-[#d4c4b7] bg-[#f3eae1]/60 p-1">

@@ -519,7 +519,7 @@ export function EmailMarketingPage() {
         </div>
 
         {/* RIGHT COLUMN: Slide-out Detail Panel */}
-        <div className={`shrink-0 rounded-[12px] glass-panel shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${
+        <div className={`shrink-0 rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm shadow-lg flex flex-col overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${
           selectedCampId 
             ? 'w-[450px] opacity-100 translate-x-0 scale-100 ml-4 border border-[#d4c4b7]' 
             : 'w-0 opacity-0 translate-x-[100px] scale-95 pointer-events-none ml-0 border-0'
