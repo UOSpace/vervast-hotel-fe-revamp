@@ -186,7 +186,7 @@ export function IndividualGuestProfilePage() {
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden pb-8 px-4 lg:px-6">
 
       {/* Back navigation */}
-      <div className="flex flex-col mb-4 animate-card-enter">
+      <div className="flex flex-col mb-4">
         <button
           onClick={() => navigate('/dashboard/guests/individual')}
           className="flex items-center text-[#7d6b5e] hover:text-[#4a3c31] transition-colors w-fit mb-2 text-sm gap-2"
@@ -195,7 +195,7 @@ export function IndividualGuestProfilePage() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
+      <div className="flex flex-col gap-6 text-xs" style={{ animationDelay: '0.1s' }}>
 
         {/* 1. TOP CARD: Profile Summary */}
         <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
