@@ -7,6 +7,7 @@ import { UnderConstructionPage } from './features/common/pages/UnderConstruction
 import { NotFoundPage } from './features/common/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
 import { PartnersPage, TravelAgenciesPage, CorporatePage } from './features/partners';
+import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from './features/reservations';
 
 export const routes: RouteObject[] = [
   {
@@ -79,11 +80,19 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/reservations/leads',
-        element: <UnderConstructionPage />,
+        element: <LeadsPage />,
+      },
+      {
+        path: '/dashboard/reservations/leads/:id',
+        element: <LeadDetailPage />,
       },
       {
         path: '/dashboard/reservations/bookings',
-        element: <UnderConstructionPage />,
+        element: <BookingsPage />,
+      },
+      {
+        path: '/dashboard/reservations/bookings/:id',
+        element: <BookingDetailPage />,
       },
       {
         path: '/dashboard/sales/leads',
