@@ -323,9 +323,11 @@
     opacity: 0.8;
     stroke-width: 0.5px;
   }
+
   50% {
     opacity: 0.5;
   }
+
   100% {
     r: 20;
     opacity: 0;

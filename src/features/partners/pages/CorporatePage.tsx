@@ -228,7 +228,7 @@ export function CorporatePage() {
       {/* ── Main Table Area ─────────────────────────────────────────────── */}
       <div className="flex-1 min-h-0 flex flex-col px-4 lg:px-6 pb-6">
         <div
-          className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] backdrop-blur-sm bg-[#f3eae1]/0 overflow-hidden animate-card-enter"
+          className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm overflow-hidden animate-card-enter"
           style={{ animationDelay: '0.1s' }}
         >
 

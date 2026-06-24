@@ -545,7 +545,7 @@ export function BookingDetailPage() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-6 text-xs animate-card-enter" style={{ animationDelay: '0.1s' }}>
+      <div className="flex flex-col gap-6 text-xs" style={{ animationDelay: '0.1s' }}>
 
         {/* Profile Header */}
         <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">

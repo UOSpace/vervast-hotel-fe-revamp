@@ -184,7 +184,7 @@ export function LeadsPage() {
       <div className="flex-1 min-h-0 flex flex-col px-4 lg:px-6 pb-6">
 
         {/* Table Container */}
-        <div className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] backdrop-blur-sm bg-[#f3eae1]/0 overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
+        <div className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
 
           {/* Toolbar */}
           <div className="p-4 border-b border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/50">

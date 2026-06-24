@@ -342,7 +342,7 @@ export function IndividualGuestProfilePage() {
             </div>
 
             {/* Table Area */}
-            <div className="border border-[#d4c4b7]/80 rounded-lg overflow-hidden bg-white/10">
+            <div className="border border-[#d4c4b7]/80 rounded-lg overflow-hidden bg-[#f3eae1]/30 backdrop-blur-sm">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#f3eae1]/80 border-b border-[#d4c4b7] text-[9px] font-bold uppercase tracking-widest text-[#7d6b5e]">

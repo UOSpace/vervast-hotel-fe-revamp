@@ -48,7 +48,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
   });
   return (
     <div
-      className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 bg-[#f3eae1]/0 hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer animate-card-enter"
+      className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 bg-[#f3eae1]/30 backdrop-blur-sm hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer animate-card-enter"
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >

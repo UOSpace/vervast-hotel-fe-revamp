@@ -68,7 +68,7 @@ export function ResortKPIWidget({ kpis }: { kpis: any[] }) {
       {kpis.map((kpi, idx) => (
         <div
           key={kpi.label}
-          className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/0 hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter min-h-[140px]"
+          className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter min-h-[140px]"
           style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
           onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
         >
