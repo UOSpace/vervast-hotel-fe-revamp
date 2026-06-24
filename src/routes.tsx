@@ -8,7 +8,7 @@ import { NotFoundPage } from './features/common/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from './features/guests';
 import { PartnersPage, TravelAgenciesPage, CorporatePage } from './features/partners';
 import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from './features/reservations';
-import { ActivitiesPage } from './features/sales';
+import { ActivitiesPage, EmailMarketingPage } from './features/sales';
 
 export const routes: RouteObject[] = [
   {
@@ -97,11 +97,19 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/sales/leads',
-        element: <UnderConstructionPage />,
+        element: <LeadsPage />,
+      },
+      {
+        path: '/dashboard/sales/leads/:id',
+        element: <LeadDetailPage />,
       },
       {
         path: '/dashboard/sales/bookings',
-        element: <UnderConstructionPage />,
+        element: <BookingsPage />,
+      },
+      {
+        path: '/dashboard/sales/bookings/:id',
+        element: <BookingDetailPage />,
       },
       {
         path: '/dashboard/sales/events',
@@ -113,7 +121,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/sales/email',
-        element: <UnderConstructionPage />,
+        element: <EmailMarketingPage />,
       },
       {
         path: '/dashboard/sales/forms',
