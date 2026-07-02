@@ -7,10 +7,10 @@ const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 
 const statusColors: Record<string, string> = {
-  high: '#C8A050',
-  moderate: '#829C64',
-  low: '#477684',
-  limited: '#71558C',
+  high: '#18181b',
+  moderate: '#52525b',
+  low: '#71717a',
+  limited: '#a1a1aa',
 };
 
 export function LiveOverviewMap() {
@@ -64,7 +64,7 @@ export function LiveOverviewMap() {
 
             {/* Country shadow */}
             <filter id="countryShadow" x="-10%" y="-10%" width="120%" height="130%">
-              <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#8a7060" floodOpacity="0.3" />
+              <feDropShadow dx="1" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.15" />
             </filter>
 
             {/* Radial gradient dots per status */}
@@ -84,8 +84,8 @@ export function LiveOverviewMap() {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill="#d9cabb"
-                  stroke="#c8b9a8"
+                  fill="#e4e4e7"
+                  stroke="#d4d4d8"
                   strokeWidth={0.5}
                   filter="url(#paper)"
                   style={{
@@ -106,7 +106,7 @@ export function LiveOverviewMap() {
                 key={`line-${location.id}`}
                 from={[8.2275, 46.8182]}
                 to={location.coordinates as [number, number]}
-                stroke="#C8A050"
+                stroke="#18181b"
                 strokeWidth={1.6}
                 strokeLinecap="round"
                 style={{ opacity: 0.85 }}
@@ -118,36 +118,38 @@ export function LiveOverviewMap() {
             const markerColor = statusColors[status] || statusColors.high;
             return (
               <Marker key={id} coordinates={coordinates as [number, number]}>
-                {/* Outer radial gradient glow */}
-                <circle r={14} fill={`url(#dotGradient-${status})`} />
-                {/* Pulse beacon effect */}
-                <circle className="map-beacon" fill="none" stroke={markerColor} />
-                {/* Inner solid dot */}
-                <circle r={3.5} fill={markerColor} stroke="#fff" strokeWidth={1} />
+                <g style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}>
+                  {/* Outer radial gradient glow */}
+                  <circle r={14} fill={`url(#dotGradient-${status})`} />
+                  {/* Pulse beacon effect */}
+                  <circle className="map-beacon" fill="none" stroke={markerColor} />
+                  {/* Inner solid dot */}
+                  <circle r={3.5} fill={markerColor} stroke="#fff" strokeWidth={1} />
 
-                {/* Label pill */}
-                <foreignObject
-                  x={labelOffset[0]}
-                  y={labelOffset[1]}
-                  width={150}
-                  height={38}
-                  style={{ overflow: 'visible' }}
-                >
-                  <div style={{
-                    background: 'rgba(255,252,248,0.96)',
-                    borderRadius: '8px',
-                    padding: '4px 8px',
-                    width: 'max-content',
-                    boxShadow: '0 1px 6px rgba(100,80,60,0.18)',
-                    border: '1px solid rgba(200,180,160,0.4)',
-                  }}>
-                    <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#4a3c31', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
-                    <div className="flex justify-between items-center gap-2 mt-0.5" style={{ fontSize: '7.5px', lineHeight: 1.2 }}>
-                      <span style={{ color: '#9B8272' }}>{city}</span>
-                      <span style={{ color: '#a65e52', fontWeight: 700 }}>{revenue}</span>
+                  {/* Label pill */}
+                  <foreignObject
+                    x={labelOffset[0]}
+                    y={labelOffset[1]}
+                    width={150}
+                    height={38}
+                    style={{ overflow: 'visible' }}
+                  >
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.98)',
+                      borderRadius: '8px',
+                      padding: '4px 8px',
+                      width: 'max-content',
+                      boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid rgba(228, 228, 231, 0.6)',
+                    }}>
+                      <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
+                      <div className="flex justify-between items-center gap-2 mt-0.5" style={{ fontSize: '7.5px', lineHeight: 1.2 }}>
+                        <span style={{ color: '#71717a' }}>{city}</span>
+                        <span style={{ color: '#18181b', fontWeight: 700 }}>{revenue}</span>
+                      </div>
                     </div>
-                  </div>
-                </foreignObject>
+                  </foreignObject>
+                </g>
               </Marker>
             );
           })}
@@ -160,10 +162,10 @@ export function LiveOverviewMap() {
             onClick={handleZoomIn}
             className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
             style={{
-              background: 'rgba(240,232,220,0.88)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(200,180,160,0.4)',
-              color: '#4a3c31',
+              border: '1px solid rgba(228, 228, 231, 0.6)',
+              color: '#1a1a1a',
               cursor: 'pointer',
             }}
             title="Zoom In"
@@ -177,10 +179,10 @@ export function LiveOverviewMap() {
             onClick={handleZoomOut}
             className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
             style={{
-              background: 'rgba(240,232,220,0.88)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(200,180,160,0.4)',
-              color: '#4a3c31',
+              border: '1px solid rgba(228, 228, 231, 0.6)',
+              color: '#1a1a1a',
               cursor: 'pointer',
             }}
             title="Zoom Out"
@@ -193,10 +195,10 @@ export function LiveOverviewMap() {
             onClick={handleReset}
             className="w-7 h-7 flex items-center justify-center rounded-md transition-colors hover:brightness-95"
             style={{
-              background: 'rgba(240,232,220,0.88)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(200,180,160,0.4)',
-              color: '#4a3c31',
+              border: '1px solid rgba(228, 228, 231, 0.6)',
+              color: '#1a1a1a',
               cursor: 'pointer',
             }}
             title="Reset View"
@@ -210,20 +212,20 @@ export function LiveOverviewMap() {
 
         {/* Legend */}
         <div className="absolute bottom-3 left-3 px-3 py-2.5 rounded-lg" style={{
-          background: 'rgba(240,232,220,0.82)',
+          background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(4px)',
-          border: '1px solid rgba(200,180,160,0.35)',
+          border: '1px solid rgba(228, 228, 231, 0.6)',
         }}>
           <div className="space-y-1.5">
             {[
-               { label: 'High Revenue (≥ $80.0M)', color: '#C8A050' },
-               { label: 'Moderate Revenue ($40.0M - $79.9M)', color: '#829C64' },
-               { label: 'Low Revenue ($20.0M - $39.9M)', color: '#477684' },
-               { label: 'Underperforming (< $20.0M)', color: '#71558C' },
+               { label: 'High Revenue (≥ $80.0M)', color: '#18181b' },
+               { label: 'Moderate Revenue ($40.0M - $79.9M)', color: '#52525b' },
+               { label: 'Low Revenue ($20.0M - $39.9M)', color: '#71717a' },
+               { label: 'Underperforming (< $20.0M)', color: '#a1a1aa' },
             ].map(({ label, color }) => (
               <div key={label} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
-                <span className="text-[9px] text-[#4a3c31]">{label}</span>
+                <span className="text-[9px] text-[#1a1a1a]">{label}</span>
               </div>
             ))}
           </div>

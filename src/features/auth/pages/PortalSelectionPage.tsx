@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
-import bgImage from '../../../assets/bg/background.png';
 import hospitalityPortalImg from '../../../assets/contents/hospitality_portal.png';
 import sanctuaryPortalImg from '../../../assets/contents/sanctuary_portal.png';
 import designPortalImg from '../../../assets/contents/design_portal.png';
@@ -42,16 +41,10 @@ export function PortalSelectionPage() {
 
   return (
     <div 
-      className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden text-[#4a3c31] select-none"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden text-[#4a3c31] select-none bg-background"
     >
       {/* Background texture overlay */}
-      <div className="absolute inset-0 bg-[#fbf6f0]/10 backdrop-blur-[1px] pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none" />
 
       <div className="z-10 flex flex-col items-center w-full max-w-5xl text-center">
         {/* Header Logo & Title */}

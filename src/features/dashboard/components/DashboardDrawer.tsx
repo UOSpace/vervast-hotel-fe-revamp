@@ -3,6 +3,7 @@ import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { CloseCircle, RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import dashboardData from '../../../data/dashboardData.json';
+import { useTheme } from '../../../config/theme-provider';
 
 const propertiesPerformanceData = [
   {
@@ -89,6 +90,7 @@ export function DashboardDrawer() {
   const { isOpen, config, closeDrawer, openDrawer } = useDashboardDrawer();
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const [active, setActive] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (isOpen) {
@@ -291,14 +293,18 @@ export function DashboardDrawer() {
               <div className="h-[200px] mt-4 -mx-2">
                 <ResponsiveContainer height="100%">
                   <LineChart data={metricData} margin={{ top: 10, right: 7, left: -5, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.3} />
-                    <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={3} dot={{ r: 4, fill: '#C8A050' }} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#262626' : '#d4c4b7'} opacity={0.3} />
+                    <Line type="monotone" dataKey="value" stroke={theme === 'dark' ? '#ffffff' : '#C8A050'} strokeWidth={3} dot={{ r: 4, fill: theme === 'dark' ? '#ffffff' : '#C8A050' }} />
                     <Tooltip
                       formatter={(value: any) => [`${prefix}${value.toLocaleString()}${suffix}`, 'Value']}
-                      contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px' }}
+                      contentStyle={
+                        theme === 'dark' 
+                          ? { backgroundColor: '#121212', border: '1px solid #262626', borderRadius: '8px', fontSize: '12px', color: '#ffffff' } 
+                          : { backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '8px', fontSize: '12px', color: '#4a3c31' }
+                      }
                     />
-                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#7d6b5e' }} dy={8} interval={0} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#7d6b5e' }} tickFormatter={(v: number) => `${prefix}${v.toLocaleString()}${suffix}`} width={45} />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: theme === 'dark' ? '#a3a3a3' : '#7d6b5e' }} dy={8} interval={0} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: theme === 'dark' ? '#a3a3a3' : '#7d6b5e' }} tickFormatter={(v: number) => `${prefix}${v.toLocaleString()}${suffix}`} width={45} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

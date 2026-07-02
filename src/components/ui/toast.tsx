@@ -80,40 +80,40 @@ export function ToastProvider({ children }: ToastProviderProps) {
     switch (variant) {
       case 'success':
         return {
-          bg: 'bg-linear-to-r from-[#f0f4ef] to-[#f8faf7] border-[#657454]/30',
-          borderLeft: 'border-l-4 border-l-[#657454]',
-          titleColor: 'text-[#35432c]',
-          textColor: 'text-[#4e5a45]',
-          iconColor: 'text-[#657454]',
-          icon: <CheckCircle size={22} className="text-[#657454] shrink-0" />
+          bg: 'bg-linear-to-r from-[#fafafa] to-[#f4f4f5] border-black/10',
+          borderLeft: 'border-l-4 border-l-[#18181b]',
+          titleColor: 'text-[#18181b]',
+          textColor: 'text-[#3f3f46]',
+          iconColor: 'text-[#18181b]',
+          icon: <CheckCircle size={22} className="text-[#18181b] shrink-0" />
         };
       case 'error':
         return {
-          bg: 'bg-linear-to-r from-[#faf0ee] to-[#fdfaf9] border-[#a65e52]/30',
-          borderLeft: 'border-l-4 border-l-[#a65e52]',
-          titleColor: 'text-[#61271f]',
-          textColor: 'text-[#7d4138]',
-          iconColor: 'text-[#a65e52]',
-          icon: <CloseCircle size={22} className="text-[#a65e52] shrink-0" />
+          bg: 'bg-linear-to-r from-[#fafafa] to-[#f4f4f5] border-black/10',
+          borderLeft: 'border-l-4 border-l-[#18181b]',
+          titleColor: 'text-[#18181b]',
+          textColor: 'text-[#3f3f46]',
+          iconColor: 'text-[#18181b]',
+          icon: <CloseCircle size={22} className="text-[#18181b] shrink-0" />
         };
       case 'warning':
         return {
-          bg: 'bg-linear-to-r from-[#fcf8ee] to-[#fefcf7] border-[#C8A050]/30',
-          borderLeft: 'border-l-4 border-l-[#C8A050]',
-          titleColor: 'text-[#5c4618]',
-          textColor: 'text-[#7a602a]',
-          iconColor: 'text-[#C8A050]',
-          icon: <Danger size={22} className="text-[#C8A050] shrink-0" />
+          bg: 'bg-linear-to-r from-[#fafafa] to-[#f4f4f5] border-black/10',
+          borderLeft: 'border-l-4 border-l-[#18181b]',
+          titleColor: 'text-[#18181b]',
+          textColor: 'text-[#3f3f46]',
+          iconColor: 'text-[#18181b]',
+          icon: <Danger size={22} className="text-[#18181b] shrink-0" />
         };
       case 'info':
       default:
         return {
-          bg: 'bg-linear-to-r from-[#eff3f6] to-[#f6f9fb] border-[#586981]/30',
-          borderLeft: 'border-l-4 border-l-[#586981]',
-          titleColor: 'text-[#2b394d]',
-          textColor: 'text-[#415169]',
-          iconColor: 'text-[#586981]',
-          icon: <InfoSquare size={22} className="text-[#586981] shrink-0" />
+          bg: 'bg-linear-to-r from-[#fafafa] to-[#f4f4f5] border-black/10',
+          borderLeft: 'border-l-4 border-l-[#18181b]',
+          titleColor: 'text-[#18181b]',
+          textColor: 'text-[#3f3f46]',
+          iconColor: 'text-[#18181b]',
+          icon: <InfoSquare size={22} className="text-[#18181b] shrink-0" />
         };
     }
   };

@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { sidebarMenu } from '../../config/menu';
 import { AltArrowDown } from '@solar-icons/react';
 import { Logo } from '../ui/Logo';
+import { Switch } from '../ui/switch';
+import { useTheme } from '../../config/theme-provider';
 
 export function Sidebar({ 
   onNavigate, 
@@ -16,6 +18,7 @@ export function Sidebar({
   const location = useLocation();
   const navigate = useNavigate();
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const { theme, setTheme } = useTheme();
 
   const toggleMenu = (name: string) => {
     setExpandedMenu(prev => prev === name ? null : name);
@@ -121,6 +124,30 @@ export function Sidebar({
           })}
         </nav>
       </div>
+
+      {/* Theme Toggle Section */}
+      <div className="mt-auto px-3 pt-3 border-t border-[#d4c4b7]/40 flex flex-col gap-2 shrink-0">
+        <div className="flex items-center justify-between px-2.5 py-1.5 rounded-[10px] bg-[#E3CCB2]/20">
+          <div className="flex items-center space-x-2 text-[#6A5848]">
+            {theme === 'dark' ? (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+              </svg>
+            ) : (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+            )}
+            <span className="text-[10px] font-bold tracking-wide">Dark Theme</span>
+          </div>
+          <Switch
+            checked={theme === 'dark'}
+            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+          />
+        </div>
+      </div>
     </div>
   );
 }
+

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
-import bgImage from '../../assets/bg/background.png';
 import { SakuraTransition, useSakuraTransition } from '../../features/dashboard/components/SakuraTransition';
 import { DashboardDrawerProvider } from '../../features/dashboard/context/DashboardDrawerContext';
 import { DashboardDrawer } from '../../features/dashboard/components/DashboardDrawer';
@@ -24,13 +23,7 @@ export function MasterLayout() {
   return (
     <DashboardDrawerProvider>
       <div 
-        className="flex h-screen w-full overflow-hidden relative text-[#4a3c31]"
-        style={{
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
+        className="flex h-screen w-full overflow-hidden relative text-[#4a3c31] bg-background"
       >
         <SakuraTransition isActive={phase !== 'idle'} phase={phase} />
         

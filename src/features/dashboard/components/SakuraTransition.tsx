@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-const PETAL_COLORS = ['#FFB7C5', '#FFC8D4', '#FF9EB5', '#FFDDE5', '#FFE4EC', '#FFA0B8'];
+const PETAL_COLORS = ['#f4f4f5', '#e4e4e7', '#d4d4d8', '#a1a1aa', '#71717a', '#3f3f46'];
 
 interface Petal {
   id: number;
@@ -70,7 +70,7 @@ export function SakuraTransition({ isActive, phase }: SakuraTransitionProps) {
     <div
       className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
       style={{
-        background: `rgba(239, 231, 213, ${overlayOpacity})`,
+        background: `rgba(255, 255, 255, ${overlayOpacity})`,
         transition: 'background 0.4s ease',
       }}
     >
