@@ -6,15 +6,15 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
   const { openDrawer } = useDashboardDrawer();
   return (
     <div
-      className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 bg-[#f3eae1]/30 backdrop-blur-sm hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer animate-card-enter"
+      className="flex flex-col justify-between gap-1.5 bg-transparent transition-opacity cursor-pointer hover:opacity-85 animate-card-enter"
       style={{ animationDelay: '0.45s' }}
       onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Stats', data: segmentTable })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-[#4a3c31] flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between pb-1.5 border-b border-[#d4c4b7]/40 mb-0">
         <span>Market Segment Stats</span>
         <InfoTooltip text="Customer segment breakdown showing leisure, business, social, and MICE groups." />
       </div>
-      <div className="flex items-center gap-6 px-2 py-2">
+      <div className="flex items-center gap-6 px-2 py-0.5 h-[120px]">
         <SharedDonutChart data={segmentData} total={totalRnights} />
         <div className="space-y-1.5 flex-1">
           {segmentData.map(s => (
@@ -28,22 +28,22 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
           ))}
         </div>
       </div>
-      <table className="w-full mt-auto" style={{ borderCollapse: 'collapse' }}>
+      <table className="w-full mt-auto" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
           <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
-            <th className="text-left pb-1">Segment</th>
-            <th className="text-right pb-1">% Rnights</th>
-            <th className="text-right pb-1">ADR (USD)</th>
-            <th className="text-right pb-1">Room Revenue (USD)</th>
+            <th className="text-left pb-1 w-[30%] truncate">Segment</th>
+            <th className="text-right pb-1 w-[18%] truncate">% Rnights</th>
+            <th className="text-right pb-1 w-[22%] truncate">ADR (USD)</th>
+            <th className="text-right pb-1 w-[30%] truncate">Room Revenue (USD)</th>
           </tr>
         </thead>
         <tbody>
           {segmentTable.map((row, idx) => (
             <tr key={row.segment} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === segmentTable.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
-              <td className="py-1">{row.segment}</td>
-              <td className="text-right py-1">{row.rnights}</td>
-              <td className="text-right py-1">{row.adr}</td>
-              <td className="text-right py-1">{row.revenue}</td>
+              <td className="py-1 truncate">{row.segment}</td>
+              <td className="text-right py-1 truncate">{row.rnights}</td>
+              <td className="text-right py-1 truncate">{row.adr}</td>
+              <td className="text-right py-1 truncate">{row.revenue}</td>
             </tr>
           ))}
         </tbody>

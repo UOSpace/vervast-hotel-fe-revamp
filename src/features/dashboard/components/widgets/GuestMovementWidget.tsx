@@ -1,52 +1,70 @@
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import dashboardData from '../../../../data/dashboardData.json';
 
 export function GuestMovementWidget() {
   const data = dashboardData.guestMovementChart;
   const legend = dashboardData.guestMovement;
 
+  const wabiSabiPalette = {
+    alpine: '#1F1D1C',  // Deep Kuro Charcoal (~12% L)
+    ocean: '#3D3A38',   // Dark Slate Gray (~23% L)
+    city: '#5E5A56',    // Medium Taupe Gray (~36% L)
+    forest: '#857E78',  // Warm Ash Gray (~52% L)
+    desert: '#B2A9A0',  // Light Sand Gray (~70% L)
+    country: '#DDD5CC', // Very Light Parchment Gray (~87% L)
+  };
+
+  const legendWithPaletteColors = legend.map((item, index) => {
+    const colorKeys = [
+      wabiSabiPalette.alpine,
+      wabiSabiPalette.ocean,
+      wabiSabiPalette.city,
+      wabiSabiPalette.forest,
+      wabiSabiPalette.desert,
+      wabiSabiPalette.country,
+    ];
+    return {
+      ...item,
+      name: item.name.replace(/^SOSEI\s+/, ''),
+      color: colorKeys[index] || item.color,
+    };
+  });
+
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-start mb-2">
-        <div className="flex justify-between w-full">
+        <InfoTooltip text="Historical overview of checked in & in-house guest across SOSEI properties over the past 7 days.">
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31]">Number Of Guests</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] cursor-help">Number Of Guests</h3>
             <p className="text-[10px] text-[#7d6b5e]">7-DAYS OVERVIEW</p>
           </div>
-          <InfoTooltip text="Historical overview of checked in & in-house guest across SOSEI properties over the past 7 days." />
-        </div>
+        </InfoTooltip>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row md:items-center mt-2">
-        <div className="w-full md:w-[60%] h-[140px] md:h-[120px]">
+      <div className="flex-1 flex flex-col justify-between mt-1">
+        <div className="w-full flex-1 min-h-[150px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 15, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.5} />
+            <BarChart data={data} margin={{ top: 5, right: 10, left: -4, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#d4c4b7" opacity={0.3} />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} dy={10} interval={0} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} domain={['dataMin - 100', 'dataMax + 100']} width={35} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: '#7d6b5e' }} domain={[0, 3500]} width={26} />
               <Tooltip contentStyle={{ backgroundColor: '#f3eae1', border: '1px solid #d4c4b7', borderRadius: '6px', fontSize: '10px' }} />
-              <Line type="natural" dataKey="alpine" stroke="#947b66" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="natural" dataKey="ocean" stroke="#657454" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="natural" dataKey="city" stroke="#586981" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="natural" dataKey="forest" stroke="#8b6b7a" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="natural" dataKey="desert" stroke="#a65e52" strokeWidth={2} dot={false} isAnimationActive={false} />
-              <Line type="natural" dataKey="country" stroke="#d4c4b7" strokeWidth={2} dot={false} isAnimationActive={false} />
-            </LineChart>
+              <Bar dataKey="country" stackId="a" name="Countryside" fill={wabiSabiPalette.country} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="desert" stackId="a" name="Desert" fill={wabiSabiPalette.desert} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="forest" stackId="a" name="Forest" fill={wabiSabiPalette.forest} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="city" stackId="a" name="City" fill={wabiSabiPalette.city} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="ocean" stackId="a" name="Ocean" fill={wabiSabiPalette.ocean} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="alpine" stackId="a" name="Alpine" fill={wabiSabiPalette.alpine} radius={[3, 3, 0, 0]} barSize={16} isAnimationActive={false} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="w-full md:w-[40%] pl-0 md:pl-4 mt-4 md:mt-0 grid grid-cols-2 md:flex md:flex-col justify-center gap-x-4 gap-y-1.5 md:space-y-1.5">
-          {legend.map((item, i) => (
-            <div key={i} className="flex items-center justify-between text-[10px]">
-              <div className="leading-[0] flex items-center">
-                <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
-                <span className="text-[#4a3c31] ml-1.5 whitespace-nowrap">{item.name}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[#4a3c31] font-semibold">{item.current}</span>
-                <span className={`w-8 text-right flex items-center justify-end ${item.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{item.trend}</span>
-              </div>
+        <div className="w-full flex flex-wrap justify-center items-center gap-x-3 gap-y-1 pt-2 border-t border-[#d4c4b7]/30 mt-2">
+          {legendWithPaletteColors.map((item, i) => (
+            <div key={i} className="flex items-center gap-1.5 text-[9px]">
+              <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
+              <span className="text-[#4a3c31]">{item.name}</span>
             </div>
           ))}
         </div>

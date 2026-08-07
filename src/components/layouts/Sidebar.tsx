@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { sidebarMenu } from '../../config/menu';
 import { AltArrowDown } from '@solar-icons/react';
 import { Logo } from '../ui/Logo';
-import { Switch } from '../ui/switch';
-import { useTheme } from '../../config/theme-provider';
+
 
 export function Sidebar({ 
   onNavigate, 
@@ -17,17 +16,23 @@ export function Sidebar({
 }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
-  const { theme, setTheme } = useTheme();
+  const [expandedMenu, setExpandedMenu] = useState<string | null>('Group View');
 
   const toggleMenu = (name: string) => {
     setExpandedMenu(prev => prev === name ? null : name);
   };
 
   const isMenuActive = (item: typeof sidebarMenu[0]) => {
-    if (location.pathname === item.path) return true;
+    const currentPath = location.pathname + location.search;
+    if (item.path === '/dashboard' && !item.children) return location.pathname === '/dashboard';
+    if (location.pathname === item.path && !location.search) return true;
     if (item.children) {
-      return item.children.some(child => location.pathname.startsWith(child.path));
+      return item.children.some(child => {
+        if (child.path.includes('?')) {
+          return currentPath === child.path || (location.pathname === '/dashboard' && !location.search && child.path.endsWith('view=all'));
+        }
+        return location.pathname.startsWith(child.path);
+      });
     }
     return item.path !== '/dashboard' && location.pathname.startsWith(item.path + '/');
   };
@@ -52,7 +57,7 @@ export function Sidebar({
         <nav className="space-y-0.5">
           {sidebarMenu.map((item) => {
             const isActive = isMenuActive(item);
-            const isExpanded = expandedMenu === item.name;
+            const isExpanded = expandedMenu === item.name || (expandedMenu === null && isActive);
             const Icon = item.icon;
             const hasChildren = !!item.children?.length;
 
@@ -73,14 +78,14 @@ export function Sidebar({
                   }}
                   className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-[10px] transition-all ${
                     isActive && !hasChildren
-                      ? 'bg-[#E3CCB2]/70 text-[#6A5848] font-bold shadow-[-4px_0_0_0_#C3A481]'
+                      ? 'bg-gray-200/80 text-[#1F1D1C] font-bold'
                       : isActive && hasChildren
-                      ? 'bg-[#E3CCB2]/40 text-[#6A5848] font-bold'
-                      : 'text-[#6A5848] font-semibold hover:bg-[#E3CCB2]/40 hover:text-[#6A5848]'
-                  }`}
+                      ? 'bg-gray-200/60 text-[#1F1D1C] font-bold'
+                      : 'text-[#4B5563] font-medium hover:bg-gray-200/50 hover:text-[#1F1D1C]'
+                  }` }
                 >
                   <div className="flex items-center space-x-2">
-                    <Icon size={15} className={isActive ? 'text-[#6A5848] shrink-0' : 'shrink-0'} />
+                    <Icon size={15} className={isActive ? 'text-[#1F1D1C] shrink-0' : 'shrink-0'} />
                     <span className="text-[10px] tracking-wide leading-tight text-left">{item.name}</span>
                   </div>
                   {hasChildren && (
@@ -93,9 +98,10 @@ export function Sidebar({
 
                 {/* Children dropdown */}
                 {hasChildren && isExpanded && (
-                  <div className="ml-4 mt-0.5 space-y-0.5 border-l border-[#d4c4b7]/60 pl-3">
+                  <div className="ml-4 mt-0.5 space-y-0.5 pl-3">
                     {item.children!.map((child) => {
-                      const childActive = location.pathname === child.path;
+                      const currentPath = location.pathname + location.search;
+                      const childActive = currentPath === child.path || (location.pathname === '/dashboard' && !location.search && child.path.endsWith('view=all'));
                       return (
                         <button
                           key={child.name}
@@ -109,8 +115,8 @@ export function Sidebar({
                           }}
                           className={`w-full text-left px-2 py-1 rounded-[8px] text-[9px] transition-all ${
                             childActive
-                              ? 'bg-[#E3CCB2]/50 text-[#6A5848] font-bold'
-                              : 'text-[#7d6b5e] hover:bg-[#E3CCB2]/30 hover:text-[#6A5848]'
+                              ? 'bg-gray-200/90 text-[#1F1D1C] font-bold'
+                              : 'text-[#6B7280] hover:bg-gray-200/50 hover:text-[#1F1D1C]'
                           }`}
                         >
                           {child.name}
@@ -125,28 +131,7 @@ export function Sidebar({
         </nav>
       </div>
 
-      {/* Theme Toggle Section */}
-      <div className="mt-auto px-3 pt-3 border-t border-[#d4c4b7]/40 flex flex-col gap-2 shrink-0">
-        <div className="flex items-center justify-between px-2.5 py-1.5 rounded-[10px] bg-[#E3CCB2]/20">
-          <div className="flex items-center space-x-2 text-[#6A5848]">
-            {theme === 'dark' ? (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-              </svg>
-            ) : (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-              </svg>
-            )}
-            <span className="text-[10px] font-bold tracking-wide">Dark Theme</span>
-          </div>
-          <Switch
-            checked={theme === 'dark'}
-            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-          />
-        </div>
-      </div>
+
     </div>
   );
 }

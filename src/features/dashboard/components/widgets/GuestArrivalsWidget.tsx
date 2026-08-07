@@ -1,36 +1,58 @@
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
-import { User } from '@solar-icons/react';
 import dashboardData from '../../../../data/dashboardData.json';
+import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
+import { RoundAltArrowRight } from '@solar-icons/react';
 
 export function GuestArrivalsWidget() {
-  const arrivals = dashboardData.guestArrivals.filter(guest => guest.vip);
+  const { openDrawer } = useDashboardDrawer();
+  const arrivals = dashboardData.guestArrivals;
+
+  const handleOpenList = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openDrawer({
+      type: 'GUEST_ARRIVALS',
+      title: 'VVIP Arrivals List',
+    });
+  };
 
   return (
-    <div className="w-full flex-1 flex flex-col">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#4a3c31] mb-0">
-          VVIP Arrivals <span className="text-[#947b66] font-normal lowercase">Today</span>
-        </h3>
-        <InfoTooltip text="Real-time ETA and special request itinerary tracker for today's arriving VVIP guests." />
+    <div className="w-full flex-1 flex flex-col justify-between">
+      {/* Header with See Full List trigger */}
+      <div className="flex justify-between items-end mb-2 shrink-0">
+        <InfoTooltip text="Real-time ETA and special request itinerary tracker for today's arriving VVIP guests.">
+          <div>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#374151] cursor-help">VVIP Arrivals</h3>
+            <p className="text-[10px] text-[#6B7280]">TODAY ({arrivals.length} GUESTS)</p>
+          </div>
+        </InfoTooltip>
+
+        <button
+          onClick={handleOpenList}
+          className="text-[9px] font-medium text-emerald-700 hover:text-emerald-900 hover:underline flex items-center gap-0.5 cursor-pointer transition-colors"
+        >
+          See list <RoundAltArrowRight size={10} />
+        </button>
       </div>
 
-      <div className="flex-1 flex flex-col space-y-1.5">
-        {arrivals.map((guest, i) => (
-          <div key={i} className="flex items-center space-x-3 border border-[#d4c4b7]/50 rounded-lg p-1.5 hover:border-[#C8A050]/50 hover:bg-[#f3eae1]/50 transition-all cursor-pointer">
-            <div className="w-7 h-7 rounded-full border border-[#d4c4b7] flex items-center justify-center text-[#7d6b5e]">
-              <User size={14} />
-            </div>
-            <div className="flex-1 flex justify-between items-center">
-              <div>
-                <p className="text-[10px] font-bold text-[#4a3c31] flex items-center space-x-2">
-                  <span>{guest.name}</span>
-                  {guest.vip && (
-                    <span className="text-[8px] border border-[#a65e52] text-[#a65e52] bg-[#a65e52]/5 px-1 rounded uppercase tracking-wide font-bold">VVIP</span>
-                  )}
+      {/* Clean Static List Container */}
+      <div className="flex-1 flex flex-col justify-around py-0.5">
+        {arrivals.slice(0, 5).map((guest: any, i: number) => (
+          <div key={guest.id || i} className="flex flex-col">
+            <div
+              onClick={handleOpenList}
+              className="flex items-center justify-between py-0.5 hover:bg-gray-200/50 px-1 rounded transition-all cursor-pointer"
+            >
+              <div className="truncate pr-2">
+                <p className="text-[10px] font-medium text-[#374151] truncate">{guest.name}</p>
+                <p className="text-[9px] text-[#6B7280] truncate">
+                  <span className="font-semibold text-emerald-700">{guest.property}</span> · {guest.time}
                 </p>
-                <p className="text-[9px] text-[#7d6b5e]">{guest.property} | {guest.time}</p>
               </div>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#657454]"></div>
+              {guest.vip && (
+                <span className="text-[7px] border border-[#1F1D1C] text-[#1F1D1C] bg-[#1F1D1C]/5 px-1.5 py-0.5 rounded uppercase tracking-wide font-bold shrink-0">
+                  VVIP
+                </span>
+              )}
             </div>
           </div>
         ))}

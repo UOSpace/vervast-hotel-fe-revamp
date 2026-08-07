@@ -6,44 +6,44 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
   const { openDrawer } = useDashboardDrawer();
   return (
     <div
-      className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col gap-3 bg-[#f3eae1]/30 backdrop-blur-sm hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer animate-card-enter"
+      className="flex flex-col justify-between gap-1.5 bg-transparent transition-opacity cursor-pointer hover:opacity-85 animate-card-enter"
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-[#4a3c31] flex items-center justify-between">
+      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between pb-1.5 border-b border-[#d4c4b7]/40 mb-0">
         <span>Channel Distribution Stats</span>
         <InfoTooltip text="Booking channel distribution comparing Direct bookings, OTAs, and Travel Agents." />
       </div>
-      <div className="flex items-center gap-6 px-2 py-2">
+      <div className="flex items-center gap-6 px-2 py-0.5 h-[120px]">
         <SharedDonutChart data={channelData} total={totalRnights} />
-        <div className="space-y-1.5 flex-1">
-          {channelData.map(s => (
-            <div key={s.name} className="flex items-center justify-between">
+        <div className="space-y-1 flex-1">
+          {channelData.map(c => (
+            <div key={c.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: s.color }} />
-                <span className="text-[9px] text-[#4a3c31] font-medium">{s.name}</span>
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: c.color }} />
+                <span className="text-[9px] text-[#4a3c31] font-medium">{c.name}</span>
               </div>
-              <span className="text-[9px] text-[#7d6b5e]">{s.value}%</span>
+              <span className="text-[9px] text-[#7d6b5e]">{c.value}%</span>
             </div>
           ))}
         </div>
       </div>
-      <table className="w-full mt-auto" style={{ borderCollapse: 'collapse' }}>
+      <table className="w-full mt-auto" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
           <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
-            <th className="text-left pb-1">Channel</th>
-            <th className="text-right pb-1">% Rnights</th>
-            <th className="text-right pb-1">ADR (USD)</th>
-            <th className="text-right pb-1">Room Revenue (USD)</th>
+            <th className="text-left pb-1 w-[30%] truncate">Channel</th>
+            <th className="text-right pb-1 w-[18%] truncate">% Rnights</th>
+            <th className="text-right pb-1 w-[22%] truncate">ADR (USD)</th>
+            <th className="text-right pb-1 w-[30%] truncate">Room Revenue (USD)</th>
           </tr>
         </thead>
         <tbody>
           {channelTable.map((row, idx) => (
             <tr key={row.channel} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === channelTable.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
-              <td className="py-1">{row.channel}</td>
-              <td className="text-right py-1">{row.rnights}</td>
-              <td className="text-right py-1">{row.adr}</td>
-              <td className="text-right py-1">{row.revenue}</td>
+              <td className="py-1 truncate">{row.channel}</td>
+              <td className="text-right py-1 truncate">{row.rnights}</td>
+              <td className="text-right py-1 truncate">{row.adr}</td>
+              <td className="text-right py-1 truncate">{row.revenue}</td>
             </tr>
           ))}
         </tbody>

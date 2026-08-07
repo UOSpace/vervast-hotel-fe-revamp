@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup } from 'react-simple-maps';
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import mapData from '../../../../data/mapData.json';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
-
-
 
 const statusColors: Record<string, string> = {
   high: '#18181b',
@@ -15,6 +13,7 @@ const statusColors: Record<string, string> = {
 
 export function LiveOverviewMap() {
   const [position, setPosition] = useState({ coordinates: [15, 20] as [number, number], zoom: 1 });
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
 
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
     setPosition(newPosition);
@@ -37,9 +36,9 @@ export function LiveOverviewMap() {
       <div className="flex-1 relative overflow-hidden rounded-md">
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ scale: 115, center: [15, 20] }}
-          width={880}
-          height={385}
+          projectionConfig={{ scale: 105, center: [15, 20] }}
+          width={850}
+          height={360}
           style={{ width: '100%', height: '100%', cursor: 'grab' }}
         >
           <ZoomableGroup
@@ -77,7 +76,7 @@ export function LiveOverviewMap() {
             ))}
           </defs>
 
-          {/* Flat country polygons — no highlight */}
+          {/* Flat country polygons */}
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => (
@@ -98,57 +97,65 @@ export function LiveOverviewMap() {
             }
           </Geographies>
 
-          {/* Connection lines from Nocturne hub */}
-          {mapData
-            .filter(d => d.id !== 'sosei-nocturne')
-            .map((location) => (
-              <Line
-                key={`line-${location.id}`}
-                from={[8.2275, 46.8182]}
-                to={location.coordinates as [number, number]}
-                stroke="#18181b"
-                strokeWidth={1.6}
-                strokeLinecap="round"
-                style={{ opacity: 0.85 }}
-              />
-            ))}
-
-          {/* Markers — radial gradient dot + label */}
-          {mapData.map(({ id, name, city, coordinates, labelOffset, status, revenue }) => {
+          {/* Markers — dots always visible, hovered marker rendered last so its popup is ALWAYS on top */}
+          {(hoveredMarkerId
+            ? [...mapData.filter(m => m.id !== hoveredMarkerId), mapData.find(m => m.id === hoveredMarkerId)!]
+            : mapData
+          ).map(({ id, name, city, coordinates, status, revenue }) => {
             const markerColor = statusColors[status] || statusColors.high;
+            const isHovered = hoveredMarkerId === id;
             return (
               <Marker key={id} coordinates={coordinates as [number, number]}>
-                <g style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}>
+                <g
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredMarkerId(id)}
+                  onMouseLeave={() => setHoveredMarkerId(null)}
+                  style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}
+                >
                   {/* Outer radial gradient glow */}
-                  <circle r={14} fill={`url(#dotGradient-${status})`} />
+                  <circle r={isHovered ? 18 : 14} fill={`url(#dotGradient-${status})`} className="transition-all duration-200" />
                   {/* Pulse beacon effect */}
                   <circle className="map-beacon" fill="none" stroke={markerColor} />
                   {/* Inner solid dot */}
-                  <circle r={3.5} fill={markerColor} stroke="#fff" strokeWidth={1} />
+                  <circle r={isHovered ? 5 : 3.5} fill={markerColor} stroke="#fff" strokeWidth={1.5} className="transition-all duration-200" />
 
-                  {/* Label pill */}
-                  <foreignObject
-                    x={labelOffset[0]}
-                    y={labelOffset[1]}
-                    width={150}
-                    height={38}
-                    style={{ overflow: 'visible' }}
-                  >
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.98)',
-                      borderRadius: '8px',
-                      padding: '4px 8px',
-                      width: 'max-content',
-                      boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)',
-                      border: '1px solid rgba(228, 228, 231, 0.6)',
-                    }}>
-                      <div style={{ fontSize: '7.5px', fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
-                      <div className="flex justify-between items-center gap-2 mt-0.5" style={{ fontSize: '7.5px', lineHeight: 1.2 }}>
-                        <span style={{ color: '#71717a' }}>{city}</span>
-                        <span style={{ color: '#18181b', fontWeight: 700 }}>{revenue}</span>
+                  {/* Label pill - visible only when hovered */}
+                  {isHovered && (
+                    <foreignObject
+                      x={-75}
+                      y={-62}
+                      width={220}
+                      height={65}
+                      style={{ overflow: 'visible', pointerEvents: 'none' }}
+                    >
+                      <div className="relative animate-in fade-in zoom-in-95 duration-150" style={{
+                        background: 'rgba(255, 255, 255, 0.98)',
+                        borderRadius: '10px',
+                        padding: '7px 12px',
+                        width: 'max-content',
+                        boxShadow: '0 6px 20px rgba(0, 0, 0, 0.18)',
+                        border: '1px solid rgba(228, 228, 231, 0.9)',
+                      }}>
+                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#111827', lineHeight: 1.3, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{name}</div>
+                        <div className="flex justify-between items-center gap-3 mt-1" style={{ fontSize: '10px', lineHeight: 1.2 }}>
+                          <span style={{ color: '#6B7280' }}>{city}</span>
+                          <span style={{ color: '#059669', fontWeight: 700 }}>{revenue}</span>
+                        </div>
+                        {/* Downward pointer arrow pointing to the dot */}
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '-5px',
+                          left: '50%',
+                          transform: 'translateX(-50%) rotate(45deg)',
+                          width: '10px',
+                          height: '10px',
+                          background: 'rgba(255, 255, 255, 0.98)',
+                          borderRight: '1px solid rgba(228, 228, 231, 0.9)',
+                          borderBottom: '1px solid rgba(228, 228, 231, 0.9)',
+                        }} />
                       </div>
-                    </div>
-                  </foreignObject>
+                    </foreignObject>
+                  )}
                 </g>
               </Marker>
             );
@@ -210,7 +217,8 @@ export function LiveOverviewMap() {
           </button>
         </div>
 
-        {/* Legend */}
+        {/* Legend (Commented out per user request) */}
+        {/*
         <div className="absolute bottom-3 left-3 px-3 py-2.5 rounded-lg" style={{
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(4px)',
@@ -230,6 +238,7 @@ export function LiveOverviewMap() {
             ))}
           </div>
         </div>
+        */}
       </div>
     </div>
   );

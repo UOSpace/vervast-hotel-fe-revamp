@@ -266,7 +266,7 @@
   ],
   "portfolioPerformance": [
     {
-      "label": "Total Room Revenue (USD)",
+      "label": "Room Revenue (USD)",
       "value": "$ 374.0M",
       "trend": "↑ 10%",
       "up": true
@@ -293,23 +293,28 @@
   "topNationalities": [
     {
       "country": "United States",
-      "percentage": "72%"
+      "revPar": "$893",
+      "val": 893
     },
     {
       "country": "United Kingdom",
-      "percentage": "68%"
-    },
-    {
-      "country": "Germany",
-      "percentage": "65%"
-    },
-    {
-      "country": "India",
-      "percentage": "70%"
+      "revPar": "$802",
+      "val": 802
     },
     {
       "country": "Australia",
-      "percentage": "63%"
+      "revPar": "$706",
+      "val": 706
+    },
+    {
+      "country": "India",
+      "revPar": "$686",
+      "val": 686
+    },
+    {
+      "country": "Germany",
+      "revPar": "$683",
+      "val": 683
     }
   ],
   "sentimentScore": {
@@ -323,21 +328,66 @@
       "name": "The Anderson Family",
       "property": "SOSEI Alpine",
       "time": "2:30 PM",
+      "suite": "Penthouse Suite 102",
+      "guestsCount": "4 Guests",
+      "specialRequest": "Helicopter Transfer & Champagne Welcome",
+      "status": "In Transit",
       "vip": true
     },
     {
       "id": 2,
       "name": "Mr. James Wilson",
       "property": "SOSEI Forest",
-      "time": "7:00 PM",
+      "time": "3:15 PM",
+      "suite": "Kanji Pavilion 04",
+      "guestsCount": "2 Guests",
+      "specialRequest": "Zen Tea Ceremony & Private Onsen",
+      "status": "Confirmed",
       "vip": true
     },
     {
       "id": 3,
-      "name": "The Parker Family",
+      "name": "The Takahashi Family",
+      "property": "SOSEI Ocean",
+      "time": "4:00 PM",
+      "suite": "Overwater Villa 18",
+      "guestsCount": "5 Guests",
+      "specialRequest": "Sunset Yacht Cruise & Chef Dining",
+      "status": "Confirmed",
+      "vip": true
+    },
+    {
+      "id": 4,
+      "name": "Lady Sarah Jenkins",
+      "property": "SOSEI City",
+      "time": "5:45 PM",
+      "suite": "Sky Sanctuary Suite 5201",
+      "guestsCount": "1 Guest",
+      "specialRequest": "Chauffeur Rolls-Royce & Aromatherapy",
+      "status": "Arrived",
+      "vip": true
+    },
+    {
+      "id": 5,
+      "name": "Mr. David Vance",
       "property": "SOSEI Desert",
-      "time": "5:30 PM",
-      "vip": false
+      "time": "7:00 PM",
+      "suite": "Royal Oasis Dune Villa 01",
+      "guestsCount": "2 Guests",
+      "specialRequest": "Private Stargazing & Bedouin Banquet",
+      "status": "In Transit",
+      "vip": true
+    },
+    {
+      "id": 6,
+      "name": "Baroness von Berg",
+      "property": "SOSEI Countryside",
+      "time": "8:30 PM",
+      "suite": "Manor House Estate 05",
+      "guestsCount": "3 Guests",
+      "specialRequest": "Equestrian Tour & Organic Tasting Menu",
+      "status": "Confirmed",
+      "vip": true
     }
   ],
   "topGuestNeeds": [

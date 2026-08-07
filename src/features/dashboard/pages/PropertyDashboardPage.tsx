@@ -66,38 +66,63 @@ export function PropertyDashboardPage() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col pt-4 lg:pt-6">
       <SakuraTransition isActive={isTransitioning} phase={phase} />
-      <PropertyHeaderWidget 
-        startDate={startDate} endDate={endDate} onDateChange={(dates: [Date | null, Date | null]) => handleDateChange('main', dates)}
-        compStartDate={compStartDate} compEndDate={compEndDate} onCompDateChange={(dates: [Date | null, Date | null]) => handleDateChange('comp', dates)}
-        selectedProperty={selectedProperty}
-        onPropertyChange={setSelectedProperty}
-        propertiesList={PROPERTIES}
-      />
       
-      <div key={selectedProperty.id} className="flex-1 min-h-0 flex flex-col gap-4">
-        {/* Row 1 */}
+      {/* Header wrapper matching DashboardPage */}
+      <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
+        <PropertyHeaderWidget 
+          startDate={startDate} endDate={endDate} onDateChange={(dates: [Date | null, Date | null]) => handleDateChange('main', dates)}
+          compStartDate={compStartDate} compEndDate={compEndDate} onCompDateChange={(dates: [Date | null, Date | null]) => handleDateChange('comp', dates)}
+          selectedProperty={selectedProperty}
+          onPropertyChange={setSelectedProperty}
+          propertiesList={PROPERTIES}
+        />
+      </header>
+
+      {/* Content wrapper matching DashboardPage */}
+      <div key={selectedProperty.id} className="flex-1 flex flex-col gap-5 pb-6 px-4 lg:px-6 text-[10px]">
+        {/* Row 1: KPI Metrics (Full Width) */}
         <PropertyKPIWidget propertyId={selectedProperty.id} />
 
-        {/* Row 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <OccupancyByRoomTypeWidget />
-          <RevenueByDepartmentWidget />
-          <MarketSegmentMixWidget />
+        {/* Row 2: Staggered Section 1 (8 columns Rhythm + 4 columns Donut Segment Mix) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch">
+          <div className="col-span-12 lg:col-span-8 flex flex-col">
+            <PropertyRhythmWidget />
+          </div>
+          <div className="col-span-12 lg:col-span-4 flex flex-col">
+            <MarketSegmentMixWidget />
+          </div>
         </div>
 
-        {/* Row 3 */}
-        <div className="grid grid-cols-1 lg:grid-cols-[28fr_40fr_32fr] gap-4">
-          <TopBookingChannelsWidget />
-          <GuestNationalityWidget />
-          <GuestSatisfactionWidget />
+        {/* Row 3: Staggered Section 2 (4 columns Satisfaction + 5 columns Room Occupancy + 3 columns Upcoming Events) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch">
+          <div className="col-span-12 lg:col-span-4 flex flex-col">
+            <GuestSatisfactionWidget />
+          </div>
+          <div className="col-span-12 lg:col-span-5 flex flex-col">
+            <OccupancyByRoomTypeWidget />
+          </div>
+          <div className="col-span-12 lg:col-span-3 flex flex-col">
+            <UpcomingEventsWidget />
+          </div>
         </div>
 
-        {/* Row 4 */}
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-4">
-          <PropertyRhythmWidget />
-          <UpcomingEventsWidget />
+        {/* Row 4: Staggered Section 3 (3 columns of 4 width each for financials and distributions) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch">
+          <div className="col-span-12 lg:col-span-4 flex flex-col">
+            <RevenueByDepartmentWidget />
+          </div>
+          <div className="col-span-12 lg:col-span-4 flex flex-col">
+            <TopBookingChannelsWidget />
+          </div>
+          <div className="col-span-12 lg:col-span-4 flex flex-col">
+            <GuestNationalityWidget />
+          </div>
+        </div>
+
+        {/* Row 5: Operational Notices & Reminders (Full Width) */}
+        <div className="w-full">
           <AlertsTasksWidget />
         </div>
       </div>

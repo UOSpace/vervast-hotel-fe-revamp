@@ -26,20 +26,19 @@ const geoConfigs = [
 ];
 
 const segmentConfigs = [
-  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#C8A050' },
-  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#947b66' },
-  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#7d6b5e' },
-  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#d4c4b7' },
-  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#e5d8cb' },
+  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#1F1D1C' },
+  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#3D3A38' },
+  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#5E5A56' },
+  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#857E78' },
+  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#B2A9A0' },
 ];
 
 const channelConfigs = [
-  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#C8A050' },
-  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#947b66' },
-  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#7d6b5e' },
-  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#d4c4b7' },
-  { channel: 'TO', share: 8, adrFactor: 0.73, color: '#b8a899' },
-  { channel: 'Trade', share: 5, adrFactor: 0.69, color: '#e5d8cb' },
+  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#1F1D1C' },
+  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#3D3A38' },
+  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#5E5A56' },
+  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#857E78' },
+  { channel: 'Others', share: 13, adrFactor: 0.71, color: '#B2A9A0' },
 ];
 
 // Helper to distribute metrics to categories consistently
@@ -110,8 +109,24 @@ function distributeMetrics(
   });
 }
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Ohayō Alfonso!';
+  if (hour >= 12 && hour < 18) return 'Konnichiwa Alfonso!';
+  return 'Konbanwa Alfonso!';
+};
+
+const getFormattedDateTime = () => {
+  const now = new Date();
+  const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return { date, time, tz };
+};
+
 export function ResortTypeDashboard() {
   const [activeResorts, setActiveResorts] = useState<string[]>(['city']);
+  const { date, time, tz } = getFormattedDateTime();
 
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -120,8 +135,8 @@ export function ResortTypeDashboard() {
 
   const [startDate, setStartDate] = useState<Date | null>(firstDayOfMonth);
   const [endDate, setEndDate] = useState<Date | null>(today);
-  const [compStartDate, setCompStartDate] = useState<Date | null>(firstDayOfPrevMonth);
-  const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
+  const compStartDate = firstDayOfPrevMonth;
+  const compEndDate = prevMonthToday;
 
   // Calculate days in the current date range
   const days = useMemo(() => {
@@ -255,7 +270,7 @@ export function ResortTypeDashboard() {
     return [
       { label: 'OCCUPANCY', value: `${avgOcc}%`, trend: formatPpChange(avgOcc, compMetrics.avgOcc), up: occDiff >= 0, color: '#947b66' },
       { label: 'Room Revenue (USD)', value: `$${(totalRevenue / 1000000).toFixed(2)}M`, trend: formatPctChange(totalRevenue, compMetrics.totalRevenue), up: revDiff >= 0, color: '#586981' },
-      { label: 'RevPAR (USD)', value: `$${avgRevpar}`, trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0, color: '#657454' },
+      { label: 'RevPAR (USD)', value: `$${avgRevpar.toLocaleString()}`, trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0, color: '#657454' },
       { label: 'ADR (USD)', value: `$${avgAdr.toLocaleString()}`, trend: formatPctChange(avgAdr, compMetrics.avgAdr), up: adrDiff >= 0, color: '#8b6b7a' },
       { label: 'TOTAL ROOM NIGHTS', value: totalOccupiedNights.toLocaleString(), trend: formatPctChange(totalOccupiedNights, compMetrics.totalOccupiedNights), up: nightsDiff >= 0, color: '#a67138' },
     ];
@@ -293,7 +308,7 @@ export function ResortTypeDashboard() {
     const tableData = geoDistribution.map(item => ({
       region: item.name,
       rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
-      adr: `$${item.adr}`,
+      adr: `$${item.adr.toLocaleString()}`,
       revenue: `$${(item.revenue / 1000000).toFixed(2)}M`,
     }));
 
@@ -301,7 +316,7 @@ export function ResortTypeDashboard() {
     tableData.push({
       region: 'Total',
       rnights: '100%',
-      adr: `$${avgAdr}`,
+      adr: `$${avgAdr.toLocaleString()}`,
       revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
       isTotal: true
     } as any);
@@ -325,14 +340,14 @@ export function ResortTypeDashboard() {
     const tableData = segmentDistribution.map(item => ({
       segment: item.name,
       rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
-      adr: `$${item.adr}`,
+      adr: `$${item.adr.toLocaleString()}`,
       revenue: `$${(item.revenue / 1000000).toFixed(2)}M`
     }));
 
     tableData.push({
       segment: 'Total',
       rnights: '100%',
-      adr: `$${avgAdr}`,
+      adr: `$${avgAdr.toLocaleString()}`,
       revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
       isTotal: true
     } as any);
@@ -356,14 +371,14 @@ export function ResortTypeDashboard() {
     const tableData = channelDistribution.map(item => ({
       channel: item.name,
       rnights: totalOccupiedNights > 0 ? `${((item.nights / totalOccupiedNights) * 100).toFixed(1)}%` : '0.0%',
-      adr: `$${item.adr}`,
+      adr: `$${item.adr.toLocaleString()}`,
       revenue: `$${(item.revenue / 1000000).toFixed(2)}M`
     }));
 
     tableData.push({
       channel: 'Total',
       rnights: '100%',
-      adr: `$${avgAdr}`,
+      adr: `$${avgAdr.toLocaleString()}`,
       revenue: `$${(totalRevenue / 1000000).toFixed(2)}M`,
       isTotal: true
     } as any);
@@ -372,17 +387,39 @@ export function ResortTypeDashboard() {
   }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   return (
-    <div className="w-full flex flex-col gap-4 px-4 lg:px-6 pb-8 text-[10px]">
+    <div className="w-full px-4 lg:px-6 pb-4 text-[10px] flex flex-col gap-2">
+      {/* Title, Date Filter, and Time (Full-Width Header at the very top) */}
+      <div className="w-full border-b border-[#d4c4b7]/40 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3 -mt-2">
+        <div>
+          <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+          <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide">
+            Resort & Destination Analytics
+          </h2>
+        </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 shrink-0">
+          <DateRangeWidget
+            startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}
+          />
+          <div className="text-right shrink-0 pb-0.5">
+            <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
+            <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Horizontal Resort Picker Gallery (Wabi-Sabi Horizontal Row) */}
       <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
 
-      <DateRangeWidget
-        startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}
-        compStartDate={compStartDate} setCompStartDate={setCompStartDate} compEndDate={compEndDate} setCompEndDate={setCompEndDate}
-      />
+      <hr className="border-t border-[#d4c4b7]/20" />
 
+      {/* KPI Cards Row (Full Width) */}
       <ResortKPIWidget kpis={dynamicKpis} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Subtle wabi-sabi dividing line */}
+      <hr className="border-t border-[#d4c4b7]/20" />
+
+      {/* Analytics Breakdown Grid (Full Width, asymmetrical heights and wider gap) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
         <ResortGeoMarketWidget geoData={dynamicGeoData} />
         <ResortMarketSegmentWidget segmentData={dynamicSegmentData} segmentTable={dynamicSegmentTable} totalRnights={dynamicTotal} />
         <ResortChannelStatsWidget channelData={dynamicChannelData} channelTable={dynamicChannelTable} totalRnights={dynamicTotal} />

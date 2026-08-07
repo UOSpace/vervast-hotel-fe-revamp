@@ -1,54 +1,5 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
-
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
-
-function SemiCircleGauge({ value }: { value: number }) {
-  const radius = 32;
-  const strokeWidth = 5;
-  const circumference = Math.PI * radius;
-  const strokeDashoffset = circumference - (value / 100) * circumference;
-
-  return (
-    <div className="relative flex justify-center mt-3 mb-2 h-[45px]">
-      <svg width="84" height="45" viewBox="0 0 84 45" className="overflow-visible">
-        <defs>
-          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#C8A050" />
-            <stop offset="50%" stopColor="#657454" />
-            <stop offset="100%" stopColor="#586981" />
-          </linearGradient>
-        </defs>
-        {/* Background track */}
-        <path d="M 10 40 A 32 32 0 0 1 74 40" fill="none" stroke="#e5d8cb" strokeWidth={strokeWidth} strokeLinecap="round" />
-        {/* Value track */}
-        <path
-          d="M 10 40 A 32 32 0 0 1 74 40"
-          fill="none"
-          stroke="url(#gaugeGradient)"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-        />
-      </svg>
-      <div className="absolute bottom-0 text-xl font-serif text-[#4a3c31] font-bold">{value}%</div>
-    </div>
-  );
-}
-
-const sparkData = [60, 63, 66, 69, 72, 75, 78, 81, 84, 88];
-
-function Sparkline({ color }: { color: string }) {
-  const data = sparkData.map((v, i) => ({ v: v + (Math.random() * 4 - 2), i }));
-  return (
-    <ResponsiveContainer width="100%" height={32}>
-      <LineChart data={data}>
-        <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.2} dot={false} isAnimationActive={false} />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
 
 function getTooltipText(label: string) {
   const l = label.toUpperCase();
@@ -63,40 +14,55 @@ function getTooltipText(label: string) {
 
 export function ResortKPIWidget({ kpis }: { kpis: any[] }) {
   const { openDrawer } = useDashboardDrawer();
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-      {kpis.map((kpi, idx) => (
-        <div
-          key={kpi.label}
-          className="relative border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:ring-2 hover:ring-[#C8A050]/50 hover:z-20 transition-all cursor-pointer animate-card-enter min-h-[140px]"
-          style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
-          onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
-        >
-          <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] flex items-center justify-between">
-            <span>{kpi.label}</span>
-            <InfoTooltip text={getTooltipText(kpi.label)} />
-          </div>
+  const occ = kpis[0];
+  const rev = kpis[1];
+  const revpar = kpis[2];
+  const adr = kpis[3];
+  const nights = kpis[4];
 
-          {kpi.label === 'OCCUPANCY' ? (
-            <SemiCircleGauge value={parseInt(kpi.value)} />
-          ) : (
-            <div className="flex-1 flex items-center justify-center mt-2 mb-1">
-              <div className="text-2xl font-serif text-[#4a3c31] leading-none">{kpi.value}</div>
-            </div>
-          )}
-
-          <div className="flex flex-col items-center mt-auto">
-            <div className={`text-[8.5px] font-bold tracking-wide ${kpi.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>
-              {kpi.trend}
-            </div>
-          </div>
-
-          <div className="mt-2 relative">
-            <Sparkline color={kpi.color} />
-            <div className="absolute -bottom-1 left-0 text-[7px] text-[#947b66]">Trend</div>
-          </div>
+  const renderCard = (kpi: any, idx: number) => {
+    if (!kpi) return null;
+    return (
+      <div
+        key={kpi.label}
+        className="h-full rounded-[12px] p-3 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter"
+        style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
+        onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
+      >
+        <div className="flex items-center justify-between gap-1 mb-1">
+          <InfoTooltip text={getTooltipText(kpi.label)}>
+            <p className="text-[10px] font-normal tracking-wider uppercase text-[#4a3c31] whitespace-nowrap truncate cursor-help">
+              {kpi.label}
+            </p>
+          </InfoTooltip>
         </div>
-      ))}
+
+        <h3 className="text-[22px] font-normal text-[#4a3c31] my-1">
+          {kpi.value}
+        </h3>
+      </div>
+    );
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+      {/* Col 1: OCCUPANCY & Room Revenue */}
+      <div className="grid grid-cols-2 gap-3 items-stretch">
+        {renderCard(occ, 0)}
+        {renderCard(rev, 1)}
+      </div>
+
+      {/* Col 2: RevPAR & ADR */}
+      <div className="grid grid-cols-2 gap-3 items-stretch">
+        {renderCard(revpar, 2)}
+        {renderCard(adr, 3)}
+      </div>
+
+      {/* Col 3: TOTAL ROOM NIGHTS */}
+      <div className="w-full h-full">
+        {renderCard(nights, 4)}
+      </div>
     </div>
   );
 }
+

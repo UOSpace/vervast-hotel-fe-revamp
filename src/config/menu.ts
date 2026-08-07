@@ -11,7 +11,15 @@ export interface MenuItem {
 }
 
 export const sidebarMenu: MenuItem[] = [
-  { name: 'Group View', icon: Globus, path: '/dashboard' },
+  {
+    name: 'Group View',
+    icon: Globus,
+    path: '/dashboard',
+    children: [
+      { name: 'Global Overview', path: '/dashboard?view=all' },
+      { name: 'Property Categories', path: '/dashboard?view=by_property_type' },
+    ],
+  },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
   {
     name: 'Guests', icon: UsersGroupTwoRounded, path: '/dashboard/guests',
