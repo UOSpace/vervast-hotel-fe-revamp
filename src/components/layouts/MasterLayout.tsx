@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
-import { SakuraTransition, useSakuraTransition } from '../../features/dashboard/components/SakuraTransition';
 import { DashboardDrawerProvider } from '../../features/dashboard/context/DashboardDrawerContext';
 import { DashboardDrawer } from '../../features/dashboard/components/DashboardDrawer';
 
 export function MasterLayout() {
-  const { phase, trigger } = useSakuraTransition();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,10 +12,7 @@ export function MasterLayout() {
   const handleNavigate = (path: string) => {
     // If it's the exact same path, do nothing
     if (path === location.pathname) return;
-    // Trigger transition and navigate at the peak
-    trigger(() => {
-      navigate(path);
-    });
+    navigate(path);
   };
 
   return (
@@ -25,7 +20,6 @@ export function MasterLayout() {
       <div 
         className="flex h-screen w-full overflow-hidden relative text-[#4a3c31] bg-background"
       >
-        <SakuraTransition isActive={phase !== 'idle'} phase={phase} />
         
         {/* Backdrop for mobile */}
         {isSidebarOpen && (

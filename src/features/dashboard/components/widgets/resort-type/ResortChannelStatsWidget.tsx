@@ -6,7 +6,7 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
   const { openDrawer } = useDashboardDrawer();
   return (
     <div
-      className="flex flex-col justify-between gap-1.5 bg-transparent transition-opacity cursor-pointer hover:opacity-85 animate-card-enter"
+      className="rounded-[12px] py-5 px-4 flex flex-col justify-between gap-2.5 bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable })}
     >
@@ -31,19 +31,19 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
       <table className="w-full mt-auto" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
           <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
-            <th className="text-left pb-1 w-[30%] truncate">Channel</th>
-            <th className="text-right pb-1 w-[18%] truncate">% Rnights</th>
-            <th className="text-right pb-1 w-[22%] truncate">ADR (USD)</th>
-            <th className="text-right pb-1 w-[30%] truncate">Room Revenue (USD)</th>
+            <th className="text-left pb-1.5 w-[30%] truncate">Channel</th>
+            <th className="text-right pb-1.5 w-[18%] truncate">% Rnights</th>
+            <th className="text-right pb-1.5 w-[22%] truncate">ADR (USD)</th>
+            <th className="text-right pb-1.5 w-[30%] truncate">Room Revenue (USD)</th>
           </tr>
         </thead>
         <tbody>
           {channelTable.map((row, idx) => (
             <tr key={row.channel} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === channelTable.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
-              <td className="py-1 truncate">{row.channel}</td>
-              <td className="text-right py-1 truncate">{row.rnights}</td>
-              <td className="text-right py-1 truncate">{row.adr}</td>
-              <td className="text-right py-1 truncate">{row.revenue}</td>
+              <td className="py-1.5 truncate">{row.channel}</td>
+              <td className="text-right py-1.5 truncate">{row.rnights}</td>
+              <td className="text-right py-1.5 truncate">{row.adr}</td>
+              <td className="text-right py-1.5 truncate">{row.revenue}</td>
             </tr>
           ))}
         </tbody>

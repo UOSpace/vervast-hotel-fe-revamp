@@ -120,7 +120,7 @@ export function SpaDashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#d4c4b7]/40 pb-4 mt-2 gap-4">
         <div>
           <span className="text-[9px] font-bold tracking-widest text-[#947b66] uppercase">Sanctuary Wellness</span>
-          <h1 className="text-2xl font-serif text-[#4a3c31] font-bold mt-0.5">Sanctuary Wellness Dashboard</h1>
+          <h1 className="text-2xl text-[#4a3c31] font-bold mt-0.5">Sanctuary Wellness Dashboard</h1>
           <p className="text-[10px] text-[#7d6b5e] mt-1">Delivering balance. Enhancing wellbeing. Elevating every stay.</p>
         </div>
         <div className="flex items-center gap-3 self-stretch md:self-auto justify-end">
@@ -162,7 +162,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">1,248</div>
+            <div className="text-xl font-normal text-[#4a3c31]">1,248</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+12% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$286,450</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$286,450</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+18% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -196,7 +196,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$229</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$229</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+5% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -213,7 +213,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">71%</div>
+            <div className="text-xl font-normal text-[#4a3c31]">71%</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+6pp vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -230,7 +230,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">2,840</div>
+            <div className="text-xl font-normal text-[#4a3c31]">2,840</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+10% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -247,7 +247,7 @@ export function SpaDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$42,180</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$42,180</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+14% vs Apr 1 - Apr 30</div>
           </div>
         </div>

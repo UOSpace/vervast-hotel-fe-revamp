@@ -12,58 +12,61 @@ export function PortalSelectionPage() {
     {
       id: 'hospitality',
       label: 'Hospitality',
+      subtitle: 'Luxury Hotels & Resorts',
       image: hospitalityPortalImg,
       path: '/dashboard',
-      glowColor: 'rgba(200, 160, 80, 0.5)'
     },
     {
       id: 'sanctuary',
       label: 'Sanctuary',
+      subtitle: 'Wellness & Spa Retreats',
       image: sanctuaryPortalImg,
       path: '/dashboard',
-      glowColor: 'rgba(166, 94, 82, 0.5)'
     },
     {
       id: 'design',
       label: 'Design',
+      subtitle: 'Architecture & Interiors',
       image: designPortalImg,
       path: '/dashboard',
-      glowColor: 'rgba(88, 105, 129, 0.5)'
     },
     {
       id: 'fnb-experience',
       label: 'F&B & Experience',
+      subtitle: 'Culinary & Curated Events',
       image: fnbPortalImg,
       path: '/dashboard',
-      glowColor: 'rgba(101, 116, 84, 0.5)'
     }
   ];
 
   return (
     <div 
-      className="min-h-screen w-full flex flex-col items-center justify-between p-6 sm:p-10 relative overflow-hidden text-[#4a3c31] select-none bg-[#f8f6f0]"
+      className="min-h-screen w-full flex flex-col items-center justify-between p-4 sm:p-8 relative overflow-hidden text-foreground select-none bg-background"
     >
-      {/* Background texture overlay */}
-      <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] pointer-events-none" />
+      {/* Background subtle radial glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-foreground/[0.015] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header Logo */}
-      <div className="z-10 flex flex-col items-center w-full pt-4 pb-8 animate-fade-in shrink-0">
-        <Logo className="w-48 md:w-56 h-auto" />
+      {/* Header Logo (Smaller & Elegant) */}
+      <div className="z-10 flex flex-col items-center w-full pt-2 pb-4 animate-fade-in shrink-0">
+        <Logo className="w-20 sm:w-24 h-auto opacity-90" />
+        <p className="text-[11px] text-muted-foreground/80 tracking-[0.2em] uppercase mt-2.5 font-medium">
+          Select Portfolio Portal
+        </p>
       </div>
 
-      {/* Portal 4-Grid Cards Container (Zero spacing & padding) */}
-      <div className="z-10 w-full max-w-6xl my-auto animate-fade-in">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 w-full rounded-2xl overflow-hidden shadow-2xl border border-[#d4c4b7]/50">
+      {/* Portal Spaced Cards Grid (+10% Card Size & Extra Wide Gaps) */}
+      <div className="z-10 w-full max-w-[1120px] my-auto animate-fade-in py-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-14 w-full justify-items-center">
           {portals.map((portal, idx) => (
             <div 
               key={portal.id}
               onClick={() => navigate(portal.path)}
-              className="relative aspect-[3/4] sm:aspect-[4/5] lg:aspect-[3/4.5] w-full overflow-hidden cursor-pointer group transition-all duration-500 border-b lg:border-b-0 lg:border-r border-[#d4c4b7]/30 last:border-0"
+              className="relative aspect-[3/4] max-h-[350px] w-full max-w-[230px] rounded-2xl overflow-hidden cursor-pointer group transition-all duration-500 border border-border/60 bg-card shadow-xs hover:shadow-xl hover:-translate-y-1.5"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
-              {/* Background Image: Grayscale initially, full color + scale on hover */}
+              {/* Background Image: Ultra-soft, high-key bright black & white photo */}
               <div 
-                className="absolute inset-0 w-full h-full grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                className="absolute inset-0 w-full h-full filter grayscale brightness-[1.14] contrast-[0.82] opacity-95 group-hover:brightness-[1.05] group-hover:contrast-90 scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
                 style={{
                   backgroundImage: `url(${portal.image})`,
                   backgroundSize: 'cover',
@@ -72,18 +75,18 @@ export function PortalSelectionPage() {
                 }}
               />
 
-              {/* Bottom Gradient Overlay (Black to transparent gradient) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-85 group-hover:opacity-95 transition-opacity duration-500" />
+              {/* Soft Light Bottom Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
 
-              {/* Glowing border accent on hover */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-amber-200/40 transition-colors duration-500 pointer-events-none" />
-
-              {/* Bottom Title Container */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end text-white z-10">
-                <div className="w-6 h-[2px] bg-white/50 mb-2.5 group-hover:w-10 group-hover:bg-amber-200 transition-all duration-500" />
-                <h3 className="text-sm font-sans tracking-[0.2em] uppercase font-bold text-white group-hover:text-amber-200 transition-colors duration-300 leading-tight">
+              {/* Content Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end text-white z-10 space-y-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <div className="w-5 h-[2px] bg-white/60 mb-1.5 group-hover:w-8 group-hover:bg-white transition-all duration-500" />
+                <h3 className="text-xs sm:text-sm font-sans tracking-[0.2em] uppercase font-bold text-white leading-tight">
                   {portal.label}
                 </h3>
+                <p className="text-[10px] sm:text-[11px] text-white/70 font-light tracking-wide group-hover:text-white/90 transition-colors">
+                  {portal.subtitle}
+                </p>
               </div>
             </div>
           ))}
@@ -91,9 +94,10 @@ export function PortalSelectionPage() {
       </div>
 
       {/* Footer copyright note */}
-      <div className="z-10 pt-8 pb-2 text-center text-[10px] text-[#7d6b5e] tracking-widest uppercase shrink-0 font-medium">
-        SOSEI Hospitality Group · Portfolio Selection
+      <div className="z-10 pt-4 pb-2 text-center text-[10px] text-muted-foreground/50 tracking-widest uppercase shrink-0 font-medium">
+        SOSEI Hospitality Group &bull; Portfolio Selection
       </div>
     </div>
   );
 }
+

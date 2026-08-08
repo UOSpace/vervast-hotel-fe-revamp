@@ -53,7 +53,7 @@ function DetailModal({ content, onClose }: { content: ModalContent; onClose: () 
         {/* Header */}
         <div className="shrink-0 px-6 py-4 border-b border-[#d4c4b7]/50 bg-gradient-to-b from-[#f3eae1]/60 to-transparent flex justify-between items-start">
           <div>
-            <h3 className="font-serif text-xl text-[#4a3c31]">{content.title}</h3>
+            <h3 className="font-bold text-xl text-[#4a3c31]">{content.title}</h3>
             {content.subtitle && <p className="text-[10px] text-[#947b66] uppercase tracking-wider font-semibold mt-0.5">{content.subtitle}</p>}
           </div>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-[#e5d8cb] text-[#6A5848] transition-colors shrink-0">✕</button>
@@ -201,13 +201,13 @@ export function IndividualGuestProfilePage() {
         <div className="relative z-20 border border-[#d4c4b7] rounded-[12px] p-5 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xs">
           <div className="flex items-center gap-4">
             {/* Avatar Circle */}
-            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 backdrop-blur-sm border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-serif font-bold shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-[#947b66]/20 backdrop-blur-sm border-2 border-[#947b66] flex items-center justify-center text-[#4a3c31] text-xl font-bold shadow-inner">
               JA
             </div>
 
             {/* Guest Info */}
             <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-serif text-[#4a3c31] font-bold">{displayName}</h2>
+              <h2 className="text-2xl font-bold text-[#4a3c31]">{displayName}</h2>
               <div className="flex items-center gap-2 text-[#7d6b5e] text-[11px]">
                 <span className="font-semibold text-[#947b66]">Primary Member</span>
                 <span>•</span>
@@ -250,7 +250,7 @@ export function IndividualGuestProfilePage() {
           {/* Header */}
           <div className="bg-[#947b66]/10 backdrop-blur-sm px-5 py-4 border-b border-[#d4c4b7] flex justify-between items-center">
             <div>
-              <h3 className="text-sm font-bold font-serif text-[#4a3c31]">Leads & Bookings</h3>
+              <h3 className="text-sm font-bold text-[#4a3c31]">Leads & Bookings</h3>
               <p className="text-[10px] text-[#7d6b5e]">View and track all leads and booking records generated for this contact.</p>
             </div>
             <div className="w-5 h-5 rounded-full hover:bg-black/5 flex items-center justify-center text-[#7d6b5e] cursor-pointer">
@@ -324,7 +324,7 @@ export function IndividualGuestProfilePage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-[#7d6b5e] uppercase tracking-wider">Total {leadTab === 'leads' ? 'Leads' : 'Bookings'}</div>
-                  <div className="text-xl font-serif font-bold text-[#4a3c31] mt-0.5">{filteredItems.length}</div>
+                  <div className="text-xl font-normal text-[#4a3c31] mt-0.5">{filteredItems.length}</div>
                 </div>
               </div>
 
@@ -334,7 +334,7 @@ export function IndividualGuestProfilePage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-[#7d6b5e] uppercase tracking-wider">Total Revenue</div>
-                  <div className="text-xl font-serif font-bold text-[#4a3c31] mt-0.5">
+                  <div className="text-xl font-normal text-[#4a3c31] mt-0.5">
                     ${totalRevenue.toLocaleString()}
                   </div>
                 </div>
@@ -370,7 +370,7 @@ export function IndividualGuestProfilePage() {
                                 </div>
                                 <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
                                   <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Revenue</div>
-                                  <div className="font-bold text-[#4a3c31] text-base font-serif">{item.value}</div>
+                                  <div className="font-bold text-[#4a3c31] text-base">{item.value}</div>
                                 </div>
                                 <div className="bg-[#f3eae1]/50 rounded-xl p-3 border border-[#d4c4b7]/50">
                                   <div className="text-[9px] font-bold uppercase tracking-wider text-[#947b66] mb-1">Status</div>

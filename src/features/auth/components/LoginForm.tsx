@@ -18,21 +18,22 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-sm">
-      <div className="space-y-2 mb-4 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Welcome Back</h1>
+    <div className="w-full">
+      <div className="space-y-1 mb-6 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Welcome Back</h1>
+        <p className="text-xs text-muted-foreground">Sign in to your account</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="p-3 text-sm text-red-600 bg-red-100/50 rounded-md border border-red-200/50">
+          <div className="p-3 text-xs font-medium text-destructive bg-destructive/10 rounded-lg border border-destructive/20">
             {error}
           </div>
         )}
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-xs font-medium text-foreground/80">Email address</Label>
             <Input
               id="email"
               type="email"
@@ -40,12 +41,12 @@ export function LoginForm() {
               required
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              className="bg-transparent border-border/60"
+              className="bg-background/40 border-border/70 rounded-lg focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-ring transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-xs font-medium text-foreground/80">Password</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -54,41 +55,42 @@ export function LoginForm() {
                 required
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                className="bg-transparent border-border/60 pr-10"
+                className="bg-background/40 border-border/70 rounded-lg pr-10 focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-ring transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <EyeClosed size={20} />
+                  <EyeClosed size={18} />
                 ) : (
-                  <Eye size={20} />
+                  <Eye size={18} />
                 )}
               </button>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between text-xs pt-0.5">
           <div className="flex items-center space-x-2">
-            <Checkbox id="remember-me" className="border-border/60" />
-            <Label htmlFor="remember-me" className="text-sm font-normal">
+            <Checkbox id="remember-me" className="border-border/70 rounded-md" />
+            <Label htmlFor="remember-me" className="text-xs font-normal text-muted-foreground cursor-pointer select-none">
               Remember me
             </Label>
           </div>
-          <a href="#" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+          <a href="#" className="text-xs font-medium text-foreground/80 hover:text-foreground transition-colors">
             Forgot password?
           </a>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button type="submit" className="w-full h-10 rounded-lg font-medium text-sm shadow-xs transition-all active:scale-[0.99]" disabled={isLoading}>
           {isLoading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
     </div>
   );
 }
+
 

@@ -11,7 +11,6 @@ import { UsersGroupTwoRounded, Bed, TagPrice, Heart, Snowflake, Plain, RoundAltA
 import dashboardData from '../../../data/dashboardData.json';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { ResortTypeDashboard } from './ResortTypeDashboard';
-import { SakuraTransition, useSakuraTransition } from '../components/SakuraTransition';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 
@@ -57,10 +56,7 @@ export function DashboardPage() {
   const [searchParams] = useSearchParams();
   const view = searchParams.get('view') === 'by_property_type' ? 'by_property_type' : 'all';
 
-  const { phase } = useSakuraTransition();
   const { openDrawer } = useDashboardDrawer();
-
-  const isTransitioning = phase !== 'idle';
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -88,7 +84,7 @@ export function DashboardPage() {
           <div className="w-full py-3 border-b border-[#d4c4b7]/40 animate-fade-in bg-transparent flex justify-between items-end" style={{ animationDelay: '0.05s' }}>
             <div>
               <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
-              <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-[#4a3c31] tracking-wide flex items-center gap-2">
                 <span>Welcome to SOSEI Hospitality</span>
               </h2>
             </div>
@@ -100,9 +96,6 @@ export function DashboardPage() {
         )}
 
       </header>
-
-      {/* Sakura transition overlay */}
-      <SakuraTransition isActive={isTransitioning} phase={phase} />
 
       {/* Conditional View Rendering */}
       {view === 'by_property_type' ? (

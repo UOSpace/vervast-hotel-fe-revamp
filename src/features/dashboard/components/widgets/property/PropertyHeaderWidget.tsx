@@ -72,7 +72,7 @@ export function PropertyHeaderWidget({
               className="flex items-center gap-2 hover:opacity-80 transition-opacity text-left cursor-pointer"
               onClick={() => setIsOpen(!isOpen)}
             >
-              <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-[#4a3c31] tracking-wide flex items-center gap-2">
                 <span>{selectedProperty.name}</span>
                 <span className="text-[#947b66] text-sm font-light">•</span>
                 <span className="text-[#947b66] text-[10px] font-sans tracking-widest uppercase font-semibold">

@@ -387,12 +387,12 @@ export function ResortTypeDashboard() {
   }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
 
   return (
-    <div className="w-full px-4 lg:px-6 pb-4 text-[10px] flex flex-col gap-2">
+    <div className="w-full px-4 lg:px-6 pb-6 text-[10px] flex flex-col gap-4">
       {/* Title, Date Filter, and Time (Full-Width Header at the very top) */}
-      <div className="w-full border-b border-[#d4c4b7]/40 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3 -mt-2">
+      <div className="w-full border-b border-[#d4c4b7]/40 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
         <div>
           <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
-          <h2 className="text-2xl font-serif text-[#4a3c31] tracking-wide">
+          <h2 className="text-2xl font-bold text-[#4a3c31] tracking-wide">
             Resort & Destination Analytics
           </h2>
         </div>
@@ -407,19 +407,16 @@ export function ResortTypeDashboard() {
         </div>
       </div>
 
-      {/* Horizontal Resort Picker Gallery (Wabi-Sabi Horizontal Row) */}
-      <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
-
-      <hr className="border-t border-[#d4c4b7]/20" />
+      {/* Horizontal Resort Picker Gallery */}
+      <div className="w-full pb-3 pt-1">
+        <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
+      </div>
 
       {/* KPI Cards Row (Full Width) */}
       <ResortKPIWidget kpis={dynamicKpis} />
 
-      {/* Subtle wabi-sabi dividing line */}
-      <hr className="border-t border-[#d4c4b7]/20" />
-
-      {/* Analytics Breakdown Grid (Full Width, asymmetrical heights and wider gap) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+      {/* Analytics Breakdown Grid (Matches gap-4 & card height of view=all) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
         <ResortGeoMarketWidget geoData={dynamicGeoData} />
         <ResortMarketSegmentWidget segmentData={dynamicSegmentData} segmentTable={dynamicSegmentTable} totalRnights={dynamicTotal} />
         <ResortChannelStatsWidget channelData={dynamicChannelData} channelTable={dynamicChannelTable} totalRnights={dynamicTotal} />
@@ -427,3 +424,4 @@ export function ResortTypeDashboard() {
     </div>
   );
 }
+

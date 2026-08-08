@@ -10,7 +10,6 @@ import { GuestSatisfactionWidget } from '../components/widgets/property/GuestSat
 import { PropertyRhythmWidget } from '../components/widgets/property/PropertyRhythmWidget';
 import { UpcomingEventsWidget } from '../components/widgets/property/UpcomingEventsWidget';
 import { AlertsTasksWidget } from '../components/widgets/property/AlertsTasksWidget';
-import { SakuraTransition, useSakuraTransition } from '../components/SakuraTransition';
 import alpineImg from '../../../assets/contents/alpine.png';
 import oceanImg from '../../../assets/contents/ocean.png';
 import cityImg from '../../../assets/contents/city.png';
@@ -50,24 +49,18 @@ export function PropertyDashboardPage() {
   const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
   const [selectedProperty, setSelectedProperty] = useState(PROPERTIES[0]);
 
-  const { phase, trigger } = useSakuraTransition();
-  const isTransitioning = phase !== 'idle';
-
   const handleDateChange = (type: 'main' | 'comp', dates: [Date | null, Date | null]) => {
-    trigger(() => {
-      if (type === 'main') {
-        setStartDate(dates[0]);
-        setEndDate(dates[1]);
-      } else {
-        setCompStartDate(dates[0]);
-        setCompEndDate(dates[1]);
-      }
-    });
+    if (type === 'main') {
+      setStartDate(dates[0]);
+      setEndDate(dates[1]);
+    } else {
+      setCompStartDate(dates[0]);
+      setCompEndDate(dates[1]);
+    }
   };
 
   return (
     <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col pt-4 lg:pt-6">
-      <SakuraTransition isActive={isTransitioning} phase={phase} />
       
       {/* Header wrapper matching DashboardPage */}
       <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">

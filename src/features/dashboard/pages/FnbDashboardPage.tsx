@@ -160,7 +160,7 @@ export function FnbDashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#d4c4b7]/40 pb-4 mt-2 gap-4">
         <div>
           <span className="text-[9px] font-bold tracking-widest text-[#947b66] uppercase">Experience Intelligence</span>
-          <h1 className="text-2xl font-serif text-[#4a3c31] font-bold mt-0.5">Experiences & F&B Dashboard</h1>
+          <h1 className="text-2xl text-[#4a3c31] font-bold mt-0.5">Experiences & F&B Dashboard</h1>
           <p className="text-[10px] text-[#7d6b5e] mt-1">Curated experiences. Memorable moments. Measurable impact.</p>
         </div>
         <div className="flex items-center gap-3 self-stretch md:self-auto justify-end">
@@ -200,7 +200,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">1,864</div>
+            <div className="text-xl font-normal text-[#4a3c31]">1,864</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+18% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -217,7 +217,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$512,450</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$512,450</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+16% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -234,7 +234,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$142</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$142</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+7% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -251,7 +251,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">$189,320</div>
+            <div className="text-xl font-normal text-[#4a3c31]">$189,320</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+21% vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -268,7 +268,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">38%</div>
+            <div className="text-xl font-normal text-[#4a3c31]">38%</div>
             <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+5pp vs Apr 1 - Apr 30</div>
           </div>
         </div>
@@ -285,7 +285,7 @@ export function FnbDashboardPage() {
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl font-serif font-bold text-[#4a3c31]">4.7 <span className="text-xs text-[#7d6b5e]">/ 5</span></div>
+            <div className="text-xl font-normal text-[#4a3c31]">4.7 <span className="text-xs text-[#7d6b5e]">/ 5</span></div>
             <div className="text-[9px] text-[#7d6b5e] font-bold mt-0.5">Excellent</div>
           </div>
         </div>

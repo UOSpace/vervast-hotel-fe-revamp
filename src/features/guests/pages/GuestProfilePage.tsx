@@ -44,7 +44,7 @@ export function GuestProfilePage() {
           <ArrowLeft size={16} /> Back to Guests
         </button>
         <div className="flex items-baseline gap-4">
-          <h1 className="text-4xl font-serif text-[#4a3c31]">The Anderson Family</h1>
+          <h1 className="text-4xl font-bold text-[#4a3c31]">The Anderson Family</h1>
         </div>
         <div className="flex items-center gap-2 mt-2 text-[#7d6b5e]">
           <CrownStar size={18} className="text-[#C8A050]" />
@@ -392,22 +392,22 @@ export function GuestProfilePage() {
             <div className="grid grid-cols-2 sm:flex sm:justify-between w-full text-center flex-1 py-2 gap-4 sm:gap-0">
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-[8px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Total Stays</div>
-                <div className="text-3xl font-serif text-[#4a3c31]">6</div>
+                <div className="text-3xl font-normal text-[#4a3c31]">6</div>
                 <div className="text-[9px] text-[#7d6b5e] mt-1">Across 5 properties</div>
               </div>
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-[8px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Av.<br />Length of Stay</div>
-                <div className="text-3xl font-serif text-[#4a3c31]">4.8</div>
+                <div className="text-3xl font-normal text-[#4a3c31]">4.8</div>
                 <div className="text-[9px] text-[#7d6b5e] mt-1">Nights</div>
               </div>
               <div className="flex flex-col justify-center flex-[1.2] border-l border-[#d4c4b7] pl-4">
                 <div className="text-[8px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Total Spend<br />(All Time)</div>
-                <div className="text-2xl font-serif text-[#4a3c31] mt-1">$78,460</div>
+                <div className="text-2xl font-normal text-[#4a3c31] mt-1">$78,460</div>
                 <div className="text-[9px] text-[#7d6b5e] mt-1">Across 6 stays</div>
               </div>
               <div className="flex flex-col justify-center flex-[1.2]">
                 <div className="text-[8px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Av. Spend<br />Per Stay</div>
-                <div className="text-2xl font-serif text-[#4a3c31] mt-1">$13,077</div>
+                <div className="text-2xl font-normal text-[#4a3c31] mt-1">$13,077</div>
                 <div className="text-[9px] text-[#947b66] font-medium mt-1">+18% vs. last year</div>
               </div>
             </div>
@@ -422,7 +422,7 @@ export function GuestProfilePage() {
             <div className="flex flex-col sm:flex-row flex-1 items-stretch gap-4 sm:gap-0 sm:items-center">
               <div className="w-full sm:w-[120px] text-center border-b sm:border-b-0 sm:border-r border-[#d4c4b7] pb-4 sm:pb-0 sm:pr-6 flex flex-col justify-center shrink-0">
                 <div className="text-[9px] font-bold text-[#7d6b5e] uppercase tracking-wider mb-2">Booking Window</div>
-                <div className="text-3xl font-serif text-[#4a3c31] font-medium">94</div>
+                <div className="text-3xl font-normal text-[#4a3c31]">94</div>
                 <div className="text-[9px] text-[#7d6b5e] mt-1">Days average</div>
               </div>
               <div className="flex-1 pl-0 sm:pl-6 flex flex-col justify-center gap-4">
