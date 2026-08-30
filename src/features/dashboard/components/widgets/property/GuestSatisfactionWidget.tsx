@@ -1,70 +1,83 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function GuestSatisfactionWidget() {
   const { openDrawer } = useDashboardDrawer();
-  const scores = [
-    { label: 'Overall Experience', score: 4.9 },
-    { label: 'Service', score: 4.8 },
-    { label: 'Cleanliness', score: 4.9 },
-    { label: 'Room Comfort', score: 4.7 },
-    { label: 'Dining', score: 4.6 },
+  const data = [
+    { name: '5 Stars', value: 72, color: '#0f172a' },
+    { name: '4 Stars', value: 20, color: '#334155' },
+    { name: '3 Stars', value: 6, color: '#64748b' },
+    { name: '< 3 Stars', value: 2, color: '#94a3b8' },
   ];
+
+  const size = 110;
+  const strokeWidth = 14;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+
+  let accumulated = 0;
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter" 
-      style={{ animationDelay: '0.45s' }}
+      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
+      style={{ animationDelay: '0.35s' }}
       onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
-        <span>GUEST SATISFACTION (MTD)</span>
+      <div className="flex justify-between items-center mb-3 h-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Guest Satisfaction (MTD)</h3>
         <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining." />
       </div>
 
-      <div className="flex-1 flex items-center justify-between">
-        {/* Left Side: Gauge */}
-        <div className="flex flex-col items-center ml-4">
-          <div className="relative flex items-center justify-center w-24 h-24 rounded-full border-4 border-[#e5d8cb] shadow-[0_0_15px_rgba(200,160,80,0.3)]">
-            {/* Value Circle Segment (Simulated with pure CSS border tricks or SVG) */}
-            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-              <circle cx="44" cy="44" r="44" fill="none" stroke="transparent" strokeWidth="4" />
-              <circle
-                cx="44" cy="44" r="44"
-                 fill="none"
-                 stroke="#C8A050"
-                 strokeWidth="4"
-                 strokeDasharray="276"
-                 strokeDashoffset={276 - (4.8 / 5) * 276}
-                 className="transition-all duration-1000"
-               />
-             </svg>
-             <div className="flex flex-col items-center">
-               <div className="text-2xl font-serif font-bold text-[#4a3c31]">
-                 4.8 <span className="text-xs font-normal text-[#6A5848]">/5</span>
-               </div>
-               <div className="text-[9px] text-[#C8A050] font-bold uppercase tracking-wider">Excellent</div>
-             </div>
-           </div>
-           <div className="text-[9px] text-[#6A5848] mt-3">vs last month <span className="text-[#15803d] font-bold">↑ 0.3</span></div>
-         </div>
- 
-         {/* Right Side: Scores */}
-         <div className="flex flex-col gap-2.5 mr-2 flex-1 max-w-[140px] h-full justify-between">
-           <div className="flex flex-col gap-2.5">
-             {scores.map((item) => (
-               <div key={item.label} className="flex justify-between items-center text-[10px] text-[#4a3c31]">
-                 <span>{item.label}</span>
-                 <span className="font-bold">{item.score}</span>
-               </div>
-             ))}
-           </div>
-           <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider justify-end">
-             View all feedback <RoundAltArrowRight size={10} />
-           </button>
-         </div>
-       </div>
-     </div>
-   );
- }
+      <div className="flex-1 flex items-center justify-between py-1 gap-3">
+        {/* Crisp Pure SVG Donut Chart */}
+        <div className="relative shrink-0 flex items-center justify-center" style={{ width: size, height: size }}>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
+            {data.map((item, index) => {
+              const strokeLength = (item.value / 100) * circumference;
+              const strokeOffset = -(accumulated / 100) * circumference;
+              accumulated += item.value;
+
+              return (
+                <circle
+                  key={index}
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="none"
+                  stroke={item.color}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={`${Math.max(0, strokeLength - 1.5)} ${circumference}`}
+                  strokeDashoffset={strokeOffset}
+                  className="transition-all duration-500"
+                />
+              );
+            })}
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+            <span className="text-xl font-bold text-zinc-900 leading-none">4.8</span>
+            <span className="text-[8.5px] text-zinc-500 font-medium mt-0.5">out of 5.0</span>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-col gap-1.5 flex-1 min-w-0 pr-1">
+          {data.map((item) => (
+            <div key={item.name} className="flex items-center justify-between text-[10px]">
+              <div className="flex items-center gap-1.5 min-w-0 truncate">
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                <span className="text-zinc-500 font-medium truncate">{item.name}</span>
+              </div>
+              <span className="font-bold text-zinc-900 ml-2">{item.value}%</span>
+            </div>
+          ))}
+          <div className="text-[9px] text-emerald-700 font-medium text-right mt-0.5">
+            ↑ +0.3 vs last mo
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+

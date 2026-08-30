@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UsersGroupTwoRounded, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
+import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import {
@@ -72,40 +72,39 @@ export function FamilyGuestsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'In House': return 'bg-[#947b66]/20 backdrop-blur-sm text-[#4a3c31] border-[#947b66]/30';
-      case 'Arriving': return 'bg-[#C8A050]/20 text-[#7a5e2a] border-[#C8A050]/30';
-      case 'Departed': return 'bg-[#7d6b5e]/20 text-[#4a3c31] border-[#7d6b5e]/30';
-      case 'Confirmed': return 'bg-blue-500/10 text-blue-800 border-blue-500/20';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'In House': return 'bg-zinc-100 text-zinc-900 border-zinc-200';
+      case 'Arriving': return 'bg-amber-50 text-amber-800 border-amber-200';
+      case 'Departed': return 'bg-zinc-100 text-zinc-500 border-zinc-200';
+      case 'Confirmed': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      default: return 'bg-zinc-100 text-zinc-700 border-zinc-200';
     }
   };
 
   return (
-    <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
+    <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden pb-8 px-4 lg:px-6">
       {/* Header */}
-      <header className="shrink-0 flex justify-between items-start mb-6 px-4 lg:px-6 animate-card-enter">
+      <header className="shrink-0 flex justify-between items-start mb-5 animate-card-enter">
         <div>
-          <h1 className="text-4xl font-serif text-[#4a3c31] mb-1 flex items-center gap-3">
-            <UsersGroupTwoRounded size={36} className="text-[#947b66]" />
-            Family Directory.
+          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mb-0.5">
+            Family Directory
           </h1>
-          <p className="text-[#7d6b5e] text-sm italic font-serif">Manage and view all guest family profiles.</p>
+          <p className="text-zinc-500 text-xs font-normal">
+            Manage and view all registered guest family profiles
+          </p>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 min-h-0 flex flex-col px-4 lg:px-6 pb-6">
-
-        {/* Table Container */}
-        <div className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
-
+      <div className="flex-1 min-h-0 flex flex-col">
+        {/* Table Container Card */}
+        <div className="flex-1 flex flex-col rounded-[12px] bg-white/70 backdrop-blur-xs border border-zinc-200/80 shadow-xs overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
           {/* Toolbar */}
-          <div className="p-4 border-b border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/50">
+          <div className="p-3.5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
             <div className="relative w-72">
-              <Magnifer size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#947b66]" />
+              <Magnifer size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
               <Input
-                placeholder="Search guests by name or ID..."
-                className="pl-9 h-9 bg-white/50 border-[#d4c4b7] text-[#4a3c31] focus-visible:ring-[#947b66] rounded-[8px] text-xs"
+                placeholder="Search families by name or ID..."
+                className="pl-9 h-8.5 bg-white border-zinc-200 text-zinc-900 focus-visible:ring-zinc-400 rounded-lg text-xs"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -114,18 +113,18 @@ export function FamilyGuestsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 border-[#d4c4b7] text-[#4a3c31] hover:bg-[#e5d8cb] rounded-[8px] text-xs flex gap-2"
+                className="h-8.5 border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-lg text-xs flex gap-2 font-medium"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
-                <Filter size={14} /> Filter Options
+                <Filter size={13} /> Filter Options
               </Button>
 
               {isFilterOpen && (
-                <div className="absolute right-0 top-11 z-50 w-48 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute right-0 top-10 z-50 w-52 bg-white border border-zinc-200 rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
                   <div className="mb-3">
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Status</label>
+                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Status</label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
+                      <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
                         <SelectValue placeholder="All Statuses" />
                       </SelectTrigger>
                       <SelectContent>
@@ -140,9 +139,9 @@ export function FamilyGuestsPage() {
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Type</label>
+                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Type</label>
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
-                      <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
+                      <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
                         <SelectValue placeholder="All Types" />
                       </SelectTrigger>
                       <SelectContent>
@@ -162,58 +161,58 @@ export function FamilyGuestsPage() {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto custom-scrollbar bg-white/20">
+          <div className="flex-1 overflow-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-[#f3eae1] border-b border-[#d4c4b7] z-10 shadow-sm">
+              <thead className="sticky top-0 bg-zinc-50/90 backdrop-blur-xs border-b border-zinc-100 z-10">
                 <tr>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Guest ID</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Name</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Status</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Room</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Type</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Arrival</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Departure</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] text-right">Spend YTD</th>
-                  <th className="px-6 py-3 w-10"></th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Guest ID</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Name</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Status</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Room</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Type</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Arrival</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Departure</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400 text-right">Spend YTD</th>
+                  <th className="px-5 py-2.5 w-10"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d4c4b7]/50 text-xs text-[#4a3c31]">
+              <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
                 {filteredGuests.length > 0 ? (
                   filteredGuests.map((guest) => (
                     <tr
                       key={guest.id}
                       onClick={() => handlePreview(guest.id)}
-                      className="hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group"
+                      className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
-                      <td className="px-6 py-4 font-mono text-[11px] text-[#947b66] group-hover:text-[#4a3c31] transition-colors">{guest.id}</td>
-                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors">{formatGuestName(guest.name)}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-[10px] font-medium border ${getStatusColor(guest.status)}`}>
+                      <td className="px-5 py-3 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{guest.id}</td>
+                      <td className="px-5 py-3 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{formatGuestName(guest.name)}</td>
+                      <td className="px-5 py-3">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(guest.status)}`}>
                           {guest.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4">{guest.room}</td>
-                      <td className="px-6 py-4">
-                        <span className="text-[11px] italic text-[#7d6b5e]">{guest.type}</span>
+                      <td className="px-5 py-3 text-zinc-700">{guest.room}</td>
+                      <td className="px-5 py-3">
+                        <span className="text-[10px] text-zinc-500 font-medium">{guest.type}</span>
                       </td>
-                      <td className="px-6 py-4 text-[#7d6b5e]">{guest.arrival}</td>
-                      <td className="px-6 py-4 text-[#7d6b5e]">{guest.departure}</td>
-                      <td className="px-6 py-4 text-right font-medium">{guest.spend}</td>
-                      <td className="px-6 py-4 text-right relative">
+                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{guest.arrival}</td>
+                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{guest.departure}</td>
+                      <td className="px-5 py-3 text-right font-medium text-zinc-900">{guest.spend}</td>
+                      <td className="px-5 py-3 text-right relative">
                         <button
                           onClick={(e) => toggleDropdown(guest.id, e)}
-                          className="p-1.5 rounded-full hover:bg-[#d4c4b7]/50 text-[#7d6b5e] hover:text-[#4a3c31] transition-colors"
+                          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-800 transition-colors"
                         >
-                          <MenuDots size={18} />
+                          <MenuDots size={16} />
                         </button>
 
                         {openDropdownId === guest.id && (
-                          <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
-                            <button onClick={() => handlePreview(guest.id)} className="w-full px-3 py-2 text-left text-xs text-[#4a3c31] hover:bg-[#e5d8cb] flex items-center gap-2 transition-colors">
-                              <Eye size={14} className="text-[#947b66]" /> Preview
+                          <div className="absolute right-5 top-9 z-50 w-32 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
+                            <button onClick={() => handlePreview(guest.id)} className="w-full px-3 py-1.5 text-left text-xs text-zinc-800 hover:bg-zinc-50 flex items-center gap-2 transition-colors">
+                              <Eye size={13} className="text-zinc-500" /> Preview
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
-                              <TrashBinTrash size={14} className="text-red-500" /> Delete
+                            <button className="w-full px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors">
+                              <TrashBinTrash size={13} className="text-rose-500" /> Delete
                             </button>
                           </div>
                         )}
@@ -222,7 +221,7 @@ export function FamilyGuestsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-[#7d6b5e] text-sm italic">
+                    <td colSpan={9} className="px-5 py-10 text-center text-zinc-400 text-xs italic">
                       No guests found matching your criteria.
                     </td>
                   </tr>
@@ -232,14 +231,13 @@ export function FamilyGuestsPage() {
           </div>
 
           {/* Pagination Footer */}
-          <div className="p-3 border-t border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/80 text-xs text-[#7d6b5e]">
-            <span>Showing <span className="font-medium text-[#4a3c31]">{filteredGuests.length}</span> of <span className="font-medium text-[#4a3c31]">{mockGuests.length}</span> guests</span>
+          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
+            <span>Showing <span className="font-medium text-zinc-900">{filteredGuests.length}</span> of <span className="font-medium text-zinc-900">{mockGuests.length}</span> families</span>
             <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 opacity-50 cursor-not-allowed">Previous</Button>
-              <Button variant="ghost" size="sm" className="h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 opacity-50 cursor-not-allowed">Next</Button>
+              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Previous</Button>
+              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Next</Button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

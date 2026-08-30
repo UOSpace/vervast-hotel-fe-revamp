@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Buildings, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
+import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash, Buildings } from '@solar-icons/react';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// Mock Data
 const mockCorporates = [
   {
     id: 'CP-001',
@@ -55,7 +55,7 @@ const mockCorporates = [
     id: 'CP-005',
     name: 'Orion Asset Management',
     email: 'admin@orionassets.co',
-    phone: '',
+    phone: '-',
     category: 'Financial Services',
     source: 'Direct',
     owner: 'Alpha',
@@ -81,10 +81,10 @@ const mockCorporates = [
   {
     id: 'CP-008',
     name: 'Hallmark Logistics',
-    email: '',
-    phone: '',
+    email: '-',
+    phone: '-',
     category: 'Logistics',
-    source: '',
+    source: '-',
     owner: 'Unknown',
   },
   {
@@ -105,60 +105,8 @@ const mockCorporates = [
     source: 'Direct',
     owner: 'Alpha',
   },
-  {
-    id: 'CP-011',
-    name: 'Harlow Insurance Partners',
-    email: '',
-    phone: '',
-    category: 'Insurance',
-    source: '',
-    owner: 'Unknown',
-  },
-  {
-    id: 'CP-012',
-    name: 'Citadel Architecture Studio',
-    email: 'travel@citadelarch.design',
-    phone: '+39 02 8735 6100',
-    category: 'Architecture & Design',
-    source: 'Trade Show',
-    owner: 'vervast',
-  },
-  {
-    id: 'CP-013',
-    name: 'Pacific Rim Trading Co.',
-    email: 'corp@pacificrimtc.com',
-    phone: '+852 2100 8830',
-    category: 'Trading',
-    source: 'Social Media',
-    owner: 'Alpha',
-  },
-  {
-    id: 'CP-014',
-    name: 'Summit Education Group',
-    email: 'admin@summitedugroup.org',
-    phone: '+61 2 9310 5500',
-    category: 'Education',
-    source: 'Email Marketing',
-    owner: 'Alpha',
-  },
-  {
-    id: 'CP-015',
-    name: 'Quantum Research Institute',
-    email: 'travel@quantumri.edu',
-    phone: '',
-    category: 'Research & Development',
-    source: 'Referral',
-    owner: 'vervast',
-  },
 ];
 
-const ALL_CATEGORIES = [
-  'Financial Services', 'Consulting', 'Technology', 'Healthcare', 'Energy',
-  'Media & Entertainment', 'Logistics', 'Aerospace & Defense', 'Retail',
-  'Insurance', 'Architecture & Design', 'Trading', 'Education', 'Research & Development',
-];
-
-// ─── Component ────────────────────────────────────────────────────────────────
 export function CorporatePage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,116 +129,114 @@ export function CorporatePage() {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-  const handleDetail = (id: string, e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setOpenDropdownId(null);
+  const handleRowClick = (id: string) => {
     navigate(`/dashboard/partners/corporate/${id}`);
   };
 
-  const filteredCorporates = mockCorporates.filter(cp => {
+  const filteredCorporates = mockCorporates.filter(corp => {
     const matchesSearch =
-      cp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cp.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'All' || cp.category === categoryFilter;
-    const matchesSource = sourceFilter === 'All' || cp.source === sourceFilter;
+      corp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      corp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      corp.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === 'All' || corp.category === categoryFilter;
+    const matchesSource = sourceFilter === 'All' || corp.source === sourceFilter;
     return matchesSearch && matchesCategory && matchesSource;
   });
 
-  // Reset to page 1 whenever filters/search change
   useEffect(() => { setCurrentPage(1); }, [searchTerm, categoryFilter, sourceFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredCorporates.length / PAGE_SIZE));
   const pagedData = filteredCorporates.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
-    <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden">
-
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <header className="shrink-0 flex justify-between items-start mb-6 px-4 lg:px-6 animate-card-enter">
+    <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden pb-8 px-4 lg:px-6">
+      {/* Header */}
+      <header className="shrink-0 flex justify-between items-start mb-5 animate-card-enter">
         <div>
-          <h1 className="text-4xl font-serif text-[#4a3c31] mb-1 flex items-center gap-3">
-            <Buildings size={36} className="text-[#947b66]" />
-            Corporate Partners.
+          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mb-0.5">
+            Corporate Accounts
           </h1>
-          <p className="text-[#7d6b5e] text-sm italic font-serif">
-            Manage and view all registered corporate accounts and company partners.
+          <p className="text-zinc-500 text-xs font-normal">
+            Manage and view enterprise accounts, retreat clients, and corporate partners
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => openDevModal('Add Company')}
-            className="flex items-center gap-2 bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] text-xs font-bold px-4 py-2 rounded-[10px] transition-all shadow-sm cursor-pointer">
+            onClick={() => openDevModal('Add Corporate Account')}
+            className="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium px-3.5 py-2 rounded-lg transition-all shadow-xs cursor-pointer">
             <Buildings size={14} />
-            Add Company
+            Add Corporate Account
           </button>
         </div>
       </header>
 
-      {/* ── Main Table Area ─────────────────────────────────────────────── */}
-      <div className="flex-1 min-h-0 flex flex-col px-4 lg:px-6 pb-6">
+      {/* Main Table Area */}
+      <div className="flex-1 min-h-0 flex flex-col">
         <div
-          className="flex-1 flex flex-col border border-[#d4c4b7] rounded-[12px] bg-[#f3eae1]/30 backdrop-blur-sm overflow-hidden animate-card-enter"
+          className="flex-1 flex flex-col rounded-[12px] bg-white/70 backdrop-blur-xs border border-zinc-200/80 shadow-xs overflow-hidden animate-card-enter"
           style={{ animationDelay: '0.1s' }}
         >
-
           {/* Toolbar */}
-          <div className="p-4 border-b border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/50">
+          <div className="p-3.5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
             <div className="relative w-72">
-              <Magnifer size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#947b66]" />
+              <Magnifer size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
               <Input
-                placeholder="Search by name, email, or ID…"
-                className="pl-9 h-9 bg-white/50 border-[#d4c4b7] text-[#4a3c31] focus-visible:ring-[#947b66] rounded-[8px] text-xs"
+                placeholder="Search by company name, email, or ID…"
+                className="pl-9 h-8.5 bg-white border-zinc-200 text-zinc-900 focus-visible:ring-zinc-400 rounded-lg text-xs"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
 
             <div className="flex items-center gap-2 relative">
-              <span className="text-xs text-[#7d6b5e]">
-                <span className="font-semibold text-[#4a3c31]">{filteredCorporates.length}</span> companies
+              <span className="text-xs text-zinc-500 mr-1">
+                <span className="font-medium text-zinc-900">{filteredCorporates.length}</span> companies
               </span>
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 border-[#d4c4b7] text-[#4a3c31] hover:bg-[#e5d8cb] rounded-[8px] text-xs flex gap-2"
+                className="h-8.5 border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-lg text-xs flex gap-2 font-medium"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
-                <Filter size={14} /> Filter Options
+                <Filter size={13} /> Filter Options
               </Button>
 
               {isFilterOpen && (
-                <div className="absolute right-0 top-11 z-50 w-56 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute right-0 top-10 z-50 w-52 bg-white border border-zinc-200 rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
                   <div className="mb-3">
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Category</label>
+                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Category</label>
                     <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                      <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
+                      <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
                         <SelectValue placeholder="All Categories" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectItem value="All">All Categories</SelectItem>
-                          {ALL_CATEGORIES.map(cat => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                          ))}
+                          <SelectItem value="Financial Services">Financial Services</SelectItem>
+                          <SelectItem value="Consulting">Consulting</SelectItem>
+                          <SelectItem value="Technology">Technology</SelectItem>
+                          <SelectItem value="Healthcare">Healthcare</SelectItem>
+                          <SelectItem value="Energy">Energy</SelectItem>
+                          <SelectItem value="Media & Entertainment">Media & Entertainment</SelectItem>
+                          <SelectItem value="Retail">Retail</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e] mb-1">Source</label>
+                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Source</label>
                     <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                      <SelectTrigger className="w-full h-8 text-xs bg-white/50 border border-[#d4c4b7] rounded px-3 text-[#4a3c31] outline-none cursor-pointer">
+                      <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
                         <SelectValue placeholder="All Sources" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectItem value="All">All Sources</SelectItem>
-                          <SelectItem value="Direct">Direct</SelectItem>
-                          <SelectItem value="Referral">Referral</SelectItem>
                           <SelectItem value="Email Marketing">Email Marketing</SelectItem>
+                          <SelectItem value="Referral">Referral</SelectItem>
                           <SelectItem value="Social Media">Social Media</SelectItem>
                           <SelectItem value="Trade Show">Trade Show</SelectItem>
+                          <SelectItem value="Direct">Direct</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -301,96 +247,60 @@ export function CorporatePage() {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto custom-scrollbar bg-white/20">
+          <div className="flex-1 overflow-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-[#f3eae1] border-b border-[#d4c4b7] z-10 shadow-sm">
+              <thead className="sticky top-0 bg-zinc-50/90 backdrop-blur-xs border-b border-zinc-100 z-10">
                 <tr>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Name</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">E-Mail Address</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Phone</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Categories</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Source</th>
-                  <th className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[#7d6b5e]">Owner</th>
-                  <th className="px-6 py-3 w-10" />
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Account ID</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Company Name</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Email Address</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Phone</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Category</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Source</th>
+                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Owner</th>
+                  <th className="px-5 py-2.5 w-10"></th>
                 </tr>
               </thead>
-
-              <tbody className="divide-y divide-[#d4c4b7]/50 text-xs text-[#4a3c31]">
+              <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
                 {pagedData.length > 0 ? (
-                  pagedData.map(cp => (
+                  pagedData.map(corp => (
                     <tr
-                      key={cp.id}
-                      onClick={() => handleDetail(cp.id)}
-                      className="hover:bg-[#e5d8cb]/40 transition-colors cursor-pointer group"
+                      key={corp.id}
+                      onClick={() => handleRowClick(corp.id)}
+                      className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
-                      {/* Name */}
-                      <td className="px-6 py-4 font-medium group-hover:text-[#947b66] transition-colors min-w-[200px]">
-                        {cp.name}
+                      <td className="px-5 py-3 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{corp.id}</td>
+                      <td className="px-5 py-3 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{corp.name}</td>
+                      <td className="px-5 py-3 text-zinc-600 text-[10px]">{corp.email}</td>
+                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{corp.phone}</td>
+                      <td className="px-5 py-3">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
+                          {corp.category}
+                        </span>
                       </td>
-
-                      {/* Email */}
-                      <td className="px-6 py-4 text-[#586981] min-w-[220px]">
-                        {cp.email || <span className="text-[#d4c4b7]">—</span>}
-                      </td>
-
-                      {/* Phone */}
-                      <td className="px-6 py-4 text-[#7d6b5e] min-w-[160px]">
-                        {cp.phone || <span className="text-[#d4c4b7]">—</span>}
-                      </td>
-
-                      {/* Category */}
-                      <td className="px-6 py-4 min-w-[180px]">
-                        {cp.category ? (
-                          <span className="px-2 py-1 rounded-full text-[10px] font-medium border bg-[#947b66]/10 backdrop-blur-sm text-[#4a3c31] border-[#947b66]/20">
-                            {cp.category}
-                          </span>
-                        ) : (
-                          <span className="text-[#d4c4b7]">—</span>
-                        )}
-                      </td>
-
-                      {/* Source */}
-                      <td className="px-6 py-4 text-[#7d6b5e] italic min-w-[140px]">
-                        {cp.source || <span className="text-[#d4c4b7] not-italic">—</span>}
-                      </td>
-
-                      {/* Owner */}
-                      <td className="px-6 py-4 min-w-[110px]">
-                        {cp.owner === 'Unknown' ? (
-                          <span className="text-[#d4c4b7] text-[11px]">Unknown</span>
-                        ) : (
-                          <span className="flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-[#947b66]/20 backdrop-blur-sm border border-[#947b66]/30 flex items-center justify-center text-[8px] font-bold text-[#947b66]">
-                              {cp.owner.charAt(0).toUpperCase()}
-                            </span>
-                            <span className="text-[11px] text-[#7d6b5e]">{cp.owner}</span>
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-6 py-4 text-right relative" onClick={e => e.stopPropagation()}>
+                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{corp.source}</td>
+                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{corp.owner}</td>
+                      <td className="px-5 py-3 text-right relative" onClick={e => e.stopPropagation()}>
                         <button
-                          onClick={e => toggleDropdown(cp.id, e)}
-                          className="p-1.5 rounded-full hover:bg-[#d4c4b7]/50 text-[#7d6b5e] hover:text-[#4a3c31] transition-colors"
+                          onClick={e => toggleDropdown(corp.id, e)}
+                          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-800 transition-colors"
                         >
-                          <MenuDots size={18} />
+                          <MenuDots size={16} />
                         </button>
 
-                        {openDropdownId === cp.id && (
-                          <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
+                        {openDropdownId === corp.id && (
+                          <div className="absolute right-5 top-9 z-50 w-32 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
                             <button
-                              onClick={e => handleDetail(cp.id, e)}
-                              className="w-full px-3 py-2 text-left text-xs text-[#4a3c31] hover:bg-[#e5d8cb] flex items-center gap-2 transition-colors"
+                              onClick={() => handleRowClick(corp.id)}
+                              className="w-full px-3 py-1.5 text-left text-xs text-zinc-800 hover:bg-zinc-50 flex items-center gap-2 transition-colors"
                             >
-                              <Eye size={14} className="text-[#947b66]" />
-                              View Detail
+                              <Eye size={13} className="text-zinc-500" /> Detail
                             </button>
                             <button
-                              onClick={e => { e.stopPropagation(); setOpenDropdownId(null); openDevModal('Delete Company'); }}
-                              className="w-full px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
-                              <TrashBinTrash size={14} className="text-red-500" />
-                              Delete
+                              onClick={() => { setOpenDropdownId(null); openDevModal('Delete Corporate Account'); }}
+                              className="w-full px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
+                            >
+                              <TrashBinTrash size={13} className="text-rose-500" /> Delete
                             </button>
                           </div>
                         )}
@@ -399,8 +309,8 @@ export function CorporatePage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-[#7d6b5e] text-sm italic">
-                      No corporate partners found matching your criteria.
+                    <td colSpan={8} className="px-5 py-10 text-center text-zinc-400 text-xs italic">
+                      No corporate accounts found matching your criteria.
                     </td>
                   </tr>
                 )}
@@ -408,33 +318,27 @@ export function CorporatePage() {
             </table>
           </div>
 
-          {/* Pagination Footer */}
-          <div className="p-3 border-t border-[#d4c4b7] flex justify-between items-center bg-[#f3eae1]/80 text-xs text-[#7d6b5e]">
+          {/* Pagination */}
+          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
             <span>
-              Showing{' '}
-              <span className="font-medium text-[#4a3c31]">{(currentPage - 1) * PAGE_SIZE + 1}</span>
-              {' '}–{' '}
-              <span className="font-medium text-[#4a3c31]">{Math.min(currentPage * PAGE_SIZE, filteredCorporates.length)}</span>
-              {' '}of{' '}
-              <span className="font-medium text-[#4a3c31]">{filteredCorporates.length}</span> companies
-              {totalPages > 1 && (
-                <span className="ml-2 text-[#d4c4b7]">· Page {currentPage} of {totalPages}</span>
-              )}
+              Showing <span className="font-medium text-zinc-900">{pagedData.length}</span> of <span className="font-medium text-zinc-900">{filteredCorporates.length}</span> companies
             </span>
             <div className="flex gap-1">
               <Button
-                variant="ghost" size="sm"
-                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${currentPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage <= 1}
+                variant="ghost"
+                size="sm"
+                className={`h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               >
                 Previous
               </Button>
               <Button
-                variant="ghost" size="sm"
-                className={`h-7 text-[#4a3c31] hover:bg-[#d4c4b7]/30 ${currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage >= totalPages}
+                variant="ghost"
+                size="sm"
+                className={`h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               >
                 Next
               </Button>

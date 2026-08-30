@@ -1,94 +1,56 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function PropertyRhythmWidget() {
   const { openDrawer } = useDashboardDrawer();
-  // Generate dummy curve data
-  const generateCurve = (peak1: number, peak2: number, base: number) => {
-    return Array.from({ length: 24 }).map((_, i) => {
-      // Create a smooth dual-peak curve using Gaussian functions
-      const val1 = peak1 * Math.exp(-Math.pow(i - 10, 2) / 10); // Morning peak
-      const val2 = peak2 * Math.exp(-Math.pow(i - 18, 2) / 12); // Evening peak
-      const noise = Math.random() * 5;
-      return { time: i, value: base + val1 + val2 + noise };
-    });
-  };
 
-  const categories = [
-    { name: 'Arrivals', data: generateCurve(20, 60, 5), color: '#a3b5b1' },
-    { name: 'Spa Demand', data: generateCurve(40, 50, 10), color: '#82a39d' },
-    { name: 'F&B Demand', data: generateCurve(30, 80, 15), color: '#578279' },
-    { name: 'Housekeeping Load', data: generateCurve(90, 20, 20), color: '#36635a' },
-    { name: 'Departures', data: generateCurve(80, 10, 5), color: '#1a4038' },
+  const rhythmData = [
+    { department: 'Arrivals & Check-in', peak: '2:00 PM – 4:00 PM', load: 85, status: 'High Volume' },
+    { department: 'F&B & Fine Dining', peak: '7:00 PM – 9:30 PM', load: 92, status: 'Peak Load' },
+    { department: 'Spa & Wellness Sanctuary', peak: '3:00 PM – 6:00 PM', load: 75, status: 'Active' },
+    { department: 'Housekeeping & Turn-down', peak: '10:00 AM – 1:00 PM', load: 90, status: 'High Volume' },
   ];
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter" 
-      style={{ animationDelay: '0.5s' }}
+      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
+      style={{ animationDelay: '0.2s' }}
       onClick={() => openDrawer({ type: 'JOURNEY_TIMELINE', title: 'Property Rhythm' })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-2 flex items-center justify-between">
-        <span>PROPERTY RHYTHM</span>
-        <InfoTooltip text="Sanctuary activity flow comparing arrivals, departures, F&B, spa, and housekeeping peak loads throughout the day." />
+      <div className="flex justify-between items-center mb-3 h-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Property Rhythm & Peak Loads</h3>
+        <InfoTooltip text="Operational activity flow and peak load schedules across key hotel departments." />
       </div>
 
-      <div className="flex-1 flex flex-col relative pt-4">
-        {/* X-Axis Labels (Top) */}
-        <div className="flex justify-between px-24 text-[8px] font-bold text-[#7d6b5e] absolute top-0 left-0 right-0 z-10">
-          <span>12 AM</span>
-          <span>4 AM</span>
-          <span>8 AM</span>
-          <span>12 PM</span>
-          <span>4 PM</span>
-          <span>8 PM</span>
-          <span>12 AM</span>
-        </div>
-
-        {/* Ridgeline Plot (Overlapping Area Charts) */}
-        <div className="flex flex-col flex-1 justify-between mt-2">
-          {categories.map((cat, idx) => (
-            <div key={cat.name} className={`relative h-[35px] ${idx !== 0 ? '-mt-4' : ''}`}>
-              <div className="absolute left-0 bottom-2 text-[9px] font-bold text-[#4a3c31] w-24 z-20">
-                {cat.name}
+      <div className="flex flex-col justify-between flex-1 py-1 gap-2.5">
+        {rhythmData.map((item) => (
+          <div key={item.department} className="flex flex-col gap-1">
+            <div className="flex justify-between items-baseline text-[10px]">
+              <span className="font-bold text-zinc-900 leading-tight">{item.department}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] text-zinc-500 font-normal">Peak: <strong className="text-zinc-700 font-medium">{item.peak}</strong></span>
+                <span className="text-[9.5px] font-bold text-zinc-900 w-8 text-right">{item.load}%</span>
               </div>
-              <div className="absolute inset-0 left-24 z-10">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={cat.data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id={`color-${idx}`} x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#e5d8cb" stopOpacity={0.8} />
-                        <stop offset="50%" stopColor={cat.color} stopOpacity={0.9} />
-                        <stop offset="100%" stopColor="#1a4038" stopOpacity={0.9} />
-                      </linearGradient>
-                    </defs>
-                    <YAxis domain={['dataMin - 10', 'dataMax + 20']} hide />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#4a3c31"
-                      strokeWidth={1}
-                      fill={`url(#color-${idx})`}
-                      isAnimationActive={false}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-              {/* Baseline */}
-              <div className="absolute bottom-0 left-24 right-0 border-b border-[#d4c4b7] z-0" />
             </div>
-          ))}
-        </div>
+            <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+              <div 
+                className={`h-full rounded-full transition-all duration-500 ${
+                  item.load >= 90 ? 'bg-zinc-900' : item.load >= 80 ? 'bg-zinc-700' : 'bg-zinc-500'
+                }`} 
+                style={{ width: `${item.load}%` }} 
+              />
+            </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Legend */}
-        <div className="flex justify-center gap-6 mt-6 pt-2 text-[8px] text-[#4a3c31]">
-          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#e5d8cb]"></div> Low</div>
-          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#82a39d]"></div> Moderate</div>
-          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#36635a]"></div> High</div>
-          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#1a4038]"></div> Very High</div>
-        </div>
+      <div className="flex justify-between items-center pt-2 border-t border-zinc-100 text-[9px] text-zinc-500 font-medium mt-1">
+        <span>Current Status: <strong className="text-emerald-700 font-medium">All Operations Normal</strong></span>
+        <span className="text-zinc-400">Next Peak: F&B Dining (7:00 PM)</span>
       </div>
     </div>
   );
 }
+
+
+

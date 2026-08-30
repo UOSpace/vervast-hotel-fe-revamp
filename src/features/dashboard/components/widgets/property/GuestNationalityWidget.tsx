@@ -1,54 +1,56 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
-import { RoundAltArrowRight } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
 export function GuestNationalityWidget() {
   const { openDrawer } = useDashboardDrawer();
   const data = [
-    { country: 'United States', iso: 'US', pct: '24%', trend: '↑ 2%', up: true },
-    { country: 'United Kingdom', iso: 'GB', pct: '16%', trend: '↑ 1%', up: true },
-    { country: 'Germany', iso: 'DE', pct: '12%', trend: '↓ 1%', up: false },
-    { country: 'Switzerland', iso: 'CH', pct: '10%', trend: '↑ 3%', up: true },
+    { country: 'United States', pct: '24%', trend: '↑ 2%', up: true },
+    { country: 'United Kingdom', pct: '16%', trend: '↑ 1%', up: true },
+    { country: 'Germany', pct: '12%', trend: '↓ 1%', up: false },
+    { country: 'Switzerland', pct: '10%', trend: '↑ 3%', up: true },
   ];
+
+  const totals = { pct: '62%', trend: '↑ 5%', up: true };
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter" 
+      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'TOP_NATIONALITIES', title: 'Top Nationalities', data })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-[#7d6b5e] mb-4 flex items-center justify-between">
-        <span>GUEST NATIONALITY (TOP 5)</span>
+      <div className="flex justify-between items-center mb-3 h-4 shrink-0">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Guest Nationality (Top 4)</h3>
         <InfoTooltip text="The distribution of guest origin countries based on check-ins MTD." />
       </div>
 
-      <div className="flex flex-col text-xs text-[#4a3c31] h-full justify-between pb-1">
-        <div>
-          {/* Header */}
-          <div className="grid grid-cols-[45%_25%_30%] mb-2 pb-2 border-b border-[#d4c4b7]/50 font-bold">
-            <div>Country</div>
-            <div className="text-right whitespace-nowrap">% of Guests</div>
-          </div>
+      <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between pt-0.5 pb-0.5">
+        {/* Header */}
+        <div className="grid grid-cols-[48%_32%_20%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400 shrink-0">
+          <div>Country</div>
+          <div className="text-right">% Share</div>
+          <div className="text-right">Trend</div>
+        </div>
 
-          {/* Rows */}
-          <div className="flex flex-col gap-3 mt-3">
-            {data.map((row) => (
-              <div key={row.country} className="grid grid-cols-[45%_25%_30%] items-center">
-                <div className="flex items-center gap-2 truncate pr-2">
-                  <span className="text-[10px] font-bold bg-[#e5d8cb] text-[#4a3c31] px-1.5 py-0.5 rounded-[4px] w-6 text-center shrink-0">{row.iso}</span>
-                  <span className="truncate">{row.country}</span>
-                </div>
-                <div className="text-right">{row.pct}</div>
-                <div className={`text-right ${row.up ? 'text-[#15803d]' : 'text-[#b91c1c]'}`}>{row.trend}</div>
-              </div>
-            ))}
-          </div>
+        {/* Rows */}
+        <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+          {data.map((row) => (
+            <div key={row.country} className="grid grid-cols-[48%_32%_20%] items-center text-[10px]">
+              <div className="truncate text-zinc-700 font-medium pr-1">{row.country}</div>
+              <div className="text-right font-medium text-zinc-900">{row.pct}</div>
+              <div className={`text-right font-medium text-[9.5px] ${row.up ? 'text-emerald-700' : 'text-rose-600'}`}>{row.trend}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer / Total */}
+        <div className="grid grid-cols-[48%_32%_20%] items-center pt-1.5 border-t border-zinc-100 text-[10px] shrink-0">
+          <div className="font-bold text-zinc-900">Top 4 Total</div>
+          <div className="text-right font-bold text-zinc-900">{totals.pct}</div>
+          <div className={`text-right font-bold text-[9.5px] ${totals.up ? 'text-emerald-700' : 'text-rose-600'}`}>{totals.trend}</div>
         </div>
       </div>
-
-      <button className="flex items-center gap-1 text-[#C8A050] text-[9px] font-bold mt-auto self-end hover:opacity-80 transition-opacity uppercase tracking-wider">
-        View all nationalities <RoundAltArrowRight size={10} />
-      </button>
     </div>
   );
 }
+
+

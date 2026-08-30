@@ -48,16 +48,16 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
   });
   return (
     <div
-      className="rounded-[12px] py-5 px-4 flex flex-col justify-between gap-2.5 bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
+      className="rounded-[12px] p-5 flex flex-col justify-between gap-3 bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between pb-1.5 border-b border-[#d4c4b7]/40 mb-0">
+      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between pb-2 border-b border-[#d4c4b7]/40 mb-1">
         <span>Geo Market Stats</span>
         <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
       </div>
       {/* Mini world map using react-simple-maps */}
-      <div className="w-full flex justify-center items-center py-0.5 h-[120px] overflow-hidden">
+      <div className="w-full flex justify-center items-center py-1 h-[120px] overflow-hidden">
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{ scale: 98, center: [15, 20] }}
@@ -91,26 +91,28 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
         </ComposableMap>
       </div>
       {/* Table */}
-      <table className="w-full mt-auto" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-        <thead>
-          <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
-            <th className="text-left pb-1.5 w-[30%] truncate">Region</th>
-            <th className="text-right pb-1.5 w-[18%] truncate">% Rnights</th>
-            <th className="text-right pb-1.5 w-[22%] truncate">ADR (USD)</th>
-            <th className="text-right pb-1.5 w-[30%] truncate">Room Revenue (USD)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {geoData.map((row, idx) => (
-            <tr key={row.region} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === geoData.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
-              <td className="py-1.5 truncate">{row.region}</td>
-              <td className="text-right py-1.5 truncate">{row.rnights}</td>
-              <td className="text-right py-1.5 truncate">{row.adr}</td>
-              <td className="text-right py-1.5 truncate">{row.revenue}</td>
+      <div className="mt-auto pt-2">
+        <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+          <thead>
+            <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
+              <th className="text-left pb-2.5 pt-1 pr-1.5 w-[30%] truncate">Region</th>
+              <th className="text-right pb-2.5 pt-1 px-1.5 w-[18%] truncate">% Rnights</th>
+              <th className="text-right pb-2.5 pt-1 px-1.5 w-[22%] truncate">ADR (USD)</th>
+              <th className="text-right pb-2.5 pt-1 pl-1.5 w-[30%] truncate">Room Revenue (USD)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {geoData.map((row, idx) => (
+              <tr key={row.region} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === geoData.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
+                <td className="py-2.5 pr-1.5 truncate">{row.region}</td>
+                <td className="text-right py-2.5 px-1.5 truncate">{row.rnights}</td>
+                <td className="text-right py-2.5 px-1.5 truncate">{row.adr}</td>
+                <td className="text-right py-2.5 pl-1.5 truncate">{row.revenue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

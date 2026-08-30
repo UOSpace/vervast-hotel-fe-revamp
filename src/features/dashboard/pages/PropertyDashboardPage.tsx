@@ -74,49 +74,55 @@ export function PropertyDashboardPage() {
       </header>
 
       {/* Content wrapper matching DashboardPage */}
-      <div key={selectedProperty.id} className="flex-1 flex flex-col gap-5 pb-6 px-4 lg:px-6 text-[10px]">
+      <div key={selectedProperty.id} className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
         {/* Row 1: KPI Metrics (Full Width) */}
-        <PropertyKPIWidget propertyId={selectedProperty.id} />
+        <div className="-mx-3">
+          <PropertyKPIWidget propertyId={selectedProperty.id} />
+        </div>
 
-        {/* Row 2: Staggered Section 1 (8 columns Rhythm + 4 columns Donut Segment Mix) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch">
-          <div className="col-span-12 lg:col-span-8 flex flex-col">
+        {/* Row 2: Property Rhythm (5 cols, aligns with Occupancy) + Market Segment Mix & Guest Satisfaction (7 cols) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
+          <div className="col-span-12 lg:col-span-5 flex flex-col">
             <PropertyRhythmWidget />
           </div>
-          <div className="col-span-12 lg:col-span-4 flex flex-col">
-            <MarketSegmentMixWidget />
+          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="flex flex-col">
+              <MarketSegmentMixWidget />
+            </div>
+            <div className="flex flex-col">
+              <GuestSatisfactionWidget />
+            </div>
           </div>
         </div>
 
-        {/* Row 3: Staggered Section 2 (4 columns Satisfaction + 5 columns Room Occupancy + 3 columns Upcoming Events) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch">
-          <div className="col-span-12 lg:col-span-4 flex flex-col">
-            <GuestSatisfactionWidget />
-          </div>
+        {/* Row 3: Room Occupancy (5 cols) + Upcoming Events & Alerts (7 cols, matching Row 2 vertical grid) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
             <OccupancyByRoomTypeWidget />
           </div>
-          <div className="col-span-12 lg:col-span-3 flex flex-col">
-            <UpcomingEventsWidget />
+          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="flex flex-col">
+              <UpcomingEventsWidget />
+            </div>
+            <div className="flex flex-col">
+              <AlertsTasksWidget />
+            </div>
           </div>
         </div>
 
-        {/* Row 4: Staggered Section 3 (3 columns of 4 width each for financials and distributions) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch">
-          <div className="col-span-12 lg:col-span-4 flex flex-col">
+        {/* Row 4: Financials & Distributions (5 cols Revenue + 7 cols Channels & Nationality, matching vertical grid) */}
+        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
+          <div className="col-span-12 lg:col-span-5 flex flex-col">
             <RevenueByDepartmentWidget />
           </div>
-          <div className="col-span-12 lg:col-span-4 flex flex-col">
-            <TopBookingChannelsWidget />
+          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="flex flex-col">
+              <TopBookingChannelsWidget />
+            </div>
+            <div className="flex flex-col">
+              <GuestNationalityWidget />
+            </div>
           </div>
-          <div className="col-span-12 lg:col-span-4 flex flex-col">
-            <GuestNationalityWidget />
-          </div>
-        </div>
-
-        {/* Row 5: Operational Notices & Reminders (Full Width) */}
-        <div className="w-full">
-          <AlertsTasksWidget />
         </div>
       </div>
     </div>

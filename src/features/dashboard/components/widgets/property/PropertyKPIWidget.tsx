@@ -72,68 +72,94 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
   const data = kpiDataMap[propertyId] ?? kpiDataMap['sosei-nocturne'];
 
   const kpis = [
-    { label: 'OCCUPANCY', value: `${data.occ}%` },
-    { label: 'Room Revenue (USD)', value: data.rev },
-    { label: 'RevPAR (USD)', value: data.revpar },
-    { label: 'ADR (USD)', value: data.adr },
-    { label: 'AVG LENGTH OF STAY', value: data.los },
+    { label: 'Occupancy', value: `${data.occ}%`, change: '+3.4% vs last period' },
+    { label: 'Room Revenue', value: data.rev, change: '+8.1% vs last period' },
+    { label: 'RevPAR', value: data.revpar, change: '+5.2% vs last period' },
+    { label: 'ADR', value: data.adr, change: '+2.8% vs last period' },
+    { label: 'Av. Length of Stay', value: `${data.los} Nights`, change: '+0.4 vs last period' },
   ];
 
   return (
     <div className="grid grid-cols-12 gap-5 items-stretch">
-      {/* Today's Activity / Operational Summary */}
+      {/* Today's Activity / Operational Summary (3 cols) */}
       <div 
-        className="col-span-12 lg:col-span-3 rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter"
+        className="col-span-12 lg:col-span-3 rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
         onClick={() => openDrawer({ type: 'LIVE_OVERVIEW', title: 'Today at a Glance' })}
       >
-        <div>
+        <div className="flex justify-between items-center mb-3 h-4">
           <InfoTooltip text="Real-time summary of today's operational guest counts.">
-            <h3 className="text-[10px] font-normal tracking-wider uppercase text-[#4a3c31] mb-3 cursor-help">
-              TODAY'S ACTIVITY
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">
+              Today's Activity
             </h3>
           </InfoTooltip>
-          
-          <div className="flex flex-col gap-2.5 text-xs text-[#4a3c31]">
-            <div className="flex justify-between items-baseline pb-1 border-b border-[#d4c4b7]/30">
-              <span className="text-[#947b66] text-[9.5px] uppercase tracking-wider font-medium">Arrivals</span>
-              <span className="text-sm font-bold">{data.arrivals}</span>
-            </div>
-            <div className="flex justify-between items-baseline pb-1 border-b border-[#d4c4b7]/30">
-              <span className="text-[#947b66] text-[9.5px] uppercase tracking-wider font-medium">Departures</span>
-              <span className="text-sm font-bold">{data.deps}</span>
-            </div>
-            <div className="flex justify-between items-baseline pb-1 border-b border-[#d4c4b7]/30">
-              <span className="text-[#947b66] text-[9.5px] uppercase tracking-wider font-medium">In-House Guests</span>
-              <span className="text-sm font-bold">{data.inhouse}</span>
-            </div>
-            <div className="flex justify-between items-baseline">
-              <span className="text-[#947b66] text-[9.5px] uppercase tracking-wider font-medium">VIP Guests</span>
-              <span className="text-sm font-bold">{data.vip}</span>
-            </div>
+        </div>
+        
+        <div className="flex flex-col gap-2 text-xs text-zinc-900 flex-1 justify-between py-0.5">
+          <div className="flex justify-between items-baseline pb-1.5 border-b border-zinc-100">
+            <span className="text-zinc-500 text-[10px] font-medium">Arrivals</span>
+            <span className="text-xs font-bold text-zinc-900">{data.arrivals}</span>
+          </div>
+          <div className="flex justify-between items-baseline pb-1.5 border-b border-zinc-100">
+            <span className="text-zinc-500 text-[10px] font-medium">Departures</span>
+            <span className="text-xs font-bold text-zinc-900">{data.deps}</span>
+          </div>
+          <div className="flex justify-between items-baseline pb-1.5 border-b border-zinc-100">
+            <span className="text-zinc-500 text-[10px] font-medium">In-House Guests</span>
+            <span className="text-xs font-bold text-zinc-900">{data.inhouse}</span>
+          </div>
+          <div className="flex justify-between items-baseline">
+            <span className="text-zinc-500 text-[10px] font-medium">VIP Guests</span>
+            <span className="text-xs font-bold text-zinc-900">{data.vip}</span>
           </div>
         </div>
       </div>
 
-      {/* Financial & Performance KPI Cards Grid */}
-      <div className="col-span-12 lg:col-span-9 grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {kpis.map((kpi, idx) => (
+      {/* Occupancy KPI Card (2 cols) — Aligns with Today's Activity to total 5 cols */}
+      <div 
+        className="col-span-12 lg:col-span-2 relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
+        style={{ animationDelay: '0.1s' }}
+        onClick={() => openDrawer({ type: 'METRIC', title: kpis[0].label, data: kpis[0].value })}
+      >
+        <div className="flex flex-col justify-between h-full py-0.5">
+          <div className="flex items-center justify-between gap-1 mb-1">
+            <InfoTooltip text={getTooltipText(kpis[0].label)}>
+              <p className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 whitespace-nowrap truncate cursor-help">
+                {kpis[0].label}
+              </p>
+            </InfoTooltip>
+          </div>
+          <h3 className="text-[22px] font-normal text-zinc-900 leading-none my-auto">
+            {kpis[0].value}
+          </h3>
+          <span className="text-[9px] text-emerald-700 font-medium">
+            {kpis[0].change}
+          </span>
+        </div>
+      </div>
+
+      {/* Remaining 4 Financial & Performance KPI Cards (7 cols, 4 sub-columns) */}
+      <div className="col-span-12 lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {kpis.slice(1).map((kpi, idx) => (
           <div
             key={kpi.label}
-            className="relative rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter"
-            style={{ animationDelay: `${0.1 + idx * 0.05}s` }}
+            className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
+            style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
             onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
           >
-            <div className="flex flex-col relative w-full h-full justify-between pt-1">
+            <div className="flex flex-col justify-between h-full py-0.5">
               <div className="flex items-center justify-between gap-1 mb-1">
                 <InfoTooltip text={getTooltipText(kpi.label)}>
-                  <p className="text-[10px] font-normal tracking-wider uppercase text-[#4a3c31] whitespace-nowrap truncate cursor-help">
+                  <p className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 whitespace-nowrap truncate cursor-help">
                     {kpi.label}
                   </p>
                 </InfoTooltip>
               </div>
-              <h3 className="text-[22px] font-normal text-[#4a3c31] my-1">
+              <h3 className="text-[22px] font-normal text-zinc-900 leading-none my-auto">
                 {kpi.value}
               </h3>
+              <span className="text-[9px] text-emerald-700 font-medium">
+                {kpi.change}
+              </span>
             </div>
           </div>
         ))}
@@ -141,4 +167,5 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
     </div>
   );
 }
+
 
