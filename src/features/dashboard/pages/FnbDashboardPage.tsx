@@ -1,59 +1,23 @@
 import { useState } from 'react';
 import {
-  LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip,
-  PieChart, Pie, Cell
+  LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip
 } from 'recharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Calendar, Sunrise, Heart, WineglassTriangle, Cup } from '@solar-icons/react';
+import {
+  Calendar,
+  AltArrowDown,
+  Heart,
+  Settings,
+  Star,
+  Cup,
+  WineglassTriangle
+} from '@solar-icons/react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
+import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
+import { InfoTooltip } from '../../common/components/InfoTooltip';
 
-// Custom icons
-const MountainIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#C8A050]">
-    <path d="M12 3L2 21h20L12 3z" />
-    <path d="M12 3l5 9H7l5-9z" />
-  </svg>
-);
-
-const SpoonForkIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#657454]">
-    <path d="M18 2v13M18 20h.01M6 2v6a4 4 0 0 0 4 4v10" />
-    <path d="M10 2v6M14 2v6a4 4 0 0 1-4 4" />
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#586981]">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
-
-const CompassIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#9d7c67]">
-    <circle cx="12" cy="12" r="10" />
-    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-  </svg>
-);
-
-const LoopIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#C8A050]">
-    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l.73-.73" />
-  </svg>
-);
-
-const StarIcon = ({ filled = true }: { filled?: boolean }) => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill={filled ? "#C8A050" : "none"} stroke="#C8A050" strokeWidth="1.5" className="inline-block mr-0.5">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
-
-// Charts Colors
-const COLORS_EXPERIENCE = ['#657454', '#4a3c31', '#C8A050', '#947b66', '#7d6b5e', '#e5d8cb'];
-const COLORS_FNB_MIX = ['#4a3c31', '#C8A050', '#947b66', '#e5d8cb'];
-
-// Mock Data matching Screenshot 1 exactly
+// Mock Data
 const experienceBookingsOverTime = [
   { name: 'May 1', value: 380 },
   { name: 'May 8', value: 530 },
@@ -64,12 +28,12 @@ const experienceBookingsOverTime = [
 ];
 
 const experiencesByCategory = [
-  { name: 'Water & Marine', value: 32 },
-  { name: 'Nature & Adventure', value: 24 },
-  { name: 'Cultural & Local', value: 17 },
-  { name: 'Wellness & Mindfulness', value: 15 },
-  { name: 'Private & Bespoke', value: 8 },
-  { name: 'Other', value: 4 }
+  { name: 'Water & Marine', value: 32, color: '#18181b' },
+  { name: 'Nature & Adventure', value: 24, color: '#3f3f46' },
+  { name: 'Cultural & Local', value: 17, color: '#52525b' },
+  { name: 'Wellness & Mindfulness', value: 15, color: '#71717a' },
+  { name: 'Private & Bespoke', value: 8, color: '#a1a1aa' },
+  { name: 'Other', value: 4, color: '#d4d4d8' }
 ];
 
 const topExperiences = [
@@ -81,11 +45,11 @@ const topExperiences = [
 ];
 
 const experienceRevenueByProperty = [
-  { name: 'SOSEI Ocean', value: 78620 },
-  { name: 'SOSEI Alpine', value: 54310 },
-  { name: 'SOSEI Forest', value: 31400 },
-  { name: 'SOSEI Desert', value: 15230 },
-  { name: 'SOSEI City', value: 9680 }
+  { name: 'SOSEI Ocean', value: 78620, pct: 41 },
+  { name: 'SOSEI Alpine', value: 54310, pct: 28 },
+  { name: 'SOSEI Forest', value: 31400, pct: 16 },
+  { name: 'SOSEI Desert', value: 15230, pct: 8 },
+  { name: 'SOSEI City', value: 9680, pct: 5 }
 ];
 
 const fnbRevenueOverTime = [
@@ -98,27 +62,27 @@ const fnbRevenueOverTime = [
 ];
 
 const revenueByOutlet = [
-  { name: 'Seascape Restaurant', value: 186420 },
-  { name: 'Terra Pavilion', value: 112380 },
-  { name: 'Alpine Grill', value: 84760 },
-  { name: 'The Tea Lounge', value: 61240 },
-  { name: 'In-Villa Dining', value: 46810 },
-  { name: 'Poolside Bar', value: 20840 }
+  { name: 'Seascape Restaurant', value: 186420, covers: '1,420', trend: '+14% YoY' },
+  { name: 'Terra Pavilion', value: 112380, covers: '980', trend: '+18% YoY' },
+  { name: 'Alpine Grill', value: 84760, covers: '740', trend: '+9% YoY' },
+  { name: 'The Tea Lounge', value: 61240, covers: '620', trend: '+12% YoY' },
+  { name: 'In-Villa Dining', value: 46810, covers: '380', trend: '+6% YoY' },
+  { name: 'Poolside Bar', value: 20840, covers: '310', trend: '+22% YoY' }
 ];
 
 const topPerformingOutlets = [
-  { name: 'Seascape Restaurant', value: 245 },
-  { name: 'Terra Pavilion', value: 198 },
-  { name: 'Alpine Grill', value: 176 },
-  { name: 'The Tea Lounge', value: 142 },
-  { name: 'Poolside Bar', value: 118 }
+  { name: 'Seascape Restaurant', value: 245, total: 300 },
+  { name: 'Terra Pavilion', value: 198, total: 300 },
+  { name: 'Alpine Grill', value: 176, total: 300 },
+  { name: 'The Tea Lounge', value: 142, total: 300 },
+  { name: 'Poolside Bar', value: 118, total: 300 }
 ];
 
 const fnbMixBreakdown = [
-  { name: 'Food', value: 62 },
-  { name: 'Beverage', value: 23 },
-  { name: 'In-Villa Dining', value: 10 },
-  { name: 'Events & Private Dining', value: 5 }
+  { name: 'Food', value: 62, color: '#18181b' },
+  { name: 'Beverage', value: 23, color: '#3f3f46' },
+  { name: 'In-Villa Dining', value: 10, color: '#71717a' },
+  { name: 'Events & Private Dining', value: 5, color: '#a1a1aa' }
 ];
 
 const experienceTypePerformance = [
@@ -136,35 +100,60 @@ const upcomingHighlights = [
   { title: 'Whale Watching Cruise', date: 'Jun 9, 8:00 AM', count: '20 Reservations' }
 ];
 
-// Heatmap data: columns [7am, 9am, 12pm, 3pm, 6pm, 9pm]
-// Rows: Seascape Restaurant, Terra Pavilion, Alpine Grill, The Tea Lounge, Poolside Bar, In-Villa Dining
-// Value: 1 (low) to 5 (high)
+const heatmapOutlets = [
+  'Seascape Restaurant',
+  'Terra Pavilion',
+  'Alpine Grill',
+  'The Tea Lounge',
+  'Poolside Bar',
+  'In-Villa Dining'
+];
+const heatmapTimes = ['7 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'];
 const heatmapData = [
-  { outlet: 'Seascape Restaurant', values: [2, 3, 5, 2, 5, 4] },
-  { outlet: 'Terra Pavilion', values: [4, 4, 3, 2, 4, 5] },
-  { outlet: 'Alpine Grill', values: [1, 2, 4, 2, 5, 5] },
-  { outlet: 'The Tea Lounge', values: [2, 5, 4, 5, 3, 1] },
-  { outlet: 'Poolside Bar', values: [1, 2, 4, 5, 4, 2] },
-  { outlet: 'In-Villa Dining', values: [4, 3, 3, 2, 4, 5] }
+  [2, 3, 5, 2, 5, 4],
+  [4, 4, 3, 2, 4, 5],
+  [1, 2, 4, 2, 5, 5],
+  [2, 5, 4, 5, 3, 1],
+  [1, 2, 4, 5, 4, 2],
+  [4, 3, 3, 2, 4, 5]
 ];
 
 export function FnbDashboardPage() {
-  const [startDate, setStartDate] = useState<Date | null>(new Date('2024-05-01'));
-  const [endDate, setEndDate] = useState<Date | null>(new Date('2024-05-31'));
+  const [startDate, setStartDate] = useState<Date | null>(new Date('2026-05-01'));
+  const [endDate, setEndDate] = useState<Date | null>(new Date('2026-05-31'));
   const { openDrawer } = useDashboardDrawer();
+  const [showDevModal, setShowDevModal] = useState(false);
+  const [devFeatureName, setDevFeatureName] = useState<string | undefined>(undefined);
+
+  const openDevModal = (name?: string) => {
+    setDevFeatureName(name);
+    setShowDevModal(true);
+  };
+
+  // Pure SVG Donut calculations for Experiences by Category
+  const donutSize = 110;
+  const donutStrokeWidth = 14;
+  const donutRadius = (donutSize - donutStrokeWidth) / 2;
+  const donutCircumference = 2 * Math.PI * donutRadius;
+  let expAccumulated = 0;
+
+  // Pure SVG Donut calculations for F&B Mix
+  let fnbAccumulated = 0;
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
 
       {/* Header Widget */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#d4c4b7]/40 pb-4 mt-2 gap-4">
+      <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 lg:pt-6 animate-card-enter">
         <div>
-          <span className="text-[9px] font-bold tracking-widest text-[#947b66] uppercase">Experience Intelligence</span>
-          <h1 className="text-2xl text-[#4a3c31] font-bold mt-0.5">Experiences & F&B Dashboard</h1>
-          <p className="text-[10px] text-[#7d6b5e] mt-1">Curated experiences. Memorable moments. Measurable impact.</p>
+          <span className="text-[9.5px] font-bold uppercase tracking-widest text-zinc-500">Experience Intelligence</span>
+          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mt-0.5">Experiences & F&B Dashboard</h1>
+          <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Curated experiences. Memorable moments. Measurable impact.</p>
         </div>
-        <div className="flex items-center gap-3 self-stretch md:self-auto justify-end">
-          <div className="relative flex items-center bg-[#efe7d5]/60 border border-[#d4c4b7] rounded-lg px-3 py-1.5 cursor-pointer">
+
+        {/* DatePicker & Export */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex items-center bg-white border border-zinc-200 rounded-lg px-3 py-1.5 cursor-pointer shadow-xs">
             <DatePicker
               selectsRange={true}
               startDate={startDate}
@@ -175,499 +164,479 @@ export function FnbDashboardPage() {
               }}
               dateFormat="MMM d, yyyy"
               placeholderText="Select Date Range"
-              className="bg-transparent border-none text-[#4a3c31] text-[10px] focus:outline-none font-bold w-[160px] cursor-pointer"
+              className="bg-transparent border-none text-zinc-900 text-[10px] focus:outline-none font-medium w-[150px] cursor-pointer"
             />
-            <Calendar size={12} className="text-[#947b66] ml-1.5" />
+            <Calendar size={13} className="text-zinc-400 ml-1.5" />
           </div>
-          <button className="bg-[#947b66] hover:bg-[#836a56] text-[#efe7d5] px-4 py-2 rounded-lg text-[10px] font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
-            Export
+          <button
+            onClick={() => openDevModal('Export Report')}
+            className="h-8.5 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3.5 font-medium flex items-center gap-2 bg-white transition-all shadow-xs cursor-pointer"
+          >
+            <AltArrowDown size={14} className="rotate-180 text-zinc-500" />
+            <span>Export</span>
           </button>
         </div>
       </div>
 
-      {/* Row 1: KPI Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-2">
-        {/* Card 1 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Total Experiences Booked', data: { key: 'TOTAL_EXPERIENCES' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Total Experiences Booked</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <MountainIcon />
-            </div>
+      {/* Row 1: KPI Grid (6 Cards) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 animate-card-enter">
+        {[
+          { label: 'TOTAL EXPERIENCES BOOKED', value: '1,864', key: 'TOTAL_EXPERIENCES' },
+          { label: 'TOTAL F&B REVENUE (USD)', value: '$512,450', key: 'TOTAL_FNB_REVENUE' },
+          { label: 'AVG SPEND PER PERSON', value: '$142', key: 'AVERAGE_SPEND' },
+          { label: 'EXPERIENCE REVENUE (USD)', value: '$189,320', key: 'EXPERIENCE_REVENUE' },
+          { label: 'REPEAT EXPERIENCE RATE', value: '38%', key: 'REPEAT_RATE' },
+          { label: 'GUEST SATISFACTION', value: '4.7 / 5', key: 'SATISFACTION' },
+        ].map((kpi, idx) => (
+          <div
+            key={kpi.label}
+            onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
+            className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[90px]"
+            style={{ animationDelay: `${0.05 + idx * 0.03}s` }}
+          >
+            <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate">
+              {kpi.label}
+            </span>
+            <h3 className="text-[22px] font-normal text-zinc-900 leading-none mt-auto">
+              {kpi.value}
+            </h3>
           </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">1,864</div>
-            <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+18% vs Apr 1 - Apr 30</div>
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Total F&B Revenue', data: { key: 'TOTAL_FNB_REVENUE' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Total F&B Revenue (USD)</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <SpoonForkIcon />
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">$512,450</div>
-            <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+16% vs Apr 1 - Apr 30</div>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Average Spend Per Person', data: { key: 'AVERAGE_SPEND' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Average Spend Per Person</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <UserIcon />
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">$142</div>
-            <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+7% vs Apr 1 - Apr 30</div>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experience Revenue (USD)', data: { key: 'EXPERIENCE_REVENUE' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Experience Revenue (USD)</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <CompassIcon />
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">$189,320</div>
-            <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+21% vs Apr 1 - Apr 30</div>
-          </div>
-        </div>
-
-        {/* Card 5 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Repeat Experience Rate', data: { key: 'REPEAT_RATE' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Repeat Experience Rate</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <LoopIcon />
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">38%</div>
-            <div className="text-[9px] text-[#15803d] font-bold mt-0.5">+5pp vs Apr 1 - Apr 30</div>
-          </div>
-        </div>
-
-        {/* Card 6 */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Guest Satisfaction', data: { key: 'SATISFACTION' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm min-h-[110px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <div className="flex justify-between items-start">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Guest Satisfaction</span>
-            <div className="w-8 h-8 rounded-full bg-[#f3eae1] border border-[#d4c4b7] flex items-center justify-center">
-              <span className="text-[#C8A050] font-serif font-bold">★</span>
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-xl font-normal text-[#4a3c31]">4.7 <span className="text-xs text-[#7d6b5e]">/ 5</span></div>
-            <div className="text-[9px] text-[#7d6b5e] font-bold mt-0.5">Excellent</div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Row 2: Experience Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+      {/* Row 2: 4 Experience Analytics Cards (4 cols) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-card-enter" style={{ animationDelay: '0.2s' }}>
+        
         {/* 1. Experience Bookings Over Time */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experience Bookings Over Time', data: { key: 'EXP_BOOKINGS_OVER_TIME' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Experience Bookings Over Time', data: 'Trend Chart' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <div className="flex justify-between items-start mb-2">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">Experience Bookings Over Time</span>
-            <span className="text-[8px] font-mono text-[#4a3c31] bg-[#efe7d5] px-1.5 py-0.5 rounded">May 31: 892</span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Experience Bookings Over Time</h3>
+            <span className="text-[9.5px] font-medium text-zinc-500">May 31: 892</span>
           </div>
-          <div className="flex-1 w-full h-[140px] mt-2">
+
+          <div className="flex-1 w-full h-[140px] pt-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={experienceBookingsOverTime}>
-                <XAxis dataKey="name" stroke="#7d6b5e" fontSize={8} tickLine={false} />
-                <YAxis stroke="#7d6b5e" fontSize={8} tickLine={false} axisLine={false} />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#657454" strokeWidth={2} dot={{ r: 3, fill: '#657454' }} />
+              <LineChart data={experienceBookingsOverTime} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#a1a1aa" fontSize={8} tickLine={false} axisLine={false} />
+                <YAxis stroke="#a1a1aa" fontSize={8} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e4e4e7', fontSize: '10px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                />
+                <Line type="monotone" dataKey="value" stroke="#18181b" strokeWidth={2} dot={{ r: 3, fill: '#18181b' }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* 2. Experiences By Category */}
+        {/* 2. Experiences by Category (Pure SVG Donut) */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experiences By Category', data: { key: 'EXP_BY_CATEGORY' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Experiences by Category', data: 'Category Breakdown' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Experiences By Category</span>
-          <div className="flex items-center justify-between flex-1">
-            <div className="w-[110px] h-[110px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={experiencesByCategory}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={35}
-                    outerRadius={50}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {experiencesByCategory.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS_EXPERIENCE[index % COLORS_EXPERIENCE.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[11px] font-bold text-[#4a3c31] leading-none">1,864</span>
-                <span className="text-[7px] text-[#7d6b5e] scale-90">Total Booked</span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Experiences by Category</h3>
+            <InfoTooltip text="Distribution of booked guest experiences by activity type." />
+          </div>
+
+          <div className="flex-1 flex items-center justify-between py-1 gap-2">
+            <div className="relative shrink-0 flex items-center justify-center" style={{ width: donutSize, height: donutSize }}>
+              <svg width={donutSize} height={donutSize} viewBox={`0 0 ${donutSize} ${donutSize}`} className="transform -rotate-90">
+                {experiencesByCategory.map((item, index) => {
+                  const strokeLength = (item.value / 100) * donutCircumference;
+                  const strokeOffset = -(expAccumulated / 100) * donutCircumference;
+                  expAccumulated += item.value;
+
+                  return (
+                    <circle
+                      key={index}
+                      cx={donutSize / 2}
+                      cy={donutSize / 2}
+                      r={donutRadius}
+                      fill="none"
+                      stroke={item.color}
+                      strokeWidth={donutStrokeWidth}
+                      strokeDasharray={`${Math.max(0, strokeLength - 1.5)} ${donutCircumference}`}
+                      strokeDashoffset={strokeOffset}
+                      className="transition-all duration-500"
+                    />
+                  );
+                })}
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span className="text-sm font-bold text-zinc-900 leading-none">1,864</span>
+                <span className="text-[7.5px] text-zinc-500 font-medium mt-0.5">Bookings</span>
               </div>
             </div>
-            <div className="flex-1 pl-4 flex flex-col gap-1 text-[8px] text-[#7d6b5e]">
-              {experiencesByCategory.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 truncate max-w-[85px]">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: COLORS_EXPERIENCE[idx % COLORS_EXPERIENCE.length] }} />
-                    {item.name}
-                  </span>
-                  <span className="font-bold text-[#4a3c31]">{item.value}%</span>
+
+            <div className="flex flex-col gap-1 flex-1 min-w-0 pr-1">
+              {experiencesByCategory.map((item) => (
+                <div key={item.name} className="flex items-center justify-between text-[9px]">
+                  <div className="flex items-center gap-1.5 min-w-0 truncate">
+                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-zinc-500 font-medium truncate">{item.name}</span>
+                  </div>
+                  <span className="font-bold text-zinc-900 ml-1">{item.value}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all experiences →</button>
         </div>
 
         {/* 3. Top Experiences */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Top Experiences', data: { key: 'TOP_EXPERIENCES_DETAIL' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Top Experiences', data: 'Leaderboard' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Top Experiences <span className="text-[8px] not-italic text-[#7d6b5e]/70">By bookings</span></span>
-          <div className="flex-1 flex flex-col justify-between">
-            {topExperiences.map((exp, idx) => (
-              <div key={idx} className="flex justify-between items-center py-1.5 border-b border-[#d4c4b7]/25 last:border-0">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-[#947b66]/10 backdrop-blur-sm flex items-center justify-center font-bold text-[9px] text-[#947b66]">
-                    {idx + 1}
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#4a3c31] text-[10px] leading-tight">{exp.name}</div>
-                    <div className="text-[8px] text-[#7d6b5e]">{exp.category}</div>
-                  </div>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Top Experiences</h3>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+            {topExperiences.map(exp => (
+              <div key={exp.name} className="flex justify-between items-center text-[10px]">
+                <div className="truncate pr-1">
+                  <span className="text-zinc-700 font-medium">{exp.name}</span>
+                  <span className="text-[8.5px] text-zinc-400 font-normal ml-1">({exp.category})</span>
                 </div>
-                <div className="font-mono font-bold text-[#4a3c31] text-[11px]">{exp.count}</div>
+                <span className="font-bold text-zinc-900 shrink-0">{exp.count}</span>
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all experiences →</button>
+
+          <div className="pt-2 border-t border-zinc-100 text-[9px] font-medium text-zinc-500">
+            View all experiences &rarr;
+          </div>
         </div>
 
-        {/* 4. Experience Revenue By Property */}
+        {/* 4. Experience Revenue by Property */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experience Revenue By Property', data: { key: 'EXP_REVENUE_PROPERTY' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Revenue by Property', data: 'Property Breakdown' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Experience Revenue By Property <span className="text-[8px] not-italic text-[#7d6b5e]/70">By revenue (USD)</span></span>
-          <div className="flex-1 flex flex-col justify-between py-1">
-            {experienceRevenueByProperty.map((prop, idx) => {
-              const maxVal = experienceRevenueByProperty[0].value;
-              const pct = (prop.value / maxVal) * 100;
-              return (
-                <div key={idx} className="flex items-center justify-between text-[9px] gap-2">
-                  <span className="w-[68px] font-semibold text-[#4a3c31] truncate">{prop.name}</span>
-                  <div className="flex-1 h-1.5 bg-[#e5d8cb]/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#657454] rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="font-mono font-bold text-[#4a3c31]">${prop.value.toLocaleString()}</span>
-                </div>
-              );
-            })}
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Revenue by Property</h3>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View property insights →</button>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+            {experienceRevenueByProperty.map(prop => (
+              <div key={prop.name} className="flex items-center justify-between text-[10px]">
+                <span className="text-zinc-600 w-24 truncate">{prop.name}</span>
+                <div className="flex-1 mx-2 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-800 rounded-full" style={{ width: `${prop.pct}%` }} />
+                </div>
+                <span className="font-bold text-zinc-900 w-12 text-right">${(prop.value / 1000).toFixed(1)}k</span>
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
 
-      {/* Row 3: F&B Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+      {/* Row 3: 4 F&B Operations Cards (4 cols) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-card-enter" style={{ animationDelay: '0.3s' }}>
+        
         {/* 1. F&B Revenue Over Time */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'F&B Revenue Over Time', data: { key: 'FNB_REVENUE_OVER_TIME' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'F&B Revenue Over Time', data: 'F&B Trend' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <div className="flex justify-between items-start mb-2">
-            <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e]">F&B Revenue Over Time</span>
-            <span className="text-[8px] font-mono text-[#4a3c31] bg-[#efe7d5] px-1.5 py-0.5 rounded">May 31: $16.4K</span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">F&B Revenue Over Time</h3>
+            <span className="text-[9.5px] font-medium text-zinc-500">May 31: $16.4k</span>
           </div>
-          <div className="flex-1 w-full h-[140px] mt-2">
+
+          <div className="flex-1 w-full h-[140px] pt-2">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={fnbRevenueOverTime}>
-                <XAxis dataKey="name" stroke="#7d6b5e" fontSize={8} tickLine={false} />
-                <YAxis stroke="#7d6b5e" fontSize={8} tickLine={false} axisLine={false} />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#C8A050" strokeWidth={2} dot={{ r: 3, fill: '#C8A050' }} />
+              <LineChart data={fnbRevenueOverTime} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#a1a1aa" fontSize={8} tickLine={false} axisLine={false} />
+                <YAxis stroke="#a1a1aa" fontSize={8} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e4e4e7', fontSize: '10px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                />
+                <Line type="monotone" dataKey="value" stroke="#18181b" strokeWidth={2} dot={{ r: 3, fill: '#18181b' }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* 2. Revenue By Outlet */}
+        {/* 2. Revenue by Outlet */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Revenue By Outlet', data: { key: 'FNB_REVENUE_OUTLET' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Revenue by Outlet', data: 'Outlets' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Revenue By Outlet <span className="text-[8px] not-italic text-[#7d6b5e]/70">By revenue (USD)</span></span>
-          <div className="flex-1 flex flex-col justify-between py-1">
-            {revenueByOutlet.map((outlet, idx) => {
-              const maxVal = revenueByOutlet[0].value;
-              const pct = (outlet.value / maxVal) * 100;
-              return (
-                <div key={idx} className="flex items-center justify-between text-[9px] gap-2">
-                  <span className="w-[85px] font-semibold text-[#4a3c31] truncate">{outlet.name}</span>
-                  <div className="flex-1 h-1.5 bg-[#e5d8cb]/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#657454] rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="font-mono font-bold text-[#4a3c31]">${outlet.value.toLocaleString()}</span>
-                </div>
-              );
-            })}
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Revenue by Outlet</h3>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View all outlets →</button>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-1.5">
+            {revenueByOutlet.slice(0, 5).map(outlet => (
+              <div key={outlet.name} className="flex justify-between items-center text-[9.5px]">
+                <span className="text-zinc-700 font-medium truncate pr-1">{outlet.name}</span>
+                <span className="font-bold text-zinc-900 shrink-0">${(outlet.value / 1000).toFixed(1)}k</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 3. Top Performing Outlets */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Top Performing Outlets', data: { key: 'TOP_OUTLETS_PERFORMANCE' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Top Performing Outlets', data: 'Outlet Covers' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Top Performing Outlets <span className="text-[8px] not-italic text-[#7d6b5e]/70">By revenue per available seat (RevPAS)</span></span>
-          <div className="flex-1 flex flex-col justify-between">
-            {topPerformingOutlets.map((outlet, idx) => (
-              <div key={idx} className="flex justify-between items-center py-1.5 border-b border-[#d4c4b7]/25 last:border-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-[#4a3c31]">{outlet.name}</span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Top Performing Outlets</h3>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+            {topPerformingOutlets.map(outlet => (
+              <div key={outlet.name} className="flex items-center justify-between text-[10px]">
+                <span className="text-zinc-600 w-28 truncate">{outlet.name}</span>
+                <div className="flex-1 mx-2 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-800 rounded-full" style={{ width: `${(outlet.value / outlet.total) * 100}%` }} />
                 </div>
-                <div className="font-mono font-bold text-[#657454] text-[11px]">${outlet.value}</div>
+                <span className="font-bold text-zinc-900 w-8 text-right">{outlet.value}</span>
               </div>
             ))}
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View outlet performance →</button>
         </div>
 
-        {/* 4. F&B Mix Breakdown */}
+        {/* 4. F&B Mix Breakdown (Pure SVG Donut) */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'F&B Mix Breakdown', data: { key: 'FNB_MIX_BREAKDOWN_DETAIL' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'F&B Mix Breakdown', data: 'Menu Mix' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[220px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">F&B Mix Breakdown</span>
-          <div className="flex items-center justify-between flex-1">
-            <div className="w-[110px] h-[110px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={fnbMixBreakdown}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={35}
-                    outerRadius={50}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {fnbMixBreakdown.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS_FNB_MIX[index % COLORS_FNB_MIX.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[10px] font-bold text-[#4a3c31] leading-none">$512,450</span>
-                <span className="text-[7px] text-[#7d6b5e] scale-90">Total Revenue</span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">F&B Mix Breakdown</h3>
+          </div>
+
+          <div className="flex-1 flex items-center justify-between py-1 gap-2">
+            <div className="relative shrink-0 flex items-center justify-center" style={{ width: donutSize, height: donutSize }}>
+              <svg width={donutSize} height={donutSize} viewBox={`0 0 ${donutSize} ${donutSize}`} className="transform -rotate-90">
+                {fnbMixBreakdown.map((item, index) => {
+                  const strokeLength = (item.value / 100) * donutCircumference;
+                  const strokeOffset = -(fnbAccumulated / 100) * donutCircumference;
+                  fnbAccumulated += item.value;
+
+                  return (
+                    <circle
+                      key={index}
+                      cx={donutSize / 2}
+                      cy={donutSize / 2}
+                      r={donutRadius}
+                      fill="none"
+                      stroke={item.color}
+                      strokeWidth={donutStrokeWidth}
+                      strokeDasharray={`${Math.max(0, strokeLength - 1.5)} ${donutCircumference}`}
+                      strokeDashoffset={strokeOffset}
+                      className="transition-all duration-500"
+                    />
+                  );
+                })}
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span className="text-base font-bold text-zinc-900 leading-none">100%</span>
+                <span className="text-[7.5px] text-zinc-500 font-medium mt-0.5">Total Mix</span>
               </div>
             </div>
-            <div className="flex-1 pl-4 flex flex-col gap-1.5 text-[8px] text-[#7d6b5e]">
-              {fnbMixBreakdown.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 truncate max-w-[80px]">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: COLORS_FNB_MIX[idx % COLORS_FNB_MIX.length] }} />
-                    {item.name}
-                  </span>
-                  <span className="font-bold text-[#4a3c31]">{item.value}%</span>
+
+            <div className="flex flex-col gap-1 flex-1 min-w-0 pr-1">
+              {fnbMixBreakdown.map((item) => (
+                <div key={item.name} className="flex items-center justify-between text-[9px]">
+                  <div className="flex items-center gap-1.5 min-w-0 truncate">
+                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-zinc-500 font-medium truncate">{item.name}</span>
+                  </div>
+                  <span className="font-bold text-zinc-900 ml-1">{item.value}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View F&B mix details →</button>
         </div>
+
       </div>
 
-      {/* Row 4: Performance, Funnel, & Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
-        {/* 1. Peak Hours By Outlet */}
+      {/* Row 4: 4 Quality & Engagement Cards (4 cols) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-card-enter" style={{ animationDelay: '0.4s' }}>
+        
+        {/* 1. Experience Type Performance */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Peak Hours By Outlet', data: { key: 'PEAK_HOURS_OUTLET' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Experience Ratings', data: 'Ratings' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[200px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Peak Hours By Outlet <span className="text-[8px] not-italic text-[#7d6b5e]/70">Average covers by time of day</span></span>
-          <div className="flex-1 flex flex-col justify-between overflow-x-auto text-[8px]">
-            {/* Headers */}
-            <div className="grid grid-cols-[80px_repeat(6,1fr)] gap-1 text-center font-bold text-[#7d6b5e] pb-1 border-b border-[#d4c4b7]/30">
-              <span className="text-left">Outlet</span>
-              <span>7 AM</span>
-              <span>9 AM</span>
-              <span>12 PM</span>
-              <span>3 PM</span>
-              <span>6 PM</span>
-              <span>9 PM</span>
-            </div>
-            {/* Grid rows */}
-            {heatmapData.map((row, idx) => (
-              <div key={idx} className="grid grid-cols-[80px_repeat(6,1fr)] gap-1 py-1 items-center">
-                <span className="font-medium text-[#4a3c31] truncate text-left leading-tight">{row.outlet}</span>
-                {row.values.map((val, vidx) => {
-                  let opacityClass = 'bg-[#657454]/10';
-                  if (val === 2) opacityClass = 'bg-[#657454]/30';
-                  if (val === 3) opacityClass = 'bg-[#657454]/50';
-                  if (val === 4) opacityClass = 'bg-[#657454]/75';
-                  if (val === 5) opacityClass = 'bg-[#657454]';
-                  return (
-                    <div
-                      key={vidx}
-                      className={`h-4.5 rounded-sm flex items-center justify-center transition-all ${opacityClass} ${val >= 4 ? 'text-[#efe7d5]' : 'text-[#4a3c31]'}`}
-                    />
-                  );
-                })}
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Experience Ratings</h3>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+            {experienceTypePerformance.map(item => (
+              <div key={item.name} className="flex justify-between items-center text-[10px]">
+                <span className="text-zinc-700 font-medium truncate pr-1">{item.name}</span>
+                <span className="font-bold text-zinc-900 shrink-0">★ {item.rating}</span>
               </div>
             ))}
-            {/* Legend */}
-            <div className="flex items-center justify-end gap-1.5 mt-2 text-[7px] text-[#7d6b5e]">
-              <span>Low</span>
-              <div className="w-16 h-1.5 bg-gradient-to-r from-[#657454]/10 to-[#657454] rounded-full" />
-              <span>High</span>
-            </div>
           </div>
         </div>
 
-        {/* 2. Experience Conversion Funnel */}
+        {/* 2. Upcoming Highlights */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experience Conversion Funnel', data: { key: 'EXP_CONVERSION_FUNNEL' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Upcoming Highlights', data: 'Highlights' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[200px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Experience Conversion Funnel <span className="text-[8px] not-italic text-[#7d6b5e]/70">From inquiry to experience</span></span>
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Upcoming Highlights</h3>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
+            {upcomingHighlights.map(ev => (
+              <div key={ev.title} className="flex justify-between items-baseline text-[10px]">
+                <div className="truncate pr-1">
+                  <div className="font-bold text-zinc-900 leading-tight truncate">{ev.title}</div>
+                  <div className="text-[8.5px] text-zinc-400 font-normal">{ev.date}</div>
+                </div>
+                <span className="text-[9px] font-semibold text-zinc-700 shrink-0">{ev.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Outlet Peak Hours Heatmap */}
+        <div
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Outlet Peak Heatmap', data: 'Heatmap' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[200px] justify-between"
+        >
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Outlet Peak Heatmap</h3>
+          </div>
+
           <div className="flex-1 flex flex-col justify-between py-1">
-            {[
-              { step: 'Experiences Viewed', val: '3,842', pct: 100 },
-              { step: 'Added to Wishlist', val: '1,926', pct: 50 },
-              { step: 'Inquiries', val: '1,102', pct: 29 },
-              { step: 'Bookings', val: '1,864', pct: 49 },
-              { step: 'Completed', val: '1,720', pct: 92 }
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col gap-0.5 text-[9px]">
-                <div className="flex justify-between items-center text-[#4a3c31]">
-                  <span>{item.step}</span>
-                  <span className="font-mono font-bold">{item.val}</span>
+            <div className="grid grid-cols-[36px_repeat(6,1fr)] gap-1 text-[7.5px] text-zinc-400 text-center font-medium">
+              <span>Outlet</span>
+              {heatmapTimes.map(t => <span key={t}>{t}</span>)}
+            </div>
+
+            <div className="flex flex-col gap-1 mt-1">
+              {heatmapOutlets.map((outlet, oIdx) => (
+                <div key={outlet} className="grid grid-cols-[36px_repeat(6,1fr)] gap-1 items-center">
+                  <span className="text-[7.5px] font-medium text-zinc-500 truncate">{outlet.split(' ')[0]}</span>
+                  {heatmapData[oIdx].map((val, tIdx) => {
+                    const getBg = (v: number) => {
+                      if (v === 1) return 'bg-zinc-100';
+                      if (v === 2) return 'bg-zinc-200';
+                      if (v === 3) return 'bg-zinc-400';
+                      if (v === 4) return 'bg-zinc-600';
+                      return 'bg-zinc-900';
+                    };
+                    return (
+                      <div
+                        key={tIdx}
+                        className={`h-2.5 rounded-[2px] ${getBg(val)} transition-all`}
+                      />
+                    );
+                  })}
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-3 bg-[#e5d8cb]/30 rounded-md overflow-hidden relative">
-                    <div className="h-full bg-[#947b66]/30" style={{ width: `${item.pct}%` }} />
-                  </div>
-                  <span className="w-8 font-mono font-bold text-[9px] text-[#7d6b5e] text-right">{item.pct}%</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View conversion details →</button>
         </div>
 
-        {/* 3. Experience Type Performance */}
+        {/* 4. Guest Experience Satisfaction */}
         <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Experience Type Performance', data: { key: 'EXP_TYPE_PERFORMANCE' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
+          onClick={() => openDrawer({ type: 'METRIC', title: 'F&B Experience Index', data: 'Satisfaction' })}
+          className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter min-h-[200px] justify-between"
         >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Experience Type Performance <span className="text-[8px] not-italic text-[#7d6b5e]/70">By satisfaction score</span></span>
-          <div className="flex-1 flex flex-col justify-between">
-            {experienceTypePerformance.map((type, idx) => (
-              <div key={idx} className="flex justify-between items-center py-2 border-b border-[#d4c4b7]/25 last:border-0">
-                <span className="font-semibold text-[#4a3c31] text-[10px]">{type.name}</span>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center">
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                    <StarIcon />
-                  </div>
-                  <span className="font-mono font-bold text-[#4a3c31] text-[10px]">{type.rating}</span>
-                </div>
-              </div>
-            ))}
+          <div className="flex justify-between items-center mb-1 h-4">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
+              F&B Experience Index <span className="text-[8px] font-normal text-zinc-400">Overall</span>
+            </h3>
           </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View satisfaction details →</button>
+
+          <div className="flex items-center justify-between flex-1 py-1 gap-3">
+            {/* Pure Vector SVG Donut Score Gauge */}
+            <div className="relative shrink-0 flex items-center justify-center" style={{ width: 68, height: 68 }}>
+              <svg width={68} height={68} viewBox="0 0 68 68" className="transform -rotate-90">
+                <circle
+                  cx={34}
+                  cy={34}
+                  r={28}
+                  fill="none"
+                  stroke="#f4f4f5"
+                  strokeWidth={7}
+                />
+                <circle
+                  cx={34}
+                  cy={34}
+                  r={28}
+                  fill="none"
+                  stroke="#18181b"
+                  strokeWidth={7}
+                  strokeLinecap="round"
+                  strokeDasharray={`${(4.7 / 5) * (2 * Math.PI * 28)} ${2 * Math.PI * 28}`}
+                  className="transition-all duration-500"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-sm font-bold text-zinc-900 leading-none">4.7</span>
+                <span className="text-[8px] text-zinc-400 font-medium mt-0.5">/ 5</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1 flex-1 text-[9px]">
+              <div className="flex justify-between">
+                <span className="text-zinc-500 truncate">Food Quality</span>
+                <span className="font-bold text-zinc-900">4.8</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500 truncate">Service Speed</span>
+                <span className="font-bold text-zinc-900">4.6</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500 truncate">Beverage & Wine</span>
+                <span className="font-bold text-zinc-900">4.7</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500 truncate">Ambience</span>
+                <span className="font-bold text-zinc-900">4.8</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* 4. Upcoming Highlights */}
-        <div
-          onClick={() => openDrawer({ type: 'FNB_DETAIL', title: 'Upcoming Highlights', data: { key: 'UPCOMING_HIGHLIGHTS_DETAIL' } })}
-          className="border border-[#d4c4b7] rounded-[12px] p-4 bg-[#f3eae1]/30 backdrop-blur-sm flex flex-col min-h-[220px] hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-        >
-          <span className="uppercase tracking-widest text-[9px] font-bold text-[#7d6b5e] mb-2">Upcoming Highlights <span className="text-[8px] not-italic text-[#7d6b5e]/70">Next 14 days</span></span>
-          <div className="flex-1 flex flex-col justify-between">
-            {upcomingHighlights.map((hl, idx) => (
-              <div key={idx} className="flex justify-between items-center py-1 border-b border-[#d4c4b7]/25 last:border-0">
-                <div className="flex flex-col">
-                  <span className="font-bold text-[#4a3c31] text-[9.5px] leading-tight">{hl.title}</span>
-                  <span className="text-[8px] text-[#7d6b5e]">{hl.date}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-[9px] font-mono font-bold text-[#657454] bg-[#657454]/10 px-1.5 py-0.5 rounded-sm">{hl.count.split(' ')[0]}</span>
-                  <div className="text-[6.5px] text-[#7d6b5e] uppercase tracking-wider mt-0.5">Resv</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className="text-[#947b66] hover:text-[#4a3c31] font-bold text-[8px] uppercase tracking-wider mt-2 self-start">View full schedule →</button>
-        </div>
       </div>
 
-      {/* Row 5: Insights Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-2">
+      {/* Row 5: 5 Bottom Action / Guiding Principle Cards (5 cols) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 animate-card-enter" style={{ animationDelay: '0.5s' }}>
         {[
-          { text: 'Sunset experiences are driving 34% of total experience revenue.', icon: <Sunrise size={18} className="text-[#C8A050]" />, key: 'SUNSET_INSIGHT', title: 'Sunset Experiences Analysis' },
-          { text: 'In-villa dining revenue increased 21% vs last month.', icon: <Cup size={18} className="text-[#657454]" />, key: 'INVILLA_INSIGHT', title: 'In-Villa Dining Growth Analysis' },
-          { text: 'Wellness and nature experiences have the highest satisfaction.', icon: <Heart size={18} className="text-[#947b66]" />, key: 'WELLNESS_INSIGHT', title: 'Wellness Satisfaction Report' },
-          { text: 'Advance bookings >14 days lead to 28% higher spend per person.', icon: <Calendar size={18} className="text-[#586981]" />, key: 'ADVANCE_INSIGHT', title: 'Advance Booking Lead Time Analysis' },
-          { text: 'Weekend dinners remain the peak for F&B revenue.', icon: <WineglassTriangle size={18} className="text-[#a65e52]" />, key: 'WEEKEND_INSIGHT', title: 'Weekend Dining Analysis' }
-        ].map((insight, idx) => (
-          <div
-            key={idx}
-            onClick={() => openDrawer({ type: 'FNB_DETAIL', title: insight.title, data: { key: insight.key } })}
-            className="border border-[#d4c4b7]/80 rounded-[12px] p-3.5 bg-[#f3eae1]/20 backdrop-blur-xs flex items-start gap-2.5 hover:ring-2 hover:ring-[#C8A050]/50 transition-all cursor-pointer"
-          >
-            <span className="shrink-0 leading-none mt-0.5">{insight.icon}</span>
-            <span className="text-[9px] text-[#4a3c31] leading-relaxed">{insight.text}</span>
-          </div>
-        ))}
+          { label: 'Optimize seating capacity.', icon: Settings },
+          { label: 'Elevate culinary craft.', icon: Cup },
+          { label: 'Enhance guest delight.', icon: Heart },
+          { label: 'Maximize beverage sales.', icon: WineglassTriangle },
+          { label: 'Deliver bespoke experiences.', icon: Star },
+        ].map((pill, idx) => {
+          const Icon = pill.icon;
+          return (
+            <div
+              key={idx}
+              className="rounded-xl border border-zinc-200/80 bg-white/60 backdrop-blur-xs p-3 flex items-center gap-2.5 transition-all duration-200 hover:bg-white hover:shadow-sm"
+            >
+              <div className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                <Icon size={13} className="text-zinc-600" />
+              </div>
+              <span className="text-[10px] font-medium text-zinc-700 truncate">{pill.label}</span>
+            </div>
+          );
+        })}
       </div>
+
+      {/* Under Development Modal */}
+      <UnderDevelopmentModal
+        open={showDevModal}
+        onClose={() => setShowDevModal(false)}
+        featureName={devFeatureName}
+      />
+
     </div>
   );
 }
