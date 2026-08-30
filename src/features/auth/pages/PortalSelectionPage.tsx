@@ -12,35 +12,31 @@ export function PortalSelectionPage() {
     {
       id: 'hospitality',
       label: 'Hospitality',
-      subtitle: 'Luxury Hotels & Resorts',
       image: hospitalityPortalImg,
       path: '/dashboard',
     },
     {
       id: 'sanctuary',
       label: 'Sanctuary',
-      subtitle: 'Wellness & Spa Retreats',
       image: sanctuaryPortalImg,
       path: '/dashboard',
     },
     {
       id: 'design',
       label: 'Design',
-      subtitle: 'Architecture & Interiors',
       image: designPortalImg,
       path: '/dashboard',
     },
     {
       id: 'fnb-experience',
       label: 'F&B & Experience',
-      subtitle: 'Culinary & Curated Events',
       image: fnbPortalImg,
       path: '/dashboard',
     }
   ];
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full flex flex-col items-center justify-between p-4 sm:p-8 relative overflow-hidden text-foreground select-none bg-background"
     >
       {/* Background subtle radial glow */}
@@ -58,14 +54,14 @@ export function PortalSelectionPage() {
       <div className="z-10 w-full max-w-[1120px] my-auto animate-fade-in py-2">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-14 w-full justify-items-center">
           {portals.map((portal, idx) => (
-            <div 
+            <div
               key={portal.id}
               onClick={() => navigate(portal.path)}
               className="relative aspect-[3/4] max-h-[350px] w-full max-w-[230px] rounded-2xl overflow-hidden cursor-pointer group transition-all duration-500 border border-border/60 bg-card shadow-xs hover:shadow-xl hover:-translate-y-1.5"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
               {/* Background Image: Ultra-soft, high-key bright black & white photo */}
-              <div 
+              <div
                 className="absolute inset-0 w-full h-full filter grayscale brightness-[1.14] contrast-[0.82] opacity-95 group-hover:brightness-[1.05] group-hover:contrast-90 scale-100 group-hover:scale-105 transition-all duration-700 ease-out"
                 style={{
                   backgroundImage: `url(${portal.image})`,
@@ -84,9 +80,6 @@ export function PortalSelectionPage() {
                 <h3 className="text-xs sm:text-sm font-sans tracking-[0.2em] uppercase font-bold text-white leading-tight">
                   {portal.label}
                 </h3>
-                <p className="text-[10px] sm:text-[11px] text-white/70 font-light tracking-wide group-hover:text-white/90 transition-colors">
-                  {portal.subtitle}
-                </p>
               </div>
             </div>
           ))}
