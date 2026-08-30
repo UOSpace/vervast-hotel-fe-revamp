@@ -45,9 +45,6 @@ export function PortalSelectionPage() {
       {/* Header Logo (Smaller & Elegant) */}
       <div className="z-10 flex flex-col items-center w-full pt-2 pb-4 animate-fade-in shrink-0">
         <Logo className="w-20 sm:w-24 h-auto opacity-90" />
-        <p className="text-[11px] text-muted-foreground/80 tracking-[0.2em] uppercase mt-2.5 font-medium">
-          Select Portfolio Portal
-        </p>
       </div>
 
       {/* Portal Spaced Cards Grid (+10% Card Size & Extra Wide Gaps) */}
