@@ -22,17 +22,17 @@ export function PortalSelectionPage() {
       path: '/dashboard',
     },
     {
+      id: 'fnb-experience',
+      label: 'Experiences & F&B',
+      image: fnbPortalImg,
+      path: '/dashboard',
+    },
+    {
       id: 'design',
       label: 'Design',
       image: designPortalImg,
       path: '/dashboard',
     },
-    {
-      id: 'fnb-experience',
-      label: 'F&B & Experience',
-      image: fnbPortalImg,
-      path: '/dashboard',
-    }
   ];
 
   return (
