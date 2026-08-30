@@ -82,11 +82,6 @@ export function PortalSelectionPage() {
           ))}
         </div>
       </div>
-
-      {/* Footer copyright note */}
-      <div className="z-10 pt-4 pb-2 text-center text-[10px] text-muted-foreground/50 tracking-widest uppercase shrink-0 font-medium">
-        SOSEI Hospitality Group &bull; Portfolio Selection
-      </div>
     </div>
   );
 }
