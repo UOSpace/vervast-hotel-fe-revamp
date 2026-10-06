@@ -1,0 +1,210 @@
+[
+  {
+    "id": "gst_ind_001",
+    "guest_type": "individual",
+    "family_id": null,
+    "first_name": "Sal",
+    "last_name": "Zanjabila",
+    "full_name": "Sal Zanjabila",
+    "title": "Ms.",
+    "gender": "Female",
+    "email": "sal.zanjabila@salindustry.com",
+    "phone": "+44 20 7946 0912",
+    "nationality": "British",
+    "country_of_residence": "GB",
+    "passport_details": {
+      "document_type": "passport",
+      "number": "GB9920148",
+      "expiry_date": "2031-04-12",
+      "issuing_country": "GBR"
+    },
+    "vip_tier": "Platinum VIP",
+    "loyalty_program": {
+      "member_id": "SOSEI-88092",
+      "tier": "Sanctuary Elite",
+      "points_balance": 184500,
+      "joined_date": "2023-02-14"
+    },
+    "preferences": {
+      "preferred_room_view": "Mountain View / High Floor",
+      "bed_type": "King Firm",
+      "pillow_type": "Goose Feather",
+      "dietary_restrictions": ["Gluten-Free", "Pescetarian"],
+      "preferred_beverage": "Matcha Tea & Sparkling Water",
+      "allergies": ["Peanuts"],
+      "room_temperature_celsius": 20.5,
+      "newspaper": "Financial Times"
+    },
+    "metrics": {
+      "total_stays": 8,
+      "total_nights": 34,
+      "lifetime_revenue_usd": 42800.00,
+      "spend_by_year": {
+        "2024": 11200.00,
+        "2025": 16060.00,
+        "2026_ytd": 15005.00
+      },
+      "last_visit_date": "2026-08-28",
+      "favorite_property_id": "sosei-nocturne"
+    },
+    "tags": ["High Spender", "Spa Enthusiast", "Alpine Regular"],
+    "created_at": "2023-02-14T10:00:00Z",
+    "updated_at": "2026-08-31T09:00:00Z"
+  },
+  {
+    "id": "gst_ind_002",
+    "guest_type": "individual",
+    "family_id": null,
+    "first_name": "Martin",
+    "last_name": "Fuentes",
+    "full_name": "Martin Fuentes",
+    "title": "Mr.",
+    "gender": "Male",
+    "email": "martin.fuentes@skylinetours.com",
+    "phone": "+1 415 555 2671",
+    "nationality": "American",
+    "country_of_residence": "US",
+    "passport_details": {
+      "document_type": "passport",
+      "number": "USA5548102",
+      "expiry_date": "2030-08-20",
+      "issuing_country": "USA"
+    },
+    "vip_tier": "Founding Circle",
+    "loyalty_program": {
+      "member_id": "SOSEI-10024",
+      "tier": "Sanctuary Founder",
+      "points_balance": 340200,
+      "joined_date": "2021-01-10"
+    },
+    "preferences": {
+      "preferred_room_view": "Sunset Ocean / Panoramic",
+      "bed_type": "King Plush",
+      "pillow_type": "Memory Foam",
+      "dietary_restrictions": ["None"],
+      "preferred_beverage": "Single Malt Scotch & Still Water",
+      "allergies": [],
+      "room_temperature_celsius": 21.0,
+      "newspaper": "Wall Street Journal"
+    },
+    "metrics": {
+      "total_stays": 14,
+      "total_nights": 62,
+      "lifetime_revenue_usd": 118400.00,
+      "spend_by_year": {
+        "2024": 28400.00,
+        "2025": 36780.00,
+        "2026_ytd": 53850.00
+      },
+      "last_visit_date": "2026-08-26",
+      "favorite_property_id": "sosei-marea"
+    },
+    "tags": ["VIP Founder", "Wine Collector", "Frequent Flyer"],
+    "created_at": "2021-01-10T11:00:00Z",
+    "updated_at": "2026-08-31T09:00:00Z"
+  },
+  {
+    "id": "gst_ind_003",
+    "guest_type": "individual",
+    "family_id": null,
+    "first_name": "Elizabeth",
+    "last_name": "Hall",
+    "full_name": "Elizabeth Hall",
+    "title": "Dr.",
+    "gender": "Female",
+    "email": "e.hall@oxford-research.org",
+    "phone": "+44 1865 270000",
+    "nationality": "British",
+    "country_of_residence": "GB",
+    "passport_details": {
+      "document_type": "passport",
+      "number": "GB8172901",
+      "expiry_date": "2029-11-04",
+      "issuing_country": "GBR"
+    },
+    "vip_tier": "Gold VIP",
+    "loyalty_program": {
+      "member_id": "SOSEI-64211",
+      "tier": "Sanctuary Gold",
+      "points_balance": 72400,
+      "joined_date": "2024-03-12"
+    },
+    "preferences": {
+      "preferred_room_view": "City Skyline / Upper Deck",
+      "bed_type": "King Medium",
+      "pillow_type": "Organic Latex",
+      "dietary_restrictions": ["Vegetarian"],
+      "preferred_beverage": "Earl Grey & Oat Milk",
+      "allergies": ["Shellfish"],
+      "room_temperature_celsius": 19.5,
+      "newspaper": "The Economist"
+    },
+    "metrics": {
+      "total_stays": 5,
+      "total_nights": 18,
+      "lifetime_revenue_usd": 24600.00,
+      "spend_by_year": {
+        "2024": 4200.00,
+        "2025": 7380.00,
+        "2026_ytd": 8150.00
+      },
+      "last_visit_date": "2026-08-29",
+      "favorite_property_id": "sosei-verper"
+    },
+    "tags": ["Executive Business", "Early Check-In"],
+    "created_at": "2024-03-12T09:00:00Z",
+    "updated_at": "2026-08-31T09:00:00Z"
+  },
+  {
+    "id": "gst_fam_001",
+    "guest_type": "family",
+    "family_id": "fam_bailey_01",
+    "first_name": "Thomas",
+    "last_name": "Bailey",
+    "full_name": "Thomas Bailey & Family",
+    "title": "Mr.",
+    "gender": "Male",
+    "email": "thomas.bailey@baileyholdings.com",
+    "phone": "+1 214 555 9811",
+    "nationality": "American",
+    "country_of_residence": "US",
+    "passport_details": {
+      "document_type": "passport",
+      "number": "USA9182311",
+      "expiry_date": "2032-01-18",
+      "issuing_country": "USA"
+    },
+    "vip_tier": "Platinum VIP",
+    "loyalty_program": {
+      "member_id": "SOSEI-99120",
+      "tier": "Sanctuary Elite",
+      "points_balance": 210800,
+      "joined_date": "2022-07-04"
+    },
+    "preferences": {
+      "preferred_room_view": "Beachfront / Connected Suites",
+      "bed_type": "King + 2 Twin Beds for Kids",
+      "pillow_type": "Down",
+      "dietary_restrictions": ["Nut Allergy for Child"],
+      "preferred_beverage": "Cabernet Sauvignon & Fresh Juices",
+      "allergies": ["Tree Nuts"],
+      "room_temperature_celsius": 21.5,
+      "newspaper": "New York Times"
+    },
+    "metrics": {
+      "total_stays": 6,
+      "total_nights": 42,
+      "lifetime_revenue_usd": 78900.00,
+      "spend_by_year": {
+        "2024": 18200.00,
+        "2025": 25400.00,
+        "2026_ytd": 39050.00
+      },
+      "last_visit_date": "2026-08-25",
+      "favorite_property_id": "sosei-marea"
+    },
+    "tags": ["Multi-Gen Family", "Private Villa Booker"],
+    "created_at": "2022-07-04T14:30:00Z",
+    "updated_at": "2026-08-31T09:00:00Z"
+  }
+]

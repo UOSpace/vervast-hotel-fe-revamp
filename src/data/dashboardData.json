@@ -7,44 +7,44 @@
       "trendUp": true,
       "icon": "users",
       "data": [
-        10,
-        13,
-        16,
-        19,
-        22,
-        24
+        2150,
+        2300,
+        2480,
+        2620,
+        2750,
+        2847
       ],
       "color": "#947b66"
     },
     "occupancy": {
       "title": "Occupancy",
-      "value": "68%",
+      "value": "78%",
       "trendText": "6%",
       "trendUp": true,
       "icon": "bed",
       "data": [
-        62,
-        66,
+        64,
+        68,
         70,
-        74,
-        80,
-        90
+        72,
+        75,
+        78
       ],
       "color": "#586981"
     },
     "adr": {
       "title": "ADR (USD)",
-      "value": "$42,000",
+      "value": "$2,450",
       "trendText": "8%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        36000,
-        37200,
-        38400,
-        39600,
-        40800,
-        42000
+        1950,
+        2020,
+        2100,
+        2240,
+        2350,
+        2450
       ],
       "color": "#8b6b7a"
     },
@@ -55,28 +55,28 @@
       "trendUp": true,
       "icon": "price",
       "data": [
-        100.0,
-        104.0,
-        108.0,
-        112.0,
-        115.0,
-        118.0
+        11.5,
+        12.8,
+        13.4,
+        14.1,
+        14.5,
+        14.8
       ],
       "color": "#657454"
     },
     "revPar": {
       "title": "RevPAR (USD)",
-      "value": "$28,560",
-      "trendText": "7%",
+      "value": "$1,921",
+      "trendText": "14%",
       "trendUp": true,
       "icon": "price",
       "data": [
-        24000,
-        24900,
-        25900,
-        26900,
-        27800,
-        28560
+        1248,
+        1373,
+        1470,
+        1612,
+        1762,
+        1921
       ],
       "color": "#a67138"
     }
@@ -117,204 +117,175 @@
       "action": "See details →",
       "priority": "High",
       "detail": "Blizzard warning active for SOSEI Alpine region. Expected accumulation of 30cm snow. All outdoor excursions have been rerouted to indoor fireplace events. Snow clearance team has been standby."
-    },
-    {
-      "id": "occupancy",
-      "icon": "users",
-      "title": "OCCUPANCY SPIKE",
-      "text": "SOSEI City at 94% capacity this weekend.",
-      "action": "See details →",
-      "priority": "Medium",
-      "detail": "Last-minute weekend reservations have pushed occupancy to 94% in SOSEI City. Implementing dynamic room rates and offering complimentary high-floor upgrades to loyalty program members."
-    },
-    {
-      "id": "supply",
-      "icon": "weather",
-      "title": "SUPPLY CHAIN DELAY",
-      "text": "Linen supply delayed in SOSEI Desert.",
-      "action": "See details →",
-      "priority": "Medium",
-      "detail": "Local logistics delay has postponed linen delivery by 24 hours. Housekeeping has initiated linen reuse protocols and requested emergency stock from the regional hub."
-    },
-    {
-      "id": "vip",
-      "icon": "heart",
-      "title": "VIP ARRIVALS",
-      "text": "Hosting 3 VIP delegation guests tomorrow.",
-      "action": "See details →",
-      "priority": "High",
-      "detail": "Three high-profile international delegation guests are checking into SOSEI Countryside. Exec Lounge has prepared custom amenities. General Manager will personally greet upon arrival."
-    },
-    {
-      "id": "maintenance",
-      "icon": "plane",
-      "title": "MAINTENANCE SCHEDULE",
-      "text": "Generator service scheduled at SOSEI Ocean.",
-      "action": "See details →",
-      "priority": "Low",
-      "detail": "Routine annual testing of backup generators is scheduled for SOSEI Ocean on Monday at 02:00 AM local time. Minimal guest impact expected; notification letters have been distributed."
     }
   ],
   "guestMovementChart": [
     {
-      "name": "May 12",
-      "alpine": 800,
-      "ocean": 650,
-      "city": 450,
-      "forest": 350,
-      "desert": 250,
-      "country": 200
+      "name": "25 Aug",
+      "alpine": 540,
+      "ocean": 480,
+      "city": 390,
+      "forest": 310,
+      "desert": 270,
+      "country": 260,
+      "total": 2250
     },
     {
-      "name": "May 13",
-      "alpine": 820,
-      "ocean": 680,
-      "city": 480,
-      "forest": 380,
-      "desert": 280,
-      "country": 220
-    },
-    {
-      "name": "May 14",
-      "alpine": 826,
-      "ocean": 690,
-      "city": 490,
-      "forest": 375,
+      "name": "26 Aug",
+      "alpine": 570,
+      "ocean": 510,
+      "city": 420,
+      "forest": 330,
       "desert": 290,
-      "country": 230
+      "country": 280,
+      "total": 2400
     },
     {
-      "name": "May 15",
-      "alpine": 850,
-      "ocean": 700,
-      "city": 500,
-      "forest": 390,
-      "desert": 300,
-      "country": 240
+      "name": "27 Aug",
+      "alpine": 610,
+      "ocean": 540,
+      "city": 440,
+      "forest": 350,
+      "desert": 310,
+      "country": 300,
+      "total": 2550
     },
     {
-      "name": "May 16",
-      "alpine": 862,
-      "ocean": 710,
-      "city": 510,
-      "forest": 400,
-      "desert": 303,
-      "country": 250
+      "name": "28 Aug",
+      "alpine": 640,
+      "ocean": 580,
+      "city": 460,
+      "forest": 360,
+      "desert": 320,
+      "country": 310,
+      "total": 2670
     },
     {
-      "name": "May 17",
-      "alpine": 878,
-      "ocean": 715,
-      "city": 515,
-      "forest": 405,
-      "desert": 305,
-      "country": 255
+      "name": "29 Aug",
+      "alpine": 660,
+      "ocean": 600,
+      "city": 470,
+      "forest": 370,
+      "desert": 330,
+      "country": 320,
+      "total": 2750
     },
     {
-      "name": "Today",
-      "alpine": 892,
-      "ocean": 721,
-      "city": 518,
-      "forest": 410,
-      "desert": 306,
-      "country": 257
+      "name": "30 Aug",
+      "alpine": 675,
+      "ocean": 615,
+      "city": 485,
+      "forest": 375,
+      "desert": 335,
+      "country": 330,
+      "total": 2815
+    },
+    {
+      "name": "31 Aug",
+      "alpine": 680,
+      "ocean": 620,
+      "city": 490,
+      "forest": 380,
+      "desert": 340,
+      "country": 337,
+      "total": 2847
     }
   ],
   "guestMovement": [
     {
       "name": "SOSEI Alpine",
-      "current": 892,
-      "trend": "+ 11%",
+      "current": 680,
+      "trend": "+ 12%",
       "up": true,
-      "color": "#947b66"
+      "color": "#1F1D1C"
     },
     {
       "name": "SOSEI Ocean",
-      "current": 721,
-      "trend": "+ 7%",
+      "current": 620,
+      "trend": "+ 15%",
       "up": true,
-      "color": "#657454"
+      "color": "#3D3A38"
     },
     {
       "name": "SOSEI City",
-      "current": 518,
-      "trend": "+ 6%",
+      "current": 490,
+      "trend": "+ 8%",
       "up": true,
-      "color": "#586981"
+      "color": "#5E5A56"
     },
     {
       "name": "SOSEI Forest",
-      "current": 410,
-      "trend": "+ 5%",
+      "current": 380,
+      "trend": "+ 6%",
       "up": true,
-      "color": "#8b6b7a"
+      "color": "#857E78"
     },
     {
       "name": "SOSEI Desert",
-      "current": 306,
-      "trend": "↓ 3%",
+      "current": 340,
+      "trend": "- 2%",
       "up": false,
-      "color": "#a65e52"
+      "color": "#B2A9A0"
     },
     {
       "name": "SOSEI Countryside",
-      "current": 257,
-      "trend": "+ 11%",
+      "current": 337,
+      "trend": "+ 9%",
       "up": true,
-      "color": "#d4c4b7"
+      "color": "#DDD5CC"
     }
   ],
   "portfolioPerformance": [
     {
       "label": "Room Revenue (USD)",
-      "value": "$ 374.0M",
-      "trend": "↑ 10%",
+      "value": "$ 118.0M",
+      "trend": "↑ 14%",
       "up": true
     },
     {
       "label": "RevPAR (USD)",
-      "value": "$ 14,840",
-      "trend": "↑ 8%",
+      "value": "$ 1,618",
+      "trend": "↑ 14%",
       "up": true
     },
     {
       "label": "Occupancy",
-      "value": "68%",
+      "value": "74%",
       "trend": "↑ 6%",
       "up": true
     },
     {
       "label": "ADR (USD)",
-      "value": "$ 21,820",
-      "trend": "↑ 4%",
+      "value": "$ 2,180",
+      "trend": "↑ 8%",
       "up": true
     }
   ],
   "topNationalities": [
     {
       "country": "United States",
-      "revPar": "$893",
-      "val": 893
+      "revPar": "$1,240",
+      "val": 1240
     },
     {
       "country": "United Kingdom",
-      "revPar": "$802",
-      "val": 802
-    },
-    {
-      "country": "Australia",
-      "revPar": "$706",
-      "val": 706
-    },
-    {
-      "country": "India",
-      "revPar": "$686",
-      "val": 686
+      "revPar": "$1,180",
+      "val": 1180
     },
     {
       "country": "Germany",
-      "revPar": "$683",
-      "val": 683
+      "revPar": "$1,050",
+      "val": 1050
+    },
+    {
+      "country": "Switzerland & EU",
+      "revPar": "$980",
+      "val": 980
+    },
+    {
+      "country": "Japan & APAC",
+      "revPar": "$1,120",
+      "val": 1120
     }
   ],
   "sentimentScore": {
@@ -325,178 +296,183 @@
   "guestArrivals": [
     {
       "id": 1,
-      "name": "The Anderson Family",
-      "property": "SOSEI Alpine",
-      "time": "2:30 PM",
-      "suite": "Penthouse Suite 102",
-      "guestsCount": "4 Guests",
-      "specialRequest": "Helicopter Transfer & Champagne Welcome",
-      "status": "In Transit",
+      "name": "Sal Zanjabila",
+      "property": "SOSEI Nocturne",
+      "time": "2:20 PM",
+      "suite": "Alpine Suite 101",
+      "guestsCount": "1 Guest",
+      "specialRequest": "Gluten-free in-room menu & Matterhorn view",
+      "status": "Arrived",
       "vip": true
     },
     {
       "id": 2,
-      "name": "Mr. James Wilson",
-      "property": "SOSEI Forest",
-      "time": "3:15 PM",
-      "suite": "Kanji Pavilion 04",
+      "name": "Martin Fuentes",
+      "property": "SOSEI Nocturne",
+      "time": "3:45 PM",
+      "suite": "Glacier Chalet 201",
       "guestsCount": "2 Guests",
-      "specialRequest": "Zen Tea Ceremony & Private Onsen",
-      "status": "Confirmed",
+      "specialRequest": "Private helicopter transfer & Sommelier dinner",
+      "status": "In Transit",
       "vip": true
     },
     {
       "id": 3,
-      "name": "The Takahashi Family",
-      "property": "SOSEI Ocean",
-      "time": "4:00 PM",
-      "suite": "Overwater Villa 18",
-      "guestsCount": "5 Guests",
-      "specialRequest": "Sunset Yacht Cruise & Chef Dining",
-      "status": "Confirmed",
+      "name": "Elizabeth Hall",
+      "property": "SOSEI Verper",
+      "time": "12:30 PM",
+      "suite": "Skyline Penthouse 2801",
+      "guestsCount": "1 Guest",
+      "specialRequest": "High-speed boardroom fiber setup",
+      "status": "Arrived",
       "vip": true
     },
     {
       "id": 4,
-      "name": "Lady Sarah Jenkins",
-      "property": "SOSEI City",
-      "time": "5:45 PM",
-      "suite": "Sky Sanctuary Suite 5201",
-      "guestsCount": "1 Guest",
-      "specialRequest": "Chauffeur Rolls-Royce & Aromatherapy",
+      "name": "Thomas Bailey & Family",
+      "property": "SOSEI Maréa",
+      "time": "1:45 PM",
+      "suite": "Overwater Villa 108",
+      "guestsCount": "4 Guests",
+      "specialRequest": "Family marine biologist dive & Nut allergy alert",
       "status": "Arrived",
       "vip": true
     },
     {
       "id": 5,
-      "name": "Mr. David Vance",
-      "property": "SOSEI Desert",
-      "time": "7:00 PM",
-      "suite": "Royal Oasis Dune Villa 01",
+      "name": "Kenzo Tanaka",
+      "property": "SOSEI Sylvan",
+      "time": "3:00 PM",
+      "suite": "Ryokan Villa 12",
       "guestsCount": "2 Guests",
-      "specialRequest": "Private Stargazing & Bedouin Banquet",
-      "status": "In Transit",
+      "specialRequest": "Private Zen master tea ceremony in-villa",
+      "status": "Arrived",
       "vip": true
     },
     {
       "id": 6,
-      "name": "Baroness von Berg",
-      "property": "SOSEI Countryside",
-      "time": "8:30 PM",
-      "suite": "Manor House Estate 05",
-      "guestsCount": "3 Guests",
-      "specialRequest": "Equestrian Tour & Organic Tasting Menu",
-      "status": "Confirmed",
+      "name": "Lord Sterling",
+      "property": "SOSEI Hearth",
+      "time": "4:00 PM",
+      "suite": "Vineyard Suite 204",
+      "guestsCount": "2 Guests",
+      "specialRequest": "Truffle hunting excursion & Private cellar tasting",
+      "status": "Arrived",
       "vip": true
     }
   ],
   "topGuestNeeds": [
     {
       "icon": "♡",
-      "percentage": "62%",
+      "percentage": "42%",
       "label": "Wellness"
     },
     {
       "icon": "👨‍👩‍👧‍👦",
-      "percentage": "48%",
+      "percentage": "28%",
       "label": "Family"
     },
     {
       "icon": "🍽️",
-      "percentage": "41%",
+      "percentage": "18%",
       "label": "Dining"
     },
     {
       "icon": "⛷️",
-      "percentage": "33%",
+      "percentage": "8%",
       "label": "Ski"
     },
     {
       "icon": "🚗",
-      "percentage": "28%",
+      "percentage": "4%",
       "label": "Transport"
     }
   ],
   "notesFromYesterday": {
     "text": "The family loved the sunset yacht experience and the morning photography walk. They mentioned the team felt incredibly attentive.",
     "author": "General Manager"
-  },
+    },
   "journeyTimeline": [
     {
       "imgKey": "alpine",
       "date": "November 2021",
-      "name": "SOSEI Alpine",
+      "name": "SOSEI Nocturne",
       "location": "Switzerland"
     },
     {
       "imgKey": "ocean",
-      "date": "January 2022",
-      "name": "SOSEI Ocean",
+      "date": "December 2020",
+      "name": "SOSEI Maréa",
       "location": "Maldives"
     },
     {
-      "imgKey": "city",
-      "date": "June 2023",
-      "name": "SOSEI City",
-      "location": "New York"
+      "imgKey": "country",
+      "date": "May 2021",
+      "name": "SOSEI Hearth",
+      "location": "Tuscany, Italy"
     },
     {
       "imgKey": "forest",
-      "date": "August 2024",
-      "name": "SOSEI Forest",
-      "location": "Tokyo"
+      "date": "September 2021",
+      "name": "SOSEI Sylvan",
+      "location": "Kyoto, Japan"
+    },
+    {
+      "imgKey": "city",
+      "date": "April 2022",
+      "name": "SOSEI Verper",
+      "location": "New York, USA"
     },
     {
       "imgKey": "desert",
-      "date": "October 2025",
-      "name": "SOSEI Desert",
-      "location": "Cairo"
-    },
-    {
-      "imgKey": "country",
-      "date": "May 2026",
-      "name": "SOSEI Countryside",
-      "location": "Melbourne"
+      "date": "November 2023",
+      "name": "SOSEI Mirage",
+      "location": "Egypt"
     }
   ],
   "spendOverTime": [
     {
-      "name": "2023",
-      "value": 373000,
+      "name": "2022",
+      "value": 48000000,
       "color": "#e5b976"
     },
     {
-      "name": "2024",
-      "value": 472800,
+      "name": "2023",
+      "value": 69000000,
       "color": "#c28c46"
     },
     {
-      "name": "2025",
-      "value": 597000,
+      "name": "2024",
+      "value": 92000000,
       "color": "#a67138"
     },
     {
-      "name": "2026",
-      "value": 642000,
+      "name": "2025",
+      "value": 104000000,
       "color": "#789366"
+    },
+    {
+      "name": "2026 YTD",
+      "value": 118000000,
+      "color": "#586981"
     }
   ],
   "sentimentChartData": [
     {
       "name": "May 21",
-      "value": 2.8
+      "value": 4.2
     },
     {
       "name": "May 22",
-      "value": 3.2
+      "value": 4.4
     },
     {
       "name": "May 23",
-      "value": 3.6
+      "value": 4.6
     },
     {
       "name": "May 24",
-      "value": 4.1
+      "value": 4.7
     },
     {
       "name": "May 25",

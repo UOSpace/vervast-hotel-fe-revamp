@@ -21,6 +21,7 @@ export type DrawerType =
   | 'CHANNEL_DISTRIBUTION'
   | 'FNB_DETAIL'
   | 'SPA_DETAIL'
+  | 'ROOM_TIER_OCCUPANCY'
   | null;
 
 export interface DrawerConfig {

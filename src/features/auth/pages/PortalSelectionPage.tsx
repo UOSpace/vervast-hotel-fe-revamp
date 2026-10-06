@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
-import hospitalityPortalImg from '../../../assets/contents/hospitality_portal.png';
-import sanctuaryPortalImg from '../../../assets/contents/sanctuary_portal.png';
-import designPortalImg from '../../../assets/contents/design_portal.png';
-import fnbPortalImg from '../../../assets/contents/fnb_portal.png';
+import hospitalityPortalImg from '@/assets/portal/hospitality.png';
+import sanctuaryPortalImg from '@/assets/portal/sanctuary.png';
+import designPortalImg from '@/assets/portal/design.jpg';
+import fnbPortalImg from '@/assets/portal/fnb.jpg';
 
 export function PortalSelectionPage() {
   const navigate = useNavigate();

@@ -151,10 +151,10 @@ export function PropertyHeaderWidget({
         </div>
       </div>
 
-      {/* Bottom Row: Date Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] text-zinc-600 pt-1">
+      {/* Bottom Row: Date Filters (Side-by-side with labels on top) */}
+      <div className="flex flex-wrap items-start gap-4 text-[10px] text-zinc-600 pt-1">
         {/* Main Date Range */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-1">
           <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Period:</span>
           <div className="relative flex items-center">
             <DatePicker
@@ -162,7 +162,7 @@ export function PropertyHeaderWidget({
               startDate={startDate}
               endDate={endDate}
               onChange={(dates) => onDateChange(dates)}
-              className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[190px] shadow-2xs font-medium"
+              className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[205px] shadow-2xs font-medium"
               dateFormat="MMM d, yyyy"
               placeholderText="Select main range"
             />
@@ -171,7 +171,7 @@ export function PropertyHeaderWidget({
         </div>
 
         {/* Comparison Date Range */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-1">
           <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Compare vs:</span>
           <div className="relative flex items-center">
             <DatePicker
@@ -179,7 +179,7 @@ export function PropertyHeaderWidget({
               startDate={compStartDate}
               endDate={compEndDate}
               onChange={(dates) => onCompDateChange(dates)}
-              className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[190px] shadow-2xs font-medium"
+              className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[205px] shadow-2xs font-medium"
               dateFormat="MMM d, yyyy"
               placeholderText="Select comparison range"
             />

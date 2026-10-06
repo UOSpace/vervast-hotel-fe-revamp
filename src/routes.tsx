@@ -9,6 +9,7 @@ import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGue
 import { PartnersPage, TravelAgenciesPage, CorporatePage, CorporateDetailPage } from './features/partners';
 import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from './features/reservations';
 import { ActivitiesPage, EmailMarketingPage } from './features/sales';
+import { FnbPosPage } from './features/fnb/pages/FnbPosPage';
 
 export const routes: RouteObject[] = [
   {
@@ -80,6 +81,14 @@ export const routes: RouteObject[] = [
         element: <FnbDashboardPage />,
       },
       {
+        path: '/dashboard/experience/pos',
+        element: <FnbPosPage />,
+      },
+      {
+        path: '/dashboard/fnb/pos',
+        element: <FnbPosPage />,
+      },
+      {
         path: '/dashboard/experience/activities',
         element: <UnderConstructionPage />,
       },
@@ -149,7 +158,19 @@ export const routes: RouteObject[] = [
         element: <UnderConstructionPage />,
       },
       {
-        path: '/dashboard/operations/activities',
+        path: '/dashboard/reports',
+        element: <UnderConstructionPage />,
+      },
+      {
+        path: '/dashboard/settings',
+        element: <UnderConstructionPage />,
+      },
+      {
+        path: '/dashboard/profile',
+        element: <UnderConstructionPage />,
+      },
+      {
+        path: '/dashboard/development',
         element: <UnderConstructionPage />,
       },
       {

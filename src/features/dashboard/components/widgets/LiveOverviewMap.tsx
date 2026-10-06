@@ -12,7 +12,7 @@ const statusColors: Record<string, string> = {
 };
 
 export function LiveOverviewMap() {
-  const [position, setPosition] = useState({ coordinates: [15, 20] as [number, number], zoom: 1 });
+  const [position, setPosition] = useState({ coordinates: [18, 25] as [number, number], zoom: 1.35 });
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
 
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
@@ -20,15 +20,15 @@ export function LiveOverviewMap() {
   };
 
   const handleZoomIn = () => {
-    setPosition(prev => ({ ...prev, zoom: Math.min(prev.zoom * 1.5, 8) }));
+    setPosition(prev => ({ ...prev, zoom: Math.min(prev.zoom * 1.3, 8) }));
   };
 
   const handleZoomOut = () => {
-    setPosition(prev => ({ ...prev, zoom: Math.max(prev.zoom / 1.5, 0.5) }));
+    setPosition(prev => ({ ...prev, zoom: Math.max(prev.zoom / 1.3, 0.6) }));
   };
 
   const handleReset = () => {
-    setPosition({ coordinates: [15, 20], zoom: 1 });
+    setPosition({ coordinates: [18, 25], zoom: 1.35 });
   };
 
   return (
@@ -36,7 +36,7 @@ export function LiveOverviewMap() {
       <div className="flex-1 relative overflow-hidden rounded-md">
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ scale: 105, center: [15, 20] }}
+          projectionConfig={{ scale: 110, center: [18, 25] }}
           width={850}
           height={360}
           style={{ width: '100%', height: '100%', cursor: 'grab' }}
@@ -45,7 +45,7 @@ export function LiveOverviewMap() {
             zoom={position.zoom}
             center={position.coordinates}
             onMoveEnd={handleMoveEnd}
-            minZoom={0.5}
+            minZoom={0.6}
             maxZoom={8}
           >
           <defs>
@@ -104,6 +104,8 @@ export function LiveOverviewMap() {
           ).map(({ id, name, city, coordinates, status, revenue }) => {
             const markerColor = statusColors[status] || statusColors.high;
             const isHovered = hoveredMarkerId === id;
+            const isTopMarker = (coordinates[1] || 0) > 30; // Northern markers flip downward to avoid top edge clipping
+
             return (
               <Marker key={id} coordinates={coordinates as [number, number]}>
                 <g
@@ -113,46 +115,60 @@ export function LiveOverviewMap() {
                   style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}
                 >
                   {/* Outer radial gradient glow */}
-                  <circle r={isHovered ? 18 : 14} fill={`url(#dotGradient-${status})`} className="transition-all duration-200" />
+                  <circle r={isHovered ? 24 : 14} fill={`url(#dotGradient-${status})`} className="transition-all duration-200" />
                   {/* Pulse beacon effect */}
                   <circle className="map-beacon" fill="none" stroke={markerColor} />
                   {/* Inner solid dot */}
-                  <circle r={isHovered ? 5 : 3.5} fill={markerColor} stroke="#fff" strokeWidth={1.5} className="transition-all duration-200" />
+                  <circle r={isHovered ? 6.5 : 3.5} fill={markerColor} stroke="#fff" strokeWidth={1.5} className="transition-all duration-200" />
 
-                  {/* Label pill - visible only when hovered */}
+                  {/* Label pill - visible only when hovered (substantially larger for high legibility) */}
                   {isHovered && (
                     <foreignObject
-                      x={-75}
-                      y={-62}
-                      width={220}
-                      height={65}
+                      x={-150}
+                      y={isTopMarker ? 24 : -125}
+                      width={420}
+                      height={140}
                       style={{ overflow: 'visible', pointerEvents: 'none' }}
                     >
                       <div className="relative animate-in fade-in zoom-in-95 duration-150" style={{
                         background: 'rgba(255, 255, 255, 0.98)',
-                        borderRadius: '10px',
-                        padding: '7px 12px',
+                        borderRadius: '16px',
+                        padding: '14px 24px',
                         width: 'max-content',
-                        boxShadow: '0 6px 20px rgba(0, 0, 0, 0.18)',
-                        border: '1px solid rgba(228, 228, 231, 0.9)',
+                        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.28)',
+                        border: '1.5px solid rgba(228, 228, 231, 0.95)',
                       }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#111827', lineHeight: 1.3, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{name}</div>
-                        <div className="flex justify-between items-center gap-3 mt-1" style={{ fontSize: '10px', lineHeight: 1.2 }}>
-                          <span style={{ color: '#6B7280' }}>{city}</span>
-                          <span style={{ color: '#059669', fontWeight: 700 }}>{revenue}</span>
+                        <div style={{ fontSize: '22px', fontWeight: 800, color: '#111827', lineHeight: 1.3, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</div>
+                        <div className="flex justify-between items-center gap-6 mt-2" style={{ fontSize: '18px', lineHeight: 1.2 }}>
+                          <span style={{ color: '#4B5563', fontWeight: 600 }}>{city}</span>
+                          <span style={{ color: '#047857', fontWeight: 800 }}>{revenue}</span>
                         </div>
-                        {/* Downward pointer arrow pointing to the dot */}
-                        <div style={{
-                          position: 'absolute',
-                          bottom: '-5px',
-                          left: '50%',
-                          transform: 'translateX(-50%) rotate(45deg)',
-                          width: '10px',
-                          height: '10px',
-                          background: 'rgba(255, 255, 255, 0.98)',
-                          borderRight: '1px solid rgba(228, 228, 231, 0.9)',
-                          borderBottom: '1px solid rgba(228, 228, 231, 0.9)',
-                        }} />
+                        {/* Pointer arrow pointing to the dot */}
+                        {isTopMarker ? (
+                          <div style={{
+                            position: 'absolute',
+                            top: '-8px',
+                            left: '50%',
+                            transform: 'translateX(-50%) rotate(45deg)',
+                            width: '16px',
+                            height: '16px',
+                            background: 'rgba(255, 255, 255, 0.98)',
+                            borderLeft: '1.5px solid rgba(228, 228, 231, 0.95)',
+                            borderTop: '1.5px solid rgba(228, 228, 231, 0.95)',
+                          }} />
+                        ) : (
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '-8px',
+                            left: '50%',
+                            transform: 'translateX(-50%) rotate(45deg)',
+                            width: '16px',
+                            height: '16px',
+                            background: 'rgba(255, 255, 255, 0.98)',
+                            borderRight: '1.5px solid rgba(228, 228, 231, 0.95)',
+                            borderBottom: '1.5px solid rgba(228, 228, 231, 0.95)',
+                          }} />
+                        )}
                       </div>
                     </foreignObject>
                   )}

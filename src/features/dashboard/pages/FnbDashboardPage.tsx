@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip
 } from 'recharts';
@@ -11,7 +12,8 @@ import {
   Settings,
   Star,
   Cup,
-  WineglassTriangle
+  WineglassTriangle,
+  ChefHat
 } from '@solar-icons/react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
@@ -119,6 +121,7 @@ const heatmapData = [
 ];
 
 export function FnbDashboardPage() {
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState<Date | null>(new Date('2026-05-01'));
   const [endDate, setEndDate] = useState<Date | null>(new Date('2026-05-31'));
   const { openDrawer } = useDashboardDrawer();
@@ -147,12 +150,19 @@ export function FnbDashboardPage() {
       <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 lg:pt-6 animate-card-enter">
         <div>
           <span className="text-[9.5px] font-bold uppercase tracking-widest text-zinc-500">Experience Intelligence</span>
-          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mt-0.5">Experiences & F&B Dashboard</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mt-0.5">Welcome To SOSEI Experiences & F&B</h1>
           <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Curated experiences. Memorable moments. Measurable impact.</p>
         </div>
 
-        {/* DatePicker & Export */}
+        {/* DatePicker & Export & POS */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/dashboard/experience/pos')}
+            className="h-8.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-[10px] px-3 font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+          >
+            <ChefHat size={14} className="text-zinc-200" />
+            <span>Point of Sale (POS)</span>
+          </button>
           <div className="relative flex items-center bg-white border border-zinc-200 rounded-lg px-3 py-1.5 cursor-pointer shadow-xs">
             <DatePicker
               selectsRange={true}

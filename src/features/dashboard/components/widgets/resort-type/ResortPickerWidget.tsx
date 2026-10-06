@@ -1,9 +1,9 @@
-import alpineImg from '../../../../../assets/contents/alpine.png';
-import oceanImg from '../../../../../assets/contents/ocean.png';
-import cityImg from '../../../../../assets/contents/city.png';
-import forestImg from '../../../../../assets/contents/forest.png';
-import desertImg from '../../../../../assets/contents/desert.png';
-import countryImg from '../../../../../assets/contents/country.png';
+import alpineImg from '@/assets/property_types/alpine.png';
+import oceanImg from '@/assets/property_types/ocean.png';
+import cityImg from '@/assets/property_types/city.png';
+import forestImg from '@/assets/property_types/forest.png';
+import desertImg from '@/assets/property_types/desert.png';
+import countryImg from '@/assets/property_types/country.png';
 
 const resorts = [
   { id: 'alpine',      name: 'SOSEI ALPINE',       img: alpineImg },
@@ -41,7 +41,7 @@ export function ResortPickerWidget({ activeResorts, setActiveResorts }: { active
                 onClick={handleToggle}
                 className={`relative w-full aspect-[5/4] overflow-hidden rounded-[2px] transition-all duration-300 cursor-pointer outline-none focus:outline-none select-none ${
                   isActive 
-                    ? 'border border-[#4a3c31]/50 p-[3px] bg-[#f3eae1]/30 shadow-sm' 
+                    ? 'border border-zinc-900/40 p-[3px] bg-zinc-900/5 shadow-sm' 
                     : 'border border-transparent p-[3px]'
                 }`}
               >

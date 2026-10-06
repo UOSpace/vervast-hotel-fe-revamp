@@ -1,0 +1,100 @@
+[
+  {
+    "id": "ptn_cons_001",
+    "name": "Virtuoso Luxury Travel Network",
+    "type": "consortia_luxury",
+    "tier": "Tier 1 Strategic",
+    "commission_rate_pct": 12.0,
+    "contact_person": "Claire Delacroix",
+    "contact_email": "luxury.partnerships@virtuoso.com",
+    "contact_phone": "+1 817 870 0300",
+    "contract_start_date": "2023-01-01",
+    "contract_end_date": "2027-12-31",
+    "annual_target_volume_usd": 12000000.00,
+    "current_ytd_revenue_usd": 8940000.00,
+    "preferred_categories": [
+      "alpine",
+      "ocean"
+    ],
+    "special_amenities_provided": [
+      "$100 Resort / Spa Credit",
+      "Complimentary Daily Full Breakfast for 2",
+      "Room Upgrade upon arrival subject to availability",
+      "Early Check-In / 4 PM Late Check-Out"
+    ],
+    "status": "active"
+  },
+  {
+    "id": "ptn_cons_002",
+    "name": "Serandipians by Traveller Made",
+    "type": "consortia_luxury",
+    "tier": "Tier 1 Strategic",
+    "commission_rate_pct": 11.5,
+    "contact_person": "Quentin Deshayes",
+    "contact_email": "partners@serandipians.com",
+    "contact_phone": "+33 1 40 50 60 70",
+    "contract_start_date": "2023-03-15",
+    "contract_end_date": "2027-03-14",
+    "annual_target_volume_usd": 7500000.00,
+    "current_ytd_revenue_usd": 5820000.00,
+    "preferred_categories": [
+      "alpine",
+      "ocean"
+    ],
+    "special_amenities_provided": [
+      "VIP Welcome Bottle of Champagne & Artisanal Treats",
+      "Complimentary Hydrotherapy Spa Session",
+      "Guaranteed 2 PM Late Check-Out"
+    ],
+    "status": "active"
+  },
+  {
+    "id": "ptn_corp_001",
+    "name": "Sal Industry Global",
+    "type": "corporate",
+    "tier": "Key Global Account",
+    "commission_rate_pct": 0.0,
+    "corporate_discount_pct": 18.0,
+    "contact_person": "Sal Zanjabila",
+    "contact_email": "travel-desk@salindustry.com",
+    "contact_phone": "+44 20 7946 0912",
+    "contract_start_date": "2024-01-01",
+    "contract_end_date": "2026-12-31",
+    "annual_target_volume_usd": 2500000.00,
+    "current_ytd_revenue_usd": 1820000.00,
+    "preferred_categories": [
+      "city",
+      "alpine"
+    ],
+    "special_amenities_provided": [
+      "Direct Billing Facility",
+      "Complimentary High-Speed Wi-Fi Pro",
+      "Executive Boardroom 2hr/day Allowance"
+    ],
+    "status": "active"
+  },
+  {
+    "id": "ptn_corp_002",
+    "name": "Skyline Tours & Bespoke Travel",
+    "type": "travel_agency",
+    "tier": "Preferred Partner",
+    "commission_rate_pct": 10.0,
+    "contact_person": "Martin Fuentes",
+    "contact_email": "booking@skylinetours.com",
+    "contact_phone": "+1 415 555 2671",
+    "contract_start_date": "2023-06-01",
+    "contract_end_date": "2026-12-31",
+    "annual_target_volume_usd": 4000000.00,
+    "current_ytd_revenue_usd": 3210000.00,
+    "preferred_categories": [
+      "ocean",
+      "alpine",
+      "city"
+    ],
+    "special_amenities_provided": [
+      "Complimentary Airport Transfers for Suite Bookings",
+      "Welcome Cocktail at Rooftop / Beach Lounge"
+    ],
+    "status": "active"
+  }
+]

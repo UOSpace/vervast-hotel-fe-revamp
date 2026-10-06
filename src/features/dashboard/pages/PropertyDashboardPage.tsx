@@ -10,12 +10,12 @@ import { GuestSatisfactionWidget } from '../components/widgets/property/GuestSat
 import { PropertyRhythmWidget } from '../components/widgets/property/PropertyRhythmWidget';
 import { UpcomingEventsWidget } from '../components/widgets/property/UpcomingEventsWidget';
 import { AlertsTasksWidget } from '../components/widgets/property/AlertsTasksWidget';
-import alpineImg from '../../../assets/contents/alpine.png';
-import oceanImg from '../../../assets/contents/ocean.png';
-import cityImg from '../../../assets/contents/city.png';
-import forestImg from '../../../assets/contents/forest.png';
-import desertImg from '../../../assets/contents/desert.png';
-import countryImg from '../../../assets/contents/country.png';
+import alpineImg from '@/assets/property_types/alpine.png';
+import oceanImg from '@/assets/property_types/ocean.png';
+import cityImg from '@/assets/property_types/city.png';
+import forestImg from '@/assets/property_types/forest.png';
+import desertImg from '@/assets/property_types/desert.png';
+import countryImg from '@/assets/property_types/country.png';
 
 export const PROPERTIES = [
   // ── Europe ──────────────────────────────────────────────────────────────

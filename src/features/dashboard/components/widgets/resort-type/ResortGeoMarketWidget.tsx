@@ -48,11 +48,11 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
   });
   return (
     <div
-      className="rounded-[12px] p-5 flex flex-col justify-between gap-3 bg-[#f3eae1]/30 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
+      className="rounded-[12px] p-4 flex flex-col justify-between gap-3 bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >
-      <div className="uppercase tracking-widest text-[9px] font-bold text-[#4a3c31] flex items-center justify-between pb-2 border-b border-[#d4c4b7]/40 mb-1">
+      <div className="uppercase tracking-widest text-[10px] font-bold text-zinc-900 flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
         <span>Geo Market Stats</span>
         <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
       </div>
@@ -94,22 +94,25 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
       <div className="mt-auto pt-2">
         <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
-            <tr className="text-[8.5px] font-bold text-[#4a3c31] border-b border-[#d4c4b7]">
-              <th className="text-left pb-2.5 pt-1 pr-1.5 w-[30%] truncate">Region</th>
-              <th className="text-right pb-2.5 pt-1 px-1.5 w-[18%] truncate">% Rnights</th>
-              <th className="text-right pb-2.5 pt-1 px-1.5 w-[22%] truncate">ADR (USD)</th>
-              <th className="text-right pb-2.5 pt-1 pl-1.5 w-[30%] truncate">Room Revenue (USD)</th>
+            <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">
+              <th className="text-left pb-2.5 pt-1 pr-1.5 w-[30%] truncate font-medium">Region</th>
+              <th className="text-right pb-2.5 pt-1 px-1.5 w-[18%] truncate font-medium">% Rnights</th>
+              <th className="text-right pb-2.5 pt-1 px-1.5 w-[22%] truncate font-medium">ADR (USD)</th>
+              <th className="text-right pb-2.5 pt-1 pl-1.5 w-[30%] truncate font-medium">Room Revenue</th>
             </tr>
           </thead>
           <tbody>
-            {geoData.map((row, idx) => (
-              <tr key={row.region} className={`text-[9px] border-b border-[#d4c4b7]/50 ${idx === geoData.length - 1 ? 'font-bold text-[#4a3c31] border-b-0' : 'text-[#4a3c31]'}`}>
-                <td className="py-2.5 pr-1.5 truncate">{row.region}</td>
-                <td className="text-right py-2.5 px-1.5 truncate">{row.rnights}</td>
-                <td className="text-right py-2.5 px-1.5 truncate">{row.adr}</td>
-                <td className="text-right py-2.5 pl-1.5 truncate">{row.revenue}</td>
-              </tr>
-            ))}
+            {geoData.map((row, idx) => {
+              const isTotal = idx === geoData.length - 1;
+              return (
+                <tr key={row.region} className={`text-[10px] border-b border-zinc-100 ${isTotal ? 'font-bold text-zinc-900 border-b-0 pt-2' : 'text-zinc-700'}`}>
+                  <td className="py-2 pr-1.5 truncate">{row.region}</td>
+                  <td className="text-right py-2 px-1.5 truncate text-zinc-900 font-medium">{row.rnights}</td>
+                  <td className="text-right py-2 px-1.5 truncate text-zinc-900 font-medium">{row.adr}</td>
+                  <td className="text-right py-2 pl-1.5 truncate text-zinc-900 font-medium">{row.revenue}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

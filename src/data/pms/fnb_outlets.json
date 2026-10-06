@@ -1,0 +1,93 @@
+[
+  {
+    "id": "fnb_alp_001",
+    "property_id": "sosei-nocturne",
+    "name": "Alpine Grill",
+    "category": "Fine Dining & Open Fire",
+    "cuisine": "Contemporary Alpine & Dry-Aged Game",
+    "seating_capacity": 90,
+    "covers_per_day_avg": 180,
+    "average_spend_usd": 176.00,
+    "operating_hours": { "lunch": "12:00 - 15:00", "dinner": "18:00 - 22:30" },
+    "dress_code": "Smart Casual / Alpine Chic",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_alp_002",
+    "property_id": "sosei-nocturne",
+    "name": "Terra Pavilion",
+    "category": "All-Day Artisanal Dining",
+    "cuisine": "Farm-to-Table Swiss Botanical",
+    "seating_capacity": 120,
+    "covers_per_day_avg": 240,
+    "average_spend_usd": 112.00,
+    "operating_hours": { "breakfast": "07:00 - 10:30", "lunch": "12:00 - 15:30", "dinner": "18:00 - 22:00" },
+    "dress_code": "Resort Casual",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_ocn_001",
+    "property_id": "sosei-marea",
+    "name": "Pelagia Coral Reef & Cellar",
+    "category": "Overwater Underwater Fine Dining",
+    "cuisine": "Fresh Coastal Seafood & Vintage Cellar",
+    "seating_capacity": 60,
+    "covers_per_day_avg": 110,
+    "average_spend_usd": 280.00,
+    "operating_hours": { "dinner": "18:30 - 23:00" },
+    "dress_code": "Barefoot Luxury",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_cty_001",
+    "property_id": "sosei-verper",
+    "name": "Vesper Observatory Lounge",
+    "category": "Rooftop Mixology & Small Plates",
+    "cuisine": "Modern Japanese Omakase & Cocktails",
+    "seating_capacity": 75,
+    "covers_per_day_avg": 210,
+    "average_spend_usd": 195.00,
+    "operating_hours": { "evening_lounge": "17:00 - 02:00" },
+    "dress_code": "Elegant Chic",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_for_001",
+    "property_id": "sosei-sylvan",
+    "name": "Sylvan Arashiyama Kaiseki",
+    "category": "Traditional Kaiseki",
+    "cuisine": "Seasonal Kyoto Kaiseki & Match Rituals",
+    "seating_capacity": 45,
+    "covers_per_day_avg": 80,
+    "average_spend_usd": 240.00,
+    "operating_hours": { "dinner": "17:30 - 21:30" },
+    "dress_code": "Kimono / Smart Casual",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_cou_001",
+    "property_id": "sosei-hearth",
+    "name": "Hearth Osteria & Enoteca",
+    "category": "Estate Tuscan Dining",
+    "cuisine": "Farm Biodynamic Tuscan Pasta & Chianti Wine",
+    "seating_capacity": 85,
+    "covers_per_day_avg": 150,
+    "average_spend_usd": 145.00,
+    "operating_hours": { "lunch": "12:30 - 15:00", "dinner": "19:00 - 22:30" },
+    "dress_code": "Smart Casual",
+    "status": "operational"
+  },
+  {
+    "id": "fnb_des_001",
+    "property_id": "sosei-mirage",
+    "name": "Mirage Bedouin Fireside Lounge",
+    "category": "Desert Open-Fire Gastronomy",
+    "cuisine": "Slow-Roasted Lamb & Middle Eastern Spices",
+    "seating_capacity": 50,
+    "covers_per_day_avg": 65,
+    "average_spend_usd": 160.00,
+    "operating_hours": { "dinner": "18:00 - 23:00" },
+    "dress_code": "Desert Chic",
+    "status": "operational"
+  }
+]

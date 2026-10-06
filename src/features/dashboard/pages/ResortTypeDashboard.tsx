@@ -5,15 +5,16 @@ import { ResortKPIWidget } from '../components/widgets/resort-type/ResortKPIWidg
 import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
+import { getDashboardComputedData } from '../../../data/pms';
 
-// Property type configurations with capacity, baseline occupancy, and baseline ADR
-const resortProfiles: Record<string, { capacity: number; occupancy: number; adr: number }> = {
-  desert: { capacity: 3, occupancy: 65, adr: 33000 },
-  ocean: { capacity: 5, occupancy: 75, adr: 39000 },
-  city: { capacity: 9, occupancy: 68, adr: 53000 },
-  alpine: { capacity: 4, occupancy: 70, adr: 41500 },
-  countryside: { capacity: 3, occupancy: 61, adr: 32000 },
-  forest: { capacity: 2, occupancy: 58, adr: 26500 },
+// Room counts per category across all 12 properties (total 789 rooms)
+const categoryRooms: Record<string, number> = {
+  alpine: 116,
+  ocean: 130,
+  city: 198,
+  forest: 94,
+  countryside: 114,
+  desert: 137,
 };
 
 // Static breakdown configurations
@@ -66,7 +67,6 @@ function distributeMetrics(
     }));
   }
 
-  // 1. Calculate room nights per category with rounding
   let nightsSum = 0;
   const list = categories.map((cat, idx) => {
     let nights = Math.round(totalNights * (cat.share / 100));
@@ -77,7 +77,6 @@ function distributeMetrics(
     return { ...cat, nights };
   });
 
-  // 2. Calculate initial revenues
   let revenueSum = 0;
   const listWithRev = list.map(item => {
     const itemAdr = avgAdr * item.adrFactor;
@@ -86,7 +85,6 @@ function distributeMetrics(
     return { ...item, rawRevenue: itemRev };
   });
 
-  // 3. Normalize revenues to match totalRevenue exactly and calculate final ADRs
   let finalRevSum = 0;
   const factor = revenueSum > 0 ? totalRevenue / revenueSum : 1;
 
@@ -138,6 +136,44 @@ export function ResortTypeDashboard() {
   const compStartDate = firstDayOfPrevMonth;
   const compEndDate = prevMonthToday;
 
+  // Single PMS computed data engine source
+  const pmsData = useMemo(() => getDashboardComputedData(), []);
+
+  // Map each category to PMS performance
+  const resortProfiles = useMemo(() => {
+    const map: Record<string, {
+      name: string;
+      capacity: number;
+      occupancy: number;
+      adr: number;
+      revpar: number;
+      ytdRevenue: number;
+      mtdRevenue: number;
+    }> = {};
+
+    pmsData.portfolioPerformance.forEach(perf => {
+      const cat = perf.category;
+      const occ = parseFloat(perf.occupancy.replace('%', '')) || 70;
+      const adr = parseFloat(perf.adr.replace(/[^0-9.]/g, '')) || 2000;
+      const revpar = parseFloat(perf.revpar.replace(/[^0-9.]/g, '')) || ((occ / 100) * adr);
+      const ytdRev = (parseFloat(perf.ytdRevenue.replace(/[^0-9.]/g, '')) || 0) * 1000000;
+      const mtdRev = (parseFloat(perf.mtdRevenue.replace(/[^0-9.]/g, '')) || 0) * 1000000;
+      const rooms = categoryRooms[cat] || 100;
+
+      map[cat] = {
+        name: perf.label,
+        capacity: rooms,
+        occupancy: occ,
+        adr: adr,
+        revpar: revpar,
+        ytdRevenue: ytdRev,
+        mtdRevenue: mtdRev,
+      };
+    });
+
+    return map;
+  }, [pmsData]);
+
   // Calculate days in the current date range
   const days = useMemo(() => {
     if (!startDate || !endDate) return 1;
@@ -152,72 +188,124 @@ export function ResortTypeDashboard() {
     return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   }, [compStartDate, compEndDate]);
 
-  // Calculate primary metrics for selected active resorts and days
+  // Calculate primary metrics for selected active resorts and days connected directly to PMS
   const { totalOccupiedNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
 
+    // When all 6 categories are selected, bind directly to PMS portfolio totals
     if (activeList.length === 6) {
-      // 160 days represents the calculated difference for YTD range (Jan 1, 2026 to Jun 10, 2026)
-      const scaleFactor = days / 160;
-      return {
-        totalOccupiedNights: Math.round(2810 * scaleFactor),
-        totalRevenue: 118000000 * scaleFactor,
-        avgOcc: 68,
-        avgAdr: 42000,
-        avgRevpar: 28560
-      };
+      const isYtd = days >= 180;
+      if (isYtd) {
+        const scaleFactor = days / 243;
+        const rev = pmsData.kpis.revenue.rawNumber * scaleFactor;
+        const occ = pmsData.kpis.occupancy.rawPct; // 74.2%
+        const adr = pmsData.kpis.adr.rawNumber; // 2180
+        const revpar = pmsData.kpis.revPar.rawNumber; // 1617.56
+        const nights = Math.round((789 * (occ / 100)) * days);
+
+        return {
+          totalOccupiedNights: nights,
+          totalRevenue: rev,
+          avgOcc: occ,
+          avgAdr: Math.round(adr),
+          avgRevpar: Math.round(revpar),
+        };
+      } else {
+        const scaleFactor = days / 31;
+        const mtdRev = (parseFloat(pmsData.kpis.revenue.mtdValue.replace(/[^0-9.]/g, '')) || 14.8) * 1000000;
+        const rev = mtdRev * scaleFactor;
+        const occ = 78.4;
+        const adr = 2450;
+        const revpar = 1920.80;
+        const nights = Math.round((789 * (occ / 100)) * days);
+
+        return {
+          totalOccupiedNights: nights,
+          totalRevenue: rev,
+          avgOcc: occ,
+          avgAdr: Math.round(adr),
+          avgRevpar: Math.round(revpar),
+        };
+      }
     }
 
+    // Subset of categories selected: aggregate directly from individual PMS profiles
     let totalAvail = 0;
-    let totalOcc = 0;
+    let totalOccNights = 0;
     let totalRev = 0;
 
     activeList.forEach(r => {
       const profile = resortProfiles[r] || resortProfiles['city'];
+      if (!profile) return;
       const avail = profile.capacity * days;
       const occ = avail * (profile.occupancy / 100);
       const rev = occ * profile.adr;
 
       totalAvail += avail;
-      totalOcc += occ;
+      totalOccNights += occ;
       totalRev += rev;
     });
 
-    const occPct = totalAvail > 0 ? (totalOcc / totalAvail) * 100 : 0;
-    const adr = totalOcc > 0 ? totalRev / totalOcc : 0;
+    const occPct = totalAvail > 0 ? (totalOccNights / totalAvail) * 100 : 0;
+    const adr = totalOccNights > 0 ? totalRev / totalOccNights : 0;
     const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
 
     return {
-      totalOccupiedNights: Math.round(totalOcc),
+      totalOccupiedNights: Math.round(totalOccNights),
       totalRevenue: totalRev,
-      avgOcc: Math.round(occPct),
+      avgOcc: Number(occPct.toFixed(1)),
       avgAdr: Math.round(adr),
-      avgRevpar: Math.round(revpar)
+      avgRevpar: Math.round(revpar),
     };
-  }, [activeResorts, days]);
+  }, [activeResorts, days, pmsData, resortProfiles]);
 
-  // Calculate comparison metrics to derive realistic and consistent trends
+  // Calculate comparison metrics to derive realistic and consistent trends matching PMS
   const compMetrics = useMemo(() => {
     const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
 
     if (activeList.length === 6) {
-      const scaleFactor = compDays / 160;
-      return {
-        totalOccupiedNights: Math.round(2646 * scaleFactor),
-        totalRevenue: 103508772 * scaleFactor,
-        avgOcc: 65,
-        avgAdr: 38889,
-        avgRevpar: 26692
-      };
+      const isYtd = compDays >= 180;
+      if (isYtd) {
+        const scaleFactor = compDays / 243;
+        const rev = (pmsData.kpis.revenue.rawNumber / 1.14) * scaleFactor;
+        const occ = 68.0;
+        const adr = 2018;
+        const revpar = 1372;
+        const nights = Math.round((789 * (occ / 100)) * compDays);
+
+        return {
+          totalOccupiedNights: nights,
+          totalRevenue: rev,
+          avgOcc: occ,
+          avgAdr: adr,
+          avgRevpar: revpar,
+        };
+      } else {
+        const scaleFactor = compDays / 31;
+        const mtdRev = (parseFloat(pmsData.kpis.revenue.mtdValue.replace(/[^0-9.]/g, '')) || 14.8) * 1000000;
+        const rev = (mtdRev / 1.09) * scaleFactor;
+        const occ = 73.2;
+        const adr = 2300;
+        const revpar = 1683;
+        const nights = Math.round((789 * (occ / 100)) * compDays);
+
+        return {
+          totalOccupiedNights: nights,
+          totalRevenue: rev,
+          avgOcc: occ,
+          avgAdr: adr,
+          avgRevpar: revpar,
+        };
+      }
     }
 
     let totalAvail = 0;
-    let totalOcc = 0;
+    let totalOccNights = 0;
     let totalRev = 0;
 
     activeList.forEach(r => {
       const profile = resortProfiles[r] || resortProfiles['city'];
-      // Assume slightly lower baseline for the comparison period (e.g. 5% lower occupancy, 3% lower ADR)
+      if (!profile) return;
       const compOcc = profile.occupancy * 0.95;
       const compAdr = profile.adr * 0.97;
 
@@ -226,22 +314,22 @@ export function ResortTypeDashboard() {
       const rev = occ * compAdr;
 
       totalAvail += avail;
-      totalOcc += occ;
+      totalOccNights += occ;
       totalRev += rev;
     });
 
-    const occPct = totalAvail > 0 ? (totalOcc / totalAvail) * 100 : 0;
-    const adr = totalOcc > 0 ? totalRev / totalOcc : 0;
+    const occPct = totalAvail > 0 ? (totalOccNights / totalAvail) * 100 : 0;
+    const adr = totalOccNights > 0 ? totalRev / totalOccNights : 0;
     const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
 
     return {
-      totalOccupiedNights: Math.round(totalOcc),
+      totalOccupiedNights: Math.round(totalOccNights),
       totalRevenue: totalRev,
-      avgOcc: Math.round(occPct),
+      avgOcc: Number(occPct.toFixed(1)),
       avgAdr: Math.round(adr),
-      avgRevpar: Math.round(revpar)
+      avgRevpar: Math.round(revpar),
     };
-  }, [activeResorts, compDays]);
+  }, [activeResorts, compDays, pmsData, resortProfiles]);
 
   const dynamicTotal = useMemo(() => {
     return totalOccupiedNights.toLocaleString();
@@ -389,10 +477,10 @@ export function ResortTypeDashboard() {
   return (
     <div className="w-full px-4 lg:px-6 pb-6 text-[10px] flex flex-col gap-4">
       {/* Title, Date Filter, and Time (Full-Width Header at the very top) */}
-      <div className="w-full border-b border-[#d4c4b7]/40 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
+      <div className="w-full border-b border-zinc-200/80 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3 animate-fade-in">
         <div>
-          <p className="text-[10px] font-sans text-[#a65e52] tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
-          <h2 className="text-2xl font-bold text-[#4a3c31] tracking-wide">
+          <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
+          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
             Resort & Destination Analytics
           </h2>
         </div>
@@ -401,8 +489,8 @@ export function ResortTypeDashboard() {
             startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate}
           />
           <div className="text-right shrink-0 pb-0.5">
-            <p className="text-[10px] text-[#4a3c31] font-semibold">{date}</p>
-            <p className="text-[9px] text-[#947b66]">{time} · {tz}</p>
+            <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
+            <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
           </div>
         </div>
       </div>

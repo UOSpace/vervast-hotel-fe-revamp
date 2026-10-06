@@ -1,0 +1,93 @@
+[
+  {
+    "id": "exp_alp_001",
+    "property_id": "sosei-nocturne",
+    "name": "Glacier Thermal Hydrotherapy & Alpine Sauna",
+    "category": "spa_wellness",
+    "target_segment": "alpine",
+    "duration_minutes": 120,
+    "price_usd": 280.00,
+    "max_participants": 8,
+    "location": "Thermal Wellness Pavilion",
+    "description": "Guided Swiss herbal sauna, cold glacier plunge, and thermal mineral soak with panoramic mountain views.",
+    "status": "available"
+  },
+  {
+    "id": "exp_alp_002",
+    "property_id": "sosei-aurora",
+    "name": "Arctic Reindeer Sledding & Aurora Hunt",
+    "category": "arctic_adventure",
+    "target_segment": "alpine",
+    "duration_minutes": 180,
+    "price_usd": 420.00,
+    "max_participants": 6,
+    "location": "Lapland Snow Reserve",
+    "description": "Nighttime safari through snowbound Finnish forests chasing the Northern Lights with indigenous Sami guides.",
+    "status": "available"
+  },
+  {
+    "id": "exp_ocn_001",
+    "property_id": "sosei-marea",
+    "name": "Sunset Manta Ray & Bioluminescent Night Dive",
+    "category": "ocean_marine",
+    "target_segment": "ocean",
+    "duration_minutes": 150,
+    "price_usd": 380.00,
+    "max_participants": 6,
+    "location": "Baa Atoll Marine Reserve",
+    "description": "Guided marine biology night snorkeling and diving among manta rays in the UNESCO biosphere reserve.",
+    "status": "available"
+  },
+  {
+    "id": "exp_cty_001",
+    "property_id": "sosei-verper",
+    "name": "Curated MoMA & Private Art Collector Tour",
+    "category": "culture_arts",
+    "target_segment": "city",
+    "duration_minutes": 180,
+    "price_usd": 450.00,
+    "max_participants": 6,
+    "location": "Manhattan Cultural District",
+    "description": "Exclusive after-hours gallery access led by the hotel's resident art historian with private chauffeur.",
+    "status": "available"
+  },
+  {
+    "id": "exp_for_001",
+    "property_id": "sosei-sylvan",
+    "name": "Zen Bamboo Forest Bathing & Temple Meditation",
+    "category": "zen_wellness",
+    "target_segment": "forest",
+    "duration_minutes": 150,
+    "price_usd": 260.00,
+    "max_participants": 4,
+    "location": "Arashiyama Bamboo Grove",
+    "description": "Private guided Shinrin-yoku forest mindfulness walk and Zen monk meditation at a private 14th-century sub-temple.",
+    "status": "available"
+  },
+  {
+    "id": "exp_cou_001",
+    "property_id": "sosei-hearth",
+    "name": "Tuscan White Truffle Hunt & Master Winemaker Blend",
+    "category": "culinary_estate",
+    "target_segment": "countryside",
+    "duration_minutes": 240,
+    "price_usd": 490.00,
+    "max_participants": 6,
+    "location": "Chianti Estate Vineyards",
+    "description": "Truffle hunting with trained Lagotto dogs followed by a private wine blending session in the estate's cellar.",
+    "status": "available"
+  },
+  {
+    "id": "exp_des_001",
+    "property_id": "sosei-mirage",
+    "name": "Siwa Great Sand Sea Stargazing & Bedouin Camp",
+    "category": "desert_astronomy",
+    "target_segment": "desert",
+    "duration_minutes": 210,
+    "price_usd": 350.00,
+    "max_participants": 8,
+    "location": "Great Sand Sea Dunes",
+    "description": "Deep desert dune crossing to a candlelit tent observatory with high-powered telescope and astronomy guide.",
+    "status": "available"
+  }
+]

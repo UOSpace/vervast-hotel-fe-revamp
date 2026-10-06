@@ -25,21 +25,28 @@ export function ResortKPIWidget({ kpis }: { kpis: any[] }) {
     return (
       <div
         key={kpi.label}
-        className="h-full rounded-[12px] p-3 flex flex-col justify-between bg-[#f3eae1]/30 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter"
+        className="h-full rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between bg-zinc-50/50 backdrop-blur-sm hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all cursor-pointer animate-card-enter"
         style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
         onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
       >
         <div className="flex items-center justify-between gap-1 mb-1">
           <InfoTooltip text={getTooltipText(kpi.label)}>
-            <p className="text-[10px] font-normal tracking-wider uppercase text-[#4a3c31] whitespace-nowrap truncate cursor-help">
+            <p className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 whitespace-nowrap truncate cursor-help">
               {kpi.label}
             </p>
           </InfoTooltip>
         </div>
 
-        <h3 className="text-[22px] font-normal text-[#4a3c31] my-1">
-          {kpi.value}
-        </h3>
+        <div className="flex items-baseline justify-between gap-1 mt-1">
+          <h3 className="text-[22px] font-normal text-zinc-900 leading-tight">
+            {kpi.value}
+          </h3>
+          {kpi.trend && (
+            <span className={`text-[9.5px] font-medium shrink-0 ${kpi.up ? 'text-emerald-700' : 'text-rose-600'}`}>
+              {kpi.trend}
+            </span>
+          )}
+        </div>
       </div>
     );
   };

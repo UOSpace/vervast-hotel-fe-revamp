@@ -1,16 +1,38 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
-export function RevenueByDepartmentWidget() {
+export function RevenueByDepartmentWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
   const { openDrawer } = useDashboardDrawer();
+
+  const propertyRevenueMap: Record<string, number> = {
+    'sosei-nocturne': 1150000,
+    'sosei-aurora': 950000,
+    'sosei-hearth': 450000,
+    'sosei-pastoral': 400000,
+    'sosei-verper': 800000,
+    'sosei-elan': 650000,
+    'sosei-marea': 1000000,
+    'sosei-pelagia': 850000,
+    'sosei-sylvan': 500000,
+    'sosei-verdant': 450000,
+    'sosei-mirage': 380000,
+    'sosei-solstice': 320000,
+  };
+
+  const roomRev = propertyRevenueMap[propertyId] ?? 1150000;
+  const fnbRev = Math.round(roomRev * 0.32);
+  const spaRev = Math.round(roomRev * 0.11);
+  const otherRev = Math.round(roomRev * 0.03);
+  const totalRev = roomRev + fnbRev + spaRev + otherRev;
+
   const data = [
-    { dept: 'Rooms', today: '$1,046,800', trend: '↑ 9%', up: true },
-    { dept: 'F&B', today: '$374,400', trend: '↑ 7%', up: true },
-    { dept: 'Spa & Wellness', today: '$119,600', trend: '↑ 12%', up: true },
-    { dept: 'Other Income', today: '$28,400', trend: '↑ 5%', up: true },
+    { dept: 'Rooms', today: `$${roomRev.toLocaleString()}`, trend: '↑ 14.0%', up: true },
+    { dept: 'F&B', today: `$${fnbRev.toLocaleString()}`, trend: '↑ 8.5%', up: true },
+    { dept: 'Spa & Wellness', today: `$${spaRev.toLocaleString()}`, trend: '↑ 11.2%', up: true },
+    { dept: 'Other Income', today: `$${otherRev.toLocaleString()}`, trend: '↑ 5.0%', up: true },
   ];
 
-  const totals = { today: '$1,569,200', trend: '↑ 8%', up: true };
+  const totals = { today: `$${totalRev.toLocaleString()}`, trend: '↑ 12.8%', up: true };
 
   return (
     <div 

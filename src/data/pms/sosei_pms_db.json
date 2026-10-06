@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "system_info": {
+    "system_name": "SOSEI Enterprise PMS",
+    "version": "2.5.0",
+    "environment": "production",
+    "database_name": "sosei_pms_master",
+    "generated_at": "2026-08-31T10:00:00Z",
+    "total_properties": 12,
+    "categories": [
+      { "id": "alpine", "name": "SOSEI Alpine", "concept": "Mountain & Arctic Ski Sanctuaries", "properties_count": 2 },
+      { "id": "ocean", "name": "SOSEI Ocean", "concept": "Overwater Villas & Coastal Cliff Sanctuaries", "properties_count": 2 },
+      { "id": "city", "name": "SOSEI City", "concept": "Urban Ultra-Luxury Flagships", "properties_count": 2 },
+      { "id": "forest", "name": "SOSEI Forest", "concept": "Zen Botanical & Rainforest Sanctuaries", "properties_count": 2 },
+      { "id": "countryside", "name": "SOSEI Countryside", "concept": "Tuscan & Provencal Vineyard Estates", "properties_count": 2 },
+      { "id": "desert", "name": "SOSEI Desert", "concept": "Mythic Oasis & Canyon Pavilions", "properties_count": 2 }
+    ]
+  },
+  "tables": {
+    "properties": [
+      { "id": "sosei-nocturne", "name": "SOSEI Nocturne", "category": "alpine", "region": "Europe", "location": "Switzerland", "coordinates": [8.2275, 46.8182], "total_rooms": 95, "status": "active" },
+      { "id": "sosei-aurora", "name": "SOSEI Aurora", "category": "alpine", "region": "Europe", "location": "Finland", "coordinates": [25.7208, 66.5039], "total_rooms": 48, "status": "active" },
+      { "id": "sosei-marea", "name": "SOSEI Maréa", "category": "ocean", "region": "Asia Pacific", "location": "Maldives", "coordinates": [73.5089, 4.1755], "total_rooms": 64, "status": "active" },
+      { "id": "sosei-pelagia", "name": "SOSEI Pelagia", "category": "ocean", "region": "Asia Pacific", "location": "Indonesia", "coordinates": [115.1889, -8.4095], "total_rooms": 72, "status": "active" },
+      { "id": "sosei-verper", "name": "SOSEI Verper", "category": "city", "region": "Americas", "location": "New York, USA", "coordinates": [-74.0060, 40.7128], "total_rooms": 142, "status": "active" },
+      { "id": "sosei-elan", "name": "SOSEI Élan", "category": "city", "region": "Americas", "location": "Los Angeles, USA", "coordinates": [-118.2437, 34.0522], "total_rooms": 88, "status": "active" },
+      { "id": "sosei-sylvan", "name": "SOSEI Sylvan", "category": "forest", "region": "Asia Pacific", "location": "Kyoto, Japan", "coordinates": [135.7681, 35.0116], "total_rooms": 52, "status": "active" },
+      { "id": "sosei-verdant", "name": "SOSEI Verdant", "category": "forest", "region": "Asia Pacific", "location": "Thailand", "coordinates": [98.9853, 18.7883], "total_rooms": 46, "status": "active" },
+      { "id": "sosei-hearth", "name": "SOSEI Hearth", "category": "countryside", "region": "Europe", "location": "Tuscany, Italy", "coordinates": [11.2558, 43.7696], "total_rooms": 58, "status": "active" },
+      { "id": "sosei-pastoral", "name": "SOSEI Pastoral", "category": "countryside", "region": "Europe", "location": "Provence, France", "coordinates": [5.2684, 43.7151], "total_rooms": 44, "status": "active" },
+      { "id": "sosei-mirage", "name": "SOSEI Mirage", "category": "desert", "region": "Middle East & Africa", "location": "Egypt", "coordinates": [31.13, 29.97], "total_rooms": 38, "status": "active" },
+      { "id": "sosei-solstice", "name": "SOSEI Solstice", "category": "desert", "region": "Middle East & Africa", "location": "Oman", "coordinates": [58.4059, 23.5859], "total_rooms": 40, "status": "active" }
+    ],
+    "room_types": [
+      { "id": "rt_alp_001", "property_id": "sosei-nocturne", "name": "Alpine Panoramic Suite", "category": "Suite", "base_rate_usd": 1250.00, "max_occupancy": 4 },
+      { "id": "rt_alp_002", "property_id": "sosei-nocturne", "name": "Glacier Penthouse Chalet", "category": "Chalet", "base_rate_usd": 2850.00, "max_occupancy": 8 },
+      { "id": "rt_alp_003", "property_id": "sosei-aurora", "name": "Aurora Geothermal Glass Igloo", "category": "Dome Chalet", "base_rate_usd": 1400.00, "max_occupancy": 2 },
+      { "id": "rt_ocn_001", "property_id": "sosei-marea", "name": "Overwater Sunset Pool Villa", "category": "Overwater Villa", "base_rate_usd": 1850.00, "max_occupancy": 3 },
+      { "id": "rt_ocn_002", "property_id": "sosei-marea", "name": "Coral Reef Grand Residence", "category": "Grand Residence", "base_rate_usd": 4200.00, "max_occupancy": 10 },
+      { "id": "rt_ocn_003", "property_id": "sosei-pelagia", "name": "Uluwatu Cliff Edge Ocean Villa", "category": "Cliff Villa", "base_rate_usd": 1600.00, "max_occupancy": 4 },
+      { "id": "rt_cty_001", "property_id": "sosei-verper", "name": "Vesper Skyline Penthouse", "category": "Penthouse", "base_rate_usd": 3400.00, "max_occupancy": 5 },
+      { "id": "rt_cty_002", "property_id": "sosei-verper", "name": "Fifth Avenue Executive Suite", "category": "Suite", "base_rate_usd": 1150.00, "max_occupancy": 3 },
+      { "id": "rt_for_001", "property_id": "sosei-sylvan", "name": "Kyoto Sylvan Onsen Villa", "category": "Ryokan Villa", "base_rate_usd": 1750.00, "max_occupancy": 3 },
+      { "id": "rt_cou_001", "property_id": "sosei-hearth", "name": "Chianti Estate Vineyard Suite", "category": "Estate Suite", "base_rate_usd": 1350.00, "max_occupancy": 3 },
+      { "id": "rt_des_001", "property_id": "sosei-mirage", "name": "Siwa Mirage Dune Pavilion", "category": "Dune Pavilion", "base_rate_usd": 1300.00, "max_occupancy": 2 }
+    ],
+    "guests": [
+      { "id": "gst_ind_001", "full_name": "Sal Zanjabila", "vip_tier": "Platinum VIP", "favorite_property_id": "sosei-nocturne", "lifetime_revenue_usd": 42800.00 },
+      { "id": "gst_ind_002", "full_name": "Martin Fuentes", "vip_tier": "Founding Circle", "favorite_property_id": "sosei-marea", "lifetime_revenue_usd": 118400.00 },
+      { "id": "gst_ind_003", "full_name": "Elizabeth Hall", "vip_tier": "Gold VIP", "favorite_property_id": "sosei-verper", "lifetime_revenue_usd": 24600.00 },
+      { "id": "gst_fam_001", "full_name": "Thomas Bailey & Family", "vip_tier": "Platinum VIP", "favorite_property_id": "sosei-marea", "lifetime_revenue_usd": 78900.00 }
+    ],
+    "reservations": [
+      { "id": "res_sosei_001", "crs_number": "CRS-1112552", "property_id": "sosei-nocturne", "guest_id": "gst_ind_001", "booking_status": "in_house", "total_amount_usd": 6635.00 },
+      { "id": "res_sosei_002", "crs_number": "CRS-350971494", "property_id": "sosei-nocturne", "guest_id": "gst_ind_002", "booking_status": "in_house", "total_amount_usd": 30400.00 },
+      { "id": "res_sosei_003", "crs_number": "CRS-350971495", "property_id": "sosei-verper", "guest_id": "gst_ind_003", "booking_status": "in_house", "total_amount_usd": 26150.00 },
+      { "id": "res_sosei_005", "crs_number": "CRS-351014436", "property_id": "sosei-marea", "guest_id": "gst_fam_001", "booking_status": "in_house", "total_amount_usd": 23300.00 },
+      { "id": "res_sosei_006", "crs_number": "CRS-351014437", "property_id": "sosei-sylvan", "guest_id": "gst_ind_002", "booking_status": "in_house", "total_amount_usd": 11700.00 },
+      { "id": "res_sosei_007", "crs_number": "CRS-351014438", "property_id": "sosei-hearth", "guest_id": "gst_ind_001", "booking_status": "in_house", "total_amount_usd": 13700.00 }
+    ]
+  }
+}

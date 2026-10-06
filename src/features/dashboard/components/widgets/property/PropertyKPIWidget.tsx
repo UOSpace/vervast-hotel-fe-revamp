@@ -14,69 +14,83 @@ function getTooltipText(label: string) {
 
 export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
   const { openDrawer } = useDashboardDrawer();
+  
+  // Real PMS-aligned metrics synchronized with Dashboard All (MTD & YTD portfolioPerformance)
   const kpiDataMap: Record<string, any> = {
-    // ── Europe ──────────────────────────────────────────────────────────
+    // ── Europe (Alpine & Countryside) ────────────────────────────────────
     'sosei-nocturne': {
-      occ: '68', rev: '$1,569,200',  revpar: '$14,840',  adr: '$21,820', los: '4.2',
-      arrivals: 24, deps: 18, inhouse: 186, vip: 14
+      occ: '76', rev: '$1,150,000', revpar: '$2,052', adr: '$2,700', los: '4.2',
+      arrivals: 24, deps: 18, inhouse: 144, vip: 14,
+      occTrend: '↑ 6.2%', revTrend: '↑ 14.0%', revparTrend: '↑ 14.2%', adrTrend: '↑ 8.0%'
     },
     'sosei-aurora': {
-      occ: '61', rev: '$1,442,000',  revpar: '$13,600',  adr: '$22,300', los: '4.8',
-      arrivals: 20, deps: 15, inhouse: 162, vip: 11
+      occ: '74', rev: '$950,000', revpar: '$1,961', adr: '$2,650', los: '4.6',
+      arrivals: 18, deps: 14, inhouse: 112, vip: 10,
+      occTrend: '↑ 5.8%', revTrend: '↑ 13.5%', revparTrend: '↑ 13.8%', adrTrend: '↑ 7.6%'
     },
     'sosei-hearth': {
-      occ: '74', rev: '$1,764,000',  revpar: '$12,200',  adr: '$16,480',   los: '3.9',
-      arrivals: 28, deps: 22, inhouse: 204, vip: 9
+      occ: '66', rev: '$450,000', revpar: '$1,267', adr: '$1,920', los: '3.8',
+      arrivals: 22, deps: 18, inhouse: 88, vip: 7,
+      occTrend: '↑ 4.9%', revTrend: '↑ 11.2%', revparTrend: '↑ 11.5%', adrTrend: '↑ 6.1%'
     },
     'sosei-pastoral': {
-      occ: '70', rev: '$1,628,000',  revpar: '$11,400',  adr: '$16,280',   los: '3.6',
-      arrivals: 26, deps: 20, inhouse: 188, vip: 7
+      occ: '64', rev: '$400,000', revpar: '$1,203', adr: '$1,880', los: '3.6',
+      arrivals: 20, deps: 16, inhouse: 76, vip: 6,
+      occTrend: '↑ 4.5%', revTrend: '↑ 10.8%', revparTrend: '↑ 11.0%', adrTrend: '↑ 5.9%'
     },
-    // ── Americas ────────────────────────────────────────────────────────
+    // ── Americas (City) ──────────────────────────────────────────────────
     'sosei-verper': {
-      occ: '88', rev: '$3,960,000', revpar: '$12,400',  adr: '$14,080',   los: '2.3',
-      arrivals: 110, deps: 98, inhouse: 418, vip: 36
+      occ: '73', rev: '$800,000', revpar: '$1,788', adr: '$2,450', los: '2.4',
+      arrivals: 65, deps: 58, inhouse: 184, vip: 22,
+      occTrend: '↑ 7.1%', revTrend: '↑ 15.2%', revparTrend: '↑ 15.4%', adrTrend: '↑ 8.5%'
     },
     'sosei-elan': {
-      occ: '91', rev: '$4,300,000', revpar: '$13,200',  adr: '$14,500',   los: '2.1',
-      arrivals: 118, deps: 104, inhouse: 442, vip: 40
+      occ: '71', rev: '$650,000', revpar: '$1,668', adr: '$2,350', los: '2.2',
+      arrivals: 55, deps: 48, inhouse: 152, vip: 18,
+      occTrend: '↑ 6.8%', revTrend: '↑ 14.8%', revparTrend: '↑ 15.0%', adrTrend: '↑ 8.1%'
     },
-    // ── Asia Pacific ────────────────────────────────────────────────────
+    // ── Asia Pacific (Ocean & Forest) ────────────────────────────────────
     'sosei-marea': {
-      occ: '82', rev: '$2,372,000', revpar: '$18,800',  adr: '$22,920', los: '6.2',
-      arrivals: 42, deps: 28, inhouse: 298, vip: 25
+      occ: '82', rev: '$1,000,000', revpar: '$2,091', adr: '$2,550', los: '6.2',
+      arrivals: 28, deps: 20, inhouse: 132, vip: 16,
+      occTrend: '↑ 8.0%', revTrend: '↑ 16.5%', revparTrend: '↑ 16.8%', adrTrend: '↑ 9.2%'
     },
     'sosei-pelagia': {
-      occ: '79', rev: '$2,084,000', revpar: '$17,400',  adr: '$22,020', los: '5.8',
-      arrivals: 38, deps: 26, inhouse: 272, vip: 22
+      occ: '80', rev: '$850,000', revpar: '$1,960', adr: '$2,450', los: '5.8',
+      arrivals: 26, deps: 19, inhouse: 126, vip: 14,
+      occTrend: '↑ 7.6%', revTrend: '↑ 15.9%', revparTrend: '↑ 16.1%', adrTrend: '↑ 8.8%'
     },
     'sosei-sylvan': {
-      occ: '57', rev: '$1,036,000',  revpar: '$9,600',  adr: '$16,840',   los: '3.6',
-      arrivals: 18, deps: 14, inhouse: 112, vip: 6
+      occ: '70', rev: '$500,000', revpar: '$1,316', adr: '$1,880', los: '3.5',
+      arrivals: 16, deps: 12, inhouse: 68, vip: 6,
+      occTrend: '↑ 5.2%', revTrend: '↑ 12.0%', revparTrend: '↑ 12.3%', adrTrend: '↑ 6.5%'
     },
     'sosei-verdant': {
-      occ: '53', rev: '$892,000',  revpar: '$8,800',  adr: '$16,600',   los: '3.3',
-      arrivals: 15, deps: 12, inhouse: 96, vip: 5
+      occ: '68', rev: '$450,000', revpar: '$1,238', adr: '$1,820', los: '3.2',
+      arrivals: 15, deps: 11, inhouse: 64, vip: 5,
+      occTrend: '↑ 4.8%', revTrend: '↑ 11.5%', revparTrend: '↑ 11.8%', adrTrend: '↑ 6.2%'
     },
-    // ── Middle East & Africa ─────────────────────────────────────────────
+    // ── Middle East & Africa (Desert) ────────────────────────────────────
     'sosei-mirage': {
-      occ: '42', rev: '$1,306,000',  revpar: '$12,600',  adr: '$30,000', los: '5.2',
-      arrivals: 9, deps: 7, inhouse: 76, vip: 13
+      occ: '71', rev: '$380,000', revpar: '$1,505', adr: '$2,120', los: '4.8',
+      arrivals: 14, deps: 10, inhouse: 72, vip: 8,
+      occTrend: '↑ 5.5%', revTrend: '↑ 12.4%', revparTrend: '↑ 12.6%', adrTrend: '↑ 7.0%'
     },
     'sosei-solstice': {
-      occ: '38', rev: '$1,176,000',  revpar: '$11,800',  adr: '$31,060', los: '4.9',
-      arrivals: 7, deps: 6, inhouse: 68, vip: 10
+      occ: '69', rev: '$320,000', revpar: '$1,435', adr: '$2,080', los: '4.6',
+      arrivals: 12, deps: 9, inhouse: 68, vip: 7,
+      occTrend: '↑ 5.1%', revTrend: '↑ 11.9%', revparTrend: '↑ 12.1%', adrTrend: '↑ 6.7%'
     },
   };
 
   const data = kpiDataMap[propertyId] ?? kpiDataMap['sosei-nocturne'];
 
   const kpis = [
-    { label: 'Occupancy', value: `${data.occ}%`, change: '+3.4% vs last period' },
-    { label: 'Room Revenue', value: data.rev, change: '+8.1% vs last period' },
-    { label: 'RevPAR', value: data.revpar, change: '+5.2% vs last period' },
-    { label: 'ADR', value: data.adr, change: '+2.8% vs last period' },
-    { label: 'Av. Length of Stay', value: `${data.los} Nights`, change: '+0.4 vs last period' },
+    { label: 'Occupancy', value: `${data.occ}%`, change: `${data.occTrend} vs last year` },
+    { label: 'Room Revenue', value: data.rev, change: `${data.revTrend} vs last year` },
+    { label: 'RevPAR', value: data.revpar, change: `${data.revparTrend} vs last year` },
+    { label: 'ADR', value: data.adr, change: `${data.adrTrend} vs last year` },
+    { label: 'Av. Length of Stay', value: `${data.los} Nights`, change: '+0.3 vs last year' },
   ];
 
   return (
