@@ -1,17 +1,17 @@
-import alpineImg from '@/assets/property_types/alpine.png';
-import oceanImg from '@/assets/property_types/ocean.png';
-import cityImg from '@/assets/property_types/city.png';
-import forestImg from '@/assets/property_types/forest.png';
+import alpineImg from '@/assets/property_types/alpine-thumb.jpg';
+import oceanImg from '@/assets/property_types/ocean_hills.jpg';
+import cityImg from '@/assets/property_types/city-thumb.jpg';
+import forestImg from '@/assets/property_types/forest_rindang.jpg';
 import desertImg from '@/assets/property_types/desert.png';
-import countryImg from '@/assets/property_types/country.png';
+import countryImg from '@/assets/property_types/country_pedesaan.jpg';
 
 const resorts = [
-  { id: 'alpine',      name: 'SOSEI ALPINE',       img: alpineImg },
-  { id: 'city',        name: 'SOSEI CITY',         img: cityImg },
-  { id: 'countryside', name: 'SOSEI COUNTRYSIDE',  img: countryImg },
-  { id: 'desert',      name: 'SOSEI DESERT',       img: desertImg },
-  { id: 'forest',      name: 'SOSEI FOREST',       img: forestImg },
-  { id: 'ocean',       name: 'SOSEI OCEAN',        img: oceanImg },
+  { id: 'alpine', name: 'SOSEI ALPINE', img: alpineImg },
+  { id: 'city', name: 'SOSEI CITY', img: cityImg },
+  { id: 'countryside', name: 'SOSEI COUNTRYSIDE', img: countryImg },
+  { id: 'desert', name: 'SOSEI DESERT', img: desertImg },
+  { id: 'forest', name: 'SOSEI FOREST', img: forestImg },
+  { id: 'ocean', name: 'SOSEI OCEAN', img: oceanImg },
 ];
 
 export function ResortPickerWidget({ activeResorts, setActiveResorts }: { activeResorts: string[], setActiveResorts: (ids: string[]) => void }) {
@@ -39,24 +39,21 @@ export function ResortPickerWidget({ activeResorts, setActiveResorts }: { active
             >
               <button
                 onClick={handleToggle}
-                className={`relative w-full aspect-[5/4] overflow-hidden rounded-[2px] transition-all duration-300 cursor-pointer outline-none focus:outline-none select-none ${
-                  isActive 
-                    ? 'border border-zinc-900/40 p-[3px] bg-zinc-900/5 shadow-sm' 
+                className={`relative w-full aspect-[5/4] overflow-hidden rounded-[2px] transition-all duration-300 cursor-pointer outline-none focus:outline-none select-none ${isActive
+                    ? 'border border-zinc-900/40 p-[3px] bg-zinc-900/5 shadow-sm'
                     : 'border border-transparent p-[3px]'
-                }`}
-              >
-                <img 
-                  src={r.img} 
-                  alt={r.name} 
-                  className={`w-full h-full object-cover filter grayscale transition-all duration-500 ${
-                    isActive ? 'opacity-100 contrast-[1.05]' : 'opacity-35 hover:opacity-55'
                   }`}
+              >
+                <img
+                  src={r.img}
+                  alt={r.name}
+                  className={`w-full h-full object-cover filter grayscale transition-all duration-500 ${isActive ? 'opacity-100 contrast-[1.05]' : 'opacity-35 hover:opacity-55'
+                    }`}
                 />
                 <div className="absolute bottom-1.5 left-2 z-10 pointer-events-none">
-                  <span 
-                    className={`text-[7px] md:text-[8px] tracking-[0.16em] uppercase transition-all duration-300 ${
-                      isActive ? 'text-white font-bold' : 'text-white/70 font-light'
-                    }`}
+                  <span
+                    className={`text-[7px] md:text-[8px] tracking-[0.16em] uppercase transition-all duration-300 ${isActive ? 'text-white font-bold' : 'text-white/70 font-light'
+                      }`}
                     style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}
                   >
                     {shortName}

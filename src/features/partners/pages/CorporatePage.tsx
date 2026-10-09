@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash, Buildings } from '@solar-icons/react';
-import { Input } from '../../../components/ui/input';
-import { Button } from '../../../components/ui/button';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
 import {
   Select,
@@ -153,7 +153,7 @@ export function CorporatePage() {
       {/* Header */}
       <header className="shrink-0 flex justify-between items-start mb-5 animate-card-enter">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mb-0.5">
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide mb-0.5">
             Corporate Accounts
           </h1>
           <p className="text-zinc-500 text-xs font-normal">

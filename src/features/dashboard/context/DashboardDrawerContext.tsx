@@ -5,6 +5,7 @@ export type DrawerType =
   | 'METRIC' 
   | 'ALERTS' 
   | 'GUEST_MOVEMENT' 
+  | 'BOOKING_PACE'
   | 'PORTFOLIO_PERFORMANCE' 
   | 'WORLD_MAP'
   | 'TOP_NATIONALITIES' 
@@ -22,6 +23,10 @@ export type DrawerType =
   | 'FNB_DETAIL'
   | 'SPA_DETAIL'
   | 'ROOM_TIER_OCCUPANCY'
+  | 'REVENUE_DEMAND_MIX'
+  | 'FORWARD_BUSINESS'
+  | 'SOSEI_SIGNALS'
+  | 'PORTFOLIO_COMPARISON'
   | null;
 
 export interface DrawerConfig {

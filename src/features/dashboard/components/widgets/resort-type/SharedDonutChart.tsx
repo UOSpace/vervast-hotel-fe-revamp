@@ -23,7 +23,7 @@ export function SharedDonutChart({ data, total }: { data: { name: string; value:
         <text x={center} y={center - 5} textAnchor="middle" dominantBaseline="central" fill="#18181b" className="text-[11px] font-bold">
           {total}
         </text>
-        <text x={center} y={center + 8} textAnchor="middle" dominantBaseline="central" fill="#7d6b5e" className="text-[7.5px] font-medium tracking-wide">
+        <text x={center} y={center + 8} textAnchor="middle" dominantBaseline="central" fill="#64748b" className="text-[7.5px] font-medium tracking-wide">
           Rnights
         </text>
       </PieChart>

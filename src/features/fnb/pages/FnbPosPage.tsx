@@ -35,7 +35,7 @@ export function FnbPosPage() {
   const [selectedGuest, setSelectedGuest] = useState<FnbGuest | null>(null);
   const [isGuestModalOpen, setIsGuestModalOpen] = useState<boolean>(true); // prompt says: harus memilih guestnya dulu!
   const [guestSearchQuery, setGuestSearchQuery] = useState('');
-  
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [menuSearchQuery, setMenuSearchQuery] = useState('');
   const [hideAllergens, setHideAllergens] = useState(false);
@@ -193,7 +193,7 @@ export function FnbPosPage() {
 
   return (
     <div className="w-full h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden font-sans">
-      
+
       {/* Top POS Control Bar */}
       <header className="shrink-0 h-16 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 lg:px-6 flex items-center justify-between z-30">
         <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export function FnbPosPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 leading-none">
-                Sosei F&B Point of Sale (POS)
+                SOSEI F&B Point of Sale (POS)
               </h1>
               <span className="text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                 Allergy Safe KDS
@@ -219,13 +219,12 @@ export function FnbPosPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsGuestModalOpen(true)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${
-              selectedGuest
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${selectedGuest
                 ? selectedGuest.allergies.length > 0
                   ? 'bg-rose-50/70 dark:bg-rose-950/30 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 hover:bg-rose-100/70'
                   : 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100/60'
                 : 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 animate-pulse'
-            }`}
+              }`}
           >
             <UsersGroupTwoRounded size={15} />
             <div className="text-left">
@@ -253,11 +252,10 @@ export function FnbPosPage() {
       {/* Guest Allergy Status Banner */}
       {selectedGuest ? (
         <div
-          className={`shrink-0 px-4 lg:px-6 py-2 border-b flex flex-wrap items-center justify-between gap-2 text-xs transition-colors ${
-            selectedGuest.allergies.length > 0
+          className={`shrink-0 px-4 lg:px-6 py-2 border-b flex flex-wrap items-center justify-between gap-2 text-xs transition-colors ${selectedGuest.allergies.length > 0
               ? 'bg-rose-500/10 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/60 text-rose-950 dark:text-rose-200'
               : 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60 text-emerald-950 dark:text-emerald-200'
-          }`}
+            }`}
         >
           <div className="flex items-center gap-2 min-w-0">
             {selectedGuest.allergies.length > 0 ? (
@@ -321,10 +319,10 @@ export function FnbPosPage() {
 
       {/* Main POS Content Area */}
       <div className="flex-1 flex overflow-hidden">
-        
+
         {/* Left Side: Menu Catalog (Cards) */}
         <main className="flex-1 flex flex-col min-w-0 border-r border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950">
-          
+
           {/* Catalog Controls: Categories & Search */}
           <div className="shrink-0 p-4 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xs space-y-3">
             {/* Search & Allergen Toggle */}
@@ -367,11 +365,10 @@ export function FnbPosPage() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold tracking-tight whitespace-nowrap transition-all cursor-pointer ${
-                    selectedCategory === cat.id
+                  className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold tracking-tight whitespace-nowrap transition-all cursor-pointer ${selectedCategory === cat.id
                       ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xs'
                       : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
-                  }`}
+                    }`}
                 >
                   {cat.label}
                 </button>
@@ -392,20 +389,18 @@ export function FnbPosPage() {
                 return (
                   <div
                     key={item.id}
-                    className={`relative rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-300 shadow-xs ${
-                      hasConflict
+                    className={`relative rounded-2xl border flex flex-col justify-between overflow-hidden transition-all duration-300 shadow-xs ${hasConflict
                         ? 'border-rose-300/80 dark:border-rose-900/60 bg-rose-50/30 dark:bg-rose-950/20 opacity-90'
                         : 'border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-lg hover:border-zinc-300 dark:hover:border-zinc-700'
-                    }`}
+                      }`}
                   >
                     {/* Image & Badges */}
                     <div className="relative h-40 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className={`w-full h-full object-cover transition-transform duration-500 hover:scale-105 ${
-                          hasConflict ? 'filter grayscale-40' : ''
-                        }`}
+                        className={`w-full h-full object-cover transition-transform duration-500 hover:scale-105 ${hasConflict ? 'filter grayscale-40' : ''
+                          }`}
                         loading="lazy"
                       />
 
@@ -533,7 +528,7 @@ export function FnbPosPage() {
 
         {/* Right Side: Active Order Ticket (Cart) */}
         <aside className="w-[320px] lg:w-[360px] shrink-0 border-l border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col justify-between z-20">
-          
+
           {/* Ticket Header */}
           <div className="p-4 border-b border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
             <div className="flex justify-between items-start">
@@ -674,11 +669,10 @@ export function FnbPosPage() {
             <button
               onClick={handleCheckoutOrder}
               disabled={cart.length === 0 || !selectedGuest}
-              className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer ${
-                cart.length > 0 && selectedGuest
+              className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer ${cart.length > 0 && selectedGuest
                   ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90'
                   : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
-              }`}
+                }`}
             >
               <CheckCircle size={15} /> Charge to Villa Folio & Send KDS
             </button>
@@ -690,7 +684,7 @@ export function FnbPosPage() {
       {isGuestModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
           <div className="bg-white dark:bg-zinc-900 w-full max-w-2xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            
+
             {/* Modal Header */}
             <div className="p-4 sm:p-5 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-900/50">
               <div className="flex items-center gap-2.5">
@@ -741,11 +735,10 @@ export function FnbPosPage() {
                   <div
                     key={guest.id}
                     onClick={() => handleSelectGuest(guest)}
-                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 ${
-                      isCurrent
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 ${isCurrent
                         ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100/70 dark:bg-zinc-800/80 shadow-sm'
                         : 'border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xs'
-                    }`}
+                      }`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
@@ -784,11 +777,10 @@ export function FnbPosPage() {
                       )}
 
                       <button
-                        className={`px-3 py-1 rounded-lg text-xs font-bold ml-2 cursor-pointer transition-colors ${
-                          isCurrent
+                        className={`px-3 py-1 rounded-lg text-xs font-bold ml-2 cursor-pointer transition-colors ${isCurrent
                             ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
                             : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-200'
-                        }`}
+                          }`}
                       >
                         {isCurrent ? 'Active' : 'Select'}
                       </button>
@@ -805,7 +797,7 @@ export function FnbPosPage() {
       {activeItemForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
           <div className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-2xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
+
             {/* Modal Image Header */}
             <div className="relative h-48 w-full bg-zinc-100 dark:bg-zinc-800">
               <img
@@ -855,7 +847,7 @@ export function FnbPosPage() {
                         {reason}
                       </p>
                       <p className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 mt-1">
-                        Sosei Medical Safety Protocol: This dish is completely locked and cannot be added to {selectedGuest.name}'s dining ticket.
+                        SOSEI Medical Safety Protocol: This dish is completely locked and cannot be added to {selectedGuest.name}'s dining ticket.
                       </p>
                     </div>
                   ) : (
@@ -883,11 +875,10 @@ export function FnbPosPage() {
                     return (
                       <div
                         key={ing}
-                        className={`p-2 rounded-lg border text-[11px] flex items-center gap-1.5 ${
-                          isAllergenMatch
+                        className={`p-2 rounded-lg border text-[11px] flex items-center gap-1.5 ${isAllergenMatch
                             ? 'border-rose-300 bg-rose-50 text-rose-900 font-bold dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-200'
                             : 'border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300'
-                        }`}
+                          }`}
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
                         <span className="truncate">{ing}</span>
@@ -944,11 +935,10 @@ export function FnbPosPage() {
                       setActiveItemForModal(null);
                     }}
                     disabled={hasConflict}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold shadow-xs cursor-pointer ${
-                      hasConflict
+                    className={`px-4 py-2 rounded-xl text-xs font-bold shadow-xs cursor-pointer ${hasConflict
                         ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
                         : 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90'
-                    }`}
+                      }`}
                   >
                     {hasConflict ? 'Locked (Allergy Conflict)' : 'Add to Order Ticket'}
                   </button>

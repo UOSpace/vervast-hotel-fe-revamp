@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UsersGroupTwoRounded, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
-import { Input } from '../../../components/ui/input';
-import { Button } from '../../../components/ui/button';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import {
   Select,
   SelectContent,

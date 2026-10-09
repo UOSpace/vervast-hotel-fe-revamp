@@ -14,7 +14,7 @@ content = content.replace(
 const newPropertiesPerformanceData = `const propertiesPerformanceData = [
   {
     id: 'alpine',
-    name: 'Sosei Alpine',
+    name: 'SOSEI Alpine',
     location: 'Switzerland & Finland',
     totalRooms: 240,
     occupiedRooms: 195,
@@ -33,13 +33,13 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'High Demand',
     localTime: '14:30 CET',
     children: [
-      { name: 'Sosei Nocturne', location: 'St. Moritz, Switzerland', totalRooms: 130, occupiedRooms: 108, occ: '83.00%', adr: '$2,860.00', revenue: '$2.25M', revpar: '$2,373.80' },
-      { name: 'Sosei Aurora', location: 'Lapland, Finland', totalRooms: 110, occupiedRooms: 87, occ: '79.40%', adr: '$2,700.00', revenue: '$1.95M', revpar: '$2,143.80' }
+      { name: 'SOSEI Nocturne', location: 'St. Moritz, Switzerland', totalRooms: 130, occupiedRooms: 108, occ: '83.00%', adr: '$2,860.00', revenue: '$2.25M', revpar: '$2,373.80' },
+      { name: 'SOSEI Aurora', location: 'Lapland, Finland', totalRooms: 110, occupiedRooms: 87, occ: '79.40%', adr: '$2,700.00', revenue: '$1.95M', revpar: '$2,143.80' }
     ]
   },
   {
     id: 'ocean',
-    name: 'Sosei Ocean',
+    name: 'SOSEI Ocean',
     location: 'Maldives & Bali',
     totalRooms: 210,
     occupiedRooms: 165,
@@ -58,13 +58,13 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'Optimal Flow',
     localTime: '18:30 MVT',
     children: [
-      { name: 'Sosei Maréa', location: 'Baa Atoll, Maldives', totalRooms: 110, occupiedRooms: 88, occ: '80.20%', adr: '$2,620.00', revenue: '$1.85M', revpar: '$2,101.24' },
-      { name: 'Sosei Pelagia', location: 'Uluwatu, Bali', totalRooms: 100, occupiedRooms: 77, occ: '76.80%', adr: '$2,460.00', revenue: '$1.55M', revpar: '$1,889.28' }
+      { name: 'SOSEI Maréa', location: 'Baa Atoll, Maldives', totalRooms: 110, occupiedRooms: 88, occ: '80.20%', adr: '$2,620.00', revenue: '$1.85M', revpar: '$2,101.24' },
+      { name: 'SOSEI Pelagia', location: 'Uluwatu, Bali', totalRooms: 100, occupiedRooms: 77, occ: '76.80%', adr: '$2,460.00', revenue: '$1.55M', revpar: '$1,889.28' }
     ]
   },
   {
     id: 'city',
-    name: 'Sosei City',
+    name: 'SOSEI City',
     location: 'New York & Los Angeles',
     totalRooms: 260,
     occupiedRooms: 197,
@@ -83,13 +83,13 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'Corporate Peak',
     localTime: '08:30 EDT',
     children: [
-      { name: 'Sosei Verper', location: 'Manhattan, New York', totalRooms: 140, occupiedRooms: 108, occ: '77.20%', adr: '$2,500.00', revenue: '$1.45M', revpar: '$1,930.00' },
-      { name: 'Sosei Élan', location: 'Beverly Hills, Los Angeles', totalRooms: 120, occupiedRooms: 89, occ: '74.00%', adr: '$2,340.00', revenue: '$1.15M', revpar: '$1,731.60' }
+      { name: 'SOSEI Verper', location: 'Manhattan, New York', totalRooms: 140, occupiedRooms: 108, occ: '77.20%', adr: '$2,500.00', revenue: '$1.45M', revpar: '$1,930.00' },
+      { name: 'SOSEI Élan', location: 'Beverly Hills, Los Angeles', totalRooms: 120, occupiedRooms: 89, occ: '74.00%', adr: '$2,340.00', revenue: '$1.15M', revpar: '$1,731.60' }
     ]
   },
   {
     id: 'countryside',
-    name: 'Sosei Countryside',
+    name: 'SOSEI Countryside',
     location: 'Tuscany & Provence',
     totalRooms: 200,
     occupiedRooms: 156,
@@ -108,13 +108,13 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'Leisure Stable',
     localTime: '14:30 CET',
     children: [
-      { name: 'Sosei Hearth', location: 'Val d\\'Orcia, Tuscany', totalRooms: 105, occupiedRooms: 83, occ: '79.50%', adr: '$2,250.00', revenue: '$1.08M', revpar: '$1,788.75' },
-      { name: 'Sosei Pastoral', location: 'Luberon, Provence', totalRooms: 95, occupiedRooms: 72, occ: '76.10%', adr: '$2,110.00', revenue: '$0.87M', revpar: '$1,605.71' }
+      { name: 'SOSEI Hearth', location: 'Val d\\'Orcia, Tuscany', totalRooms: 105, occupiedRooms: 83, occ: '79.50%', adr: '$2,250.00', revenue: '$1.08M', revpar: '$1,788.75' },
+      { name: 'SOSEI Pastoral', location: 'Luberon, Provence', totalRooms: 95, occupiedRooms: 72, occ: '76.10%', adr: '$2,110.00', revenue: '$0.87M', revpar: '$1,605.71' }
     ]
   },
   {
     id: 'forest',
-    name: 'Sosei Forest',
+    name: 'SOSEI Forest',
     location: 'Kyoto & Chiang Mai',
     totalRooms: 180,
     occupiedRooms: 143,
@@ -133,13 +133,13 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'High Demand',
     localTime: '22:30 JST',
     children: [
-      { name: 'Sosei Sylvan', location: 'Arashiyama, Kyoto', totalRooms: 95, occupiedRooms: 77, occ: '81.00%', adr: '$2,120.00', revenue: '$0.82M', revpar: '$1,717.20' },
-      { name: 'Sosei Verdant', location: 'Chiang Mai, Thailand', totalRooms: 85, occupiedRooms: 66, occ: '77.80%', adr: '$1,980.00', revenue: '$0.63M', revpar: '$1,540.44' }
+      { name: 'SOSEI Sylvan', location: 'Arashiyama, Kyoto', totalRooms: 95, occupiedRooms: 77, occ: '81.00%', adr: '$2,120.00', revenue: '$0.82M', revpar: '$1,717.20' },
+      { name: 'SOSEI Verdant', location: 'Chiang Mai, Thailand', totalRooms: 85, occupiedRooms: 66, occ: '77.80%', adr: '$1,980.00', revenue: '$0.63M', revpar: '$1,540.44' }
     ]
   },
   {
     id: 'desert',
-    name: 'Sosei Desert',
+    name: 'SOSEI Desert',
     location: 'Siwa & Al Hajar',
     totalRooms: 150,
     occupiedRooms: 111,
@@ -158,8 +158,8 @@ const newPropertiesPerformanceData = `const propertiesPerformanceData = [
     status: 'Optimal Flow',
     localTime: '17:30 GST',
     children: [
-      { name: 'Sosei Mirage', location: 'Siwa Oasis, Egypt', totalRooms: 80, occupiedRooms: 61, occ: '75.80%', adr: '$2,040.00', revenue: '$0.68M', revpar: '$1,546.32' },
-      { name: 'Sosei Solstice', location: 'Al Hajar, Oman', totalRooms: 70, occupiedRooms: 51, occ: '72.60%', adr: '$1,920.00', revenue: '$0.52M', revpar: '$1,393.92' }
+      { name: 'SOSEI Mirage', location: 'Siwa Oasis, Egypt', totalRooms: 80, occupiedRooms: 61, occ: '75.80%', adr: '$2,040.00', revenue: '$0.68M', revpar: '$1,546.32' },
+      { name: 'SOSEI Solstice', location: 'Al Hajar, Oman', totalRooms: 70, occupiedRooms: 51, occ: '72.60%', adr: '$1,920.00', revenue: '$0.52M', revpar: '$1,393.92' }
     ]
   }
 ];`;
@@ -242,9 +242,9 @@ const newMetricSection = `      case 'METRIC':
                 targetLine: 75,
                 unit: '%',
                 drivers: [
-                  'High weekend leisure demand at Sosei Alpine (81.2%) & Ocean (78.5%) driving sustained peaks.',
-                  'Corporate retreat buyouts in Sosei Verper NY (77.2%) boosted midweek room nights by 14%.',
-                  'Direct bookings via Sosei Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
+                  'High weekend leisure demand at SOSEI Alpine (81.2%) & Ocean (78.5%) driving sustained peaks.',
+                  'Corporate retreat buyouts in SOSEI Verper NY (77.2%) boosted midweek room nights by 14%.',
+                  'Direct bookings via SOSEI Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
                   'Seasonal wellness packages at Kyoto Sylvan and Lapland Aurora expanded average length of stay to 4.2 nights.'
                 ]
               };
@@ -258,7 +258,7 @@ const newMetricSection = `      case 'METRIC':
                 targetValue: '$2,300',
                 varianceText: '+$150 Rate Premium vs Budget',
                 contextLabel: 'Top Performing',
-                contextValue: 'Sosei Alpine ($2,780)',
+                contextValue: 'SOSEI Alpine ($2,780)',
                 yAxisSuffix: '',
                 chartData: [
                   { date: 'Sep 23', value: 2380, target: 2300 },
@@ -354,9 +354,9 @@ const newMetricSection = `      case 'METRIC':
                 unit: '$',
                 drivers: [
                   'RevPAR expansion driven primarily by simultaneous increases in ADR (+8%) and occupancy (+6%).',
-                  'Sosei Alpine led yield with $2,257 RevPAR, representing an exceptional 111% index vs luxury compset.',
+                  'SOSEI Alpine led yield with $2,257 RevPAR, representing an exceptional 111% index vs luxury compset.',
                   'Minimum stay restrictions on weekends preserved ADR integrity and eliminated single-night vacancy drag.',
-                  'Strong mid-week corporate yields at Sosei Verper NY lifted urban RevPAR to $1,829.'
+                  'Strong mid-week corporate yields at SOSEI Verper NY lifted urban RevPAR to $1,829.'
                 ]
               };
             } else {
@@ -642,7 +642,7 @@ const newGuestMovement = `      case 'GUEST_MOVEMENT':
                 <tbody>
                   {movementData.map((row) => (
                     <tr key={row.name} className="border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                      <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">Sosei {row.name}</td>
+                      <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">SOSEI {row.name}</td>
                       <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{row.in}</td>
                       <td className="py-2.5 px-3 text-right text-emerald-700 font-medium">+{row.arr}</td>
                       <td className="py-2.5 px-3 text-right text-zinc-500 font-medium">-{row.dep}</td>
@@ -918,7 +918,7 @@ const newContainerAndWidth = `  const getDrawerWidth = () => {
         <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 backdrop-blur-sm">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{config?.title || 'Details'}</h2>
-            <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Sosei Executive Management & Operational Intelligence</p>
+            <p className="text-[10px] text-zinc-500 font-normal mt-0.5">SOSEI Executive Management & Operational Intelligence</p>
           </div>
           <button
             onClick={closeDrawer}

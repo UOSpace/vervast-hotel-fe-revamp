@@ -71,11 +71,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Ocean Collection (Maldives & Amalfi)', count: 480, rate: '$240', rev: '$115,200' },
-                { name: 'Sosei Alpine Collection (St. Moritz & Zermatt)', count: 390, rate: '$235', rev: '$91,650' },
-                { name: 'Sosei Forest Collection (Kyoto & Black Forest)', count: 180, rate: '$210', rev: '$37,800' },
-                { name: 'Sosei Desert Collection (Al Wadi & Sedona)', count: 110, rate: '$200', rev: '$22,000' },
-                { name: 'Sosei City Collection (Tokyo & New York)', count: 88, rate: '$225', rev: '$19,800' },
+                { name: 'SOSEI Ocean Collection (Maldives & Amalfi)', count: 480, rate: '$240', rev: '$115,200' },
+                { name: 'SOSEI Alpine Collection (St. Moritz & Zermatt)', count: 390, rate: '$235', rev: '$91,650' },
+                { name: 'SOSEI Forest Collection (Kyoto & Black Forest)', count: 180, rate: '$210', rev: '$37,800' },
+                { name: 'SOSEI Desert Collection (Al Wadi & Sedona)', count: 110, rate: '$200', rev: '$22,000' },
+                { name: 'SOSEI City Collection (Tokyo & New York)', count: 88, rate: '$225', rev: '$19,800' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -112,11 +112,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Ocean Collection', standard: '$220', peak: '$260', realized: '$240' },
-                { name: 'Sosei Alpine Collection', standard: '$215', peak: '$255', realized: '$235' },
-                { name: 'Sosei City Collection', standard: '$210', peak: '$245', realized: '$225' },
-                { name: 'Sosei Forest Collection', standard: '$195', peak: '$230', realized: '$210' },
-                { name: 'Sosei Desert Collection', standard: '$180', peak: '$220', realized: '$200' },
+                { name: 'SOSEI Ocean Collection', standard: '$220', peak: '$260', realized: '$240' },
+                { name: 'SOSEI Alpine Collection', standard: '$215', peak: '$255', realized: '$235' },
+                { name: 'SOSEI City Collection', standard: '$210', peak: '$245', realized: '$225' },
+                { name: 'SOSEI Forest Collection', standard: '$195', peak: '$230', realized: '$210' },
+                { name: 'SOSEI Desert Collection', standard: '$180', peak: '$220', realized: '$200' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -236,10 +236,10 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Botanical Signature Elixir', units: 120, price: '$78.50', rev: '$9,420' },
+                { name: 'SOSEI Botanical Signature Elixir', units: 120, price: '$78.50', rev: '$9,420' },
                 { name: 'Calm & Restore Night Balm', units: 148, price: '$41.95', rev: '$6,210' },
                 { name: 'Himalayan Pink Mineral Soak', units: 162, price: '$30.00', rev: '$4,860' },
-                { name: 'Sosei Mulberry Silk Eye Pillow', units: 88, price: '$45.20', rev: '$3,980' },
+                { name: 'SOSEI Mulberry Silk Eye Pillow', units: 88, price: '$45.20', rev: '$3,980' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -419,11 +419,10 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.date}</td>
                   <td className="py-2.5 px-3 text-zinc-600 dark:text-zinc-300">{row.window}</td>
                   <td className="py-2.5 px-3 text-right">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      row.level === 'Peak'
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${row.level === 'Peak'
                         ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
                         : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                    }`}>
+                      }`}>
                       {row.level}
                     </span>
                   </td>

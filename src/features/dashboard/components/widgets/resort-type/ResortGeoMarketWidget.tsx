@@ -27,11 +27,11 @@ const getRegionForCountry = (name: string) => {
 };
 
 const colorPalette = [
-  '#1F1D1C', // Rank 1 (Highest) - Darkest
-  '#3D3A38', // Rank 2
-  '#5E5A56', // Rank 3
-  '#857E78', // Rank 4
-  '#B2A9A0'  // Rank 5 (Lowest) - Lightest
+  '#0f172a', // Rank 1 (Highest) - Darkest slate
+  '#334155', // Rank 2
+  '#64748b', // Rank 3
+  '#94a3b8', // Rank 4
+  '#cbd5e1'  // Rank 5 (Lowest) - Lightest gray
 ];
 
 export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
@@ -80,7 +80,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
                     strokeWidth={0.4}
                     style={{
                       default: { outline: 'none' },
-                      hover: { outline: 'none', fill: '#18181b' },
+                      hover: { outline: 'none', fill: '#0f172a' },
                       pressed: { outline: 'none' },
                     }}
                   />

@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 
-import oceanImg from '../../../assets/contents/ocean.png';
-import alpineImg from '../../../assets/contents/alpine.png';
-import desertImg from '../../../assets/contents/desert.png';
-import cityImg from '../../../assets/contents/city.png';
-import forestImg from '../../../assets/contents/forest.png';
+import stayMizuImg from '../../../assets/contents/stay_mizu_maldives.jpg';
+import journeyAlpineImg from '../../../assets/contents/journey_alpine.jpg';
+import journeySingaporeImg from '../../../assets/contents/journey_singapore.jpg';
+import journeyOmanImg from '../../../assets/contents/journey_oman.jpg';
+import journeyMaldivesImg from '../../../assets/contents/journey_maldives.jpg';
+import familyByRiverImg from '../../../assets/contents/family_by_river.jpg';
 
 export function GuestProfilePage() {
   useParams();
@@ -44,7 +45,7 @@ export function GuestProfilePage() {
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Guest Profile</h3>
             </div>
 
-            <img src={forestImg} alt="Anderson Family" className="w-full h-[125px] object-cover rounded-lg shadow-xs shrink-0" />
+            <img src={familyByRiverImg} alt="Anderson Family" className="w-full h-[125px] object-cover rounded-lg shadow-xs shrink-0" />
 
             <div className="pt-3 grid grid-cols-2 gap-3 flex-1">
               <div className="flex flex-col gap-0.5">
@@ -134,7 +135,7 @@ export function GuestProfilePage() {
               {/* Left: Image on Top, Clean Key Details Below (col-7) */}
               <div className="col-span-1 md:col-span-7 flex flex-col justify-between h-full gap-2.5">
                 <div className="rounded-lg overflow-hidden shrink-0">
-                  <img src={oceanImg} alt="SOSEI Mizu" className="w-full h-[125px] object-cover" />
+                  <img src={stayMizuImg} alt="SOSEI Mizu" className="w-full h-[125px] object-cover" />
                 </div>
 
                 <div className="flex flex-col flex-1 justify-between gap-2.5">
@@ -197,10 +198,10 @@ export function GuestProfilePage() {
             </div>
             <div className="flex flex-col justify-between flex-1 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 py-1 gap-3">
               {[
-                { date: 'Mar 2025', name: 'SOSEI Alpine', loc: 'Switzerland', img: alpineImg },
-                { date: 'Aug 2024', name: 'SOSEI City', loc: 'Singapore', img: cityImg },
-                { date: 'Feb 2024', name: 'SOSEI Desert', loc: 'Oman', img: desertImg },
-                { date: 'May 2023', name: 'SOSEI Ocean', loc: 'Maldives', img: oceanImg },
+                { date: 'Mar 2025', name: 'SOSEI Alpine', loc: 'Switzerland', img: journeyAlpineImg },
+                { date: 'Aug 2024', name: 'SOSEI City', loc: 'Singapore', img: journeySingaporeImg },
+                { date: 'Feb 2024', name: 'SOSEI Desert', loc: 'Oman', img: journeyOmanImg },
+                { date: 'May 2023', name: 'SOSEI Ocean', loc: 'Maldives', img: journeyMaldivesImg },
               ].map((stay, idx) => (
                 <div key={idx} className="flex gap-3 relative z-10 items-center">
                   <img src={stay.img} className="w-8 h-8 rounded-full object-cover border border-white shadow-xs shrink-0" alt={stay.name} />

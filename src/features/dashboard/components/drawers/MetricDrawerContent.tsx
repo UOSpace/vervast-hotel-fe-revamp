@@ -2,190 +2,11 @@ import React, { useState } from 'react';
 import { RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 
-export interface PropertyPerformanceItem {
-  id: string;
-  name: string;
-  location: string;
-  totalRooms: number;
-  occupiedRooms: number;
-  occ: string;
-  occNum: number;
-  targetOcc: number;
-  adr: string;
-  adrNum: number;
-  targetAdr: number;
-  revenue: string;
-  revenueNum: number;
-  targetRev: number;
-  revpar: string;
-  revparNum: number;
-  targetRevpar: number;
-  status: string;
-  localTime: string;
-  children: Array<{
-    name: string;
-    location: string;
-    totalRooms: number;
-    occupiedRooms: number;
-    occ: string;
-    adr: string;
-    revenue: string;
-    revpar: string;
-  }>;
-}
+import { simulatedCategoryPerformance, type PropertyPerformanceCategory } from '../../services/propertySimulation';
 
-export const accuratePropertiesData: PropertyPerformanceItem[] = [
-  {
-    id: 'alpine',
-    name: 'Sosei Alpine',
-    location: 'Switzerland & Finland',
-    totalRooms: 240,
-    occupiedRooms: 195,
-    occ: '81.20%',
-    occNum: 81.2,
-    targetOcc: 78.0,
-    adr: '$2,780.00',
-    adrNum: 2780,
-    targetAdr: 2600,
-    revenue: '$4.20M',
-    revenueNum: 4.20,
-    targetRev: 3.85,
-    revpar: '$2,257.36',
-    revparNum: 2257.36,
-    targetRevpar: 2028.00,
-    status: 'High Demand',
-    localTime: '14:30 CET',
-    children: [
-      { name: 'Sosei Nocturne', location: 'St. Moritz, Switzerland', totalRooms: 130, occupiedRooms: 108, occ: '83.00%', adr: '$2,860.00', revenue: '$2.25M', revpar: '$2,373.80' },
-      { name: 'Sosei Aurora', location: 'Lapland, Finland', totalRooms: 110, occupiedRooms: 87, occ: '79.40%', adr: '$2,700.00', revenue: '$1.95M', revpar: '$2,143.80' }
-    ]
-  },
-  {
-    id: 'ocean',
-    name: 'Sosei Ocean',
-    location: 'Maldives & Bali',
-    totalRooms: 210,
-    occupiedRooms: 165,
-    occ: '78.50%',
-    occNum: 78.5,
-    targetOcc: 76.0,
-    adr: '$2,540.00',
-    adrNum: 2540,
-    targetAdr: 2400,
-    revenue: '$3.40M',
-    revenueNum: 3.40,
-    targetRev: 3.10,
-    revpar: '$1,993.90',
-    revparNum: 1993.90,
-    targetRevpar: 1824.00,
-    status: 'Optimal Flow',
-    localTime: '18:30 MVT',
-    children: [
-      { name: 'Sosei Maréa', location: 'Baa Atoll, Maldives', totalRooms: 110, occupiedRooms: 88, occ: '80.20%', adr: '$2,620.00', revenue: '$1.85M', revpar: '$2,101.24' },
-      { name: 'Sosei Pelagia', location: 'Uluwatu, Bali', totalRooms: 100, occupiedRooms: 77, occ: '76.80%', adr: '$2,460.00', revenue: '$1.55M', revpar: '$1,889.28' }
-    ]
-  },
-  {
-    id: 'city',
-    name: 'Sosei City',
-    location: 'New York & Los Angeles',
-    totalRooms: 260,
-    occupiedRooms: 197,
-    occ: '75.60%',
-    occNum: 75.6,
-    targetOcc: 74.0,
-    adr: '$2,420.00',
-    adrNum: 2420,
-    targetAdr: 2350,
-    revenue: '$2.60M',
-    revenueNum: 2.60,
-    targetRev: 2.45,
-    revpar: '$1,829.52',
-    revparNum: 1829.52,
-    targetRevpar: 1739.00,
-    status: 'Corporate Peak',
-    localTime: '08:30 EDT',
-    children: [
-      { name: 'Sosei Verper', location: 'Manhattan, New York', totalRooms: 140, occupiedRooms: 108, occ: '77.20%', adr: '$2,500.00', revenue: '$1.45M', revpar: '$1,930.00' },
-      { name: 'Sosei Élan', location: 'Beverly Hills, Los Angeles', totalRooms: 120, occupiedRooms: 89, occ: '74.00%', adr: '$2,340.00', revenue: '$1.15M', revpar: '$1,731.60' }
-    ]
-  },
-  {
-    id: 'countryside',
-    name: 'Sosei Countryside',
-    location: 'Tuscany & Provence',
-    totalRooms: 200,
-    occupiedRooms: 156,
-    occ: '77.80%',
-    occNum: 77.8,
-    targetOcc: 75.0,
-    adr: '$2,180.00',
-    adrNum: 2180,
-    targetAdr: 2100,
-    revenue: '$1.95M',
-    revenueNum: 1.95,
-    targetRev: 1.80,
-    revpar: '$1,696.04',
-    revparNum: 1696.04,
-    targetRevpar: 1575.00,
-    status: 'Leisure Stable',
-    localTime: '14:30 CET',
-    children: [
-      { name: 'Sosei Hearth', location: 'Val d\'Orcia, Tuscany', totalRooms: 105, occupiedRooms: 83, occ: '79.50%', adr: '$2,250.00', revenue: '$1.08M', revpar: '$1,788.75' },
-      { name: 'Sosei Pastoral', location: 'Luberon, Provence', totalRooms: 95, occupiedRooms: 72, occ: '76.10%', adr: '$2,110.00', revenue: '$0.87M', revpar: '$1,605.71' }
-    ]
-  },
-  {
-    id: 'forest',
-    name: 'Sosei Forest',
-    location: 'Kyoto & Chiang Mai',
-    totalRooms: 180,
-    occupiedRooms: 143,
-    occ: '79.40%',
-    occNum: 79.4,
-    targetOcc: 76.0,
-    adr: '$2,050.00',
-    adrNum: 2050,
-    targetAdr: 1950,
-    revenue: '$1.45M',
-    revenueNum: 1.45,
-    targetRev: 1.35,
-    revpar: '$1,627.70',
-    revparNum: 1627.70,
-    targetRevpar: 1482.00,
-    status: 'High Demand',
-    localTime: '22:30 JST',
-    children: [
-      { name: 'Sosei Sylvan', location: 'Arashiyama, Kyoto', totalRooms: 95, occupiedRooms: 77, occ: '81.00%', adr: '$2,120.00', revenue: '$0.82M', revpar: '$1,717.20' },
-      { name: 'Sosei Verdant', location: 'Chiang Mai, Thailand', totalRooms: 85, occupiedRooms: 66, occ: '77.80%', adr: '$1,980.00', revenue: '$0.63M', revpar: '$1,540.44' }
-    ]
-  },
-  {
-    id: 'desert',
-    name: 'Sosei Desert',
-    location: 'Siwa & Al Hajar',
-    totalRooms: 150,
-    occupiedRooms: 111,
-    occ: '74.20%',
-    occNum: 74.2,
-    targetOcc: 72.0,
-    adr: '$1,980.00',
-    adrNum: 1980,
-    targetAdr: 1900,
-    revenue: '$1.20M',
-    revenueNum: 1.20,
-    targetRev: 1.15,
-    revpar: '$1,469.16',
-    revparNum: 1469.16,
-    targetRevpar: 1368.00,
-    status: 'Optimal Flow',
-    localTime: '17:30 GST',
-    children: [
-      { name: 'Sosei Mirage', location: 'Siwa Oasis, Egypt', totalRooms: 80, occupiedRooms: 61, occ: '75.80%', adr: '$2,040.00', revenue: '$0.68M', revpar: '$1,546.32' },
-      { name: 'Sosei Solstice', location: 'Al Hajar, Oman', totalRooms: 70, occupiedRooms: 51, occ: '72.60%', adr: '$1,920.00', revenue: '$0.52M', revpar: '$1,393.92' }
-    ]
-  }
-];
+export type PropertyPerformanceItem = PropertyPerformanceCategory;
+export const accuratePropertiesData: PropertyPerformanceCategory[] = simulatedCategoryPerformance;
+
 
 interface MetricDrawerContentProps {
   config: {
@@ -201,152 +22,190 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
 
   const isOcc = t.includes('OCCUPANCY');
   const isAdr = t.includes('ADR');
-  const isRev = t.includes('REVENUE');
   const isRevPar = t.includes('REVPAR');
+  const isTotalHotelRev = t.includes('TOTAL HOTEL REVENUE') || t.includes('TOTAL REVENUE');
+  const isRoomRev = t.includes('ROOM REVENUE') || (!isTotalHotelRev && t.includes('REVENUE'));
+  const isRev = isTotalHotelRev || isRoomRev;
 
   const getMetricConfig = () => {
     if (isOcc) {
       return {
         title: 'Occupancy Rate Performance',
-        subtitle: 'Daily realized occupancy vs budget target (75.0%) across all 12 sanctuaries (MTD)',
-        heroValue: '78.4%',
-        heroTrend: '+6.0% YoY',
+        subtitle: 'Daily realized occupancy vs budget target (72.1%) across all 12 sanctuaries (MTD)',
+        heroValue: '74.2%',
+        heroTrend: '+4.8 pts vs LY',
         heroTrendUp: true,
-        targetValue: '75.0%',
-        varianceText: '+3.4% pts Above Budget Target',
+        targetValue: '72.1%',
+        varianceText: '+2.1 pts Above Budget Target',
         contextLabel: 'Rooms Occupied',
-        contextValue: '967 / 1,240 Rooms',
+        contextValue: '920 / 1,240 Rooms',
         yAxisSuffix: '%',
         chartData: [
-          { date: 'Sep 23', value: 75.8, target: 75 },
-          { date: 'Sep 24', value: 76.4, target: 75 },
-          { date: 'Sep 25', value: 77.1, target: 75 },
-          { date: 'Sep 26', value: 78.5, target: 75 },
-          { date: 'Sep 27', value: 82.4, target: 75 },
-          { date: 'Sep 28', value: 84.8, target: 75 },
-          { date: 'Sep 29', value: 81.2, target: 75 },
-          { date: 'Sep 30', value: 76.5, target: 75 },
-          { date: 'Oct 01', value: 75.9, target: 75 },
-          { date: 'Oct 02', value: 76.8, target: 75 },
-          { date: 'Oct 03', value: 77.9, target: 75 },
-          { date: 'Oct 04', value: 83.1, target: 75 },
-          { date: 'Oct 05', value: 85.0, target: 75 },
-          { date: 'Oct 06', value: 78.4, target: 75 },
+          { date: 'Sep 23', value: 71.8, target: 72.1 },
+          { date: 'Sep 24', value: 72.4, target: 72.1 },
+          { date: 'Sep 25', value: 73.1, target: 72.1 },
+          { date: 'Sep 26', value: 74.5, target: 72.1 },
+          { date: 'Sep 27', value: 77.4, target: 72.1 },
+          { date: 'Sep 28', value: 78.8, target: 72.1 },
+          { date: 'Sep 29', value: 76.2, target: 72.1 },
+          { date: 'Sep 30', value: 73.5, target: 72.1 },
+          { date: 'Oct 01', value: 72.9, target: 72.1 },
+          { date: 'Oct 02', value: 73.8, target: 72.1 },
+          { date: 'Oct 03', value: 74.9, target: 72.1 },
+          { date: 'Oct 04', value: 77.1, target: 72.1 },
+          { date: 'Oct 05', value: 78.0, target: 72.1 },
+          { date: 'Oct 06', value: 74.2, target: 72.1 },
         ],
-        targetLine: 75,
+        targetLine: 72.1,
         drivers: [
-          'High weekend leisure demand at Sosei Alpine (81.2%) & Ocean (78.5%) driving sustained peaks.',
-          'Corporate retreat buyouts in Sosei Verper NY (77.2%) boosted midweek room nights by 14%.',
-          'Direct bookings via Sosei Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
-          'Seasonal wellness packages at Kyoto Sylvan and Lapland Aurora expanded average length of stay to 4.2 nights.'
+          'Strong leisure demand at SOSEI Alpine (77.5%) & Ocean (75.2%) driving sustained peak performance.',
+          'Occupancy outperforming LY by +4.8 percentage points and budget targets by +2.1 percentage points.',
+          'Direct bookings via SOSEI Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
+          'Corporate retreat buyouts in SOSEI Verper NY (75.0%) lifted urban midweek room occupancy by 12%.'
         ]
       };
     } else if (isAdr) {
       return {
         title: 'Average Daily Rate (ADR) Performance',
-        subtitle: 'Realized daily rate yield vs budget target ($2,300) across luxury room tiers',
-        heroValue: '$2,450',
-        heroTrend: '+8.0% YoY',
+        subtitle: 'Realized daily rate yield vs budget target ($1,378) across luxury room tiers (MTD)',
+        heroValue: '$1,420',
+        heroTrend: '+$85 vs LY (+6.0%)',
         heroTrendUp: true,
-        targetValue: '$2,300',
-        varianceText: '+$150 Rate Premium vs Budget',
-        contextLabel: 'Top Performing',
-        contextValue: 'Sosei Alpine ($2,780)',
+        targetValue: '$1,378',
+        varianceText: '+$42 vs Budget (+3.2%)',
+        contextLabel: 'Top Performing Collection',
+        contextValue: 'SOSEI Alpine ($1,680)',
         yAxisSuffix: '',
         chartData: [
-          { date: 'Sep 23', value: 2380, target: 2300 },
-          { date: 'Sep 24', value: 2410, target: 2300 },
-          { date: 'Sep 25', value: 2435, target: 2300 },
-          { date: 'Sep 26', value: 2460, target: 2300 },
-          { date: 'Sep 27', value: 2540, target: 2300 },
-          { date: 'Sep 28', value: 2590, target: 2300 },
-          { date: 'Sep 29', value: 2510, target: 2300 },
-          { date: 'Sep 30', value: 2420, target: 2300 },
-          { date: 'Oct 01', value: 2400, target: 2300 },
-          { date: 'Oct 02', value: 2430, target: 2300 },
-          { date: 'Oct 03', value: 2470, target: 2300 },
-          { date: 'Oct 04', value: 2550, target: 2300 },
-          { date: 'Oct 05', value: 2580, target: 2300 },
-          { date: 'Oct 06', value: 2450, target: 2300 },
+          { date: 'Sep 23', value: 1390, target: 1378 },
+          { date: 'Sep 24', value: 1405, target: 1378 },
+          { date: 'Sep 25', value: 1415, target: 1378 },
+          { date: 'Sep 26', value: 1430, target: 1378 },
+          { date: 'Sep 27', value: 1475, target: 1378 },
+          { date: 'Sep 28', value: 1495, target: 1378 },
+          { date: 'Sep 29', value: 1460, target: 1378 },
+          { date: 'Sep 30', value: 1410, target: 1378 },
+          { date: 'Oct 01', value: 1400, target: 1378 },
+          { date: 'Oct 02', value: 1415, target: 1378 },
+          { date: 'Oct 03', value: 1435, target: 1378 },
+          { date: 'Oct 04', value: 1480, target: 1378 },
+          { date: 'Oct 05', value: 1495, target: 1378 },
+          { date: 'Oct 06', value: 1420, target: 1378 },
         ],
-        targetLine: 2300,
+        targetLine: 1378,
         drivers: [
-          'Presidential and Royal Villa upgrades maintained an average nightly rate of $3,450 with 92% occupancy.',
-          'Dynamic rate yield algorithm captured +12% weekend pricing surge across Alpine and Maldives.',
-          'Direct booking rate integrity ensured zero OTA discounting across luxury master suites.',
-          'Exclusive autumn harvest culinary inclusions elevated Countryside ADR to $2,180.'
-        ]
-      };
-    } else if (isRev) {
-      return {
-        title: 'Room & Portfolio Revenue Performance',
-        subtitle: 'Realized gross revenue generation (MTD actuals $14.80M vs $13.50M budget target)',
-        heroValue: '$14.80M MTD',
-        heroTrend: '+14.0% YoY',
-        heroTrendUp: true,
-        targetValue: '$13.50M Target',
-        varianceText: '+$1.30M (+9.6%) Ahead of Budget',
-        contextLabel: 'YTD Total Portfolio',
-        contextValue: '$118.0M Gross Revenue',
-        yAxisSuffix: 'M',
-        chartData: [
-          { date: 'Sep 23', value: 1.85, target: 1.70 },
-          { date: 'Sep 24', value: 1.92, target: 1.70 },
-          { date: 'Sep 25', value: 2.05, target: 1.70 },
-          { date: 'Sep 26', value: 2.15, target: 1.70 },
-          { date: 'Sep 27', value: 2.48, target: 1.70 },
-          { date: 'Sep 28', value: 2.62, target: 1.70 },
-          { date: 'Sep 29', value: 2.30, target: 1.70 },
-          { date: 'Sep 30', value: 1.90, target: 1.70 },
-          { date: 'Oct 01', value: 1.95, target: 1.70 },
-          { date: 'Oct 02', value: 2.08, target: 1.70 },
-          { date: 'Oct 03', value: 2.18, target: 1.70 },
-          { date: 'Oct 04', value: 2.52, target: 1.70 },
-          { date: 'Oct 05', value: 2.58, target: 1.70 },
-          { date: 'Oct 06', value: 2.24, target: 1.70 },
-        ],
-        targetLine: 1.70,
-        drivers: [
-          'Strong room revenue contribution representing 68% of total portfolio gross intake.',
-          'F&B banquet buyouts and private chef experiences generated $3.2M ancillary income.',
-          'Holistic thermal spa therapies and retail memberships contributed $2.4M across sanctuaries.',
-          'Advance booking pace for the upcoming winter holiday season is pacing 18% higher than prior year.'
+          'ADR expanded to $1,420 MTD, delivering a +$85 vs LY (+6.0%) rate increase across destinations.',
+          'Outperforming budget benchmark by +$42 vs Budget (+3.2%) driven by signature suite yield premiums.',
+          'Presidential and Royal Villa upgrades maintained an average nightly rate of $3,450 across destinations.',
+          'Direct booking rate integrity ensured zero OTA discounting across luxury sanctuaries.'
         ]
       };
     } else if (isRevPar) {
       return {
         title: 'Revenue Per Available Room (RevPAR) Performance',
-        subtitle: 'Yield efficiency benchmark combining occupancy volume and ADR pricing power',
-        heroValue: '$1,921',
-        heroTrend: '+14.0% YoY',
+        subtitle: 'Yield efficiency benchmark combining occupancy volume and ADR pricing power (MTD)',
+        heroValue: '$1,054',
+        heroTrend: '+$92 vs LY (+8.5%)',
         heroTrendUp: true,
-        targetValue: '$1,725',
-        varianceText: '+$196 (+11.4%) Yield Efficiency',
+        targetValue: '$1,006',
+        varianceText: '+$48 vs Budget (+4.1%)',
         contextLabel: 'Total Portfolio TrevPAR',
-        contextValue: '$2,640 (Total Rev/Room)',
+        contextValue: '$1,357 (Total Rev/Room)',
         yAxisSuffix: '',
         chartData: [
-          { date: 'Sep 23', value: 1804, target: 1725 },
-          { date: 'Sep 24', value: 1841, target: 1725 },
-          { date: 'Sep 25', value: 1877, target: 1725 },
-          { date: 'Sep 26', value: 1931, target: 1725 },
-          { date: 'Sep 27', value: 2092, target: 1725 },
-          { date: 'Sep 28', value: 2196, target: 1725 },
-          { date: 'Sep 29', value: 2038, target: 1725 },
-          { date: 'Sep 30', value: 1851, target: 1725 },
-          { date: 'Oct 01', value: 1821, target: 1725 },
-          { date: 'Oct 02', value: 1866, target: 1725 },
-          { date: 'Oct 03', value: 1924, target: 1725 },
-          { date: 'Oct 04', value: 2119, target: 1725 },
-          { date: 'Oct 05', value: 2193, target: 1725 },
-          { date: 'Oct 06', value: 1921, target: 1725 },
+          { date: 'Sep 23', value: 998, target: 1006 },
+          { date: 'Sep 24', value: 1017, target: 1006 },
+          { date: 'Sep 25', value: 1034, target: 1006 },
+          { date: 'Sep 26', value: 1065, target: 1006 },
+          { date: 'Sep 27', value: 1142, target: 1006 },
+          { date: 'Sep 28', value: 1178, target: 1006 },
+          { date: 'Sep 29', value: 1113, target: 1006 },
+          { date: 'Sep 30', value: 1036, target: 1006 },
+          { date: 'Oct 01', value: 1021, target: 1006 },
+          { date: 'Oct 02', value: 1044, target: 1006 },
+          { date: 'Oct 03', value: 1075, target: 1006 },
+          { date: 'Oct 04', value: 1141, target: 1006 },
+          { date: 'Oct 05', value: 1166, target: 1006 },
+          { date: 'Oct 06', value: 1054, target: 1006 },
         ],
-        targetLine: 1725,
+        targetLine: 1006,
         drivers: [
-          'RevPAR expansion driven primarily by simultaneous increases in ADR (+8%) and occupancy (+6%).',
-          'Sosei Alpine led yield with $2,257 RevPAR, representing an exceptional 111% index vs luxury compset.',
-          'Minimum stay restrictions on weekends preserved ADR integrity and eliminated single-night vacancy drag.',
-          'Strong mid-week corporate yields at Sosei Verper NY lifted urban RevPAR to $1,829.'
+          'RevPAR reached $1,054, up +$92 vs LY (+8.5%) and +$48 vs Budget (+4.1%).',
+          'Balanced yield expansion achieved through healthy occupancy (74.2%) and ADR ($1,420).',
+          'SOSEI Alpine led yield with $1,302 RevPAR, representing top performance across destinations.',
+          'Minimum stay restrictions on weekends preserved pricing power and eliminated single-night vacancy drag.'
+        ]
+      };
+    } else if (isTotalHotelRev) {
+      return {
+        title: 'Total Hotel Revenue (5 Hospitality Pillars)',
+        subtitle: 'Total hotel business revenue across all 5 hospitality pillars (MTD actuals $152M vs $146.2M budget target)',
+        heroValue: '$152M MTD',
+        heroTrend: '+11.0% vs LY',
+        heroTrendUp: true,
+        targetValue: '$146.2M Target',
+        varianceText: '+$5.8M (+4.0%) vs Budget',
+        contextLabel: '5 Hospitality Pillars',
+        contextValue: 'Rooms $118M · F&B $22M · Spa $8M · Act $4M',
+        yAxisSuffix: 'M',
+        chartData: [
+          { date: 'Sep 23', value: 4.65, target: 4.71 },
+          { date: 'Sep 24', value: 4.72, target: 4.71 },
+          { date: 'Sep 25', value: 4.80, target: 4.71 },
+          { date: 'Sep 26', value: 4.95, target: 4.71 },
+          { date: 'Sep 27', value: 5.35, target: 4.71 },
+          { date: 'Sep 28', value: 5.48, target: 4.71 },
+          { date: 'Sep 29', value: 5.20, target: 4.71 },
+          { date: 'Sep 30', value: 4.82, target: 4.71 },
+          { date: 'Oct 01', value: 4.75, target: 4.71 },
+          { date: 'Oct 02', value: 4.86, target: 4.71 },
+          { date: 'Oct 03', value: 4.98, target: 4.71 },
+          { date: 'Oct 04', value: 5.32, target: 4.71 },
+          { date: 'Oct 05', value: 5.40, target: 4.71 },
+          { date: 'Oct 06', value: 4.90, target: 4.71 },
+        ],
+        targetLine: 4.71,
+        drivers: [
+          'Total hotel business revenue generated $152M MTD, up +11.0% vs LY and +4.0% ahead of budget.',
+          'Rooms revenue ($118M / 77.6%) anchored total business performance with strong rate yields.',
+          'Food & Beverage generated $22M (14.5%) with Michelin-starred dining buyouts and private banqueting.',
+          'Spa & Wellness contributed $8M (5.3%) and Activities & Others contributed $4M (2.6%) in high-margin experiences.'
+        ]
+      };
+    } else if (isRoomRev) {
+      return {
+        title: 'Room Revenue Performance',
+        subtitle: 'Realized room revenue generation (MTD actuals $118M vs $112.2M budget target)',
+        heroValue: '$118M MTD',
+        heroTrend: '+14.0% vs LY',
+        heroTrendUp: true,
+        targetValue: '$112.2M Target',
+        varianceText: '+$5.8M (+5.2%) vs Budget',
+        contextLabel: 'Share of Hotel Revenue',
+        contextValue: '77.6% of Total Hotel Business',
+        yAxisSuffix: 'M',
+        chartData: [
+          { date: 'Sep 23', value: 3.58, target: 3.62 },
+          { date: 'Sep 24', value: 3.65, target: 3.62 },
+          { date: 'Sep 25', value: 3.72, target: 3.62 },
+          { date: 'Sep 26', value: 3.84, target: 3.62 },
+          { date: 'Sep 27', value: 4.15, target: 3.62 },
+          { date: 'Sep 28', value: 4.25, target: 3.62 },
+          { date: 'Sep 29', value: 4.02, target: 3.62 },
+          { date: 'Sep 30', value: 3.74, target: 3.62 },
+          { date: 'Oct 01', value: 3.68, target: 3.62 },
+          { date: 'Oct 02', value: 3.77, target: 3.62 },
+          { date: 'Oct 03', value: 3.86, target: 3.62 },
+          { date: 'Oct 04', value: 4.12, target: 3.62 },
+          { date: 'Oct 05', value: 4.18, target: 3.62 },
+          { date: 'Oct 06', value: 3.80, target: 3.62 },
+        ],
+        targetLine: 3.62,
+        drivers: [
+          'Room Revenue reached $118M MTD, delivering a +14.0% vs LY increase and +5.2% above budget.',
+          'Average Daily Rate ($1,420) and 74.2% occupancy drove strong top-line room yields across all collections.',
+          'SOSEI Alpine ($33.5M) and SOSEI Ocean ($27.2M) generated over 51% of portfolio room revenue.',
+          'Strong booking pace for remaining dates in October projected to sustain revenue momentum.'
         ]
       };
     } else {
@@ -441,22 +300,22 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
             <AreaChart data={m.chartData} margin={{ top: 10, right: 10, left: -15, bottom: 5 }}>
               <defs>
                 <linearGradient id="metricDrawerGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={theme === 'dark' ? '#fafafa' : '#18181b'} stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor={theme === 'dark' ? '#fafafa' : '#18181b'} stopOpacity={0.0}/>
+                  <stop offset="5%" stopColor={theme === 'dark' ? '#fafafa' : '#18181b'} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={theme === 'dark' ? '#fafafa' : '#18181b'} stopOpacity={0.0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#27272a' : '#f4f4f5'} />
-              <XAxis 
-                dataKey="date" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fontSize: 9, fill: theme === 'dark' ? '#71717a' : '#a1a1aa' }} 
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 9, fill: theme === 'dark' ? '#71717a' : '#a1a1aa' }}
                 dy={6}
               />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fontSize: 9, fill: theme === 'dark' ? '#71717a' : '#a1a1aa' }} 
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 9, fill: theme === 'dark' ? '#71717a' : '#a1a1aa' }}
                 tickFormatter={(v: number) => isRev ? `$${v}M` : isOcc ? `${v}%` : `$${v}`}
                 width={45}
               />
@@ -475,13 +334,13 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
                 }}
               />
               <ReferenceLine y={m.targetLine} stroke="#a1a1aa" strokeDasharray="3 3" />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke={theme === 'dark' ? '#fafafa' : '#18181b'} 
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={theme === 'dark' ? '#fafafa' : '#18181b'}
                 strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#metricDrawerGradient)" 
+                fillOpacity={1}
+                fill="url(#metricDrawerGradient)"
                 dot={{ r: 3, fill: theme === 'dark' ? '#fafafa' : '#18181b' }}
               />
             </AreaChart>
@@ -556,10 +415,10 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
               <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
                 <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
                 <td className="py-3 px-3 text-zinc-500">Global Portfolio (12 Sanctuaries)</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">78.40%</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">$2,450.00</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$14.80M</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,920.80</td>
+                <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{isTotalHotelRev ? '$152.00M' : '$118.00M'}</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
                 <td className="py-3 px-3 text-right text-emerald-700 font-bold">Above Target</td>
               </tr>
             </tbody>

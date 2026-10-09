@@ -1,0 +1,52 @@
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  PORTAL: '/portal',
+  DASHBOARD: {
+    ROOT: '/dashboard',
+    PROPERTY: '/dashboard/property',
+    GUESTS: {
+      ROOT: '/dashboard/guests',
+      FAMILY: '/dashboard/guests/family',
+      FAMILY_DETAIL: (uuid: string) => `/dashboard/guests/family/${uuid}`,
+      INDIVIDUAL: '/dashboard/guests/individual',
+      INDIVIDUAL_DETAIL: (uuid: string) => `/dashboard/guests/individual/${uuid}`,
+    },
+    PARTNERS: {
+      ROOT: '/dashboard/partners',
+      RELATIONSHIP: '/dashboard/partners/relationship',
+      AGENCIES: '/dashboard/partners/agencies',
+      CORPORATE: '/dashboard/partners/corporate',
+      CORPORATE_DETAIL: (id: string) => `/dashboard/partners/corporate/${id}`,
+    },
+    EXPERIENCE: {
+      FNB: '/dashboard/experience/fnb',
+      POS: '/dashboard/experience/pos',
+      ACTIVITIES: '/dashboard/experience/activities',
+    },
+    RESERVATIONS: {
+      LEADS: '/dashboard/reservations/leads',
+      LEAD_DETAIL: (id: string) => `/dashboard/reservations/leads/${id}`,
+      BOOKINGS: '/dashboard/reservations/bookings',
+      BOOKING_DETAIL: (id: string) => `/dashboard/reservations/bookings/${id}`,
+    },
+    SALES: {
+      LEADS: '/dashboard/sales/leads',
+      LEAD_DETAIL: (id: string) => `/dashboard/sales/leads/${id}`,
+      BOOKINGS: '/dashboard/sales/bookings',
+      BOOKING_DETAIL: (id: string) => `/dashboard/sales/bookings/${id}`,
+      ACTIVITIES: '/dashboard/sales/activities',
+      EMAIL: '/dashboard/sales/email',
+      FORMS: '/dashboard/sales/forms',
+      EVENTS: '/dashboard/sales/events',
+    },
+    SPA: '/dashboard/spa',
+    OPERATIONS: {
+      HOUSEKEEPING: '/dashboard/operations/housekeeping',
+      FNB: '/dashboard/operations/fnb',
+    },
+    REPORTS: '/dashboard/reports',
+    SETTINGS: '/dashboard/settings',
+    PROFILE: '/dashboard/profile',
+  },
+} as const;

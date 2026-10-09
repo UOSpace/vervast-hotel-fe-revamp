@@ -3,108 +3,156 @@
     "id": "sosei-nocturne", 
     "name": "SOSEI NOCTURNE", 
     "city": "Switzerland", 
-    "coordinates": [8.2275, 46.8182], 
-    "status": "low",
+    "grouping": "Alpine",
+    "status": "above_plan",
+    "statusLabel": "Performing above plan",
+    "occupancy": "78%",
+    "adr": "$2,800",
+    "revpar": "$2,080",
     "revenue": "$2.20M",
-    "labelOffset": [6, -32]
+    "coordinates": [8.2275, 46.8182]
   },
   { 
     "id": "sosei-aurora", 
     "name": "SOSEI AURORA", 
     "city": "Finland", 
-    "coordinates": [25.7208, 66.5039], 
-    "status": "low",
+    "grouping": "Alpine",
+    "status": "on_plan",
+    "statusLabel": "On plan",
+    "occupancy": "74%",
+    "adr": "$2,600",
+    "revpar": "$1,940",
     "revenue": "$2.00M",
-    "labelOffset": [6, -15]
+    "coordinates": [25.7208, 66.5039]
   },
   { 
     "id": "sosei-marea", 
     "name": "SOSEI MARÉA", 
     "city": "Maldives", 
-    "coordinates": [73.5089, 4.1755], 
-    "status": "limited",
+    "grouping": "Ocean",
+    "status": "above_plan",
+    "statusLabel": "Performing above plan",
+    "occupancy": "76%",
+    "adr": "$2,400",
+    "revpar": "$1,824",
     "revenue": "$1.40M",
-    "labelOffset": [-110, 6]
+    "coordinates": [73.5089, 4.1755]
   },
   { 
     "id": "sosei-pelagia", 
     "name": "SOSEI PELAGIA", 
     "city": "Indonesia", 
-    "coordinates": [115.1889, -8.4095], 
-    "status": "limited",
+    "grouping": "Ocean",
+    "status": "on_plan",
+    "statusLabel": "On plan",
+    "occupancy": "70%",
+    "adr": "$1,900",
+    "revpar": "$1,330",
     "revenue": "$1.20M",
-    "labelOffset": [6, 6]
+    "coordinates": [115.1889, -8.4095]
   },
   { 
     "id": "sosei-verper", 
     "name": "SOSEI VERPER", 
     "city": "New York, USA", 
-    "coordinates": [-74.0060, 40.7128], 
-    "status": "limited",
+    "grouping": "City",
+    "status": "attention",
+    "statusLabel": "Attention",
+    "occupancy": "62%",
+    "adr": "$1,450",
+    "revpar": "$899",
     "revenue": "$1.30M",
-    "labelOffset": [-125, -25]
+    "coordinates": [-74.0060, 40.7128]
   },
   { 
     "id": "sosei-elan", 
     "name": "SOSEI ÉLAN", 
     "city": "Los Angeles, USA", 
-    "coordinates": [-118.2437, 34.0522], 
-    "status": "limited",
+    "grouping": "City",
+    "status": "on_plan",
+    "statusLabel": "On plan",
+    "occupancy": "69%",
+    "adr": "$1,600",
+    "revpar": "$1,104",
     "revenue": "$1.10M",
-    "labelOffset": [6, 6]
+    "coordinates": [-118.2437, 34.0522]
   },
   { 
     "id": "sosei-sylvan", 
     "name": "SOSEI SYLVAN", 
-    "city": "Kyoto", 
-    "coordinates": [135.7681, 35.0116], 
-    "status": "limited",
+    "city": "Kyoto, Japan", 
+    "grouping": "Forest",
+    "status": "above_plan",
+    "statusLabel": "Performing above plan",
+    "occupancy": "82%",
+    "adr": "$2,100",
+    "revpar": "$1,722",
     "revenue": "$1.00M",
-    "labelOffset": [6, -20]
+    "coordinates": [135.7681, 35.0116]
   },
   { 
     "id": "sosei-verdant", 
     "name": "SOSEI VERDANT", 
     "city": "Thailand", 
-    "coordinates": [98.9853, 18.7883], 
-    "status": "limited",
+    "grouping": "Forest",
+    "status": "attention",
+    "statusLabel": "Attention",
+    "occupancy": "58%",
+    "adr": "$1,250",
+    "revpar": "$725",
     "revenue": "$0.80M",
-    "labelOffset": [6, 6]
+    "coordinates": [98.9853, 18.7883]
   },
   { 
     "id": "sosei-hearth", 
     "name": "SOSEI HEARTH", 
     "city": "Tuscany, Italy", 
-    "coordinates": [11.2558, 43.7696], 
-    "status": "limited",
+    "grouping": "Countryside",
+    "status": "above_plan",
+    "statusLabel": "Performing above plan",
+    "occupancy": "79%",
+    "adr": "$1,950",
+    "revpar": "$1,540",
     "revenue": "$1.10M",
-    "labelOffset": [-120, 15]
+    "coordinates": [11.2558, 43.7696]
   },
   { 
     "id": "sosei-pastoral", 
     "name": "SOSEI PASTORAL", 
     "city": "Provence, France", 
-    "coordinates": [5.2684, 43.7151], 
-    "status": "limited",
+    "grouping": "Countryside",
+    "status": "on_plan",
+    "statusLabel": "On plan",
+    "occupancy": "71%",
+    "adr": "$1,750",
+    "revpar": "$1,242",
     "revenue": "$0.90M",
-    "labelOffset": [-120, -15]
+    "coordinates": [5.2684, 43.7151]
   },
   { 
     "id": "sosei-mirage", 
     "name": "SOSEI MIRAGE", 
     "city": "Egypt", 
-    "coordinates": [31.13, 29.97], 
-    "status": "limited",
+    "grouping": "Desert",
+    "status": "attention",
+    "statusLabel": "Attention",
+    "occupancy": "55%",
+    "adr": "$1,650",
+    "revpar": "$907",
     "revenue": "$1.00M",
-    "labelOffset": [6, 6]
+    "coordinates": [31.13, 29.97]
   },
   { 
     "id": "sosei-solstice", 
     "name": "SOSEI SOLSTICE", 
     "city": "Oman", 
-    "coordinates": [58.4059, 23.5859], 
-    "status": "limited",
+    "grouping": "Desert",
+    "status": "on_plan",
+    "statusLabel": "On plan",
+    "occupancy": "66%",
+    "adr": "$1,850",
+    "revpar": "$1,221",
     "revenue": "$0.80M",
-    "labelOffset": [6, -15]
+    "coordinates": [58.4059, 23.5859]
   }
 ]

@@ -161,12 +161,12 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { prop: 'Sosei Ocean Collection', items: 12, bookings: 780, ticket: '$100.79', rev: '$78,620' },
-                { prop: 'Sosei Alpine Collection', items: 15, bookings: 510, ticket: '$106.49', rev: '$54,310' },
-                { prop: 'Sosei Forest Collection', items: 8, bookings: 320, ticket: '$98.12', rev: '$31,400' },
-                { prop: 'Sosei Countryside Collection', items: 10, bookings: 240, ticket: '$100.80', rev: '$24,200' },
-                { prop: 'Sosei Desert Collection', items: 10, bookings: 180, ticket: '$84.61', rev: '$15,230' },
-                { prop: 'Sosei City Collection', items: 5, bookings: 110, ticket: '$88.00', rev: '$9,680' },
+                { prop: 'SOSEI Ocean Collection', items: 12, bookings: 780, ticket: '$100.79', rev: '$78,620' },
+                { prop: 'SOSEI Alpine Collection', items: 15, bookings: 510, ticket: '$106.49', rev: '$54,310' },
+                { prop: 'SOSEI Forest Collection', items: 8, bookings: 320, ticket: '$98.12', rev: '$31,400' },
+                { prop: 'SOSEI Countryside Collection', items: 10, bookings: 240, ticket: '$100.80', rev: '$24,200' },
+                { prop: 'SOSEI Desert Collection', items: 10, bookings: 180, ticket: '$84.61', rev: '$15,230' },
+                { prop: 'SOSEI City Collection', items: 5, bookings: 110, ticket: '$88.00', rev: '$9,680' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.prop}</td>
@@ -250,12 +250,12 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Seascape Restaurant (Sosei Ocean)', covers: '3,200', check: '$58.25', share: '35%', rev: '$186,420' },
-                { name: 'Terra Pavilion (Sosei Alpine)', covers: '2,840', check: '$39.57', share: '20%', rev: '$112,380' },
-                { name: 'Alpine Grill (Sosei Alpine)', covers: '1,980', check: '$42.80', share: '45%', rev: '$84,760' },
-                { name: 'The Tea Lounge (Sosei City)', covers: '1,540', check: '$39.76', share: '55%', rev: '$61,240' },
+                { name: 'Seascape Restaurant (SOSEI Ocean)', covers: '3,200', check: '$58.25', share: '35%', rev: '$186,420' },
+                { name: 'Terra Pavilion (SOSEI Alpine)', covers: '2,840', check: '$39.57', share: '20%', rev: '$112,380' },
+                { name: 'Alpine Grill (SOSEI Alpine)', covers: '1,980', check: '$42.80', share: '45%', rev: '$84,760' },
+                { name: 'The Tea Lounge (SOSEI City)', covers: '1,540', check: '$39.76', share: '55%', rev: '$61,240' },
                 { name: 'In-Villa Private Dining (All Properties)', covers: '980', check: '$47.76', share: '15%', rev: '$46,810' },
-                { name: 'Poolside Ocean Bar (Sosei Ocean)', covers: '1,200', check: '$17.36', share: '70%', rev: '$20,840' },
+                { name: 'Poolside Ocean Bar (SOSEI Ocean)', covers: '1,200', check: '$17.36', share: '70%', rev: '$20,840' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -294,11 +294,11 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Seascape Restaurant', prop: 'Sosei Ocean', cap: 80, revpas: '$245', occ: '88%' },
-                { name: 'Terra Pavilion', prop: 'Sosei Alpine', cap: 120, revpas: '$198', occ: '74%' },
-                { name: 'Alpine Grill', prop: 'Sosei Alpine', cap: 90, revpas: '$176', occ: '70%' },
-                { name: 'The Tea Lounge', prop: 'Sosei City', cap: 60, revpas: '$142', occ: '62%' },
-                { name: 'Poolside Ocean Bar', prop: 'Sosei Ocean', cap: 100, revpas: '$118', occ: '65%' },
+                { name: 'Seascape Restaurant', prop: 'SOSEI Ocean', cap: 80, revpas: '$245', occ: '88%' },
+                { name: 'Terra Pavilion', prop: 'SOSEI Alpine', cap: 120, revpas: '$198', occ: '74%' },
+                { name: 'Alpine Grill', prop: 'SOSEI Alpine', cap: 90, revpas: '$176', occ: '70%' },
+                { name: 'The Tea Lounge', prop: 'SOSEI City', cap: 60, revpas: '$142', occ: '62%' },
+                { name: 'Poolside Ocean Bar', prop: 'SOSEI Ocean', cap: 100, revpas: '$118', occ: '65%' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -504,10 +504,10 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { date: 'Jun 2, 7:00 PM', name: 'Full Moon Sandbank Gala', location: 'Sosei Ocean', cap: '24 / 24 seats', status: 'Fully Booked', statusColor: 'emerald' },
-                { date: 'Jun 4, 6:30 AM', name: 'Glacier Sunrise Yoga & Tea', location: 'Sosei Alpine', cap: '18 / 20 seats', status: 'Almost Full', statusColor: 'amber' },
-                { date: 'Jun 7, 7:00 PM', name: 'Michelin Guest Chef Omakase', location: 'Sosei Ocean', cap: '12 / 12 seats', status: 'Fully Booked', statusColor: 'emerald' },
-                { date: 'Jun 12, 10:00 AM', name: 'Coral Restoration & Reef Safari', location: 'Sosei Ocean', cap: '15 / 30 seats', status: 'Open for Booking', statusColor: 'zinc' },
+                { date: 'Jun 2, 7:00 PM', name: 'Full Moon Sandbank Gala', location: 'SOSEI Ocean', cap: '24 / 24 seats', status: 'Fully Booked', statusColor: 'emerald' },
+                { date: 'Jun 4, 6:30 AM', name: 'Glacier Sunrise Yoga & Tea', location: 'SOSEI Alpine', cap: '18 / 20 seats', status: 'Almost Full', statusColor: 'amber' },
+                { date: 'Jun 7, 7:00 PM', name: 'Michelin Guest Chef Omakase', location: 'SOSEI Ocean', cap: '12 / 12 seats', status: 'Fully Booked', statusColor: 'emerald' },
+                { date: 'Jun 12, 10:00 AM', name: 'Coral Restoration & Reef Safari', location: 'SOSEI Ocean', cap: '15 / 30 seats', status: 'Open for Booking', statusColor: 'zinc' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 text-zinc-500 text-[11px]">{row.date}</td>
@@ -515,13 +515,12 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
                   <td className="py-2.5 px-3 text-zinc-600 dark:text-zinc-300 text-[11px]">{row.location}</td>
                   <td className="py-2.5 px-3 text-right font-medium text-zinc-700 dark:text-zinc-300">{row.cap}</td>
                   <td className="py-2.5 px-3 text-right">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      row.statusColor === 'emerald'
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${row.statusColor === 'emerald'
                         ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
                         : row.statusColor === 'amber'
-                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
-                    }`}>
+                          ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
+                      }`}>
                       {row.status}
                     </span>
                   </td>
@@ -555,12 +554,12 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Ocean Collection', fnb: '$165', act: '$112', combined: '$277' },
-                { name: 'Sosei Alpine Collection', fnb: '$150', act: '$98', combined: '$248' },
-                { name: 'Sosei Desert Collection', fnb: '$135', act: '$85', combined: '$220' },
-                { name: 'Sosei Forest Collection', fnb: '$120', act: '$72', combined: '$192' },
-                { name: 'Sosei Countryside Collection', fnb: '$118', act: '$68', combined: '$186' },
-                { name: 'Sosei City Collection', fnb: '$110', act: '$48', combined: '$158' },
+                { name: 'SOSEI Ocean Collection', fnb: '$165', act: '$112', combined: '$277' },
+                { name: 'SOSEI Alpine Collection', fnb: '$150', act: '$98', combined: '$248' },
+                { name: 'SOSEI Desert Collection', fnb: '$135', act: '$85', combined: '$220' },
+                { name: 'SOSEI Forest Collection', fnb: '$120', act: '$72', combined: '$192' },
+                { name: 'SOSEI Countryside Collection', fnb: '$118', act: '$68', combined: '$186' },
+                { name: 'SOSEI City Collection', fnb: '$110', act: '$48', combined: '$158' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -583,7 +582,7 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
         <div className="p-4 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
           <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Sunset Cruise Yield & Performance</h4>
           <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            The Sunset Catamaran Cruise continues to be the highest performing single experiential item in the Sosei portfolio.
+            The Sunset Catamaran Cruise continues to be the highest performing single experiential item in the SOSEI portfolio.
             With an average ticket price of $150 per person and a 92% capacity load factor on weekends, it generates significant high-margin beverage revenue.
           </p>
         </div>

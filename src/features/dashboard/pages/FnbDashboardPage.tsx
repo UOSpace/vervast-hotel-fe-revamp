@@ -149,8 +149,8 @@ export function FnbDashboardPage() {
       {/* Header Widget */}
       <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 lg:pt-6 animate-card-enter">
         <div>
-          <span className="text-[9.5px] font-bold uppercase tracking-widest text-zinc-500">Experience Intelligence</span>
-          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mt-0.5">Welcome To SOSEI Experiences & F&B</h1>
+          <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Experience Intelligence</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Experiences & F&B</h1>
           <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Curated experiences. Memorable moments. Measurable impact.</p>
         </div>
 

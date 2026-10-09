@@ -468,7 +468,7 @@ export function getDashboardComputedData(): DashboardComputedData {
   const portfolioPerformance = [
     {
       category: 'alpine',
-      label: 'Sosei Alpine',
+      label: 'SOSEI Alpine',
       value: '$2.10M',
       trend: '+12%',
       up: true,
@@ -480,7 +480,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'ocean',
-      label: 'Sosei Ocean',
+      label: 'SOSEI Ocean',
       value: '$1.30M',
       trend: '+15%',
       up: true,
@@ -492,7 +492,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'countryside',
-      label: 'Sosei Countryside',
+      label: 'SOSEI Countryside',
       value: '$1.00M',
       trend: '+9%',
       up: true,
@@ -504,7 +504,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'forest',
-      label: 'Sosei Forest',
+      label: 'SOSEI Forest',
       value: '$0.70M',
       trend: '+6%',
       up: true,
@@ -516,7 +516,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'city',
-      label: 'Sosei City',
+      label: 'SOSEI City',
       value: '$0.60M',
       trend: '+8%',
       up: true,
@@ -528,7 +528,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'desert',
-      label: 'Sosei Desert',
+      label: 'SOSEI Desert',
       value: '$0.20M',
       trend: '-2%',
       up: false,

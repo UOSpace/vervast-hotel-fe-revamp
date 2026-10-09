@@ -6,7 +6,7 @@ export function UnderConstructionPage() {
   const location = useLocation();
 
   const isDesignPortal = location.pathname === '/dashboard/development';
-  const pageTitle = isDesignPortal ? 'Welcome To SOSEI Design' : 'Module Under Development';
+  const pageTitle = isDesignPortal ? 'Welcome to SOSEI Design' : 'Module Under Development';
   const pageSubtitle = isDesignPortal 
     ? 'Concept, architecture, property renovation and luxury developments.' 
     : "This module is currently being crafted by our engineering team. We're working hard to bring you new features and improvements.";
@@ -30,7 +30,7 @@ export function UnderConstructionPage() {
       </div>
 
       {/* Main message */}
-      <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 mb-2 tracking-tight text-center">{pageTitle}</h1>
+      <h1 className="text-2xl font-bold text-zinc-900 mb-2 tracking-wide text-center">{pageTitle}</h1>
       <p className="text-zinc-500 max-w-lg mx-auto text-xs text-center leading-relaxed mb-8">
         {pageSubtitle}
       </p>

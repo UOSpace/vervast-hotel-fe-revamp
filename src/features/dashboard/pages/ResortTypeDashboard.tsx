@@ -27,19 +27,19 @@ const geoConfigs = [
 ];
 
 const segmentConfigs = [
-  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#1F1D1C' },
-  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#3D3A38' },
-  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#5E5A56' },
-  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#857E78' },
-  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#B2A9A0' },
+  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#0f172a' },
+  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#334155' },
+  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#64748b' },
+  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#94a3b8' },
+  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#cbd5e1' },
 ];
 
 const channelConfigs = [
-  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#1F1D1C' },
-  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#3D3A38' },
-  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#5E5A56' },
-  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#857E78' },
-  { channel: 'Others', share: 13, adrFactor: 0.71, color: '#B2A9A0' },
+  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#0f172a' },
+  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#334155' },
+  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#64748b' },
+  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#94a3b8' },
+  { channel: 'Others', share: 13, adrFactor: 0.71, color: '#cbd5e1' },
 ];
 
 // Helper to distribute metrics to categories consistently

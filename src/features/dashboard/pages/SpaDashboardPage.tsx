@@ -57,12 +57,12 @@ const revenueByCategory = [
   { name: 'Other', value: 3 }
 ];
 
-const therapistPerformance = [
-  { name: 'Ananda', treatments: 152, revenue: '$36.5k', utilization: '82%' },
-  { name: 'Maya', treatments: 148, revenue: '$34.1k', utilization: '78%' },
-  { name: 'Suri', treatments: 137, revenue: '$31.8k', utilization: '75%' },
-  { name: 'Lina', treatments: 130, revenue: '$28.9k', utilization: '72%' },
-  { name: 'Pema', treatments: 124, revenue: '$27.6k', utilization: '68%' }
+const performanceByProperty = [
+  { property: 'SOSEI Nocturne', treatments: 384, revenue: '$94.5k', share: '33%' },
+  { property: 'SOSEI Maréa', treatments: 312, revenue: '$77.3k', share: '27%' },
+  { property: 'SOSEI Sylvan', treatments: 236, revenue: '$51.6k', share: '18%' },
+  { property: 'SOSEI Solstice', treatments: 182, revenue: '$37.2k', share: '13%' },
+  { property: 'SOSEI Hearth', treatments: 134, revenue: '$25.8k', share: '9%' },
 ];
 
 const upcomingPeakTimes = [
@@ -73,10 +73,10 @@ const upcomingPeakTimes = [
 ];
 
 const retailTopSellers = [
-  { name: 'Sosei Signature Oil', revenue: '$9,420' },
+  { name: 'SOSEI Signature Oil', revenue: '$9,420' },
   { name: 'Calm & Restore Balm', revenue: '$6,210' },
   { name: 'Mineral Soak', revenue: '$4,860' },
-  { name: 'Sosei Silk Eye Pillow', revenue: '$3,980' }
+  { name: 'SOSEI Silk Eye Pillow', revenue: '$3,980' }
 ];
 
 const heatmapDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -108,12 +108,12 @@ export function SpaDashboardPage() {
 
   return (
     <div className="w-full h-full flex flex-col gap-5 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 text-[10px]">
-      
+
       {/* Header Widget */}
       <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 lg:pt-6 animate-card-enter">
         <div>
-          <span className="text-[9.5px] font-bold uppercase tracking-widest text-zinc-500">Sanctuary Wellness</span>
-          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mt-0.5">Welcome To SOSEI Sanctuary</h1>
+          <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Sanctuary Wellness</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Sanctuary</h1>
           <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Delivering balance. Enhancing wellbeing. Elevating every stay.</p>
         </div>
 
@@ -338,33 +338,33 @@ export function SpaDashboardPage() {
         </div>
       </div>
 
-      {/* LAYER 3: Therapist Performance Table (5 cols) + [Top Treatments (3.5 cols) & Revenue by Category (3.5 cols) in 7 cols] */}
+      {/* LAYER 3: Performance by Property Table (5 cols) + [Top Treatments (3.5 cols) & Revenue by Category (3.5 cols) in 7 cols] */}
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
-        {/* Left: Therapist Performance (5 cols) */}
+        {/* Left: Performance by Property (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Therapist Performance', data: 'Therapists' })}
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Performance by Property', data: 'Property Mix' })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.35s' }}
         >
           <div className="flex justify-between items-center mb-3 h-4 shrink-0">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Therapist Performance</h3>
-            <InfoTooltip text="Treatments completed, revenue generated, and utilization rate." />
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Performance by Property</h3>
+            <InfoTooltip text="Treatments completed, spa revenue generated, and share by luxury property." />
           </div>
 
           <div className="flex-1 flex flex-col justify-between py-0.5">
-            <div className="grid grid-cols-[30%_25%_25%_20%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400">
-              <div>Therapist</div>
+            <div className="grid grid-cols-[38%_20%_24%_18%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400">
+              <div>Property</div>
               <div className="text-right">Treatments</div>
               <div className="text-right">Rev</div>
-              <div className="text-right">Util</div>
+              <div className="text-right">Share</div>
             </div>
             <div className="flex flex-col justify-between flex-1 py-1 gap-1.5">
-              {therapistPerformance.map(th => (
-                <div key={th.name} className="grid grid-cols-[30%_25%_25%_20%] items-center text-[10px]">
-                  <div className="text-zinc-700 font-medium truncate">{th.name}</div>
-                  <div className="text-right text-zinc-500">{th.treatments}</div>
-                  <div className="text-right font-medium text-zinc-900">{th.revenue}</div>
-                  <div className="text-right font-medium text-emerald-700 text-[9.5px]">{th.utilization}</div>
+              {performanceByProperty.map(item => (
+                <div key={item.property} className="grid grid-cols-[38%_20%_24%_18%] items-center text-[10px]">
+                  <div className="text-zinc-700 font-medium truncate">{item.property}</div>
+                  <div className="text-right text-zinc-500 tabular-nums">{item.treatments}</div>
+                  <div className="text-right font-medium text-zinc-900 tabular-nums">{item.revenue}</div>
+                  <div className="text-right font-medium text-[#14532d] text-[9.5px] tabular-nums">{item.share}</div>
                 </div>
               ))}
             </div>
@@ -476,9 +476,8 @@ export function SpaDashboardPage() {
                     <div className="text-[10px] font-bold text-zinc-900">{pk.day}</div>
                     <div className="text-[9px] text-zinc-400 font-normal">{pk.time}</div>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider ${
-                    pk.level === 'HIGH' ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-700'
-                  }`}>
+                  <span className={`px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider ${pk.level === 'HIGH' ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-700'
+                    }`}>
                     {pk.level}
                   </span>
                 </div>

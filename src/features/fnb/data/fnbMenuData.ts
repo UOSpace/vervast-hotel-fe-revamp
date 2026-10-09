@@ -1,3 +1,23 @@
+import caviarImg from '@/assets/fnb/fnb_caviar.jpg';
+import scallopCrudoImg from '@/assets/fnb/fnb_scallop_crudo.jpg';
+import mushroomTartletImg from '@/assets/fnb/fnb_mushroom_tartlet.jpg';
+import softShellCrabImg from '@/assets/fnb/fnb_soft_shell_crab.jpg';
+import wagyuStriploinImg from '@/assets/fnb/fnb_wagyu_striploin.jpg';
+import lobsterThermidorImg from '@/assets/fnb/fnb_lobster_thermidor.jpg';
+import toothfishImg from '@/assets/fnb/fnb_toothfish.jpg';
+import cauliflowerSteakImg from '@/assets/fnb/fnb_cauliflower_steak.jpg';
+import taglioliniTruffleImg from '@/assets/fnb/fnb_tagliolini_truffle.jpg';
+import crabRavioloniImg from '@/assets/fnb/fnb_crab_ravioloni.jpg';
+import herbGnocchiImg from '@/assets/fnb/fnb_herb_gnocchi.jpg';
+import zenGardenBowlImg from '@/assets/fnb/fnb_zen_garden_bowl.jpg';
+import salmonBurrataImg from '@/assets/fnb/fnb_salmon_burrata.jpg';
+import chocolateSouffleImg from '@/assets/fnb/fnb_chocolate_souffle.jpg';
+import matchaMillefeuilleImg from '@/assets/fnb/fnb_matcha_millefeuille.jpg';
+import sorbetTrioImg from '@/assets/fnb/fnb_sorbet_trio.jpg';
+import goldenHighballImg from '@/assets/fnb/fnb_golden_highball.jpg';
+import botanicalElixirImg from '@/assets/fnb/fnb_botanical_elixir.jpg';
+import icedMatchaLatteImg from '@/assets/fnb/fnb_iced_matcha_latte.jpg';
+
 export interface FnbGuest {
   id: string;
   name: string;
@@ -34,7 +54,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-101',
     name: 'Sal Zanjabila',
     room: 'Alpine Penthouse 101',
-    property: 'Sosei Alpine (St. Moritz)',
+    property: 'SOSEI Alpine (St. Moritz)',
     vipTier: 'Platinum VIP',
     allergies: ['Peanuts', 'Tree Nuts'],
     dietaryRestrictions: ['Pescetarian'],
@@ -48,7 +68,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-102',
     name: 'Thomas Bailey & Family',
     room: 'Overwater Villa 108',
-    property: 'Sosei Ocean (Maldives)',
+    property: 'SOSEI Ocean (Maldives)',
     vipTier: 'Founding Circle',
     allergies: ['Shellfish', 'Crustaceans'],
     dietaryRestrictions: ['Halal Preferred'],
@@ -62,7 +82,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-103',
     name: 'Elena Rostova',
     room: 'Skyline Residence 2801',
-    property: 'Sosei City (New York)',
+    property: 'SOSEI City (New York)',
     vipTier: 'VVIP Tier 1',
     allergies: ['Gluten'],
     dietaryRestrictions: ['Celiac Friendly', 'No Refined Sugar'],
@@ -76,7 +96,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-104',
     name: 'Kenzo Tanaka',
     room: 'Sanctuary Ryokan Villa 12',
-    property: 'Sosei Forest (Kyoto)',
+    property: 'SOSEI Forest (Kyoto)',
     vipTier: 'Diamond Patron',
     allergies: ['Dairy', 'Lactose'],
     dietaryRestrictions: ['Organic Only'],
@@ -90,7 +110,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-105',
     name: 'Martin Fuentes',
     room: 'Glacier Chalet 201',
-    property: 'Sosei Alpine (Zermatt)',
+    property: 'SOSEI Alpine (Zermatt)',
     vipTier: 'Founding Circle',
     allergies: [],
     dietaryRestrictions: ['None'],
@@ -104,7 +124,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-106',
     name: 'Sophia Lorenzi',
     room: 'Grand Oasis Villa 05',
-    property: 'Sosei Desert (Al Wadi)',
+    property: 'SOSEI Desert (Al Wadi)',
     vipTier: 'Platinum VIP',
     allergies: ['Soy', 'Sesame'],
     dietaryRestrictions: ['Vegetarian'],
@@ -118,7 +138,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     id: 'gst-107',
     name: 'Lord & Lady Sterling',
     room: 'Vineyard Suite 204',
-    property: 'Sosei Countryside (Tuscany)',
+    property: 'SOSEI Countryside (Tuscany)',
     vipTier: 'VVIP Tier 1',
     allergies: ['Eggs'],
     dietaryRestrictions: ['Low Sodium'],
@@ -138,7 +158,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'starters',
     categoryLabel: 'Starters & Caviar',
     price: 185,
-    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
+    image: caviarImg,
     description: 'Aged Oscietra sturgeon caviar served with warm buckwheat blinis, organic egg yolk emulsion, crème fraîche, and garden chives.',
     prepTimeMinutes: 10,
     calories: 220,
@@ -160,7 +180,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'starters',
     categoryLabel: 'Starters & Caviar',
     price: 48,
-    image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80',
+    image: scallopCrudoImg,
     description: 'Sashimi-grade Hokkaido sea scallops sliced paper-thin, compressed cucumber, yuzu kosho vinaigrette, Australian finger lime pearls, and sea salt.',
     prepTimeMinutes: 12,
     calories: 160,
@@ -183,7 +203,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'starters',
     categoryLabel: 'Starters & Caviar',
     price: 36,
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
+    image: mushroomTartletImg,
     description: 'Hand-foraged Swiss alpine morels and chanterelles pan-glazed in shallot reduction, encased in crisp vegan pastry with thyme glaze.',
     prepTimeMinutes: 15,
     calories: 240,
@@ -205,7 +225,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'starters',
     categoryLabel: 'Starters & Caviar',
     price: 44,
-    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80',
+    image: softShellCrabImg,
     description: 'Flash-fried soft-shell crab resting on crushed roasted peanut satay cream, green mango slaw, and kaffir lime leaf oil.',
     prepTimeMinutes: 16,
     calories: 380,
@@ -230,7 +250,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'mains',
     categoryLabel: 'Main Courses & Grills',
     price: 165,
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
+    image: wagyuStriploinImg,
     description: 'Finest Japanese A5 black cattle sirloin seared over binchotan charcoal, accompanied by smoked potato mousseline, baby leek confit, and red wine bordelaise jus.',
     prepTimeMinutes: 22,
     calories: 680,
@@ -248,11 +268,11 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
   },
   {
     id: 'fnb-main-02',
-    name: 'Brittany Blue Lobster Thermidor Sosei',
+    name: 'Brittany Blue Lobster Thermidor SOSEI',
     category: 'mains',
     categoryLabel: 'Main Courses & Grills',
     price: 145,
-    image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80',
+    image: lobsterThermidorImg,
     description: 'Whole Brittany blue lobster roasted in shell with Cognac reduction, aged Gruyère crust, dijon cream sauce, and fresh summer tarragon.',
     prepTimeMinutes: 25,
     calories: 590,
@@ -276,7 +296,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'mains',
     categoryLabel: 'Main Courses & Grills',
     price: 78,
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
+    image: toothfishImg,
     description: 'Sustainably sourced Chilean seabass marinated 48 hours in Kyoto saikyo white miso and mirin, caramelized over coals with baby bok choy and toasted sesame.',
     prepTimeMinutes: 20,
     calories: 420,
@@ -297,7 +317,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'mains',
     categoryLabel: 'Main Courses & Grills',
     price: 42,
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
+    image: cauliflowerSteakImg,
     description: 'Thick cut roasted heirloom cauliflower basted in za’atar oil, served on toasted sesame tahini, pomegranate reduction, mint chimichurri, and toasted pine nuts.',
     prepTimeMinutes: 18,
     calories: 310,
@@ -321,7 +341,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'pasta',
     categoryLabel: 'Wood-Fired & Pasta',
     price: 88,
-    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80',
+    image: taglioliniTruffleImg,
     description: '30-egg yolk handmade silky pasta spun in cultured butter emulsion, finished tableside with fresh shavings of Italian Alba white truffle.',
     prepTimeMinutes: 15,
     calories: 520,
@@ -343,7 +363,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'pasta',
     categoryLabel: 'Wood-Fired & Pasta',
     price: 64,
-    image: 'https://images.unsplash.com/photo-1587740896339-96a76170508d?auto=format&fit=crop&w=600&q=80',
+    image: crabRavioloniImg,
     description: 'Jumbo pasta pockets stuffed with sweet red king crab meat and artisanal buffalo ricotta, floating in saffron lobster bisque with Meyer lemon oil.',
     prepTimeMinutes: 18,
     calories: 460,
@@ -364,7 +384,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'pasta',
     categoryLabel: 'Wood-Fired & Pasta',
     price: 46,
-    image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&w=600&q=80',
+    image: herbGnocchiImg,
     description: 'Tender pillow gnocchi crafted from mountain potatoes and organic cassava starch, tossed in roasted cherry tomato passata, Genovese basil, and walnut pesto.',
     prepTimeMinutes: 14,
     calories: 390,
@@ -388,7 +408,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'bowls',
     categoryLabel: 'Sanctuary Bowls & Salads',
     price: 34,
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80',
+    image: zenGardenBowlImg,
     description: 'Wild heirloom quinoa, avocado rose, edamame, shaved radishes, pickled lotus root, kale crisps, and cold-pressed ginger tahini dressing.',
     prepTimeMinutes: 10,
     calories: 340,
@@ -411,7 +431,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'bowls',
     categoryLabel: 'Sanctuary Bowls & Salads',
     price: 42,
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80',
+    image: salmonBurrataImg,
     description: 'House cold-smoked Swiss alpine salmon, creamy artisanal burrata heart, wild rocket arugula, pomegranate arils, and aged balsamic glaze.',
     prepTimeMinutes: 10,
     calories: 410,
@@ -434,7 +454,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'desserts',
     categoryLabel: 'Artisanal Desserts',
     price: 28,
-    image: 'https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80',
+    image: chocolateSouffleImg,
     description: 'Baked to order molten single-origin Grand Cru chocolate soufflé, accompanied by Tahitian vanilla bean crème anglaise and caramelized Piedmont hazelnut crunch.',
     prepTimeMinutes: 20,
     calories: 480,
@@ -457,7 +477,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'desserts',
     categoryLabel: 'Artisanal Desserts',
     price: 26,
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80',
+    image: matchaMillefeuilleImg,
     description: 'Crisp caramelized inverted puff pastry layered with ceremonial grade Uji matcha mascarpone mousse and adzuki red bean coulis.',
     prepTimeMinutes: 12,
     calories: 380,
@@ -475,11 +495,11 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
   },
   {
     id: 'fnb-dst-03',
-    name: 'Sosei Organic Sorbet Trio (100% Allergen-Free)',
+    name: 'SOSEI Organic Sorbet Trio (100% Allergen-Free)',
     category: 'desserts',
     categoryLabel: 'Artisanal Desserts',
     price: 22,
-    image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=600&q=80',
+    image: sorbetTrioImg,
     description: 'Three quenelles of fresh house-churned sorbet: Alphonso Mango & Lime, Sicilian Blood Orange, and Wild Alpine Raspberry. Completely allergen-free.',
     prepTimeMinutes: 8,
     calories: 140,
@@ -498,11 +518,11 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
   // SIGNATURE BEVERAGES & CELLAR
   {
     id: 'fnb-bev-01',
-    name: 'Sosei Signature Golden Highball',
+    name: 'SOSEI Signature Golden Highball',
     category: 'beverages',
     categoryLabel: 'Signature Beverages & Cellar',
     price: 38,
-    image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80',
+    image: goldenHighballImg,
     description: 'Yamazaki 12-Year Single Malt Whisky, artisanal cold-extracted ginger root elixir, hand-carved ice sphere, soda, finished with 24k edible gold leaf.',
     prepTimeMinutes: 5,
     calories: 120,
@@ -522,7 +542,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'beverages',
     categoryLabel: 'Signature Beverages & Cellar',
     price: 24,
-    image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',
+    image: botanicalElixirImg,
     description: 'Organic mountain blackberry juice, rosemary reduction, smoked pine needles mist, and tonic water. Zero alcohol, rejuvenating botanicals.',
     prepTimeMinutes: 5,
     calories: 75,
@@ -541,7 +561,7 @@ export const FNB_MENU_ITEMS: FnbMenuItem[] = [
     category: 'beverages',
     categoryLabel: 'Signature Beverages & Cellar',
     price: 18,
-    image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=600&q=80',
+    image: icedMatchaLatteImg,
     description: 'Stone-ground ceremonial Uji matcha whisked with house-pressed raw almond milk, vanilla blossom bean syrup, and crushed ice.',
     prepTimeMinutes: 5,
     calories: 130,

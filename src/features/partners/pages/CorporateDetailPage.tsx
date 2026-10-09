@@ -5,7 +5,7 @@ import {
   UsersGroupTwoRounded,
 } from '@solar-icons/react';
 import { useToast } from '../../../components/ui/toast';
-import { Input } from '../../../components/ui/input';
+import { Input } from '@/components/ui/Input';
 
 interface Lead {
   id: string;

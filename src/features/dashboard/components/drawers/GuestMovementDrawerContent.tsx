@@ -6,12 +6,12 @@ interface GuestMovementDrawerContentProps {
 
 export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContentProps) {
   const movementData = [
-    { name: 'Alpine', arr: 145, in: 580, dep: 95, vip: 18, collection: 'Sosei Alpine (Switzerland & Finland)' },
-    { name: 'Ocean', arr: 110, in: 520, dep: 80, vip: 14, collection: 'Sosei Ocean (Maldives & Bali)' },
-    { name: 'City', arr: 160, in: 640, dep: 120, vip: 22, collection: 'Sosei City (New York & Los Angeles)' },
-    { name: 'Countryside', arr: 85, in: 410, dep: 60, vip: 10, collection: 'Sosei Countryside (Tuscany & Provence)' },
-    { name: 'Forest', arr: 75, in: 387, dep: 55, vip: 12, collection: 'Sosei Forest (Kyoto & Chiang Mai)' },
-    { name: 'Desert', arr: 60, in: 310, dep: 45, vip: 8, collection: 'Sosei Desert (Siwa & Al Hajar)' },
+    { name: 'Alpine', arr: 145, in: 580, dep: 95, vip: 18, collection: 'SOSEI Alpine (Switzerland & Finland)' },
+    { name: 'Ocean', arr: 110, in: 520, dep: 80, vip: 14, collection: 'SOSEI Ocean (Maldives & Bali)' },
+    { name: 'City', arr: 160, in: 640, dep: 120, vip: 22, collection: 'SOSEI City (New York & Los Angeles)' },
+    { name: 'Countryside', arr: 85, in: 410, dep: 60, vip: 10, collection: 'SOSEI Countryside (Tuscany & Provence)' },
+    { name: 'Forest', arr: 75, in: 387, dep: 55, vip: 12, collection: 'SOSEI Forest (Kyoto & Chiang Mai)' },
+    { name: 'Desert', arr: 60, in: 310, dep: 45, vip: 8, collection: 'SOSEI Desert (Siwa & Al Hajar)' },
   ];
 
   return (
@@ -29,15 +29,15 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#27272a' : '#f4f4f5'} />
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: theme === 'dark' ? '#a1a1aa' : '#71717a' }} />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: theme === 'dark' ? '#a1a1aa' : '#71717a' }} width={40} />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff', 
-                border: theme === 'dark' ? '1px solid #27272a' : '1px solid #e4e4e7', 
-                borderRadius: '8px', 
-                fontSize: '11px', 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: theme === 'dark' ? '#18181b' : '#ffffff',
+                border: theme === 'dark' ? '1px solid #27272a' : '1px solid #e4e4e7',
+                borderRadius: '8px',
+                fontSize: '11px',
                 color: theme === 'dark' ? '#fafafa' : '#09090b',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-              }} 
+              }}
             />
             <Bar dataKey="in" name="In-House" fill={theme === 'dark' ? '#fafafa' : '#18181b'} radius={[4, 4, 0, 0]} />
             <Bar dataKey="arr" name="Expected Arrivals" fill="#059669" radius={[4, 4, 0, 0]} />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Eye, EyeClosed, User, Lock } from '@solar-icons/react';
 import { useLogin } from '../hooks/useLogin';
 import { Logo } from '@/components/ui/Logo';

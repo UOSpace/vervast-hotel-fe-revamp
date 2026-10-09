@@ -218,7 +218,7 @@ export function PartnersPage() {
       {/* Header Container */}
       <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 z-10 animate-card-enter">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 leading-tight mb-0.5">
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide mb-0.5">
             Relationship Intelligence
           </h1>
           <p className="text-zinc-500 text-xs font-normal">

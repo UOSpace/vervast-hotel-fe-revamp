@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { CloseCircle, RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -6,9 +6,15 @@ import dashboardData from '../../../data/dashboardData.json';
 import { getDashboardComputedData } from '../../../data/pms';
 import { useTheme } from '../../../config/theme-provider';
 import { MetricDrawerContent, accuratePropertiesData } from './drawers/MetricDrawerContent';
-import { GuestMovementDrawerContent } from './drawers/GuestMovementDrawerContent';
+import { BookingPaceDrawerContent } from './drawers/BookingPaceDrawerContent';
+import { RevenueDemandMixDrawerContent } from './drawers/RevenueDemandMixDrawerContent';
+import { ForwardBusinessDrawerContent } from './drawers/ForwardBusinessDrawerContent';
+import { SOSEISignalsDrawerContent } from './drawers/SoseiSignalsDrawerContent';
+import { PortfolioComparisonDrawerContent } from './drawers/PortfolioComparisonDrawerContent';
 import { FnbDrawerContent } from './drawers/FnbDrawerContent';
 import { SpaDrawerContent } from './drawers/SpaDrawerContent';
+import { GeoMarketDrawerContent } from './drawers/GeoMarketDrawerContent';
+import { MarketSegmentDrawerContent } from './drawers/MarketSegmentDrawerContent';
 
 const propertiesPerformanceData = accuratePropertiesData;
 
@@ -40,17 +46,17 @@ export function DashboardDrawer() {
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-xs text-zinc-500">Global real-time property status across all 6 collections.</p>
               <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                Avg 78.4% Occupancy
+                Avg 74.2% Occupancy
               </span>
             </div>
             <div className="flex flex-col gap-3">
               {[
-                { name: 'Sosei Alpine Collection', location: 'St. Moritz & Zermatt', time: '14:30 CET', occ: '87.2%', status: 'Peak Season', count: '180 Rms' },
-                { name: 'Sosei Ocean Collection', location: 'Maldives & Amalfi', time: '18:30 MVT', occ: '84.1%', status: 'High Demand', count: '170 Rms' },
-                { name: 'Sosei City Collection', location: 'Tokyo & New York', time: '22:30 JST', occ: '76.8%', status: 'Normal Pace', count: '280 Rms' },
-                { name: 'Sosei Countryside Collection', location: 'Kyoto & Tuscany', time: '22:30 JST', occ: '75.3%', status: 'Normal Pace', count: '190 Rms' },
-                { name: 'Sosei Forest Collection', location: 'Black Forest & Hokkaido', time: '14:30 CET', occ: '69.4%', status: 'Steady Flow', count: '240 Rms' },
-                { name: 'Sosei Desert Collection', location: 'Al Wadi & Sedona', time: '17:30 GST', occ: '61.2%', status: 'Midweek Dip', count: '180 Rms' },
+                { name: 'SOSEI Alpine Collection', location: 'St. Moritz & Zermatt', time: '14:30 CET', occ: '87.2%', status: 'Peak Season', count: '180 Rms' },
+                { name: 'SOSEI Ocean Collection', location: 'Maldives & Amalfi', time: '18:30 MVT', occ: '84.1%', status: 'High Demand', count: '170 Rms' },
+                { name: 'SOSEI City Collection', location: 'Tokyo & New York', time: '22:30 JST', occ: '76.8%', status: 'Normal Pace', count: '280 Rms' },
+                { name: 'SOSEI Countryside Collection', location: 'Kyoto & Tuscany', time: '22:30 JST', occ: '75.3%', status: 'Normal Pace', count: '190 Rms' },
+                { name: 'SOSEI Forest Collection', location: 'Black Forest & Hokkaido', time: '14:30 CET', occ: '69.4%', status: 'Steady Flow', count: '240 Rms' },
+                { name: 'SOSEI Desert Collection', location: 'Al Wadi & Sedona', time: '17:30 GST', occ: '61.2%', status: 'Midweek Dip', count: '180 Rms' },
               ].map((resort) => (
                 <div key={resort.name} className="p-3.5 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/40 flex justify-between items-center hover:bg-zinc-100/60 dark:hover:bg-zinc-800/70 transition-all">
                   <div>
@@ -165,76 +171,18 @@ export function DashboardDrawer() {
           </div>
         );
 
+      case 'BOOKING_PACE':
+        return <BookingPaceDrawerContent theme={theme} />;
+
       case 'GUEST_MOVEMENT':
-        return <GuestMovementDrawerContent theme={theme} />;
+        return <BookingPaceDrawerContent theme={theme} />;
 
+      case 'REVENUE_DEMAND_MIX':
       case 'ROOM_TIER_OCCUPANCY':
-        return (
-          <div className="space-y-6 animate-fade-in text-xs text-zinc-900">
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900">Room Tier & Suite Occupancy Performance</h4>
-              <p className="text-xs text-zinc-500 mt-1">Real-time room tier occupancy rates, ADR premium, and inventory breakdown across all 12 sanctuaries.</p>
-            </div>
+        return <RevenueDemandMixDrawerContent theme={theme} />;
 
-            {/* Metric summary boxes */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Total Suite Inventory</span>
-                <div className="text-xl font-bold text-zinc-900 mt-1">320 Suites</div>
-                <span className="text-[10px] text-zinc-400 mt-0.5 block">Across 12 Sanctuaries</span>
-              </div>
-              <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Tier Occupancy Average</span>
-                <div className="text-xl font-bold text-emerald-700 mt-1">83.42%</div>
-                <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">â†‘ 5.2% vs Last Month</span>
-              </div>
-              <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Top Tier ADR</span>
-                <div className="text-xl font-bold text-zinc-900 mt-1">$3,450.00</div>
-                <span className="text-[10px] text-zinc-400 mt-0.5 block">Presidential & Royal Villas</span>
-              </div>
-            </div>
-
-            {/* Table with horizontal scroll safety and clear cell padding */}
-            <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-              <table className="w-full min-w-[650px] text-xs text-zinc-800 border-separate border-spacing-0">
-                <thead className="sticky -top-6 z-20 bg-zinc-50 shadow-2xs">
-                  <tr className="text-left text-zinc-500">
-                    <th className="py-3 px-3.5 font-semibold text-[10.5px] bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">Room Tier</th>
-                    <th className="py-3 px-3 font-semibold text-[10.5px] bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">Category</th>
-                    <th className="py-3 px-3 font-semibold text-[10.5px] text-right bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">Inventory</th>
-                    <th className="py-3 px-3 font-semibold text-[10.5px] text-right bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">Occupied</th>
-                    <th className="py-3 px-3 font-semibold text-[10.5px] text-right bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">Occupancy</th>
-                    <th className="py-3 px-3 font-semibold text-[10.5px] text-right bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">ADR (USD)</th>
-                    <th className="py-3 px-3.5 font-semibold text-[10.5px] text-right bg-zinc-50 border-b border-zinc-200 whitespace-nowrap">RevPAR (USD)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { tier: 'Presidential & Royal Villas', category: 'Ultra Luxury Tier', total: 36, occRooms: 33, occ: '92.00%', adr: '$3,450.00', revpar: '$3,174.00' },
-                    { tier: 'Horizon Overwater Suites', category: 'Signature Suite Tier', total: 68, occRooms: 59, occ: '86.50%', adr: '$2,250.00', revpar: '$1,946.25' },
-                    { tier: 'Signature Panoramic Chalets', category: 'Premium Chalet Tier', total: 92, occRooms: 75, occ: '81.20%', adr: '$1,650.00', revpar: '$1,339.80' },
-                    { tier: 'Garden & Forest Pavilions', category: 'Sanctuary Pavilion Tier', total: 124, occRooms: 92, occ: '74.00%', adr: '$1,180.00', revpar: '$873.20' },
-                  ].map((r, i) => (
-                    <tr key={i} className="border-b border-zinc-100 hover:bg-zinc-50/80 transition-colors">
-                      <td className="py-3 px-3.5 font-semibold text-zinc-900 whitespace-nowrap">{r.tier}</td>
-                      <td className="py-3 px-3 text-zinc-500 whitespace-nowrap">{r.category}</td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-700 whitespace-nowrap">{r.total} Rooms</td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-700 whitespace-nowrap">{r.occRooms} Rooms</td>
-                      <td className="py-3 px-3 text-right whitespace-nowrap">
-                        <span className="inline-block px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10.5px]">
-                          {r.occ}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-900 whitespace-nowrap">{r.adr}</td>
-                      <td className="py-3 px-3.5 text-right font-medium text-zinc-900 whitespace-nowrap">{r.revpar}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
+      case 'PORTFOLIO_COMPARISON':
+        return <PortfolioComparisonDrawerContent />;
 
       case 'PORTFOLIO_PERFORMANCE':
         return (
@@ -292,10 +240,10 @@ export function DashboardDrawer() {
                   })}
                   <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
-                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">78.40%</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$2,450.00</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$14.80M</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,920.80</td>
+                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$118.00M</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
                   </tr>
                 </tbody>
               </table>
@@ -367,10 +315,10 @@ export function DashboardDrawer() {
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
                     <td className="py-3 px-3 text-zinc-500">12 Sanctuaries Worldwide</td>
                     <td className="py-3 px-3 text-right text-zinc-400">-</td>
-                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">78.40%</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$2,450.00</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$14.80M</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,920.80</td>
+                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$118.00M</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
                   </tr>
                 </tbody>
               </table>
@@ -446,7 +394,7 @@ export function DashboardDrawer() {
           const sentimentByProperty = [
             {
               id: 'alpine',
-              name: 'Sosei Alpine',
+              name: 'SOSEI Alpine',
               score: '4.8',
               children: [
                 { name: 'Location', score: '4.3' },
@@ -459,7 +407,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'ocean',
-              name: 'Sosei Ocean',
+              name: 'SOSEI Ocean',
               score: '4.6',
               children: [
                 { name: 'Location', score: '4.1' },
@@ -472,7 +420,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'city',
-              name: 'Sosei City',
+              name: 'SOSEI City',
               score: '4.5',
               children: [
                 { name: 'Location', score: '4.0' },
@@ -485,7 +433,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'forest',
-              name: 'Sosei Forest',
+              name: 'SOSEI Forest',
               score: '4.7',
               children: [
                 { name: 'Location', score: '4.2' },
@@ -614,6 +562,9 @@ export function DashboardDrawer() {
           );
         }
 
+      case 'FORWARD_BUSINESS':
+        return <ForwardBusinessDrawerContent />;
+
       case 'GUEST_ARRIVALS':
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -654,7 +605,7 @@ export function DashboardDrawer() {
           const guestNeedsByProperty = [
             {
               id: 'alpine',
-              name: 'Sosei Alpine Collection',
+              name: 'SOSEI Alpine Collection',
               needs: [
                 { label: 'Private Ski Guide & Equipment Fitting', pct: '36%', pctNum: 36 },
                 { label: 'Thermal Onsen & Alpine Recovery Spa', pct: '28%', pctNum: 28 },
@@ -664,7 +615,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'ocean',
-              name: 'Sosei Ocean Collection',
+              name: 'SOSEI Ocean Collection',
               needs: [
                 { label: 'Private Catamaran & Coral Diving', pct: '38%', pctNum: 38 },
                 { label: 'Holistic Ayurveda & Ocean Spa', pct: '30%', pctNum: 30 },
@@ -674,7 +625,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'city',
-              name: 'Sosei City Collection',
+              name: 'SOSEI City Collection',
               needs: [
                 { label: 'Michelin Dining & Rooftop Bar Reservations', pct: '34%', pctNum: 34 },
                 { label: 'Chauffeured Electric Maybach Fleet', pct: '26%', pctNum: 26 },
@@ -684,7 +635,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'countryside',
-              name: 'Sosei Countryside Collection',
+              name: 'SOSEI Countryside Collection',
               needs: [
                 { label: 'Traditional Tea Ceremony & Zen Gardens', pct: '35%', pctNum: 35 },
                 { label: 'Farm-to-Table Organic Harvest Dining', pct: '27%', pctNum: 27 },
@@ -694,7 +645,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'forest',
-              name: 'Sosei Forest Collection',
+              name: 'SOSEI Forest Collection',
               needs: [
                 { label: 'Shinrin-yoku (Forest Bathing) & Meditation', pct: '37%', pctNum: 37 },
                 { label: 'Treehouse Herbal Bath Therapy', pct: '29%', pctNum: 29 },
@@ -704,7 +655,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'desert',
-              name: 'Sosei Desert Collection',
+              name: 'SOSEI Desert Collection',
               needs: [
                 { label: 'Private Dune Camp & Starlight Dining', pct: '40%', pctNum: 40 },
                 { label: 'Bedouin Herbal Scrub & Hammam', pct: '26%', pctNum: 26 },
@@ -770,47 +721,14 @@ export function DashboardDrawer() {
           );
         }
 
+      case 'SOSEI_SIGNALS':
       case 'NOTES_YESTERDAY':
-        return (
-          <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-            <p className="text-xs text-zinc-500">Executive operational handover log and general manager observations.</p>
-            <div className="p-5 border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30 relative text-xs leading-relaxed">
-              <span className="text-zinc-300 dark:text-zinc-600 text-4xl absolute top-2 left-3 leading-none font-serif">â€œ</span>
-              <div className="pl-6 pt-1">
-                <p className="text-zinc-800 dark:text-zinc-200 text-xs sm:text-sm leading-relaxed">
-                  {dashboardData.notesFromYesterday.text}
-                </p>
-                <div className="text-right text-[10px] font-bold uppercase tracking-wider text-zinc-500 mt-4">â€” {dashboardData.notesFromYesterday.author}</div>
-              </div>
-            </div>
-            <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
-              <h4 className="text-[10px] font-bold tracking-wider uppercase text-zinc-500 mb-3">Department Performance Verification</h4>
-              <div className="space-y-2 text-[10px]">
-                <div className="flex justify-between items-center p-2.5 rounded-lg border border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-800/20">
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200">Front Office & VIP Concierge</span>
-                  <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 font-semibold">100% On-time Arrival Check-in</span>
-                </div>
-                <div className="flex justify-between items-center p-2.5 rounded-lg border border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-800/20">
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200">F&B Sanctuary Dining</span>
-                  <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 font-semibold">4.92 / 5.0 Tasting Menu CSAT</span>
-                </div>
-                <div className="flex justify-between items-center p-2.5 rounded-lg border border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-800/20">
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200">Housekeeping & Turndown</span>
-                  <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 font-semibold">Turnaround 23m avg (Target &lt;30m)</span>
-                </div>
-                <div className="flex justify-between items-center p-2.5 rounded-lg border border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/30 dark:bg-zinc-800/20">
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200">Holistic Wellness & Spa</span>
-                  <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 font-semibold">88.5% Slot Utilization Rate</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        return <SOSEISignalsDrawerContent />;
 
       case 'JOURNEY_TIMELINE':
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-            <p className="text-xs text-zinc-500">Historical expansion and milestone sanctuaries of the Sosei hospitality brand.</p>
+            <p className="text-xs text-zinc-500">Historical expansion and milestone sanctuaries of the SOSEI hospitality brand.</p>
             <div className="relative border-l-2 border-zinc-200 dark:border-zinc-800 ml-3 pl-6 space-y-6">
               {dashboardData.journeyTimeline.map((item: any, idx: number) => (
                 <div key={idx} className="relative">
@@ -831,7 +749,7 @@ export function DashboardDrawer() {
         {
           const spendByProperty = [
             {
-              id: 'alpine', name: 'Sosei Alpine Collection', total: '$32.8M', avg: '$2,780', years: [
+              id: 'alpine', name: 'SOSEI Alpine Collection', total: '$32.8M', avg: '$2,780', years: [
                 { year: '2026 YTD', avg: '$2,780', total: '$32.8M' }, { year: '2025', avg: '$2,690', total: '$29.8M' }, { year: '2024', avg: '$2,540', total: '$26.4M' }, { year: '2023', avg: '$2,380', total: '$23.2M' },
               ], categories: [
                 { cat: 'Suites & Chalets', avg2026: '$1,720', avg2025: '$1,660', avg2024: '$1,570', avg2023: '$1,470' },
@@ -841,7 +759,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'ocean', name: 'Sosei Ocean Collection', total: '$28.5M', avg: '$2,650', years: [
+              id: 'ocean', name: 'SOSEI Ocean Collection', total: '$28.5M', avg: '$2,650', years: [
                 { year: '2026 YTD', avg: '$2,650', total: '$28.5M' }, { year: '2025', avg: '$2,580', total: '$25.9M' }, { year: '2024', avg: '$2,440', total: '$23.1M' }, { year: '2023', avg: '$2,310', total: '$20.5M' },
               ], categories: [
                 { cat: 'Water Villas & Suites', avg2026: '$1,640', avg2025: '$1,600', avg2024: '$1,510', avg2023: '$1,430' },
@@ -851,7 +769,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'city', name: 'Sosei City Collection', total: '$23.6M', avg: '$2,380', years: [
+              id: 'city', name: 'SOSEI City Collection', total: '$23.6M', avg: '$2,380', years: [
                 { year: '2026 YTD', avg: '$2,380', total: '$23.6M' }, { year: '2025', avg: '$2,310', total: '$21.5M' }, { year: '2024', avg: '$2,210', total: '$19.4M' }, { year: '2023', avg: '$2,100', total: '$17.2M' },
               ], categories: [
                 { cat: 'Skyline Suites', avg2026: '$1,440', avg2025: '$1,400', avg2024: '$1,340', avg2023: '$1,270' },
@@ -861,7 +779,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'countryside', name: 'Sosei Countryside Collection', total: '$13.2M', avg: '$2,250', years: [
+              id: 'countryside', name: 'SOSEI Countryside Collection', total: '$13.2M', avg: '$2,250', years: [
                 { year: '2026 YTD', avg: '$2,250', total: '$13.2M' }, { year: '2025', avg: '$2,180', total: '$12.1M' }, { year: '2024', avg: '$2,070', total: '$11.0M' }, { year: '2023', avg: '$1,960', total: '$9.8M' },
               ], categories: [
                 { cat: 'Estate Ryokan Villas', avg2026: '$1,380', avg2025: '$1,340', avg2024: '$1,270', avg2023: '$1,200' },
@@ -871,7 +789,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'forest', name: 'Sosei Forest Collection', total: '$11.6M', avg: '$2,150', years: [
+              id: 'forest', name: 'SOSEI Forest Collection', total: '$11.6M', avg: '$2,150', years: [
                 { year: '2026 YTD', avg: '$2,150', total: '$11.6M' }, { year: '2025', avg: '$2,090', total: '$10.6M' }, { year: '2024', avg: '$1,990', total: '$9.6M' }, { year: '2023', avg: '$1,890', total: '$8.5M' },
               ], categories: [
                 { cat: 'Canopy & Forest Villas', avg2026: '$1,320', avg2025: '$1,280', avg2024: '$1,220', avg2023: '$1,160' },
@@ -881,7 +799,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'desert', name: 'Sosei Desert Collection', total: '$8.3M', avg: '$1,980', years: [
+              id: 'desert', name: 'SOSEI Desert Collection', total: '$8.3M', avg: '$1,980', years: [
                 { year: '2026 YTD', avg: '$1,980', total: '$8.3M' }, { year: '2025', avg: '$1,920', total: '$7.5M' }, { year: '2024', avg: '$1,820', total: '$6.8M' }, { year: '2023', avg: '$1,720', total: '$5.9M' },
               ], categories: [
                 { cat: 'Dune Tent Lodges', avg2026: '$1,210', avg2025: '$1,170', avg2024: '$1,110', avg2023: '$1,050' },
@@ -1033,144 +951,24 @@ export function DashboardDrawer() {
         }
 
       case 'GEO_MARKET':
-        {
-          const rawTableData = Array.isArray(config.data) ? config.data : [
-            { region: 'Asia Pacific', rnights: '32.5%', adr: '$2,580', revenue: '$3.77M' },
-            { region: 'Europe', rnights: '28.4%', adr: '$2,620', revenue: '$3.29M' },
-            { region: 'Americas', rnights: '22.7%', adr: '$2,410', revenue: '$2.63M' },
-            { region: 'Middle East', rnights: '11.2%', adr: '$2,750', revenue: '$1.30M' },
-            { region: 'Africa & Others', rnights: '5.2%', adr: '$2,120', revenue: '$0.61M' },
-          ];
-
-          const countriesMap: Record<string, string> = {
-            'Asia Pacific': 'Japan, China, Singapore, Australia',
-            'Europe': 'UK, Switzerland, Germany, France',
-            'Americas': 'USA, Canada, Brazil',
-            'Middle East': 'UAE, Saudi Arabia, Qatar',
-            'Africa & Others': 'South Africa, Egypt, Kenya',
-          };
-
-          const geoTableData = rawTableData
-            .filter((item: any) => !item.isTotal)
-            .map((item: any) => ({
-              region: item.region || item.name || '',
-              rnights: item.rnights || (item.value ? `${item.value}%` : ''),
-              adr: item.adr || '-',
-              revenue: item.revenue || '-',
-              countries: item.countries || countriesMap[item.region || item.name] || 'Local feeder markets',
-            }));
-
-          return (
-            <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Regional room nights and revenue contribution across global feeder markets.</p>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                  Total MTD Room Rev: $11.60M
-                </span>
-              </div>
-              <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Source Region</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Nights Share</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">ADR (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Revenue (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Primary Feeder Markets</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {geoTableData.map((row, idx) => (
-                      <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.region}</td>
-                        <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.rnights}</td>
-                        <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.adr}</td>
-                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.revenue}</td>
-                        <td className="py-2.5 px-3 text-zinc-500 text-[10px]">{row.countries}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        }
+        return <GeoMarketDrawerContent />;
 
       case 'MARKET_SEGMENT':
-        {
-          const rawSegmentData = Array.isArray(config.data) ? config.data : [
-            { segment: 'Leisure & FIT Luxury', rnights: '54.0%', adr: '$2,640', revenue: '$6.26M' },
-            { segment: 'Corporate & Executive Retreats', rnights: '22.5%', adr: '$2,480', revenue: '$2.61M' },
-            { segment: 'Wellness & Sanctuary Immersion', rnights: '14.5%', adr: '$2,320', revenue: '$1.68M' },
-            { segment: 'Private Buyouts & Events', rnights: '9.0%', adr: '$2,850', revenue: '$1.05M' },
-          ];
-
-          const descMap: Record<string, string> = {
-            'Leisure & FIT Luxury': 'High net-worth independent travelers, bespoke couples & holiday seekers',
-            'Corporate & Executive Retreats': 'C-suite retreats, Fortune 500 board meetings & partner programs',
-            'Wellness & Sanctuary Immersion': 'Multi-day holistic wellness, thermal onsen & detox programs',
-            'Private Buyouts & Events': 'Exclusive full-property sanctuary buyouts & elite gatherings',
-          };
-
-          const segmentTableData = rawSegmentData
-            .filter((item: any) => !item.isTotal)
-            .map((item: any) => ({
-              segment: item.segment || item.name || '',
-              rnights: item.rnights || (item.value ? `${item.value}%` : ''),
-              adr: item.adr || '-',
-              revenue: item.revenue || '-',
-              desc: item.desc || descMap[item.segment || item.name] || 'General guest segment',
-            }));
-
-          return (
-            <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Performance and yield realization by guest market segment.</p>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                  Total MTD Room Rev: $11.60M
-                </span>
-              </div>
-              <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Market Segment</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Nights Share</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">ADR (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Revenue (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Strategic Profile</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {segmentTableData.map((row, idx) => (
-                      <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.segment}</td>
-                        <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.rnights}</td>
-                        <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.adr}</td>
-                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.revenue}</td>
-                        <td className="py-2.5 px-3 text-zinc-500 text-[10px]">{row.desc}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        }
+        return <MarketSegmentDrawerContent />;
 
       case 'CHANNEL_DISTRIBUTION':
         {
           const rawChannelData = Array.isArray(config.data) ? config.data : [
             { channel: 'Direct & VIP Concierge', rnights: '38.5%', adr: '$2,680', revenue: '$4.47M' },
             { channel: 'Luxury Consortia (Virtuoso, Amex FHR)', rnights: '28.2%', adr: '$2,550', revenue: '$3.27M' },
-            { channel: 'Official Sosei Portal', rnights: '18.3%', adr: '$2,350', revenue: '$2.12M' },
+            { channel: 'Official SOSEI Portal', rnights: '18.3%', adr: '$2,350', revenue: '$2.12M' },
             { channel: 'Curated Tour Operators', rnights: '15.0%', adr: '$2,120', revenue: '$1.74M' },
           ];
 
           const feeMap: Record<string, string> = {
             'Direct & VIP Concierge': '0% commission, highest margin private concierge bookings',
             'Luxury Consortia (Virtuoso, Amex FHR)': '10% standard fee, high ADR with verified elite amenities',
-            'Official Sosei Portal': 'Direct digital web & mobile app booking channel',
+            'Official SOSEI Portal': 'Direct digital web & mobile app booking channel',
             'Curated Tour Operators': 'Contracted luxury wholesale & seasonal alpine/ocean allotments',
           };
 
@@ -1232,24 +1030,37 @@ export function DashboardDrawer() {
   };
 
   const getDrawerWidth = () => {
-    if (!config) return 'w-[95vw] sm:w-[580px]';
+    if (!config) return 'w-[95vw] sm:w-[720px]';
     switch (config.type) {
+      case 'BOOKING_PACE':
       case 'METRIC':
       case 'SPEND_OVERTIME':
       case 'WORLD_MAP':
       case 'PORTFOLIO_PERFORMANCE':
+      case 'PORTFOLIO_COMPARISON':
       case 'ROOM_TIER_OCCUPANCY':
-        return 'w-[96vw] sm:w-[780px] lg:w-[860px]';
+      case 'REVENUE_DEMAND_MIX':
+      case 'FORWARD_BUSINESS':
+      case 'SOSEI_SIGNALS':
+      case 'GUEST_MOVEMENT':
+        return 'w-[96vw] sm:w-[940px] lg:w-[1080px] xl:w-[1180px]';
       case 'TOP_NATIONALITIES':
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
-      case 'GUEST_MOVEMENT':
       case 'FNB_DETAIL':
       case 'SPA_DETAIL':
-        return 'w-[94vw] sm:w-[680px] lg:w-[760px]';
+        return 'w-[95vw] sm:w-[820px] lg:w-[920px]';
+      case 'LIVE_OVERVIEW':
+      case 'GUEST_ARRIVALS':
+      case 'GUEST_NEEDS':
+      case 'NOTES_YESTERDAY':
+      case 'ALERTS':
+      case 'SENTIMENT_SCORE':
+      case 'SENTIMENT_OVER_TIME':
+        return 'w-[95vw] sm:w-[740px] lg:w-[820px]';
       default:
-        return 'w-[94vw] sm:w-[580px]';
+        return 'w-[95vw] sm:w-[740px] lg:w-[820px]';
     }
   };
 
@@ -1268,7 +1079,7 @@ export function DashboardDrawer() {
         <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 backdrop-blur-sm">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{config?.title || 'Details'}</h2>
-            <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Sosei Executive Management & Operational Intelligence</p>
+            <p className="text-[10px] text-zinc-500 font-normal mt-0.5">SOSEI Executive Management & Operational Intelligence</p>
           </div>
           <button
             onClick={closeDrawer}

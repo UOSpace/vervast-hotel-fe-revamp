@@ -26,12 +26,32 @@ export function Sidebar({
 
   const isChildActive = (child: { name: string; path: string; isDynamicOverview?: boolean }) => {
     const currentPath = location.pathname + location.search;
+    const searchParams = new URLSearchParams(location.search);
+    const currentView = searchParams.get('view');
+
+    // Case 1: Property Categories (view=by_property_type)
+    if (child.path.includes('view=by_property_type')) {
+      return currentView === 'by_property_type';
+    }
+
+    // Case 2: Global Overview (dynamic overview child)
     if (child.isDynamicOverview) {
+      if (currentView === 'by_property_type') {
+        return false;
+      }
       const overviewPath = getGlobalOverviewPath(activePortal);
-      if (location.pathname === overviewPath) return true;
-      if (activePortal === 'hospitality' && (location.pathname === '/dashboard' || currentPath === '/dashboard?view=all')) return true;
+      if (location.pathname === overviewPath && (!location.search || currentPath === `${overviewPath}?view=all`)) {
+        return true;
+      }
+      if (
+        activePortal === 'hospitality' &&
+        (location.pathname === '/dashboard' || currentPath === '/dashboard?view=all')
+      ) {
+        return true;
+      }
       return false;
     }
+
     if (child.path.includes('?')) {
       return currentPath === child.path;
     }
