@@ -54,7 +54,7 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
         {/* Left: Next 90 Days Line Chart */}
         <div className="flex-1 h-[140px] sm:h-auto min-w-0">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={series} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+            <AreaChart data={series} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="bookingPaceGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#18181b" stopOpacity={0.12} />
@@ -76,7 +76,7 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
                 ticks={[0, 5000, 10000, 15000, 20000]}
                 tickFormatter={(v) => (v === 0 ? '0' : `${v / 1000}K`)}
                 domain={[0, 22000]}
-                width={32}
+                width={30}
               />
               <Tooltip
                 contentStyle={{

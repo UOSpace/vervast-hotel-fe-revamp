@@ -10,9 +10,21 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-zinc-900 flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
-        <span>Channel Distribution Stats</span>
-        <InfoTooltip text="Booking channel distribution comparing Direct bookings, OTAs, and Travel Agents." />
+      <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
+        <div className="flex items-center gap-1.5">
+          <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">Channel Distribution Stats</span>
+          <InfoTooltip text="Booking channel distribution comparing Direct bookings, OTAs, and Travel Agents." />
+        </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution Stats', data: channelTable });
+          }}
+          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+        >
+          <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+        </button>
       </div>
       <div className="flex items-center gap-6 px-2 py-1 h-[120px]">
         <SharedDonutChart data={channelData} total={totalRnights} />

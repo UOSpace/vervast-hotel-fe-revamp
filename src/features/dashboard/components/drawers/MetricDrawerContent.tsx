@@ -19,24 +19,28 @@ interface MetricDrawerContentProps {
 export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps) {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const t = config.title.toUpperCase();
+  const propName = config.data?.propertyName;
 
   const isOcc = t.includes('OCCUPANCY');
   const isAdr = t.includes('ADR');
   const isRevPar = t.includes('REVPAR');
   const isTotalHotelRev = t.includes('TOTAL HOTEL REVENUE') || t.includes('TOTAL REVENUE');
   const isRoomRev = t.includes('ROOM REVENUE') || (!isTotalHotelRev && t.includes('REVENUE'));
+  const isLos = t.includes('STAY') || t.includes('LOS') || t.includes('LENGTH');
   const isRev = isTotalHotelRev || isRoomRev;
+
+  const customHeroValue = typeof config.data === 'string' ? config.data : config.data?.value;
 
   const getMetricConfig = () => {
     if (isOcc) {
       return {
         title: 'Occupancy Rate Performance',
-        subtitle: 'Daily realized occupancy vs budget target (72.1%) across all 12 sanctuaries (MTD)',
-        heroValue: '74.2%',
+        subtitle: 'Daily realized occupancy vs budget and forecast across luxury sanctuaries (MTD)',
+        heroValue: customHeroValue || '74.2%',
         heroTrend: '+4.8 pts vs LY',
         heroTrendUp: true,
         targetValue: '72.1%',
-        varianceText: '+2.1 pts Above Budget Target',
+        varianceText: '+2.1 pts vs Budget · +1.2 pts vs Forecast',
         contextLabel: 'Rooms Occupied',
         contextValue: '920 / 1,240 Rooms',
         yAxisSuffix: '%',
@@ -59,7 +63,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         targetLine: 72.1,
         drivers: [
           'Strong leisure demand at SOSEI Alpine (77.5%) & Ocean (75.2%) driving sustained peak performance.',
-          'Occupancy outperforming LY by +4.8 percentage points and budget targets by +2.1 percentage points.',
+          'Occupancy outperforming LY by +4.8 pts, budget targets by +2.1 pts, and latest forecast by +1.2 pts.',
           'Direct bookings via SOSEI Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
           'Corporate retreat buyouts in SOSEI Verper NY (75.0%) lifted urban midweek room occupancy by 12%.'
         ]
@@ -67,12 +71,12 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
     } else if (isAdr) {
       return {
         title: 'Average Daily Rate (ADR) Performance',
-        subtitle: 'Realized daily rate yield vs budget target ($1,378) across luxury room tiers (MTD)',
-        heroValue: '$1,420',
+        subtitle: 'Realized daily rate yield vs budget and forecast across luxury room tiers (MTD)',
+        heroValue: customHeroValue || '$1,420',
         heroTrend: '+$85 vs LY (+6.0%)',
         heroTrendUp: true,
         targetValue: '$1,378',
-        varianceText: '+$42 vs Budget (+3.2%)',
+        varianceText: '+$42 vs Budget (+3.2%) · +$18 vs Forecast (+1.3%)',
         contextLabel: 'Top Performing Collection',
         contextValue: 'SOSEI Alpine ($1,680)',
         yAxisSuffix: '',
@@ -95,7 +99,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         targetLine: 1378,
         drivers: [
           'ADR expanded to $1,420 MTD, delivering a +$85 vs LY (+6.0%) rate increase across destinations.',
-          'Outperforming budget benchmark by +$42 vs Budget (+3.2%) driven by signature suite yield premiums.',
+          'Outperforming budget benchmark by +$42 (+3.2%) and latest forecast by +$18 (+1.3%) driven by suite yields.',
           'Presidential and Royal Villa upgrades maintained an average nightly rate of $3,450 across destinations.',
           'Direct booking rate integrity ensured zero OTA discounting across luxury sanctuaries.'
         ]
@@ -104,11 +108,11 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
       return {
         title: 'Revenue Per Available Room (RevPAR) Performance',
         subtitle: 'Yield efficiency benchmark combining occupancy volume and ADR pricing power (MTD)',
-        heroValue: '$1,054',
+        heroValue: customHeroValue || '$1,054',
         heroTrend: '+$92 vs LY (+8.5%)',
         heroTrendUp: true,
         targetValue: '$1,006',
-        varianceText: '+$48 vs Budget (+4.1%)',
+        varianceText: '+$48 vs Budget (+4.1%) · +$22 vs Forecast (+2.1%)',
         contextLabel: 'Total Portfolio TrevPAR',
         contextValue: '$1,357 (Total Rev/Room)',
         yAxisSuffix: '',
@@ -130,7 +134,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         ],
         targetLine: 1006,
         drivers: [
-          'RevPAR reached $1,054, up +$92 vs LY (+8.5%) and +$48 vs Budget (+4.1%).',
+          'RevPAR reached $1,054, up +$92 vs LY (+8.5%), +$48 vs Budget (+4.1%), and +$22 vs Forecast (+2.1%).',
           'Balanced yield expansion achieved through healthy occupancy (74.2%) and ADR ($1,420).',
           'SOSEI Alpine led yield with $1,302 RevPAR, representing top performance across destinations.',
           'Minimum stay restrictions on weekends preserved pricing power and eliminated single-night vacancy drag.'
@@ -139,12 +143,12 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
     } else if (isTotalHotelRev) {
       return {
         title: 'Total Hotel Revenue (5 Hospitality Pillars)',
-        subtitle: 'Total hotel business revenue across all 5 hospitality pillars (MTD actuals $152M vs $146.2M budget target)',
-        heroValue: '$152M MTD',
+        subtitle: 'Total hotel business revenue across all 5 hospitality pillars (MTD actuals)',
+        heroValue: customHeroValue || '$152M MTD',
         heroTrend: '+11.0% vs LY',
         heroTrendUp: true,
         targetValue: '$146.2M Target',
-        varianceText: '+$5.8M (+4.0%) vs Budget',
+        varianceText: '+$5.8M (+4.0%) vs Budget · +$2.9M (+1.9%) vs Forecast',
         contextLabel: '5 Hospitality Pillars',
         contextValue: 'Rooms $118M · F&B $22M · Spa $8M · Act $4M',
         yAxisSuffix: 'M',
@@ -166,21 +170,21 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         ],
         targetLine: 4.71,
         drivers: [
-          'Total hotel business revenue generated $152M MTD, up +11.0% vs LY and +4.0% ahead of budget.',
-          'Rooms revenue ($118M / 77.6%) anchored total business performance with strong rate yields.',
-          'Food & Beverage generated $22M (14.5%) with Michelin-starred dining buyouts and private banqueting.',
-          'Spa & Wellness contributed $8M (5.3%) and Activities & Others contributed $4M (2.6%) in high-margin experiences.'
+          'Total hotel business revenue generated strong performance MTD, outperforming LY and Budget.',
+          'Rooms revenue anchored total business performance with strong rate yields.',
+          'Food & Beverage generated steady volume with Michelin-starred dining buyouts and private banqueting.',
+          'Spa & Wellness and Activities contributed high-margin experiences across luxury destinations.'
         ]
       };
     } else if (isRoomRev) {
       return {
         title: 'Room Revenue Performance',
-        subtitle: 'Realized room revenue generation (MTD actuals $118M vs $112.2M budget target)',
-        heroValue: '$118M MTD',
-        heroTrend: '+14.0% vs LY',
+        subtitle: 'Realized room revenue generation (MTD actuals)',
+        heroValue: customHeroValue || '$118M MTD',
+        heroTrend: '+$14.5M vs LY (+14.0%)',
         heroTrendUp: true,
         targetValue: '$112.2M Target',
-        varianceText: '+$5.8M (+5.2%) vs Budget',
+        varianceText: '+$5.8M (+5.2%) vs Budget · +$2.4M (+2.1%) vs Forecast',
         contextLabel: 'Share of Hotel Revenue',
         contextValue: '77.6% of Total Hotel Business',
         yAxisSuffix: 'M',
@@ -202,10 +206,46 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         ],
         targetLine: 3.62,
         drivers: [
-          'Room Revenue reached $118M MTD, delivering a +14.0% vs LY increase and +5.2% above budget.',
+          'Room Revenue reached $118M MTD, delivering a +$14.5M (+14.0%) increase vs LY, +$5.8M (+5.2%) above budget, and +$2.4M (+2.1%) ahead of latest forecast.',
           'Average Daily Rate ($1,420) and 74.2% occupancy drove strong top-line room yields across all collections.',
           'SOSEI Alpine ($33.5M) and SOSEI Ocean ($27.2M) generated over 51% of portfolio room revenue.',
           'Strong booking pace for remaining dates in October projected to sustain revenue momentum.'
+        ]
+      };
+    } else if (isLos) {
+      const losVal = customHeroValue || (config.data?.los ? `${config.data.los} Nights` : '4.2 Nights');
+      return {
+        title: propName ? `${propName} — Average Length of Stay` : 'Average Length of Stay (ALOS) Performance',
+        subtitle: propName ? `Realized guest length of stay across leisure and retreat stays at ${propName}` : 'Average guest duration across destinations and stay portfolios (MTD)',
+        heroValue: losVal,
+        heroTrend: '+0.3 Nights',
+        heroTrendUp: true,
+        targetValue: '3.8 Nights',
+        varianceText: '+0.4 Nights vs Target Benchmark',
+        contextLabel: 'Top Segment by Stay',
+        contextValue: 'Leisure & Retreats (5.2 Nights)',
+        yAxisSuffix: ' N',
+        chartData: [
+          { date: 'Sep 23', value: 3.9, target: 3.8 },
+          { date: 'Sep 24', value: 4.0, target: 3.8 },
+          { date: 'Sep 25', value: 4.1, target: 3.8 },
+          { date: 'Sep 26', value: 4.2, target: 3.8 },
+          { date: 'Sep 27', value: 4.5, target: 3.8 },
+          { date: 'Sep 28', value: 4.6, target: 3.8 },
+          { date: 'Sep 29', value: 4.3, target: 3.8 },
+          { date: 'Sep 30', value: 4.0, target: 3.8 },
+          { date: 'Oct 01', value: 3.9, target: 3.8 },
+          { date: 'Oct 02', value: 4.1, target: 3.8 },
+          { date: 'Oct 03', value: 4.3, target: 3.8 },
+          { date: 'Oct 04', value: 4.4, target: 3.8 },
+          { date: 'Oct 05', value: 4.5, target: 3.8 },
+          { date: 'Oct 06', value: parseFloat(config.data?.los || '4.2'), target: 3.8 },
+        ],
+        targetLine: 3.8,
+        drivers: [
+          'Strong leisure and wellness retreat bookings generating average stay lengths exceeding 4.5 nights.',
+          'Direct bookings through private butler concierge yield 5.2 nights average length of stay.',
+          'Zero early departures recorded across multi-bedroom villas and private mountain chalets.',
         ]
       };
     } else {
@@ -348,81 +388,127 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         </div>
       </div>
 
-      {/* Detailed Property Collection Breakdown Table */}
+      {/* Breakdown Table: If property context, show Property Room Tiers. If global, show Collection League */}
       <div>
         <div className="flex justify-between items-center mb-2 px-0.5">
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100">
-            Property Collection Breakdown (MTD Actuals)
+            {propName ? `${propName} — Room Tier Inventory & Yield (MTD Actuals)` : 'Property Collection Breakdown (MTD Actuals)'}
           </h4>
-          <span className="text-[9.5px] text-zinc-400">Click collection row to expand individual sanctuaries</span>
+          <span className="text-[9.5px] text-zinc-400">
+            {propName ? 'Room categories and realized yields' : 'Click collection row to expand individual sanctuaries'}
+          </span>
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
-            <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 backdrop-blur-sm">
-              <tr className="text-left text-zinc-400">
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Property Collection</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Location</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Occupancy</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">ADR (USD)</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Revenue (USD)</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">RevPAR (USD)</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accuratePropertiesData.map((prop) => {
-                const isExpanded = !!expandedRows[prop.id];
-                return (
-                  <React.Fragment key={prop.id}>
-                    <tr
-                      className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors"
-                      onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
-                    >
-                      <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 whitespace-nowrap">
-                        {isExpanded ? (
-                          <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
-                        ) : (
-                          <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                        )}
-                        {prop.name}
-                      </td>
-                      <td className="py-2.5 px-3 text-zinc-500 whitespace-nowrap">{prop.location}</td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.occ}</td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.adr}</td>
-                      <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revpar}</td>
-                      <td className="py-2.5 px-3 text-right whitespace-nowrap">
-                        <span className="inline-block px-2 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          {prop.status}
-                        </span>
-                      </td>
-                    </tr>
-                    {isExpanded && prop.children.map((child, cIdx) => (
-                      <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20 text-zinc-600 dark:text-zinc-400">
-                        <td className="py-2 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{child.name}</td>
-                        <td className="py-2 px-3 text-[10px] text-zinc-400 whitespace-nowrap">{child.location}</td>
-                        <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.occ}</td>
-                        <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.adr}</td>
-                        <td className="py-2 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
-                        <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.revpar}</td>
-                        <td className="py-2 px-3 text-right text-[9.5px] text-zinc-400 whitespace-nowrap">Sanctuary Node</td>
+          {propName ? (
+            <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+              <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 backdrop-blur-sm">
+                <tr className="text-left text-zinc-400">
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Room Category</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap text-right">Inventory</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Occupancy</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">ADR (USD)</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">MTD Revenue</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { type: 'Presidential / Mountain Chalet', keys: '30 Keys', occ: `${Math.min(95, parseInt(config.data?.occ || '76') + 4)}%`, adr: `$${Math.round(parseInt(String(config.data?.adr || '2700').replace(/[^0-9]/g, '')) * 1.18).toLocaleString()}`, rev: `$${Math.round(parseInt(String(config.data?.rev || '1150000').replace(/[^0-9]/g, '')) * 0.40 / 1000)}K`, status: 'Peak Demand' },
+                  { type: 'Signature Sanctuary Suite', keys: '25 Keys', occ: `${config.data?.occ || '76'}%`, adr: `$${Math.round(parseInt(String(config.data?.adr || '2700').replace(/[^0-9]/g, '')) * 1.04).toLocaleString()}`, rev: `$${Math.round(parseInt(String(config.data?.rev || '1150000').replace(/[^0-9]/g, '')) * 0.30 / 1000)}K`, status: 'High Yield' },
+                  { type: 'Panoramic View Suite', keys: '20 Keys', occ: `${Math.max(50, parseInt(config.data?.occ || '76') - 2)}%`, adr: `$${Math.round(parseInt(String(config.data?.adr || '2700').replace(/[^0-9]/g, '')) * 0.92).toLocaleString()}`, rev: `$${Math.round(parseInt(String(config.data?.rev || '1150000').replace(/[^0-9]/g, '')) * 0.19 / 1000)}K`, status: 'On Plan' },
+                  { type: 'Glacier / Deluxe Pavilion', keys: '20 Keys', occ: `${Math.max(45, parseInt(config.data?.occ || '76') - 6)}%`, adr: `$${Math.round(parseInt(String(config.data?.adr || '2700').replace(/[^0-9]/g, '')) * 0.81).toLocaleString()}`, rev: `$${Math.round(parseInt(String(config.data?.rev || '1150000').replace(/[^0-9]/g, '')) * 0.11 / 1000)}K`, status: 'Stable' },
+                ].map((tier, idx) => (
+                  <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                    <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{tier.type}</td>
+                    <td className="py-2.5 px-3 text-right text-zinc-500 whitespace-nowrap">{tier.keys}</td>
+                    <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{tier.occ}</td>
+                    <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{tier.adr}</td>
+                    <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{tier.rev}</td>
+                    <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                      <span className="inline-block px-2 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                        {tier.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
+                  <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Property Inventory</td>
+                  <td className="py-3 px-3 text-right text-zinc-500">95 Keys</td>
+                  <td className="py-3 px-3 text-right text-emerald-700 font-bold">{config.data?.occ || '76'}%</td>
+                  <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{config.data?.adr || '$2,700'}</td>
+                  <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{config.data?.rev || '$1.15M'}</td>
+                  <td className="py-3 px-3 text-right text-emerald-700 font-bold">Optimal</td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+              <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 backdrop-blur-sm">
+                <tr className="text-left text-zinc-400">
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Property Collection</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Location</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Occupancy</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">ADR (USD)</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Revenue (USD)</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">RevPAR (USD)</th>
+                  <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800 whitespace-nowrap">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accuratePropertiesData.map((prop) => {
+                  const isExpanded = !!expandedRows[prop.id];
+                  return (
+                    <React.Fragment key={prop.id}>
+                      <tr
+                        className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                        onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
+                      >
+                        <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 whitespace-nowrap">
+                          {isExpanded ? (
+                            <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
+                          ) : (
+                            <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
+                          )}
+                          {prop.name}
+                        </td>
+                        <td className="py-2.5 px-3 text-zinc-500 whitespace-nowrap">{prop.location}</td>
+                        <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.occ}</td>
+                        <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.adr}</td>
+                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
+                        <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revpar}</td>
+                        <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                          <span className="inline-block px-2 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                            {prop.status}
+                          </span>
+                        </td>
                       </tr>
-                    ))}
-                  </React.Fragment>
-                );
-              })}
-              <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
-                <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">Global Portfolio (12 Sanctuaries)</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{isTotalHotelRev ? '$152.00M' : '$118.00M'}</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">Above Target</td>
-              </tr>
-            </tbody>
-          </table>
+                      {isExpanded && prop.children.map((child, cIdx) => (
+                        <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20 text-zinc-600 dark:text-zinc-400">
+                          <td className="py-2 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{child.name}</td>
+                          <td className="py-2 px-3 text-[10px] text-zinc-400 whitespace-nowrap">{child.location}</td>
+                          <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.occ}</td>
+                          <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.adr}</td>
+                          <td className="py-2 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
+                          <td className="py-2 px-3 text-right text-[10.5px] whitespace-nowrap">{child.revpar}</td>
+                          <td className="py-2 px-3 text-right text-[9.5px] text-zinc-400 whitespace-nowrap">Sanctuary Node</td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+                <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
+                  <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
+                  <td className="py-3 px-3 text-zinc-500">Global Portfolio (12 Sanctuaries)</td>
+                  <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
+                  <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
+                  <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{isTotalHotelRev ? '$152.00M' : '$118.00M'}</td>
+                  <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
+                  <td className="py-3 px-3 text-right text-emerald-700 font-bold">Above Target</td>
+                </tr>
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

@@ -1,7 +1,13 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
-export function OccupancyByRoomTypeWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
+export function OccupancyByRoomTypeWidget({ 
+  propertyId = 'sosei-nocturne',
+  propertyName,
+}: { 
+  propertyId?: string;
+  propertyName?: string;
+}) {
   const { openDrawer } = useDashboardDrawer();
 
   const propertyRoomMap: Record<string, { occ: number; total: number; types: Array<{ type: string; occ: number; available: number }> }> = {
@@ -127,15 +133,37 @@ export function OccupancyByRoomTypeWidget({ propertyId = 'sosei-nocturne' }: { p
 
   const totals = { occ: propInfo.occ, occupied: totalOccupied, available: propInfo.total };
 
+  const activePropName = propertyName || 'SOSEI Nocturne';
+
   return (
     <div 
       className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.2s' }}
-      onClick={() => openDrawer({ type: 'METRIC', title: 'Occupancy by Room Type', data: `${totals.occ}%` })}
+      onClick={() => openDrawer({ 
+        type: 'ROOM_TIER_OCCUPANCY', 
+        title: `Room Tier Occupancy — ${activePropName}`, 
+        data: { propertyId, propertyName: activePropName, types: propInfo.types, totals, data } 
+      })}
     >
       <div className="flex justify-between items-center mb-3 h-4 shrink-0">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Occupancy by Room Type</h3>
-        <InfoTooltip text="Detailed room type occupancy count and percentage breakdown." />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDrawer({
+                type: 'ROOM_TIER_OCCUPANCY',
+                title: `Room Tier Occupancy — ${activePropName}`,
+                data: { propertyId, propertyName: activePropName, types: propInfo.types, totals, data }
+              });
+            }}
+            className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+          >
+            <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+          </button>
+          <InfoTooltip text="Detailed room type occupancy count and percentage breakdown." />
+        </div>
       </div>
 
       <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between pt-0.5 pb-0.5">

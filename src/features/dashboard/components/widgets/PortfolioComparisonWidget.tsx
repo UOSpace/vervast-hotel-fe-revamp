@@ -114,10 +114,14 @@ export function PortfolioComparisonWidget({
                 <td className="py-2 px-2 text-right whitespace-nowrap border-b border-zinc-100/80">
                   <span
                     className={`inline-flex items-center gap-0.5 text-[9.5px] font-medium ${
-                      item.growthVsLyUp ? 'text-[#14532d]' : 'text-[#800020]'
+                      item.growthVsLyNum > 0
+                        ? 'text-[#14532d]'
+                        : item.growthVsLyNum < 0
+                        ? 'text-[#800020]'
+                        : 'text-zinc-500'
                     }`}
                   >
-                    <span>{item.growthVsLyUp ? '↑' : '↓'}</span>
+                    <span>{item.growthVsLyNum > 0 ? '↑' : item.growthVsLyNum < 0 ? '↓' : '—'}</span>
                     {item.growthVsLy}
                   </span>
                 </td>
@@ -126,10 +130,14 @@ export function PortfolioComparisonWidget({
                 <td className="py-2 px-2 text-right whitespace-nowrap border-b border-zinc-100/80">
                   <span
                     className={`inline-flex items-center gap-0.5 text-[9.5px] font-medium ${
-                      item.vsBudgetUp ? 'text-[#14532d]' : 'text-[#800020]'
+                      item.vsBudgetNum > 0
+                        ? 'text-[#14532d]'
+                        : item.vsBudgetNum < 0
+                        ? 'text-[#800020]'
+                        : 'text-zinc-500'
                     }`}
                   >
-                    <span>{item.vsBudgetUp ? '↑' : '↓'}</span>
+                    <span>{item.vsBudgetNum > 0 ? '↑' : item.vsBudgetNum < 0 ? '↓' : '—'}</span>
                     {item.vsBudget}
                   </span>
                 </td>

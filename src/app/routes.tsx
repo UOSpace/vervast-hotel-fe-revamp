@@ -38,6 +38,14 @@ export const routes: RouteObject[] = [
         element: <DashboardPage />,
       },
       {
+        path: '/dashboard/categories',
+        element: <DashboardPage />,
+      },
+      {
+        path: '/dashboard/property-categories',
+        element: <Navigate to="/dashboard/categories" replace />,
+      },
+      {
         path: '/dashboard/property',
         element: <PropertyDashboardPage />,
       },

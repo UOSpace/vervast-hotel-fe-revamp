@@ -1,7 +1,13 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
-export function RevenueByDepartmentWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
+export function RevenueByDepartmentWidget({ 
+  propertyId = 'sosei-nocturne',
+  propertyName,
+}: { 
+  propertyId?: string;
+  propertyName?: string;
+}) {
   const { openDrawer } = useDashboardDrawer();
 
   const propertyRevenueMap: Record<string, number> = {
@@ -26,23 +32,44 @@ export function RevenueByDepartmentWidget({ propertyId = 'sosei-nocturne' }: { p
   const totalRev = roomRev + fnbRev + spaRev + otherRev;
 
   const data = [
-    { dept: 'Rooms', today: `$${roomRev.toLocaleString()}`, trend: '↑ 14.0%', up: true },
-    { dept: 'F&B', today: `$${fnbRev.toLocaleString()}`, trend: '↑ 8.5%', up: true },
-    { dept: 'Spa & Wellness', today: `$${spaRev.toLocaleString()}`, trend: '↑ 11.2%', up: true },
-    { dept: 'Other Income', today: `$${otherRev.toLocaleString()}`, trend: '↑ 5.0%', up: true },
+    { dept: 'Rooms', today: `$${roomRev.toLocaleString()}`, rawVal: roomRev, trend: '↑ 14.0%', up: true },
+    { dept: 'F&B', today: `$${fnbRev.toLocaleString()}`, rawVal: fnbRev, trend: '↑ 8.5%', up: true },
+    { dept: 'Spa & Wellness', today: `$${spaRev.toLocaleString()}`, rawVal: spaRev, trend: '↑ 11.2%', up: true },
+    { dept: 'Other Income', today: `$${otherRev.toLocaleString()}`, rawVal: otherRev, trend: '↑ 5.0%', up: true },
   ];
 
   const totals = { today: `$${totalRev.toLocaleString()}`, trend: '↑ 12.8%', up: true };
+  const activePropName = propertyName || 'SOSEI Nocturne';
 
   return (
     <div 
       className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.25s' }}
-      onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Revenue by Department', data: totals.today })}
+      onClick={() => openDrawer({ 
+        type: 'DEPARTMENT_REVENUE', 
+        title: `Department Revenue — ${activePropName}`, 
+        data: { propertyId, propertyName: activePropName, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals } 
+      })}
     >
       <div className="flex justify-between items-center mb-3 h-4 shrink-0">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Revenue by Department (USD)</h3>
-        <InfoTooltip text="Income breakdown across rooms, food & beverage, spa, and miscellaneous departments." />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDrawer({
+                type: 'DEPARTMENT_REVENUE',
+                title: `Department Revenue — ${activePropName}`,
+                data: { propertyId, propertyName: activePropName, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals }
+              });
+            }}
+            className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+          >
+            <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+          </button>
+          <InfoTooltip text="Income breakdown across rooms, food & beverage, spa, and miscellaneous departments." />
+        </div>
       </div>
 
       <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between pt-0.5 pb-0.5">

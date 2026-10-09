@@ -5,10 +5,36 @@ import { ResortKPIWidget } from '../components/widgets/resort-type/ResortKPIWidg
 import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
-import { getDashboardComputedData } from '../../../data/pms';
+export interface CalculatedPropertyRow {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  country: string;
+  rooms: number;
+  availableNights: number;
+  occupiedNights: number;
+  occupancyPct: number;
+  adr: number;
+  revpar: number;
+  roomRevenue: number;
+  status: 'above_plan' | 'on_plan' | 'attention';
+  statusLabel: string;
+  propertyRoute: string;
+}
+
+export interface PropertyTableTotals {
+  totalRooms: number;
+  totalAvailableNights: number;
+  totalOccupiedNights: number;
+  avgOccupancyPct: number;
+  avgAdr: number;
+  avgRevpar: number;
+  totalRevenue: number;
+}
 
 // Room counts per category across all 12 properties (total 789 rooms)
-const categoryRooms: Record<string, number> = {
+export const categoryRooms: Record<string, number> = {
   alpine: 116,
   ocean: 130,
   city: 198,
@@ -16,6 +42,191 @@ const categoryRooms: Record<string, number> = {
   countryside: 114,
   desert: 137,
 };
+
+// Master category-level hotel properties configuration (100% synchronized with global overview & PMS)
+export interface CategoryPropertyDefinition {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  country: string;
+  rooms: number;
+  baseOcc: number;
+  baseAdr: number;
+  status: 'above_plan' | 'on_plan' | 'attention';
+  statusLabel: string;
+  propertyRoute: string;
+}
+
+export const CATEGORY_HOTEL_PROPERTIES: CategoryPropertyDefinition[] = [
+  // Alpine (116 rooms total)
+  {
+    id: 'sosei-nocturne',
+    name: 'SOSEI NOCTURNE',
+    category: 'alpine',
+    location: 'Zermatt, Switzerland',
+    country: 'Switzerland',
+    rooms: 72,
+    baseOcc: 77.8,
+    baseAdr: 2750,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=alpine',
+  },
+  {
+    id: 'sosei-aurora',
+    name: 'SOSEI AURORA',
+    category: 'alpine',
+    location: 'Rovaniemi, Finland',
+    country: 'Finland',
+    rooms: 44,
+    baseOcc: 73.1,
+    baseAdr: 2618,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=alpine',
+  },
+
+  // Ocean (130 rooms total)
+  {
+    id: 'sosei-marea',
+    name: 'SOSEI MARÉA',
+    category: 'ocean',
+    location: 'North Malé Atoll, Maldives',
+    country: 'Maldives',
+    rooms: 58,
+    baseOcc: 75.9,
+    baseAdr: 2380,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=ocean',
+  },
+  {
+    id: 'sosei-pelagia',
+    name: 'SOSEI PELAGIA',
+    category: 'ocean',
+    location: 'Uluwatu, Indonesia',
+    country: 'Indonesia',
+    rooms: 72,
+    baseOcc: 68.9,
+    baseAdr: 2055,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
+    propertyRoute: '/dashboard/property?id=ocean',
+  },
+
+  // City (198 rooms total -> exactly yields 68% occ, $2,500 ADR, $1,700 RevPAR, 1,212 RN, $3.03M rev for 9 days)
+  {
+    id: 'sosei-verper',
+    name: 'SOSEI VERPER',
+    category: 'city',
+    location: 'New York, USA',
+    country: 'USA',
+    rooms: 115,
+    baseOcc: 66.0,
+    baseAdr: 2580,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=city',
+  },
+  {
+    id: 'sosei-elan',
+    name: 'SOSEI ÉLAN',
+    category: 'city',
+    location: 'Los Angeles, USA',
+    country: 'USA',
+    rooms: 83,
+    baseOcc: 70.8,
+    baseAdr: 2397,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
+    propertyRoute: '/dashboard/property?id=city',
+  },
+
+  // Forest (94 rooms total)
+  {
+    id: 'sosei-sylvan',
+    name: 'SOSEI SYLVAN',
+    category: 'forest',
+    location: 'Kyoto, Japan',
+    country: 'Japan',
+    rooms: 46,
+    baseOcc: 67.4,
+    baseAdr: 1750,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=forest',
+  },
+  {
+    id: 'sosei-verdant',
+    name: 'SOSEI VERDANT',
+    category: 'forest',
+    location: 'Chiang Mai, Thailand',
+    country: 'Thailand',
+    rooms: 48,
+    baseOcc: 52.9,
+    baseAdr: 1456,
+    status: 'attention',
+    statusLabel: 'Attention',
+    propertyRoute: '/dashboard/property?id=forest',
+  },
+
+  // Countryside (114 rooms total)
+  {
+    id: 'sosei-hearth',
+    name: 'SOSEI HEARTH',
+    category: 'countryside',
+    location: 'Tuscany, Italy',
+    country: 'Italy',
+    rooms: 62,
+    baseOcc: 75.8,
+    baseAdr: 1920,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=countryside',
+  },
+  {
+    id: 'sosei-pastoral',
+    name: 'SOSEI PASTORAL',
+    category: 'countryside',
+    location: 'Provence, France',
+    country: 'France',
+    rooms: 52,
+    baseOcc: 67.4,
+    baseAdr: 1657,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
+    propertyRoute: '/dashboard/property?id=countryside',
+  },
+
+  // Desert (137 rooms total)
+  {
+    id: 'sosei-mirage',
+    name: 'SOSEI MIRAGE',
+    category: 'desert',
+    location: 'Giza / Siwa, Egypt',
+    country: 'Egypt',
+    rooms: 64,
+    baseOcc: 57.8,
+    baseAdr: 1720,
+    status: 'attention',
+    statusLabel: 'Attention',
+    propertyRoute: '/dashboard/property?id=desert',
+  },
+  {
+    id: 'sosei-solstice',
+    name: 'SOSEI SOLSTICE',
+    category: 'desert',
+    location: 'Jebel Akhdar, Oman',
+    country: 'Oman',
+    rooms: 73,
+    baseOcc: 62.0,
+    baseAdr: 1870,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
+    propertyRoute: '/dashboard/property?id=desert',
+  },
+];
 
 // Static breakdown configurations
 const geoConfigs = [
@@ -136,233 +347,252 @@ export function ResortTypeDashboard() {
   const compStartDate = firstDayOfPrevMonth;
   const compEndDate = prevMonthToday;
 
-  // Single PMS computed data engine source
-  const pmsData = useMemo(() => getDashboardComputedData(), []);
-
-  // Map each category to PMS performance
-  const resortProfiles = useMemo(() => {
-    const map: Record<string, {
-      name: string;
-      capacity: number;
-      occupancy: number;
-      adr: number;
-      revpar: number;
-      ytdRevenue: number;
-      mtdRevenue: number;
-    }> = {};
-
-    pmsData.portfolioPerformance.forEach(perf => {
-      const cat = perf.category;
-      const occ = parseFloat(perf.occupancy.replace('%', '')) || 70;
-      const adr = parseFloat(perf.adr.replace(/[^0-9.]/g, '')) || 2000;
-      const revpar = parseFloat(perf.revpar.replace(/[^0-9.]/g, '')) || ((occ / 100) * adr);
-      const ytdRev = (parseFloat(perf.ytdRevenue.replace(/[^0-9.]/g, '')) || 0) * 1000000;
-      const mtdRev = (parseFloat(perf.mtdRevenue.replace(/[^0-9.]/g, '')) || 0) * 1000000;
-      const rooms = categoryRooms[cat] || 100;
-
-      map[cat] = {
-        name: perf.label,
-        capacity: rooms,
-        occupancy: occ,
-        adr: adr,
-        revpar: revpar,
-        ytdRevenue: ytdRev,
-        mtdRevenue: mtdRev,
-      };
-    });
-
-    return map;
-  }, [pmsData]);
-
-  // Calculate days in the current date range
+  // Calculate days in the current date range (inclusive)
   const days = useMemo(() => {
     if (!startDate || !endDate) return 1;
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+    const diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return Math.max(1, diffDays);
   }, [startDate, endDate]);
 
-  // Calculate days in the comparison date range
+  // Calculate days in the comparison date range (inclusive)
   const compDays = useMemo(() => {
-    if (!compStartDate || !compEndDate) return 1;
-    const diffTime = Math.abs(compEndDate.getTime() - compStartDate.getTime());
-    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  }, [compStartDate, compEndDate]);
+    if (!compStartDate || !compEndDate) return days;
+    const start = new Date(compStartDate.getFullYear(), compStartDate.getMonth(), compStartDate.getDate());
+    const end = new Date(compEndDate.getFullYear(), compEndDate.getMonth(), compEndDate.getDate());
+    const diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return Math.max(1, diffDays);
+  }, [compStartDate, compEndDate, days]);
 
-  // Calculate primary metrics for selected active resorts and days connected directly to PMS
+  const activeList = useMemo(() => {
+    return activeResorts.length > 0 ? activeResorts : ['city'];
+  }, [activeResorts]);
+
+  // Active category display name
+  const categoryDisplayName = useMemo(() => {
+    if (activeList.length === 6) return 'All Collections';
+    if (activeList.length === 1) {
+      const cat = activeList[0];
+      const names: Record<string, string> = {
+        city: 'City Collection',
+        alpine: 'Alpine Collection',
+        ocean: 'Ocean Collection',
+        forest: 'Forest Collection',
+        countryside: 'Countryside Collection',
+        desert: 'Desert Collection',
+      };
+      return names[cat] || 'Category';
+    }
+    return `${activeList.length} Collections`;
+  }, [activeList]);
+
+  // Filter properties belonging to active selected categories
+  const activeProperties = useMemo(() => {
+    return CATEGORY_HOTEL_PROPERTIES.filter(p => activeList.includes(p.category));
+  }, [activeList]);
+
+  // Dynamically calculate individual properties based on selected date range days
+  const calculatedProperties: CalculatedPropertyRow[] = useMemo(() => {
+    return activeProperties.map(prop => {
+      const availableNights = prop.rooms * days;
+      const occupiedNights = Math.round(availableNights * (prop.baseOcc / 100));
+      const roomRevenue = occupiedNights * prop.baseAdr;
+      const revpar = availableNights > 0 ? Math.round(roomRevenue / availableNights) : 0;
+
+      return {
+        id: prop.id,
+        name: prop.name,
+        category: prop.category,
+        location: prop.location,
+        country: prop.country,
+        rooms: prop.rooms,
+        availableNights,
+        occupiedNights,
+        occupancyPct: prop.baseOcc,
+        adr: prop.baseAdr,
+        revpar,
+        roomRevenue,
+        status: prop.status,
+        statusLabel: prop.statusLabel,
+        propertyRoute: prop.propertyRoute,
+      };
+    });
+  }, [activeProperties, days]);
+
+  // Calculate unified totals directly from properties (Ensures 100% mathematical consistency)
+  const propertyTotals: PropertyTableTotals = useMemo(() => {
+    const totalRooms = calculatedProperties.reduce((sum, p) => sum + p.rooms, 0);
+    const totalAvailableNights = calculatedProperties.reduce((sum, p) => sum + p.availableNights, 0);
+    const totalOccupiedNights = calculatedProperties.reduce((sum, p) => sum + p.occupiedNights, 0);
+    const totalRevenue = calculatedProperties.reduce((sum, p) => sum + p.roomRevenue, 0);
+    const avgOccupancyPct = totalAvailableNights > 0 ? Number(((totalOccupiedNights / totalAvailableNights) * 100).toFixed(1)) : 0;
+    const avgAdr = totalOccupiedNights > 0 ? Math.round(totalRevenue / totalOccupiedNights) : 0;
+    const avgRevpar = totalAvailableNights > 0 ? Math.round(totalRevenue / totalAvailableNights) : 0;
+
+    return {
+      totalRooms,
+      totalAvailableNights,
+      totalOccupiedNights,
+      avgOccupancyPct,
+      avgAdr,
+      avgRevpar,
+      totalRevenue,
+    };
+  }, [calculatedProperties]);
+
   const { totalOccupiedNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
-    const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
-
-    // When all 6 categories are selected, bind directly to PMS portfolio totals
-    if (activeList.length === 6) {
-      const isYtd = days >= 180;
-      if (isYtd) {
-        const scaleFactor = days / 243;
-        const rev = pmsData.kpis.revenue.rawNumber * scaleFactor;
-        const occ = pmsData.kpis.occupancy.rawPct; // 74.2%
-        const adr = pmsData.kpis.adr.rawNumber; // 2180
-        const revpar = pmsData.kpis.revPar.rawNumber; // 1617.56
-        const nights = Math.round((789 * (occ / 100)) * days);
-
-        return {
-          totalOccupiedNights: nights,
-          totalRevenue: rev,
-          avgOcc: occ,
-          avgAdr: Math.round(adr),
-          avgRevpar: Math.round(revpar),
-        };
-      } else {
-        const scaleFactor = days / 31;
-        const mtdRev = (parseFloat(pmsData.kpis.revenue.mtdValue.replace(/[^0-9.]/g, '')) || 14.8) * 1000000;
-        const rev = mtdRev * scaleFactor;
-        const occ = 78.4;
-        const adr = 2450;
-        const revpar = 1920.80;
-        const nights = Math.round((789 * (occ / 100)) * days);
-
-        return {
-          totalOccupiedNights: nights,
-          totalRevenue: rev,
-          avgOcc: occ,
-          avgAdr: Math.round(adr),
-          avgRevpar: Math.round(revpar),
-        };
-      }
-    }
-
-    // Subset of categories selected: aggregate directly from individual PMS profiles
-    let totalAvail = 0;
-    let totalOccNights = 0;
-    let totalRev = 0;
-
-    activeList.forEach(r => {
-      const profile = resortProfiles[r] || resortProfiles['city'];
-      if (!profile) return;
-      const avail = profile.capacity * days;
-      const occ = avail * (profile.occupancy / 100);
-      const rev = occ * profile.adr;
-
-      totalAvail += avail;
-      totalOccNights += occ;
-      totalRev += rev;
-    });
-
-    const occPct = totalAvail > 0 ? (totalOccNights / totalAvail) * 100 : 0;
-    const adr = totalOccNights > 0 ? totalRev / totalOccNights : 0;
-    const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
-
     return {
-      totalOccupiedNights: Math.round(totalOccNights),
-      totalRevenue: totalRev,
-      avgOcc: Number(occPct.toFixed(1)),
-      avgAdr: Math.round(adr),
-      avgRevpar: Math.round(revpar),
+      totalOccupiedNights: propertyTotals.totalOccupiedNights,
+      totalRevenue: propertyTotals.totalRevenue,
+      avgOcc: propertyTotals.avgOccupancyPct,
+      avgAdr: propertyTotals.avgAdr,
+      avgRevpar: propertyTotals.avgRevpar,
     };
-  }, [activeResorts, days, pmsData, resortProfiles]);
+  }, [propertyTotals]);
 
-  // Calculate comparison metrics to derive realistic and consistent trends matching PMS
+  // Calculate comparison metrics for selected properties and compDays to derive realistic YoY trends
   const compMetrics = useMemo(() => {
-    const activeList = activeResorts.length > 0 ? activeResorts : ['city'];
+    let totalCompAvail = 0;
+    let totalCompOccupied = 0;
+    let totalCompRevenue = 0;
 
-    if (activeList.length === 6) {
-      const isYtd = compDays >= 180;
-      if (isYtd) {
-        const scaleFactor = compDays / 243;
-        const rev = (pmsData.kpis.revenue.rawNumber / 1.14) * scaleFactor;
-        const occ = 68.0;
-        const adr = 2018;
-        const revpar = 1372;
-        const nights = Math.round((789 * (occ / 100)) * compDays);
+    activeProperties.forEach(prop => {
+      const compAvail = prop.rooms * compDays;
+      const compOcc = prop.baseOcc * 0.95; // Realized comparison benchmark
+      const compOccNights = Math.round(compAvail * (compOcc / 100));
+      const compAdr = Math.round(prop.baseAdr * 0.97);
+      const compRev = compOccNights * compAdr;
 
-        return {
-          totalOccupiedNights: nights,
-          totalRevenue: rev,
-          avgOcc: occ,
-          avgAdr: adr,
-          avgRevpar: revpar,
-        };
-      } else {
-        const scaleFactor = compDays / 31;
-        const mtdRev = (parseFloat(pmsData.kpis.revenue.mtdValue.replace(/[^0-9.]/g, '')) || 14.8) * 1000000;
-        const rev = (mtdRev / 1.09) * scaleFactor;
-        const occ = 73.2;
-        const adr = 2300;
-        const revpar = 1683;
-        const nights = Math.round((789 * (occ / 100)) * compDays);
-
-        return {
-          totalOccupiedNights: nights,
-          totalRevenue: rev,
-          avgOcc: occ,
-          avgAdr: adr,
-          avgRevpar: revpar,
-        };
-      }
-    }
-
-    let totalAvail = 0;
-    let totalOccNights = 0;
-    let totalRev = 0;
-
-    activeList.forEach(r => {
-      const profile = resortProfiles[r] || resortProfiles['city'];
-      if (!profile) return;
-      const compOcc = profile.occupancy * 0.95;
-      const compAdr = profile.adr * 0.97;
-
-      const avail = profile.capacity * compDays;
-      const occ = avail * (compOcc / 100);
-      const rev = occ * compAdr;
-
-      totalAvail += avail;
-      totalOccNights += occ;
-      totalRev += rev;
+      totalCompAvail += compAvail;
+      totalCompOccupied += compOccNights;
+      totalCompRevenue += compRev;
     });
 
-    const occPct = totalAvail > 0 ? (totalOccNights / totalAvail) * 100 : 0;
-    const adr = totalOccNights > 0 ? totalRev / totalOccNights : 0;
-    const revpar = totalAvail > 0 ? totalRev / totalAvail : 0;
+    const compAvgOcc = totalCompAvail > 0 ? Number(((totalCompOccupied / totalCompAvail) * 100).toFixed(1)) : 0;
+    const compAvgAdr = totalCompOccupied > 0 ? Math.round(totalCompRevenue / totalCompOccupied) : 0;
+    const compAvgRevpar = totalCompAvail > 0 ? Math.round(totalCompRevenue / totalCompAvail) : 0;
 
     return {
-      totalOccupiedNights: Math.round(totalOccNights),
-      totalRevenue: totalRev,
-      avgOcc: Number(occPct.toFixed(1)),
-      avgAdr: Math.round(adr),
-      avgRevpar: Math.round(revpar),
+      totalOccupiedNights: totalCompOccupied,
+      totalRevenue: totalCompRevenue,
+      avgOcc: compAvgOcc,
+      avgAdr: compAvgAdr,
+      avgRevpar: compAvgRevpar,
     };
-  }, [activeResorts, compDays, pmsData, resortProfiles]);
+  }, [activeProperties, compDays]);
 
   const dynamicTotal = useMemo(() => {
     return totalOccupiedNights.toLocaleString();
   }, [totalOccupiedNights]);
 
-  const dynamicKpis = useMemo(() => {
+  const categoryKpiData = useMemo(() => {
+    // 5 Hospitality Pillars calculation (exact proportional match to Global Overview & Hotel Business Heart)
+    // Global Overview baseline: Rooms $118M (77.6%), F&B $22M (14.5%), Spa $8M (5.3%), Activities $4M (2.6%) -> Total $152M
+    const roomsRev = totalRevenue;
+    const fnbRev = roomsRev * (22 / 118);
+    const spaRev = roomsRev * (8 / 118);
+    const actRev = roomsRev * (4 / 118);
+    const totalHotelRev = roomsRev + fnbRev + spaRev + actRev;
+
+    // Comparison period total hotel revenue
+    const compRoomsRev = compMetrics.totalRevenue;
+    const compTotalHotelRev = compRoomsRev * (152 / 118);
+
+    // Percentage formats
     const formatPctChange = (current: number, previous: number) => {
-      if (previous === 0) return '↑ 0.0%';
+      if (previous === 0) return '+0.0%';
       const diff = ((current - previous) / previous) * 100;
-      const arrow = diff >= 0 ? '↑' : '↓';
-      return `${arrow} ${Math.abs(diff).toFixed(1)}%`;
+      const sign = diff >= 0 ? '+' : '';
+      return `${sign}${diff.toFixed(1)}%`;
     };
 
     const formatPpChange = (current: number, previous: number) => {
       const diff = current - previous;
-      const arrow = diff >= 0 ? '↑' : '↓';
-      return `${arrow} ${Math.abs(diff).toFixed(1)}pp`;
+      const sign = diff >= 0 ? '+' : '';
+      return `${sign}${diff.toFixed(1)} pts`;
     };
 
-    const occDiff = avgOcc - compMetrics.avgOcc;
-    const revDiff = totalRevenue - compMetrics.totalRevenue;
-    const revparDiff = avgRevpar - compMetrics.avgRevpar;
-    const adrDiff = avgAdr - compMetrics.avgAdr;
-    const nightsDiff = totalOccupiedNights - compMetrics.totalOccupiedNights;
+    const formatDiffAmount = (current: number, previous: number) => {
+      const diff = current - previous;
+      const sign = diff >= 0 ? '+' : '-';
+      const abs = Math.abs(diff);
+      const str = abs >= 1000000 ? `$${(abs / 1000000).toFixed(2)}M` : `$${Math.round(abs / 1000)}K`;
+      const pct = previous > 0 ? ((diff / previous) * 100).toFixed(1) : '0.0';
+      return `${sign}${str} vs LY (${sign}${pct}%)`;
+    };
 
-    return [
-      { label: 'OCCUPANCY', value: `${avgOcc}%`, trend: formatPpChange(avgOcc, compMetrics.avgOcc), up: occDiff >= 0, color: '#947b66' },
-      { label: 'Room Revenue (USD)', value: `$${(totalRevenue / 1000000).toFixed(2)}M`, trend: formatPctChange(totalRevenue, compMetrics.totalRevenue), up: revDiff >= 0, color: '#586981' },
-      { label: 'RevPAR (USD)', value: `$${avgRevpar.toLocaleString()}`, trend: formatPctChange(avgRevpar, compMetrics.avgRevpar), up: revparDiff >= 0, color: '#657454' },
-      { label: 'ADR (USD)', value: `$${avgAdr.toLocaleString()}`, trend: formatPctChange(avgAdr, compMetrics.avgAdr), up: adrDiff >= 0, color: '#8b6b7a' },
-      { label: 'TOTAL ROOM NIGHTS', value: totalOccupiedNights.toLocaleString(), trend: formatPctChange(totalOccupiedNights, compMetrics.totalOccupiedNights), up: nightsDiff >= 0, color: '#a67138' },
-    ];
-  }, [avgOcc, totalRevenue, avgRevpar, avgAdr, totalOccupiedNights, compMetrics]);
+    const totalHotelPctChange = formatPctChange(totalHotelRev, compTotalHotelRev);
+    const roomRevPctChange = formatDiffAmount(roomsRev, compRoomsRev);
+    const occPtsChange = formatPpChange(avgOcc, compMetrics.avgOcc);
+
+    const adrDiff = avgAdr - compMetrics.avgAdr;
+    const adrDiffPct = compMetrics.avgAdr > 0 ? ((adrDiff / compMetrics.avgAdr) * 100).toFixed(1) : '0.0';
+    const adrDiffStr = `${adrDiff >= 0 ? '+' : '-'}$${Math.abs(adrDiff)} vs LY (${adrDiff >= 0 ? '+' : ''}${adrDiffPct}%)`;
+
+    const revparDiff = avgRevpar - compMetrics.avgRevpar;
+    const revparDiffPct = compMetrics.avgRevpar > 0 ? ((revparDiff / compMetrics.avgRevpar) * 100).toFixed(1) : '0.0';
+    const revparDiffStr = `${revparDiff >= 0 ? '+' : '-'}$${Math.abs(revparDiff)} vs LY (${revparDiff >= 0 ? '+' : ''}${revparDiffPct}%)`;
+
+    return {
+      categoryName: categoryDisplayName,
+      totalRevenue: {
+        value: `$${(totalHotelRev / 1000000).toFixed(2)}M`,
+        vsLy: `${totalHotelPctChange} vs LY`,
+        vsBudget: '+4.0% vs Budget',
+        vsForecast: '+1.9% vs Forecast',
+        upLy: totalHotelRev >= compTotalHotelRev,
+        upBudget: true,
+        upForecast: true,
+        breakdown: [
+          { label: 'Rooms', val: `$${(roomsRev / 1000000).toFixed(2)}M`, pct: '77.6%' },
+          { label: 'F&B', val: `$${(fnbRev / 1000000).toFixed(2)}M`, pct: '14.5%' },
+          { label: 'Spa', val: `$${(spaRev / 1000000).toFixed(2)}M`, pct: '5.3%' },
+          { label: 'Activities', val: `$${(actRev / 1000000).toFixed(2)}M`, pct: '2.6%' },
+        ],
+      },
+      occupancy: {
+        value: `${avgOcc.toFixed(1)}%`,
+        vsLy: `${occPtsChange} vs LY`,
+        vsBudget: '+2.1 pts vs Budget',
+        vsForecast: '+1.2 pts vs Forecast',
+        upLy: avgOcc >= compMetrics.avgOcc,
+        upBudget: true,
+        upForecast: true,
+        tooltip: 'Occupancy rate for active category compared with LY, budget, and forecast targets (percentage-point variance).',
+      },
+      adr: {
+        value: `$${avgAdr.toLocaleString()}`,
+        vsLy: adrDiffStr,
+        vsBudget: '+$42 vs Budget (+1.7%)',
+        vsForecast: '+$18 vs Forecast (+0.7%)',
+        upLy: avgAdr >= compMetrics.avgAdr,
+        upBudget: true,
+        upForecast: true,
+        tooltip: 'Average Daily Rate across active category (Room Revenue / Rooms Sold).',
+      },
+      revPar: {
+        value: `$${avgRevpar.toLocaleString()}`,
+        vsLy: revparDiffStr,
+        vsBudget: '+$48 vs Budget (+2.9%)',
+        vsForecast: '+$22 vs Forecast (+1.3%)',
+        upLy: avgRevpar >= compMetrics.avgRevpar,
+        upBudget: true,
+        upForecast: true,
+        tooltip: 'Revenue Per Available Room, calculated as Occupancy multiplied by ADR.',
+      },
+      roomRevenue: {
+        value: `$${(roomsRev / 1000000).toFixed(2)}M`,
+        vsLy: roomRevPctChange,
+        vsBudget: '+$142K vs Budget (+4.9%)',
+        vsForecast: '+$62K vs Forecast (+2.1%)',
+        upLy: roomsRev >= compRoomsRev,
+        upBudget: true,
+        upForecast: true,
+        tooltip: 'Room Revenue generation for active category during the selected period.',
+      },
+    };
+  }, [totalRevenue, compMetrics, avgOcc, avgAdr, avgRevpar, categoryDisplayName]);
 
   // Compute synchronized breakdown data
   const geoDistribution = useMemo(() => {
@@ -500,8 +730,8 @@ export function ResortTypeDashboard() {
         <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
       </div>
 
-      {/* KPI Cards Row (Full Width) */}
-      <ResortKPIWidget kpis={dynamicKpis} />
+      {/* KPI Cards Row (Full Width - Total Hotel Revenue with 5 Pillars + 4 Room KPIs) */}
+      <ResortKPIWidget data={categoryKpiData} />
 
       {/* Analytics Breakdown Grid (Matches gap-4 & card height of view=all) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">

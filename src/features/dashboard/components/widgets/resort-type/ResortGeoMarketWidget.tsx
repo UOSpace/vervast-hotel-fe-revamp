@@ -52,9 +52,21 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >
-      <div className="uppercase tracking-widest text-[10px] font-bold text-zinc-900 flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
-        <span>Geo Market Stats</span>
-        <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
+      <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
+        <div className="flex items-center gap-1.5">
+          <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">Geo Market Stats</span>
+          <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
+        </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData });
+          }}
+          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+        >
+          <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+        </button>
       </div>
       {/* Mini world map using react-simple-maps */}
       <div className="w-full flex justify-center items-center py-1 h-[120px] overflow-hidden">

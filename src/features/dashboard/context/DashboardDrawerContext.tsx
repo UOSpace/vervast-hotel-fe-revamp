@@ -27,6 +27,10 @@ export type DrawerType =
   | 'FORWARD_BUSINESS'
   | 'SOSEI_SIGNALS'
   | 'PORTFOLIO_COMPARISON'
+  | 'PROPERTY_ACTIVITY'
+  | 'PROPERTY_RHYTHM'
+  | 'DEPARTMENT_REVENUE'
+  | 'UPCOMING_EVENTS'
   | null;
 
 export interface DrawerConfig {

@@ -238,27 +238,27 @@ Bagian **Portfolio Performance** adalah jantung finansial (*financial heart*) da
   2. **MTD (Primary)**: Performa finansial bulan berjalan (Revenue, Occupancy, ADR, RevPAR vs LY & vs Budget).
   3. **Forward / Future**: OTB revenue, OTB room nights, booking pace, dan forecast.
 - **Kontrol Filter Periode**:
-  - Teks indikator periode: `Period: October 1–31, 2026` (atau tanggal periode aktif).
+  - Teks indikator periode: `Period: October 1–[tanggal sekarang], 2026` (MTD mencakup awal bulan hingga tanggal hari ini berjalan, bukan akhir bulan tanggal 31).
   - Tab filter interaktif: `[ Today ] [ MTD ] [ YTD ]` dengan status `MTD` aktif secara default.
 
 ### B. 5 Metrik Finansial Wajib (5 KPI Cards)
-Setiap metrik menampilkan nilai utama dan **dua perbandingan sekaligus (dual comparisons)**: `vs LY` (Last Year) dan `vs Budget`:
+Setiap metrik menampilkan nilai utama dan **tiga perbandingan sekaligus (triple comparisons)**: `vs LY` (Last Year), `vs Budget`, dan `vs Forecast`:
 
 1. **OCCUPANCY**
    - Lensa Utama: MTD (`74.2%`)
-   - Perbandingan: Wajib menggunakan satuan **persentase poin (`pts`)**, bukan persen biasa (misal: `+4.8 pts vs LY`, `+2.1 pts vs Budget`), karena 6% growth berbeda secara finansial dengan 6 percentage-point growth.
+   - Perbandingan: Wajib menggunakan satuan **persentase poin (`pts`)**, bukan persen biasa (misal: `+4.8 pts vs LY`, `+2.1 pts vs Budget`, `+1.2 pts vs Forecast`), karena 6% growth berbeda secara finansial dengan 6 percentage-point growth.
 2. **ADR (Average Daily Rate)**
    - Lensa Utama: MTD (`$1,420`)
-   - Perbandingan: Nominal & Persentase (`+$85 vs LY (+6.0%)`, `+$42 vs Budget (+3.2%)`).
+   - Perbandingan: Nominal & Persentase (`+$85 vs LY (+6.0%)`, `+$42 vs Budget (+3.2%)`, `+$18 vs Forecast (+1.3%)`).
 3. **REVPAR (Revenue Per Available Room)**
    - Lensa Utama: MTD (`$1,054`)
-   - Perbandingan: Nominal & Persentase (`+$92 vs LY (+8.5%)`, `+$48 vs Budget (+4.1%)`).
+   - Perbandingan: Nominal & Persentase (`+$92 vs LY (+8.5%)`, `+$48 vs Budget (+4.1%)`, `+$22 vs Forecast (+2.1%)`).
 4. **ROOM REVENUE**
    - Lensa Utama: MTD (`$118M`)
-   - Perbandingan: Persentase pertumbuhan (`+14.0% vs LY`, `+5.2% vs Budget`).
+   - Perbandingan: Nominal & Persentase (Duit dulu baru persentase: `+$14.5M vs LY (+14.0%)`, `+$5.8M vs Budget (+5.2%)`, `+$2.4M vs Forecast (+2.1%)`).
 5. **TOTAL HOTEL REVENUE (Executive Hotel KPI)**
    - Lensa Utama: MTD (`$152M`)
-   - Perbandingan: Persentase pertumbuhan (`+11.0% vs LY`, `+4.0% vs Budget`).
+   - Perbandingan: Persentase pertumbuhan (`+11.0% vs LY`, `+4.0% vs Budget`, `+1.9% vs Forecast`).
    - Fungsi: Menjawab pertanyaan CEO *"What did the hotel business actually generate?"* secara menyeluruh, melampaui sekadar bisnis kamar.
 
 ### C. Arsitektur 5 Pilar Hospitality (Hospitality = Hotel Business)
@@ -374,8 +374,8 @@ Setiap kartu (*widget*) pada dashboard memiliki aturan paten, tujuan bisnis (*ex
 - **Selector Horizon Waktu (Pill Selector)**:
   - Pilihan: `[ 30D | 90D | 180D | 365D ]` dengan **default 90D**.
 - **5 Metrik Finansial OTB Panel Kiri**:
-  1. `Revenue OTB`: **$38.4M** (↑ +12% vs LY) — Total pendapatan kamar & paket yang sudah terkontrak.
-  2. `Room Nights OTB`: **14,820 RN** (↑ +11% vs LY) — Jumlah malam kamar yang sudah terjual.
+  1. `Revenue OTB`: **$38.4M** (↑ +14% vs LY) — Total pendapatan kamar & paket yang sudah terkontrak.
+  2. `Room Nights OTB`: **14,820 RN** (↑ +12% vs LY) — Jumlah malam kamar yang sudah terjual.
   3. `Occupancy OTB`: **76%** (+4 pts vs LY) — Tingkat keterisian dasar dari pemesanan saat ini.
   4. `ADR OTB`: **$2,120** (↑ +6% vs LY) — Rata-rata tarif harian pemesanan masa depan.
   5. `Cancellation Exposure`: **$2.1M** (↑ +8% vs LY) — Nilai pendapatan berisiko batal (*revenue at risk* berdasar histori pembatalan / fleksibilitas rate).
@@ -397,40 +397,39 @@ Setiap kartu (*widget*) pada dashboard memiliki aturan paten, tujuan bisnis (*ex
 - **Status**: **MENGGANTIKAN KARTU LAMA "Top Nationalities"** (Berdasarkan keputusan strategis eksekutif: Geo Market jauh lebih bernilai dibanding sekadar daftar bendera negara).
 - **Tujuan Eksekutif**: Menjawab pertanyaan tajam direksi: *"Dari mana aliran permintaan dan booking kita berasal? (Where is demand coming from?)"*.
 - **Posisi Grid**: **Row 4 — Sejajar horizontal dari kiri ke kanan bersama SOSEI Signal** (`[ Forward Business ] [ Geo Market ] [ Market Segment ] [ SOSEI Signals ]`).
-- **Data & Metrik Wajib (Tabel Bersih & Razor-Sharp)**:
-  1. `Europe`: **31% Room Nights** | ADR **$1,380** | Revenue **$41M** (Trend: ↑ **+12% vs LY**).
-  2. `APAC`: **35% Room Nights** | ADR **$1,090** | Revenue **$38M** (Trend: ↑ **+18% vs LY** — Sesuai dengan SOSEI Signal akselerasi APAC).
-  3. `Americas`: **24% Room Nights** | ADR **$1,240** | Revenue **$28M** (Trend: ↑ **+8% vs LY**).
-  4. `Middle East`: **10% Room Nights** | ADR **$1,520** | Revenue **$11M** (Trend: ↑ **+6% vs LY** — Yield ADR tertinggi).
+- **Data & Metrik Wajib (Tabel Bersih & Razor-Sharp — Sinkron dengan Property Category)**:
+  1. `Asia Pacific`: **35% Room Nights** | ADR **$1,380** | Revenue **$41M** (Trend: ↑ **+16% vs LY**).
+  2. `Europe`: **25% Room Nights** | ADR **$1,520** | Revenue **$30M** (Trend: ↑ **+12% vs LY**).
+  3. `America`: **20% Room Nights** | ADR **$1,410** | Revenue **$24M** (Trend: ↑ **+8% vs LY**).
+  4. `Middle East`: **12% Room Nights** | ADR **$1,650** | Revenue **$16M** (Trend: ↑ **+9% vs LY** — Yield ADR tertinggi).
+  5. `Africa`: **8% Room Nights** | ADR **$1,120** | Revenue **$7M** (Trend: ↑ **+5% vs LY**).
   - *Total Revenue*: **$118M** (100% identik dengan Total Rooms Revenue portofolio $118M — SSOT mutlak!).
 - **Aturan Tipografi & Styling**:
   - Judul: `text-[10px] font-bold uppercase tracking-widest text-zinc-900`
   - Subtitle: `Where is demand coming from?` (`text-[9px] text-zinc-400 font-normal`)
   - Header Kolom: Title Case (`Market`, `Room Nights`, `ADR`, `Revenue`, `vs LY`) dengan `text-[9.5px] font-medium text-zinc-400` (dilarang uppercase).
-  - Baris Tabel: Nama benua `text-[10px] font-medium text-zinc-900`, angka `text-right text-[10px]`, tren `text-emerald-700 text-[9.5px] font-medium`.
-  - Footer Ringkas: Menampilkan `Global Feeder Markets · Total Room Rev: $118M`.
+  - Baris Tabel: Nama region `text-[10px] font-medium text-zinc-900`, angka `text-right text-[10px]`, tren `text-emerald-700 text-[9.5px] font-medium`.
 - **Integrasi Drawer**:
-  - Mengklik kartu membuka **Geo Market Drawer Content** yang menyajikan 4 kartu hero (Volume Leader APAC 35%, Highest Yield Middle East $1,520, Revenue Anchor Europe $41M, Americas $28M), tabel rincian feeder gateways (LHR, ZRH, HND, SIN, JFK, DXB), serta matriks distribusi feeder di 12 luxury sanctuaries.
+  - Mengklik kartu membuka **Geo Market Drawer Content** yang menyajikan 4 kartu hero (Volume Leader Asia Pacific 35%, Highest Yield Middle East $1,650, Revenue Anchor Asia Pacific $41M, America & Emerging Africa $7M), tabel rincian feeder gateways (LHR, ZRH, HND, SIN, JFK, DXB, JNB), serta matriks distribusi feeder di 12 luxury sanctuaries.
 
 ### 8B. Kartu 8B: Market Segment (Segmen Pasar & Profil Permintaan Tamu)
 - **Status**: **KARTU TERPISAH (Completely Separate Card)** mendampingi Geo Market.
 - **Tujuan Eksekutif**: Menjawab pertanyaan fundamental manajemen portofolio: *"Permintaan seperti apa yang berhasil kita tarik? (What kind of demand are we attracting?)"*.
-- **Posisi Grid**: **Row 4 — Sejajar horizontal dari kiri ke kanan bersama SOSEI Signal** (`[ Forward Business ] [ Geo Market ] [ Market Segment ] [ SOSEI Signals ]`).
-- **Data & Metrik Wajib (Tabel Bersih & Razor-Sharp)**:
-  1. `Leisure`: **45% Room Nights** | ADR **$1,120** | Revenue **$52M** (Trend: ↑ **+14% vs LY** — Pilar utama volume & kestabilan keterisian).
-  2. `Corporate`: **22% Room Nights** | ADR **$1,340** | Revenue **$31M** (Trend: ↓ **-7% vs LY** — Ditampilkan warna merah `text-rose-600` penanda pelambatan corporate demand).
-  3. `Group / MICE`: **14% Room Nights** | ADR **$1,580** | Revenue **$19M** (Trend: ↑ **+9% vs LY** — Pertemuan puncak kepemimpinan & buyouts).
-  4. `Wellness`: **9% Room Nights** | ADR **$1,760** | Revenue **$14M** (Trend: ↑ **+19% vs LY** — Segmen dengan pertumbuhan tercepat dan ADR tertinggi).
-  5. `Social / Other`: **10% Room Nights** | ADR **$980** | Revenue **$11M** (Trend: ↑ **+5% vs LY**).
-  - *Total Bookings*: **$127M** (100% volume booking yang tercatat).
+- **Posisi Grid**: **Row 3 — Sejajar horizontal dari kiri ke kanan bersama SOSEI Signal** (`[ Geo Market ] [ Market Segment ] [ SOSEI Signals ]`).
+- **Data & Metrik Wajib (Tabel Bersih & Razor-Sharp — Sinkron dengan Property Category)**:
+  1. `Leisure`: **55% Room Nights** | ADR **$1,380** | Revenue **$65M** (Trend: ↑ **+14% vs LY** — Pilar utama volume & kestabilan keterisian).
+  2. `Business`: **25% Room Nights** | ADR **$1,620** | Revenue **$30M** (Trend: ↑ **+8% vs LY** — C-suite executives & corporate retreat buyouts).
+  3. `Social`: **10% Room Nights** | ADR **$1,180** | Revenue **$11M** (Trend: ↑ **+10% vs LY** — Private celebrations, bespoke weddings & family gatherings).
+  4. `MICE`: **7% Room Nights** | ADR **$1,720** | Revenue **$9M** (Trend: ↑ **+12% vs LY** — Executive leadership summits, conferences & buyouts — Yield ADR tertinggi).
+  5. `Others`: **3% Room Nights** | ADR **$1,050** | Revenue **$3M** (Trend: ↑ **+4% vs LY**).
+  - *Total Revenue*: **$118M** (100% identik dengan Total Rooms Revenue portofolio $118M — SSOT mutlak!).
 - **Aturan Tipografi & Styling**:
   - Judul: `text-[10px] font-bold uppercase tracking-widest text-zinc-900`
   - Subtitle: `What kind of demand are we attracting?` (`text-[9px] text-zinc-400 font-normal`)
   - Header Kolom: Title Case (`Segment`, `Room Nights`, `ADR`, `Revenue`, `vs LY`) dengan `text-[9.5px] font-medium text-zinc-400`.
-  - Tren: Positif hijau `text-emerald-700`, Negatif merah `text-rose-600` (Corporate ↓ -7%).
-  - Footer Ringkas: Menampilkan `Demand Yield Realization · Total Bookings: $127M`.
+  - Tren: Positif hijau `text-emerald-700` (`text-[#14532d]`).
 - **Integrasi Drawer**:
-  - Mengklik kartu membuka **Market Segment Drawer Content** yang menyajikan 4 kartu hero (Core Leisure Driver 45%, Top Yield Wellness $1,760, Leadership & MICE $19M, Watch Item Corporate -7%), profil risiko pembatalan (*cancellation risk*), rata-rata *booking lead time*, dan matriks segmen dominan di 12 luxury sanctuaries.
+  - Mengklik kartu membuka **Market Segment Drawer Content** yang menyajikan 4 kartu hero (Core Leisure Driver 55% $65M, Corporate & Business 25% $30M, Social & Gatherings 10% $11M, Top Yield Segment MICE $1,720 $9M), profil risiko pembatalan (*cancellation risk*), rata-rata *booking lead time*, dan matriks segmen dominan di 12 luxury sanctuaries.
 
 ### 9. Kartu 9: SOSEI Signals (Portfolio Signals & Signature Intelligence Layer)
 - **Status**: **MENGGANTIKAN KARTU LAMA "Notes From Yesterday"**.
@@ -465,9 +464,9 @@ Setiap kartu (*widget*) pada dashboard memiliki aturan paten, tujuan bisnis (*ex
   5. `RevPAR (USD)`: Pendapatan per kamar tersedia (`$1,079`, `$850`, `$721`, `$763`).
   6. `Room Revenue (USD)`: Pendapatan murni kamar (`$24.0M`, `$21.5M`, `$18.4M`, `$12.1M`).
   7. `Total Revenue (USD)`: Total omzet termasuk F&B, Spa & Aktivitas (`$31.2M`, `$28.1M`, `$24.0M`, `$16.8M`).
-  8. `vs LY`: Pertumbuhan tahunan (Hijau `↑ +18%`, `↑ +14%`, `↑ +8%` atau Merah `↓ -3%`).
-  9. `vs Budget`: Realisasi terhadap target anggaran (Hijau `↑ +9%`, `↑ +6%`, `↑ +4%` atau Merah `↓ -6%`).
-  10. `Status`: Titik status bulat minimalis (Hijau `bg-emerald-600` untuk *above/on plan*, Merah `bg-rose-500` untuk *attention*).
+  8. `vs LY`: Pertumbuhan tahunan (Hijau `↑ +18%`, `↑ +14%`, `↑ +8%`, `↑ +11%` atau Merah `↓ -3%`, Netral `— 0%`).
+  9. `vs Budget`: Realisasi terhadap target anggaran (Hijau `↑ +9%`, `↑ +6%`, `↑ +4%`, `↑ +5%`, Netral `— 0%`, Merah `↓ -6%`).
+  10. `Status`: Titik status bulat minimalis (Hijau `#14532d` untuk *above_plan*, Abu-abu `zinc-400` untuk *on_plan*, Merah `#800020` untuk *attention* — data dan indikator wajib 100% konsisten secara logis).
 - **Aksi Cepat & Navigasi**:
   - Mengklik baris properti langsung membuka **Detailed Property View** (`/dashboard/property?id=...`).
   - Tombol sudut kanan atas `See details →` membuka **Portfolio Comparison Drawer** dengan matriks performa mendalam dan perbandingan seluruh 12 sanctuary.

@@ -12,8 +12,9 @@ export function MasterLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleNavigate = (path: string) => {
-    // If it's the exact same path, do nothing
-    if (path === location.pathname) return;
+    // If it's the exact same full path including query parameters, do nothing
+    const currentFullPath = location.pathname + location.search;
+    if (path === currentFullPath) return;
     navigate(path);
   };
 

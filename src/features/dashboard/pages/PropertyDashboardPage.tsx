@@ -77,20 +77,20 @@ export function PropertyDashboardPage() {
       <div key={selectedProperty.id} className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
         {/* Row 1: KPI Metrics (Full Width) */}
         <div className="-mx-3">
-          <PropertyKPIWidget propertyId={selectedProperty.id} />
+          <PropertyKPIWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
         </div>
 
         {/* Row 2: Property Rhythm (5 cols, aligns with Occupancy) + Market Segment Mix & Guest Satisfaction (7 cols) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <PropertyRhythmWidget />
+            <PropertyRhythmWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <MarketSegmentMixWidget />
+              <MarketSegmentMixWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
             <div className="flex flex-col">
-              <GuestSatisfactionWidget />
+              <GuestSatisfactionWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
           </div>
         </div>
@@ -98,14 +98,14 @@ export function PropertyDashboardPage() {
         {/* Row 3: Room Occupancy (5 cols) + Upcoming Events & Alerts (7 cols, matching Row 2 vertical grid) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <OccupancyByRoomTypeWidget />
+            <OccupancyByRoomTypeWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <UpcomingEventsWidget />
+              <UpcomingEventsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
             <div className="flex flex-col">
-              <AlertsTasksWidget />
+              <AlertsTasksWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
           </div>
         </div>
@@ -113,14 +113,14 @@ export function PropertyDashboardPage() {
         {/* Row 4: Financials & Distributions (5 cols Revenue + 7 cols Channels & Nationality, matching vertical grid) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <RevenueByDepartmentWidget />
+            <RevenueByDepartmentWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <TopBookingChannelsWidget />
+              <TopBookingChannelsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
             <div className="flex flex-col">
-              <GuestNationalityWidget />
+              <GuestNationalityWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
             </div>
           </div>
         </div>

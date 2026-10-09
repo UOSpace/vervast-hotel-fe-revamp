@@ -15,6 +15,14 @@ import { FnbDrawerContent } from './drawers/FnbDrawerContent';
 import { SpaDrawerContent } from './drawers/SpaDrawerContent';
 import { GeoMarketDrawerContent } from './drawers/GeoMarketDrawerContent';
 import { MarketSegmentDrawerContent } from './drawers/MarketSegmentDrawerContent';
+import { ChannelDistributionDrawerContent } from './drawers/ChannelDistributionDrawerContent';
+import {
+  PropertyActivityDrawerContent,
+  PropertyRhythmDrawerContent,
+  PropertyRoomTierDrawerContent,
+  PropertyDepartmentRevenueDrawerContent,
+  PropertyUpcomingEventsDrawerContent,
+} from './drawers/PropertyDrawerContent';
 
 const propertiesPerformanceData = accuratePropertiesData;
 
@@ -81,6 +89,53 @@ export function DashboardDrawer() {
         return <MetricDrawerContent config={config} theme={theme} />;
 
       case 'ALERTS':
+        // If property alerts are provided, show property operational tasks
+        if (config.data?.alerts) {
+          const alerts = config.data.alerts;
+          const propName = config.data.propertyName || 'Property';
+          return (
+            <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
+              <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{propName}</h4>
+                  <p className="text-[10px] text-zinc-500">Active operational alerts and housekeeping/maintenance tasks</p>
+                </div>
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                  {alerts.length} Pending Actions
+                </span>
+              </div>
+              <div className="flex flex-col gap-3">
+                {alerts.map((alert: any) => {
+                  const priorityColorMap: Record<string, string> = {
+                    High: '#800020',
+                    Medium: '#b45309',
+                    Low: '#14532d',
+                  };
+                  const color = priorityColorMap[alert.priority] || '#71717a';
+                  return (
+                    <div key={alert.id || alert.title} className="p-4 border rounded-xl bg-zinc-50/50 dark:bg-zinc-800/40 border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-baseline mb-1">
+                          <span className="font-bold text-xs text-zinc-900 dark:text-zinc-100">{alert.title}</span>
+                          <span className="text-[8.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border" style={{ borderColor: `${color}40`, color, backgroundColor: `${color}10` }}>
+                            {alert.priority} Priority
+                          </span>
+                        </div>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">{alert.text || alert.desc}</p>
+                        {alert.detail && (
+                          <div className="mt-2.5 pt-2.5 border-t border-zinc-200/80 dark:border-zinc-800 text-[11px] text-zinc-500 leading-relaxed">
+                            {alert.detail}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
         // If data is provided, show specific alert detail
         if (config.data) {
           const alert = config.data;
@@ -178,8 +233,25 @@ export function DashboardDrawer() {
         return <BookingPaceDrawerContent theme={theme} />;
 
       case 'REVENUE_DEMAND_MIX':
-      case 'ROOM_TIER_OCCUPANCY':
         return <RevenueDemandMixDrawerContent theme={theme} />;
+
+      case 'ROOM_TIER_OCCUPANCY':
+        if (config.data?.types) {
+          return <PropertyRoomTierDrawerContent data={config.data} />;
+        }
+        return <RevenueDemandMixDrawerContent theme={theme} />;
+
+      case 'PROPERTY_ACTIVITY':
+        return <PropertyActivityDrawerContent data={config.data} />;
+
+      case 'PROPERTY_RHYTHM':
+        return <PropertyRhythmDrawerContent data={config.data} />;
+
+      case 'DEPARTMENT_REVENUE':
+        return <PropertyDepartmentRevenueDrawerContent data={config.data} />;
+
+      case 'UPCOMING_EVENTS':
+        return <PropertyUpcomingEventsDrawerContent data={config.data} />;
 
       case 'PORTFOLIO_COMPARISON':
         return <PortfolioComparisonDrawerContent />;
@@ -957,66 +1029,7 @@ export function DashboardDrawer() {
         return <MarketSegmentDrawerContent />;
 
       case 'CHANNEL_DISTRIBUTION':
-        {
-          const rawChannelData = Array.isArray(config.data) ? config.data : [
-            { channel: 'Direct & VIP Concierge', rnights: '38.5%', adr: '$2,680', revenue: '$4.47M' },
-            { channel: 'Luxury Consortia (Virtuoso, Amex FHR)', rnights: '28.2%', adr: '$2,550', revenue: '$3.27M' },
-            { channel: 'Official SOSEI Portal', rnights: '18.3%', adr: '$2,350', revenue: '$2.12M' },
-            { channel: 'Curated Tour Operators', rnights: '15.0%', adr: '$2,120', revenue: '$1.74M' },
-          ];
-
-          const feeMap: Record<string, string> = {
-            'Direct & VIP Concierge': '0% commission, highest margin private concierge bookings',
-            'Luxury Consortia (Virtuoso, Amex FHR)': '10% standard fee, high ADR with verified elite amenities',
-            'Official SOSEI Portal': 'Direct digital web & mobile app booking channel',
-            'Curated Tour Operators': 'Contracted luxury wholesale & seasonal alpine/ocean allotments',
-          };
-
-          const channelTableData = rawChannelData
-            .filter((item: any) => !item.isTotal)
-            .map((item: any) => ({
-              channel: item.channel || item.name || '',
-              rnights: item.rnights || item.pct || (item.value ? `${item.value}%` : ''),
-              adr: item.adr || '-',
-              revenue: item.revenue || '-',
-              fee: item.fee || feeMap[item.channel || item.name] || 'General booking source info',
-            }));
-
-          return (
-            <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Booking channel yield and commission economics comparison.</p>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                  Total MTD Room Rev: $11.60M
-                </span>
-              </div>
-              <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Distribution Channel</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Nights Share</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">ADR (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Room Revenue (USD)</th>
-                      <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Channel Economics & Terms</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {channelTableData.map((row, idx) => (
-                      <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.channel}</td>
-                        <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.rnights}</td>
-                        <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.adr}</td>
-                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.revenue}</td>
-                        <td className="py-2.5 px-3 text-zinc-500 text-[10px]">{row.fee}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        }
+        return <ChannelDistributionDrawerContent />;
 
       case 'FNB_DETAIL':
         return <FnbDrawerContent config={config} />;
@@ -1043,6 +1056,9 @@ export function DashboardDrawer() {
       case 'FORWARD_BUSINESS':
       case 'SOSEI_SIGNALS':
       case 'GUEST_MOVEMENT':
+      case 'PROPERTY_ACTIVITY':
+      case 'PROPERTY_RHYTHM':
+      case 'DEPARTMENT_REVENUE':
         return 'w-[96vw] sm:w-[940px] lg:w-[1080px] xl:w-[1180px]';
       case 'TOP_NATIONALITIES':
       case 'GEO_MARKET':
@@ -1050,6 +1066,7 @@ export function DashboardDrawer() {
       case 'CHANNEL_DISTRIBUTION':
       case 'FNB_DETAIL':
       case 'SPA_DETAIL':
+      case 'UPCOMING_EVENTS':
         return 'w-[95vw] sm:w-[820px] lg:w-[920px]';
       case 'LIVE_OVERVIEW':
       case 'GUEST_ARRIVALS':

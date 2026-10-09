@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { LiveOverviewMap } from '../components/widgets/LiveOverviewMap';
 import { PortfolioKpisWidget } from '../components/widgets/PortfolioKpisWidget';
 import { BookingPaceWidget } from '../components/widgets/BookingPaceWidget';
@@ -16,7 +16,12 @@ import { InfoTooltip } from '../../common/components/InfoTooltip';
 
 export function DashboardPage() {
   const [searchParams] = useSearchParams();
-  const view = searchParams.get('view') === 'by_property_type' ? 'by_property_type' : 'all';
+  const location = useLocation();
+  const isCategories =
+    location.pathname === '/dashboard/categories' ||
+    location.pathname === '/dashboard/property-categories' ||
+    searchParams.get('view') === 'by_property_type';
+  const view = isCategories ? 'by_property_type' : 'all';
 
   const { openDrawer } = useDashboardDrawer();
 
@@ -57,7 +62,7 @@ export function DashboardPage() {
                 </button>
               </div>
               <div
-                className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter bg-zinc-50/50 backdrop-blur-sm transition-all z-20 hover:z-40 border border-zinc-100/80 min-h-[260px]"
+                className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter backdrop-blur-sm transition-all z-20 hover:z-40 min-h-[260px]"
                 style={{ animationDelay: '0.1s' }}
               >
                 <LiveOverviewMap />

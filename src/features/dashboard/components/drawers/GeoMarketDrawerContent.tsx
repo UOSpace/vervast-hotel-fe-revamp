@@ -1,10 +1,62 @@
+import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import {
   simulatedGeoMarketData,
   simulatedPropertiesData,
 } from '../../services/propertySimulation';
 
+const regionalMeta: Record<string, { feederCountries: string[]; keyHubs: string; vsLy: string }> = {
+  'Asia Pacific': {
+    feederCountries: ['Japan', 'Singapore', 'Australia', 'China'],
+    keyHubs: 'HND, NRT, SIN, SYD',
+    vsLy: '↑ +16%',
+  },
+  'Europe': {
+    feederCountries: ['United Kingdom', 'Switzerland', 'Germany', 'France'],
+    keyHubs: 'LHR, ZRH, CDG, FRA',
+    vsLy: '↑ +12%',
+  },
+  'America': {
+    feederCountries: ['United States', 'Canada', 'Brazil', 'Mexico'],
+    keyHubs: 'JFK, SFO, LAX, MIA',
+    vsLy: '↑ +8%',
+  },
+  'Middle East': {
+    feederCountries: ['UAE', 'Saudi Arabia', 'Qatar', 'Kuwait'],
+    keyHubs: 'DXB, DOH, RUH',
+    vsLy: '↑ +9%',
+  },
+  'Africa': {
+    feederCountries: ['South Africa', 'Nigeria', 'Kenya', 'Morocco'],
+    keyHubs: 'JNB, CPT, NBO',
+    vsLy: '↑ +5%',
+  },
+};
+
 export function GeoMarketDrawerContent() {
+  const { config } = useDashboardDrawer();
   const data = simulatedGeoMarketData;
+  const customData: any[] | null = Array.isArray(config?.data) && config.data.length > 0 ? config.data : null;
+
+  const totalRow = customData ? (customData.find((r: any) => r.isTotal || r.region === 'Total') || customData[customData.length - 1]) : null;
+  const activeItems = customData ? customData.filter((r: any) => !r.isTotal && r.region !== 'Total') : null;
+
+  const totalRevenueDisplay = totalRow?.revenue || data.totalRevenue;
+
+  // Derive dynamic hero metrics if customData is present
+  const volumeLeader = activeItems ? activeItems[0] : null;
+  const highestAdr = activeItems ? [...activeItems].sort((a, b) => {
+    const valA = parseFloat(a.adr.replace(/[^0-9.]/g, '')) || 0;
+    const valB = parseFloat(b.adr.replace(/[^0-9.]/g, '')) || 0;
+    return valB - valA;
+  })[0] : null;
+
+  const revenueAnchor = activeItems ? [...activeItems].sort((a, b) => {
+    const valA = parseFloat(a.revenue.replace(/[^0-9.]/g, '')) || 0;
+    const valB = parseFloat(b.revenue.replace(/[^0-9.]/g, '')) || 0;
+    return valB - valA;
+  })[0] : null;
+
+  const emergingMarket = activeItems ? activeItems[activeItems.length - 1] : null;
 
   return (
     <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
@@ -23,7 +75,7 @@ export function GeoMarketDrawerContent() {
             Geo Market Distribution (Where is demand coming from?)
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Cross-continental guest origin breakdown across all 12 luxury sanctuaries.
+            Cross-continental guest origin breakdown across all luxury destinations.
           </p>
         </div>
 
@@ -31,7 +83,7 @@ export function GeoMarketDrawerContent() {
           <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
             Total Room Revenue MTD
           </div>
-          <div className="text-lg font-bold text-zinc-900">{data.totalRevenue}</div>
+          <div className="text-lg font-bold text-zinc-900">{totalRevenueDisplay}</div>
         </div>
       </div>
 
@@ -41,32 +93,48 @@ export function GeoMarketDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Volume Leader
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">APAC (35%)</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">↑ +18% vs LY</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">
+            {volumeLeader ? `${volumeLeader.region} (${volumeLeader.rnights})` : 'Asia Pacific (35%)'}
+          </div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
+            {volumeLeader ? `${volumeLeader.revenue} · Rank 1 Share` : '↑ +16% vs LY'}
+          </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Highest Yield ADR
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Middle East</div>
-          <div className="text-[10px] font-medium text-zinc-600 mt-0.5">$1,520 ADR (↑ +6%)</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">
+            {highestAdr ? highestAdr.region : 'Middle East'}
+          </div>
+          <div className="text-[10px] font-medium text-zinc-600 mt-0.5">
+            {highestAdr ? `${highestAdr.adr} ADR · Peak Rate` : '$1,650 ADR (↑ +9%)'}
+          </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Revenue Anchor
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Europe ($41M)</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">31% Room Nights</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">
+            {revenueAnchor ? `${revenueAnchor.region} (${revenueAnchor.revenue})` : 'Asia Pacific ($41M)'}
+          </div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
+            {revenueAnchor ? `${revenueAnchor.rnights} Room Nights` : '35% Room Nights'}
+          </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Americas Market
+            Emerging Feeder
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">$28M Rev</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">24% RN · $1,240 ADR</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">
+            {emergingMarket ? `${emergingMarket.region} (${emergingMarket.revenue})` : '$24M Rev (America)'}
+          </div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
+            {emergingMarket ? `${emergingMarket.rnights} Feeder Share` : 'Africa: $7M · 8% RN'}
+          </div>
         </div>
       </div>
 
@@ -97,27 +165,48 @@ export function GeoMarketDrawerContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {data.items.map((item) => (
-                <tr key={item.id} className="hover:bg-zinc-50/60 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900">{item.market}</td>
-                  <td className="py-3 px-4 text-right font-medium text-zinc-700">
-                    {item.roomNightsFormatted}
-                  </td>
-                  <td className="py-3 px-4 text-right font-medium text-zinc-700">
-                    {item.adrFormatted}
-                  </td>
-                  <td className="py-3 px-4 text-right font-bold text-zinc-900">
-                    {item.revenueFormatted}
-                  </td>
-                  <td className="py-3 px-4 text-right font-semibold text-emerald-700">
-                    {item.vsLyFormatted}
-                  </td>
-                  <td className="py-3 px-4 text-zinc-600">
-                    {item.feederCountries.join(', ')}
-                  </td>
-                  <td className="py-3 px-4 text-zinc-500 text-[11px]">{item.keyHubs}</td>
-                </tr>
-              ))}
+              {activeItems
+                ? activeItems.map((item: any) => {
+                    const meta = regionalMeta[item.region] || {
+                      feederCountries: ['International feeders'],
+                      keyHubs: 'Global aviation hubs',
+                      vsLy: '↑ +10%',
+                    };
+                    return (
+                      <tr key={item.region} className="hover:bg-zinc-50/60 transition-colors">
+                        <td className="py-3 px-4 font-bold text-zinc-900">{item.region}</td>
+                        <td className="py-3 px-4 text-right font-medium text-zinc-700">{item.rnights}</td>
+                        <td className="py-3 px-4 text-right font-medium text-zinc-700">{item.adr}</td>
+                        <td className="py-3 px-4 text-right font-bold text-zinc-900">{item.revenue}</td>
+                        <td className="py-3 px-4 text-right font-semibold text-emerald-700">{meta.vsLy}</td>
+                        <td className="py-3 px-4 text-zinc-600">{meta.feederCountries.join(', ')}</td>
+                        <td className="py-3 px-4 text-zinc-500 text-[11px]">{meta.keyHubs}</td>
+                      </tr>
+                    );
+                  })
+                : data.items.map((item) => (
+                    <tr key={item.id} className="hover:bg-zinc-50/60 transition-colors">
+                      <td className="py-3 px-4 font-bold text-zinc-900">{item.market}</td>
+                      <td className="py-3 px-4 text-right font-medium text-zinc-700">{item.roomNightsFormatted}</td>
+                      <td className="py-3 px-4 text-right font-medium text-zinc-700">{item.adrFormatted}</td>
+                      <td className="py-3 px-4 text-right font-bold text-zinc-900">{item.revenueFormatted}</td>
+                      <td className="py-3 px-4 text-right font-semibold text-emerald-700">{item.vsLyFormatted}</td>
+                      <td className="py-3 px-4 text-zinc-600">{item.feederCountries.join(', ')}</td>
+                      <td className="py-3 px-4 text-zinc-500 text-[11px]">{item.keyHubs}</td>
+                    </tr>
+                  ))}
+
+              {/* Total Row */}
+              <tr className="bg-zinc-50 font-bold border-t border-zinc-200">
+                <td className="py-3 px-4 text-zinc-900">Total Portfolio</td>
+                <td className="py-3 px-4 text-right text-zinc-900">{totalRow ? totalRow.rnights : '100%'}</td>
+                <td className="py-3 px-4 text-right text-zinc-900">{totalRow ? totalRow.adr : '$1,420'}</td>
+                <td className="py-3 px-4 text-right text-zinc-900">{totalRevenueDisplay}</td>
+                <td className="py-3 px-4 text-right text-emerald-700">↑ +14%</td>
+                <td className="py-3 px-4 text-zinc-600 text-[11px]" colSpan={2}>
+                  Realized Geographical Contribution
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -154,10 +243,10 @@ export function GeoMarketDrawerContent() {
                   prop.grouping === 'Alpine' || prop.grouping === 'Countryside'
                     ? { name: 'Europe', share: '46%' }
                     : prop.grouping === 'Ocean' || prop.grouping === 'City'
-                    ? { name: 'APAC', share: '52%' }
+                    ? { name: 'Asia Pacific', share: '52%' }
                     : prop.grouping === 'Desert'
                     ? { name: 'Middle East', share: '44%' }
-                    : { name: 'Americas', share: '38%' };
+                    : { name: 'America', share: '38%' };
 
                 return (
                   <tr key={prop.id} className="hover:bg-zinc-50/60 transition-colors">

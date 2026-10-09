@@ -1,7 +1,13 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
-export function GuestSatisfactionWidget() {
+export function GuestSatisfactionWidget({
+  propertyId = 'sosei-nocturne',
+  propertyName = 'SOSEI Nocturne',
+}: {
+  propertyId?: string;
+  propertyName?: string;
+}) {
   const { openDrawer } = useDashboardDrawer();
   const data = [
     { name: '5 Stars', value: 72, color: '#0f172a' },
@@ -21,11 +27,31 @@ export function GuestSatisfactionWidget() {
     <div 
       className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.35s' }}
-      onClick={() => openDrawer({ type: 'SENTIMENT_SCORE', title: 'Sentiment Score' })}
+      onClick={() => openDrawer({ 
+        type: 'SENTIMENT_SCORE', 
+        title: `Guest Satisfaction & Sentiment — ${propertyName}`,
+        data: { propertyName, propertyId, score: '4.8 / 5.0' }
+      })}
     >
       <div className="flex justify-between items-center mb-3 h-4">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Guest Satisfaction (MTD)</h3>
-        <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining." />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDrawer({
+                type: 'SENTIMENT_SCORE',
+                title: `Guest Satisfaction & Sentiment — ${propertyName}`,
+                data: { propertyName, propertyId, score: '4.8 / 5.0' },
+              });
+            }}
+            className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+          >
+            <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+          </button>
+          <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining." />
+        </div>
       </div>
 
       <div className="flex-1 flex items-center justify-between py-1 gap-3">

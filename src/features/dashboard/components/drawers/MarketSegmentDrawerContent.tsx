@@ -1,10 +1,116 @@
+import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import {
   simulatedMarketSegmentData,
   simulatedPropertiesData,
 } from '../../services/propertySimulation';
 
 export function MarketSegmentDrawerContent() {
-  const data = simulatedMarketSegmentData;
+  const { config } = useDashboardDrawer();
+  const defaultData = simulatedMarketSegmentData;
+  const customData = Array.isArray(config?.data) ? config.data : null;
+
+  let totalRevenue = defaultData.totalRevenue;
+  let items: any[] = defaultData.items;
+  let heroLeisure = { label: 'Leisure (55%)', sub: '$65M · ↑ +14% vs LY' };
+  let heroBusiness = { label: 'Business (25%)', sub: '$30M · ↑ +8% vs LY' };
+  let heroSocial = { label: 'Social (10%)', sub: '$11M · ↑ +10% vs LY' };
+  let heroTopYield = { label: 'MICE ($1,720)', sub: '$9M · ↑ +12% vs LY Pace' };
+
+  if (customData) {
+    const totalRow = customData.find(
+      (r: any) => r.segment?.toLowerCase() === 'total' || r.isTotal
+    );
+    const activeRows = customData.filter(
+      (r: any) => r !== totalRow && r.segment?.toLowerCase() !== 'total'
+    );
+
+    if (totalRow?.revenue) {
+      totalRevenue = totalRow.revenue;
+    }
+
+    const leisure = activeRows.find((r: any) =>
+      r.segment?.toLowerCase().includes('leisure')
+    );
+    const business = activeRows.find((r: any) =>
+      r.segment?.toLowerCase().includes('business')
+    );
+    const social = activeRows.find((r: any) =>
+      r.segment?.toLowerCase().includes('social')
+    );
+
+    if (leisure) {
+      heroLeisure = {
+        label: `Leisure (${leisure.rnights || '55%'})`,
+        sub: `${leisure.revenue || '$1.64M'} · ADR ${leisure.adr || '$2,465'}`,
+      };
+    }
+    if (business) {
+      heroBusiness = {
+        label: `Business (${business.rnights || '25%'})`,
+        sub: `${business.revenue || '$0.88M'} · ADR ${business.adr || '$2,921'}`,
+      };
+    }
+    if (social) {
+      heroSocial = {
+        label: `Social (${social.rnights || '10%'})`,
+        sub: `${social.revenue || '$0.22M'} · ADR ${social.adr || '$1,822'}`,
+      };
+    }
+
+    // Find highest ADR segment
+    let topAdrItem = activeRows[0];
+    let maxAdrVal = 0;
+    activeRows.forEach((r: any) => {
+      const val = parseInt((r.adr || '').replace(/[^0-9]/g, ''), 10) || 0;
+      if (val > maxAdrVal) {
+        maxAdrVal = val;
+        topAdrItem = r;
+      }
+    });
+
+    if (topAdrItem) {
+      heroTopYield = {
+        label: `${topAdrItem.segment} (${topAdrItem.adr})`,
+        sub: `${topAdrItem.revenue} · ${topAdrItem.rnights} Volume`,
+      };
+    }
+
+    const strategicProfiles: Record<
+      string,
+      { desc: string; lead: number; risk: 'Low' | 'Medium' | 'High' }
+    > = {
+      Leisure: { desc: 'High length-of-stay, high spa & F&B capture', lead: 45, risk: 'Low' },
+      Business: { desc: 'Short lead times, corporate preferred rates', lead: 14, risk: 'Medium' },
+      Social: { desc: 'Weekend & celebratory demand, buyout potential', lead: 60, risk: 'Low' },
+      MICE: { desc: 'Multi-room group contracts with banquet guarantee', lead: 90, risk: 'Low' },
+      Others: { desc: 'Contracted luxury wholesale & reserve allotments', lead: 21, risk: 'Medium' },
+    };
+
+    items = activeRows.map((r: any, idx: number) => {
+      const profile =
+        strategicProfiles[r.segment] || {
+          desc: 'Specialized niche market demand',
+          lead: 30,
+          risk: 'Medium' as const,
+        };
+      return {
+        id: `custom-seg-${idx}`,
+        segment: r.segment,
+        roomNightsPct: parseFloat(r.rnights) || 0,
+        roomNightsFormatted: r.rnights,
+        adrUsd: parseInt((r.adr || '').replace(/[^0-9]/g, ''), 10) || 0,
+        adrFormatted: r.adr,
+        revenueUsdMillions: parseFloat((r.revenue || '').replace(/[^0-9.]/g, '')) || 0,
+        revenueFormatted: r.revenue,
+        vsLyPct: 12,
+        vsLyFormatted: '+12% Pace',
+        isPositive: true,
+        description: profile.desc,
+        avgLeadTimeDays: profile.lead,
+        cancellationRisk: profile.risk,
+      };
+    });
+  }
 
   return (
     <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
@@ -31,7 +137,7 @@ export function MarketSegmentDrawerContent() {
           <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
             Total Demand Bookings
           </div>
-          <div className="text-lg font-bold text-zinc-900">{data.totalRevenue}</div>
+          <div className="text-lg font-bold text-zinc-900">{totalRevenue}</div>
         </div>
       </div>
 
@@ -41,32 +147,32 @@ export function MarketSegmentDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Core Leisure Driver
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Leisure (45%)</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">$52M · ↑ +14% vs LY</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{heroLeisure.label}</div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroLeisure.sub}</div>
+        </div>
+
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Corporate & Business
+          </span>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{heroBusiness.label}</div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroBusiness.sub}</div>
+        </div>
+
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Social & Gatherings
+          </span>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{heroSocial.label}</div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroSocial.sub}</div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Top Yield Segment
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Wellness ($1,760)</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">↑ +19% vs LY Pace</div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Leadership & MICE
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Group ($19M)</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">$1,580 ADR · ↑ +9%</div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Watch Item: Corporate
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">Corporate ($31M)</div>
-          <div className="text-[10px] font-medium text-rose-600 mt-0.5">↓ -7% Softening</div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{heroTopYield.label}</div>
+          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroTopYield.sub}</div>
         </div>
       </div>
 
@@ -98,7 +204,7 @@ export function MarketSegmentDrawerContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {data.items.map((item) => (
+              {items.map((item) => (
                 <tr key={item.id} className="hover:bg-zinc-50/60 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900">{item.segment}</td>
                   <td className="py-3 px-4 text-right font-medium text-zinc-700">
@@ -136,6 +242,24 @@ export function MarketSegmentDrawerContent() {
                   </td>
                 </tr>
               ))}
+              {customData && (
+                <tr className="bg-zinc-50/80 font-bold border-t border-zinc-200">
+                  <td className="py-3 px-4 font-bold text-zinc-900">Total</td>
+                  <td className="py-3 px-4 text-right font-bold text-zinc-900">100%</td>
+                  <td className="py-3 px-4 text-right font-bold text-zinc-900">
+                    {customData.find((r: any) => r.segment?.toLowerCase() === 'total' || r.isTotal)?.adr || '$2,500'}
+                  </td>
+                  <td className="py-3 px-4 text-right font-bold text-zinc-900">{totalRevenue}</td>
+                  <td className="py-3 px-4 text-right font-bold text-emerald-700">+11% YoY</td>
+                  <td className="py-3 px-4 text-zinc-700">Category Aggregate Demand</td>
+                  <td className="py-3 px-4 text-right text-zinc-700">38d Avg</td>
+                  <td className="py-3 px-4 text-center">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
+                      Balanced
+                    </span>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -169,14 +293,14 @@ export function MarketSegmentDrawerContent() {
               {simulatedPropertiesData.map((prop) => {
                 const segmentMix =
                   prop.grouping === 'City'
-                    ? { top: 'Corporate', topShare: '42%', secondary: 'Group / MICE (28%)' }
+                    ? { top: 'Business', topShare: '42%', secondary: 'MICE (28%)' }
                     : prop.grouping === 'Forest'
-                    ? { top: 'Wellness', topShare: '48%', secondary: 'Leisure (34%)' }
+                    ? { top: 'Social', topShare: '38%', secondary: 'Leisure (34%)' }
                     : prop.grouping === 'Alpine'
-                    ? { top: 'Leisure', topShare: '58%', secondary: 'Wellness (22%)' }
+                    ? { top: 'Leisure', topShare: '58%', secondary: 'Social (22%)' }
                     : prop.grouping === 'Desert'
-                    ? { top: 'Group / MICE', topShare: '36%', secondary: 'Leisure (32%)' }
-                    : { top: 'Leisure', topShare: '62%', secondary: 'Wellness (18%)' };
+                    ? { top: 'MICE', topShare: '36%', secondary: 'Leisure (32%)' }
+                    : { top: 'Leisure', topShare: '62%', secondary: 'Social (18%)' };
 
                 return (
                   <tr key={prop.id} className="hover:bg-zinc-50/60 transition-colors">

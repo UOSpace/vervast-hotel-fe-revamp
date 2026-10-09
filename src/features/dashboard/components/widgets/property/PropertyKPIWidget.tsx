@@ -12,71 +12,89 @@ function getTooltipText(label: string) {
   return "Key performance indicator metrics.";
 }
 
-export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyId?: string }) {
+export function PropertyKPIWidget({ 
+  propertyId = 'sosei-nocturne',
+  propertyName,
+}: { 
+  propertyId?: string;
+  propertyName?: string;
+}) {
   const { openDrawer } = useDashboardDrawer();
   
   // Real PMS-aligned metrics synchronized with Dashboard All (MTD & YTD portfolioPerformance)
   const kpiDataMap: Record<string, any> = {
     // ── Europe (Alpine & Countryside) ────────────────────────────────────
     'sosei-nocturne': {
+      name: 'SOSEI Nocturne', location: 'Zermatt, Switzerland', category: 'Alpine',
       occ: '76', rev: '$1,150,000', revpar: '$2,052', adr: '$2,700', los: '4.2',
       arrivals: 24, deps: 18, inhouse: 144, vip: 14,
       occTrend: '↑ 6.2%', revTrend: '↑ 14.0%', revparTrend: '↑ 14.2%', adrTrend: '↑ 8.0%'
     },
     'sosei-aurora': {
+      name: 'SOSEI Aurora', location: 'Rovaniemi, Finland', category: 'Alpine',
       occ: '74', rev: '$950,000', revpar: '$1,961', adr: '$2,650', los: '4.6',
       arrivals: 18, deps: 14, inhouse: 112, vip: 10,
       occTrend: '↑ 5.8%', revTrend: '↑ 13.5%', revparTrend: '↑ 13.8%', adrTrend: '↑ 7.6%'
     },
     'sosei-hearth': {
+      name: 'SOSEI Hearth', location: 'Tuscany, Italy', category: 'Countryside',
       occ: '66', rev: '$450,000', revpar: '$1,267', adr: '$1,920', los: '3.8',
       arrivals: 22, deps: 18, inhouse: 88, vip: 7,
       occTrend: '↑ 4.9%', revTrend: '↑ 11.2%', revparTrend: '↑ 11.5%', adrTrend: '↑ 6.1%'
     },
     'sosei-pastoral': {
+      name: 'SOSEI Pastoral', location: 'Provence, France', category: 'Countryside',
       occ: '64', rev: '$400,000', revpar: '$1,203', adr: '$1,880', los: '3.6',
       arrivals: 20, deps: 16, inhouse: 76, vip: 6,
       occTrend: '↑ 4.5%', revTrend: '↑ 10.8%', revparTrend: '↑ 11.0%', adrTrend: '↑ 5.9%'
     },
     // ── Americas (City) ──────────────────────────────────────────────────
     'sosei-verper': {
+      name: 'SOSEI Verper', location: 'New York, USA', category: 'City',
       occ: '73', rev: '$800,000', revpar: '$1,788', adr: '$2,450', los: '2.4',
       arrivals: 65, deps: 58, inhouse: 184, vip: 22,
       occTrend: '↑ 7.1%', revTrend: '↑ 15.2%', revparTrend: '↑ 15.4%', adrTrend: '↑ 8.5%'
     },
     'sosei-elan': {
+      name: 'SOSEI Élan', location: 'Los Angeles, USA', category: 'City',
       occ: '71', rev: '$650,000', revpar: '$1,668', adr: '$2,350', los: '2.2',
       arrivals: 55, deps: 48, inhouse: 152, vip: 18,
       occTrend: '↑ 6.8%', revTrend: '↑ 14.8%', revparTrend: '↑ 15.0%', adrTrend: '↑ 8.1%'
     },
     // ── Asia Pacific (Ocean & Forest) ────────────────────────────────────
     'sosei-marea': {
+      name: 'SOSEI Maréa', location: 'North Malé Atoll, Maldives', category: 'Ocean',
       occ: '82', rev: '$1,000,000', revpar: '$2,091', adr: '$2,550', los: '6.2',
       arrivals: 28, deps: 20, inhouse: 132, vip: 16,
       occTrend: '↑ 8.0%', revTrend: '↑ 16.5%', revparTrend: '↑ 16.8%', adrTrend: '↑ 9.2%'
     },
     'sosei-pelagia': {
+      name: 'SOSEI Pelagia', location: 'Uluwatu, Indonesia', category: 'Ocean',
       occ: '80', rev: '$850,000', revpar: '$1,960', adr: '$2,450', los: '5.8',
       arrivals: 26, deps: 19, inhouse: 126, vip: 14,
       occTrend: '↑ 7.6%', revTrend: '↑ 15.9%', revparTrend: '↑ 16.1%', adrTrend: '↑ 8.8%'
     },
     'sosei-sylvan': {
+      name: 'SOSEI Sylvan', location: 'Kyoto, Japan', category: 'Forest',
       occ: '70', rev: '$500,000', revpar: '$1,316', adr: '$1,880', los: '3.5',
       arrivals: 16, deps: 12, inhouse: 68, vip: 6,
       occTrend: '↑ 5.2%', revTrend: '↑ 12.0%', revparTrend: '↑ 12.3%', adrTrend: '↑ 6.5%'
     },
     'sosei-verdant': {
+      name: 'SOSEI Verdant', location: 'Chiang Mai, Thailand', category: 'Forest',
       occ: '68', rev: '$450,000', revpar: '$1,238', adr: '$1,820', los: '3.2',
       arrivals: 15, deps: 11, inhouse: 64, vip: 5,
       occTrend: '↑ 4.8%', revTrend: '↑ 11.5%', revparTrend: '↑ 11.8%', adrTrend: '↑ 6.2%'
     },
     // ── Middle East & Africa (Desert) ────────────────────────────────────
     'sosei-mirage': {
+      name: 'SOSEI Mirage', location: 'Siwa Oasis, Egypt', category: 'Desert',
       occ: '71', rev: '$380,000', revpar: '$1,505', adr: '$2,120', los: '4.8',
       arrivals: 14, deps: 10, inhouse: 72, vip: 8,
       occTrend: '↑ 5.5%', revTrend: '↑ 12.4%', revparTrend: '↑ 12.6%', adrTrend: '↑ 7.0%'
     },
     'sosei-solstice': {
+      name: 'SOSEI Solstice', location: 'Al Hajar, Oman', category: 'Desert',
       occ: '69', rev: '$320,000', revpar: '$1,435', adr: '$2,080', los: '4.6',
       arrivals: 12, deps: 9, inhouse: 68, vip: 7,
       occTrend: '↑ 5.1%', revTrend: '↑ 11.9%', revparTrend: '↑ 12.1%', adrTrend: '↑ 6.7%'
@@ -84,13 +102,15 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
   };
 
   const data = kpiDataMap[propertyId] ?? kpiDataMap['sosei-nocturne'];
+  const activePropName = propertyName || data.name;
 
+  // STRICT REQUIREMENT: No "vs last year" text suffix, clean executive badges
   const kpis = [
-    { label: 'Occupancy', value: `${data.occ}%`, change: `${data.occTrend} vs last year` },
-    { label: 'Room Revenue', value: data.rev, change: `${data.revTrend} vs last year` },
-    { label: 'RevPAR', value: data.revpar, change: `${data.revparTrend} vs last year` },
-    { label: 'ADR', value: data.adr, change: `${data.adrTrend} vs last year` },
-    { label: 'Av. Length of Stay', value: `${data.los} Nights`, change: '+0.3 vs last year' },
+    { label: 'Occupancy', value: `${data.occ}%`, change: data.occTrend },
+    { label: 'Room Revenue', value: data.rev, change: data.revTrend },
+    { label: 'RevPAR', value: data.revpar, change: data.revparTrend },
+    { label: 'ADR', value: data.adr, change: data.adrTrend },
+    { label: 'Av. Length of Stay', value: `${data.los} Nights`, change: '+0.3 Nights' },
   ];
 
   return (
@@ -98,7 +118,20 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
       {/* Today's Activity / Operational Summary (3 cols) */}
       <div 
         className="col-span-12 lg:col-span-3 rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
-        onClick={() => openDrawer({ type: 'LIVE_OVERVIEW', title: 'Today at a Glance' })}
+        onClick={() => openDrawer({ 
+          type: 'PROPERTY_ACTIVITY', 
+          title: `Today's Activity — ${activePropName}`,
+          data: {
+            propertyId,
+            propertyName: activePropName,
+            location: data.location,
+            category: data.category,
+            arrivals: data.arrivals,
+            deps: data.deps,
+            inhouse: data.inhouse,
+            vip: data.vip,
+          }
+        })}
       >
         <div className="flex justify-between items-center mb-3 h-4">
           <InfoTooltip text="Real-time summary of today's operational guest counts.">
@@ -132,7 +165,22 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
       <div 
         className="col-span-12 lg:col-span-2 relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
         style={{ animationDelay: '0.1s' }}
-        onClick={() => openDrawer({ type: 'METRIC', title: kpis[0].label, data: kpis[0].value })}
+        onClick={() => openDrawer({ 
+          type: 'METRIC', 
+          title: `${kpis[0].label} — ${activePropName}`, 
+          data: {
+            label: kpis[0].label,
+            value: kpis[0].value,
+            change: kpis[0].change,
+            propertyName: activePropName,
+            propertyId,
+            occ: data.occ,
+            rev: data.rev,
+            revpar: data.revpar,
+            adr: data.adr,
+            los: data.los,
+          }
+        })}
       >
         <div className="flex flex-col justify-between h-full py-0.5">
           <div className="flex items-center justify-between gap-1 mb-1">
@@ -158,7 +206,22 @@ export function PropertyKPIWidget({ propertyId = 'sosei-nocturne' }: { propertyI
             key={kpi.label}
             className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
             style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
-            onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
+            onClick={() => openDrawer({ 
+              type: 'METRIC', 
+              title: `${kpi.label} — ${activePropName}`, 
+              data: {
+                label: kpi.label,
+                value: kpi.value,
+                change: kpi.change,
+                propertyName: activePropName,
+                propertyId,
+                occ: data.occ,
+                rev: data.rev,
+                revpar: data.revpar,
+                adr: data.adr,
+                los: data.los,
+              }
+            })}
           >
             <div className="flex flex-col justify-between h-full py-0.5">
               <div className="flex items-center justify-between gap-1 mb-1">

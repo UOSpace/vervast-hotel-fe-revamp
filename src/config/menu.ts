@@ -16,7 +16,7 @@ export const sidebarMenu: MenuItem[] = [
     path: '/dashboard',
     children: [
       { name: 'Global Overview', path: '/dashboard', isDynamicOverview: true },
-      { name: 'Property Categories', path: '/dashboard?view=by_property_type' },
+      { name: 'Property Categories', path: '/dashboard/categories' },
     ],
   },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
@@ -71,7 +71,7 @@ export const fnbSidebarMenu: MenuItem[] = [
     path: '/dashboard/experience/fnb',
     children: [
       { name: 'Global Overview', path: '/dashboard/experience/fnb', isDynamicOverview: true },
-      { name: 'Property Categories', path: '/dashboard?view=by_property_type' },
+      { name: 'Property Categories', path: '/dashboard/categories' },
     ],
   },
   {

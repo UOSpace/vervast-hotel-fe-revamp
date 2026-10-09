@@ -87,12 +87,6 @@ export function GeoMarketWidget({
             </tbody>
           </table>
         </div>
-
-        {/* Footer Subtext: Total feeder volume */}
-        <div className="pt-2 mt-1 border-t border-zinc-100 flex items-center justify-between text-[9px] text-zinc-400">
-          <span>Global Feeder Markets</span>
-          <span className="font-medium text-zinc-700">Total Room Rev: {data.totalRevenue}</span>
-        </div>
       </div>
     </div>
   );

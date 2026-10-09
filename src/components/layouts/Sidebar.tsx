@@ -28,15 +28,23 @@ export function Sidebar({
     const currentPath = location.pathname + location.search;
     const searchParams = new URLSearchParams(location.search);
     const currentView = searchParams.get('view');
+    const isCategoriesActive =
+      location.pathname === '/dashboard/categories' ||
+      location.pathname === '/dashboard/property-categories' ||
+      currentView === 'by_property_type';
 
-    // Case 1: Property Categories (view=by_property_type)
-    if (child.path.includes('view=by_property_type')) {
-      return currentView === 'by_property_type';
+    // Case 1: Property Categories
+    if (
+      child.name === 'Property Categories' ||
+      child.path.includes('/dashboard/categories') ||
+      child.path.includes('view=by_property_type')
+    ) {
+      return isCategoriesActive;
     }
 
     // Case 2: Global Overview (dynamic overview child)
     if (child.isDynamicOverview) {
-      if (currentView === 'by_property_type') {
+      if (isCategoriesActive) {
         return false;
       }
       const overviewPath = getGlobalOverviewPath(activePortal);
@@ -66,6 +74,8 @@ export function Sidebar({
       if (location.pathname === overviewPath) return true;
       if (
         location.pathname === '/dashboard' ||
+        location.pathname === '/dashboard/categories' ||
+        location.pathname === '/dashboard/property-categories' ||
         location.pathname === '/dashboard/spa' ||
         location.pathname === '/dashboard/experience/fnb' ||
         location.pathname === '/dashboard/development'
