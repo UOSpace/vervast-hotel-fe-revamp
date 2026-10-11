@@ -62,7 +62,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         ],
         targetLine: 72.1,
         drivers: [
-          'Strong leisure demand at SOSEI Alpine (77.5%) & Ocean (75.2%) driving sustained peak performance.',
+          'Strong leisure demand at Sosei Sky (77.5%) & Beach Resort (75.2%) driving sustained peak performance.',
           'Occupancy outperforming LY by +4.8 pts, budget targets by +2.1 pts, and latest forecast by +1.2 pts.',
           'Direct bookings via SOSEI Privilege Concierge accounted for 42% of total room nights with minimal cancellations.',
           'Corporate retreat buyouts in SOSEI Verper NY (75.0%) lifted urban midweek room occupancy by 12%.'
@@ -78,7 +78,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         targetValue: '$1,378',
         varianceText: '+$42 vs Budget (+3.2%) · +$18 vs Forecast (+1.3%)',
         contextLabel: 'Top Performing Collection',
-        contextValue: 'SOSEI Alpine ($1,680)',
+        contextValue: 'Sosei Sky ($2,705)',
         yAxisSuffix: '',
         chartData: [
           { date: 'Sep 23', value: 1390, target: 1378 },
@@ -136,7 +136,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         drivers: [
           'RevPAR reached $1,054, up +$92 vs LY (+8.5%), +$48 vs Budget (+4.1%), and +$22 vs Forecast (+2.1%).',
           'Balanced yield expansion achieved through healthy occupancy (74.2%) and ADR ($1,420).',
-          'SOSEI Alpine led yield with $1,302 RevPAR, representing top performance across destinations.',
+          'Sosei Sky led yield with $2,104 RevPAR, representing top performance across destinations.',
           'Minimum stay restrictions on weekends preserved pricing power and eliminated single-night vacancy drag.'
         ]
       };
@@ -208,7 +208,7 @@ export function MetricDrawerContent({ config, theme }: MetricDrawerContentProps)
         drivers: [
           'Room Revenue reached $118M MTD, delivering a +$14.5M (+14.0%) increase vs LY, +$5.8M (+5.2%) above budget, and +$2.4M (+2.1%) ahead of latest forecast.',
           'Average Daily Rate ($1,420) and 74.2% occupancy drove strong top-line room yields across all collections.',
-          'SOSEI Alpine ($33.5M) and SOSEI Ocean ($27.2M) generated over 51% of portfolio room revenue.',
+          'Sosei Sky ($34.5M) and Sosei Beach Resort ($29.8M) generated over 54% of portfolio room revenue.',
           'Strong booking pace for remaining dates in October projected to sustain revenue momentum.'
         ]
       };

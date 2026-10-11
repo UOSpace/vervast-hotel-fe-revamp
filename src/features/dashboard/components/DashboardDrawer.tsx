@@ -52,19 +52,18 @@ export function DashboardDrawer() {
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">Global real-time property status across all 6 collections.</p>
+              <p className="text-xs text-zinc-500">Global real-time property status across all 5 collections.</p>
               <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                 Avg 74.2% Occupancy
               </span>
             </div>
             <div className="flex flex-col gap-3">
               {[
-                { name: 'SOSEI Alpine Collection', location: 'St. Moritz & Zermatt', time: '14:30 CET', occ: '87.2%', status: 'Peak Season', count: '180 Rms' },
-                { name: 'SOSEI Ocean Collection', location: 'Maldives & Amalfi', time: '18:30 MVT', occ: '84.1%', status: 'High Demand', count: '170 Rms' },
-                { name: 'SOSEI City Collection', location: 'Tokyo & New York', time: '22:30 JST', occ: '76.8%', status: 'Normal Pace', count: '280 Rms' },
-                { name: 'SOSEI Countryside Collection', location: 'Kyoto & Tuscany', time: '22:30 JST', occ: '75.3%', status: 'Normal Pace', count: '190 Rms' },
-                { name: 'SOSEI Forest Collection', location: 'Black Forest & Hokkaido', time: '14:30 CET', occ: '69.4%', status: 'Steady Flow', count: '240 Rms' },
-                { name: 'SOSEI Desert Collection', location: 'Al Wadi & Sedona', time: '17:30 GST', occ: '61.2%', status: 'Midweek Dip', count: '180 Rms' },
+                { name: 'SoSei Urban Collection', location: 'Tokyo & London', time: '22:30 JST', occ: '76.8%', status: 'Normal Pace', count: '198 Rms' },
+                { name: 'Sosei Beach Resort Collection', location: 'Maldives & Amalfi', time: '18:30 MVT', occ: '84.1%', status: 'High Demand', count: '130 Rms' },
+                { name: 'Sosei Sky Collection', location: 'St. Moritz & Zermatt', time: '14:30 CET', occ: '87.2%', status: 'Peak Season', count: '116 Rms' },
+                { name: 'Sosei Nature Collection', location: 'Kyoto, Black Forest, Provence', time: '22:30 JST', occ: '72.3%', status: 'Normal Pace', count: '160 Rms' },
+                { name: 'Sosei Wellness Collection', location: 'Baden-Baden, Jebel Akhdar, Sedona', time: '17:30 GST', occ: '65.2%', status: 'Steady Flow', count: '185 Rms' },
               ].map((resort) => (
                 <div key={resort.name} className="p-3.5 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/40 flex justify-between items-center hover:bg-zinc-100/60 dark:hover:bg-zinc-800/70 transition-all">
                   <div>
@@ -465,55 +464,68 @@ export function DashboardDrawer() {
         {
           const sentimentByProperty = [
             {
-              id: 'alpine',
-              name: 'SOSEI Alpine',
+              id: 'urban',
+              name: 'SoSei Urban',
               score: '4.8',
               children: [
-                { name: 'Location', score: '4.3' },
-                { name: 'Rooms', score: '4.2' },
-                { name: 'Value', score: '4.5' },
-                { name: 'Cleanliness', score: '4.5' },
-                { name: 'Service', score: '4.6' },
-                { name: 'Sleep Quality', score: '4.5' },
+                { name: 'Location', score: '4.9' },
+                { name: 'Rooms', score: '4.7' },
+                { name: 'Value', score: '4.6' },
+                { name: 'Cleanliness', score: '4.9' },
+                { name: 'Service', score: '4.8' },
+                { name: 'Sleep Quality', score: '4.7' },
               ],
             },
             {
-              id: 'ocean',
-              name: 'SOSEI Ocean',
-              score: '4.6',
+              id: 'beach-resort',
+              name: 'Sosei Beach Resort',
+              score: '4.9',
               children: [
-                { name: 'Location', score: '4.1' },
-                { name: 'Rooms', score: '4.0' },
-                { name: 'Value', score: '4.3' },
-                { name: 'Cleanliness', score: '4.4' },
-                { name: 'Service', score: '4.5' },
-                { name: 'Sleep Quality', score: '4.2' },
+                { name: 'Location', score: '5.0' },
+                { name: 'Rooms', score: '4.9' },
+                { name: 'Value', score: '4.7' },
+                { name: 'Cleanliness', score: '4.9' },
+                { name: 'Service', score: '4.9' },
+                { name: 'Sleep Quality', score: '4.8' },
               ],
             },
             {
-              id: 'city',
-              name: 'SOSEI City',
-              score: '4.5',
+              id: 'sky',
+              name: 'Sosei Sky',
+              score: '4.8',
               children: [
-                { name: 'Location', score: '4.0' },
-                { name: 'Rooms', score: '3.9' },
-                { name: 'Value', score: '4.1' },
-                { name: 'Cleanliness', score: '4.3' },
-                { name: 'Service', score: '4.4' },
-                { name: 'Sleep Quality', score: '4.0' },
+                { name: 'Location', score: '4.9' },
+                { name: 'Rooms', score: '4.8' },
+                { name: 'Value', score: '4.7' },
+                { name: 'Cleanliness', score: '4.9' },
+                { name: 'Service', score: '4.8' },
+                { name: 'Sleep Quality', score: '4.8' },
               ],
             },
             {
-              id: 'forest',
-              name: 'SOSEI Forest',
+              id: 'nature',
+              name: 'Sosei Nature',
               score: '4.7',
               children: [
-                { name: 'Location', score: '4.2' },
-                { name: 'Rooms', score: '4.1' },
-                { name: 'Value', score: '4.4' },
-                { name: 'Cleanliness', score: '4.6' },
-                { name: 'Service', score: '4.5' },
-                { name: 'Sleep Quality', score: '4.3' },
+                { name: 'Location', score: '4.8' },
+                { name: 'Rooms', score: '4.6' },
+                { name: 'Value', score: '4.6' },
+                { name: 'Cleanliness', score: '4.8' },
+                { name: 'Service', score: '4.7' },
+                { name: 'Sleep Quality', score: '4.7' },
+              ],
+            },
+            {
+              id: 'wellness',
+              name: 'Sosei Wellness',
+              score: '4.9',
+              children: [
+                { name: 'Location', score: '4.8' },
+                { name: 'Rooms', score: '4.9' },
+                { name: 'Value', score: '4.8' },
+                { name: 'Cleanliness', score: '5.0' },
+                { name: 'Service', score: '4.9' },
+                { name: 'Sleep Quality', score: '4.9' },
               ],
             },
           ];
@@ -584,14 +596,14 @@ export function DashboardDrawer() {
         {
           const generateReviews = () => {
             const reviews = [
-              { guest: 'Anderson Family', property: 'SOSEI Alpine', score: 4.8, rating: 'Excellent', comment: 'Absolutely stunning resort. The spa at Alpine was world-class.', color: '#059669' },
-              { guest: 'James Wilson', property: 'SOSEI Forest', score: 4.6, rating: 'Excellent', comment: 'Impeccable service, though dining options slightly limited at night.', color: '#059669' },
-              { guest: 'Maria Schmidt', property: 'SOSEI Ocean', score: 4.5, rating: 'Very Good', comment: 'Beautiful ocean views. The private beach access was a highlight.', color: '#059669' },
-              { guest: 'Park Family', property: 'SOSEI Desert', score: 4.3, rating: 'Very Good', comment: 'Unique desert experience. Pool area could use more shaded loungers.', color: '#71717a' },
-              { guest: 'Robert Chen', property: 'SOSEI City', score: 4.0, rating: 'Good', comment: 'Great city location. Room was comfortable but street noise noticeable.', color: '#71717a' },
-              { guest: 'Emma Watson', property: 'SOSEI Countryside', score: 3.8, rating: 'Good', comment: 'Lovely countryside retreat. Some outdoor activities were unavailable.', color: '#71717a' },
-              { guest: 'Hiroshi Tanaka', property: 'SOSEI Forest', score: 4.7, rating: 'Excellent', comment: 'A magical forest sanctuary. The morning meditation was unforgettable.', color: '#059669' },
-              { guest: 'Sarah Davis', property: 'SOSEI Alpine', score: 3.5, rating: 'Fair', comment: 'Nice property but room upgrade not available despite request. Good ski access.', color: '#e11d48' },
+              { guest: 'Anderson Family', property: 'Sosei Sky', score: 4.8, rating: 'Excellent', comment: 'Absolutely stunning resort. The ski concierge at Sky was world-class.', color: '#059669' },
+              { guest: 'James Wilson', property: 'Sosei Nature', score: 4.6, rating: 'Excellent', comment: 'Impeccable forest service, though dining options slightly limited at night.', color: '#059669' },
+              { guest: 'Maria Schmidt', property: 'Sosei Beach Resort', score: 4.9, rating: 'Excellent', comment: 'Beautiful ocean views. The private overwater villa was a highlight.', color: '#059669' },
+              { guest: 'Park Family', property: 'Sosei Wellness', score: 4.8, rating: 'Excellent', comment: 'Unique thermal wellness experience. Thermal mud and hydrotherapy were sublime.', color: '#059669' },
+              { guest: 'Robert Chen', property: 'SoSei Urban', score: 4.7, rating: 'Very Good', comment: 'Great city center location. Room was comfortable and Maybach chauffeur on point.', color: '#71717a' },
+              { guest: 'Emma Watson', property: 'Sosei Nature', score: 4.5, rating: 'Very Good', comment: 'Lovely countryside retreat. The tea ceremony was wonderful.', color: '#71717a' },
+              { guest: 'Hiroshi Tanaka', property: 'Sosei Wellness', score: 4.9, rating: 'Excellent', comment: 'A magical healing sanctuary. The medical longevity consultation was unforgettable.', color: '#059669' },
+              { guest: 'Sarah Davis', property: 'Sosei Sky', score: 4.2, rating: 'Very Good', comment: 'Nice mountain property and great ski access. Room views were breathtaking.', color: '#71717a' },
             ];
             return reviews.map((r, i) => {
               const d = new Date();
@@ -676,28 +688,8 @@ export function DashboardDrawer() {
         {
           const guestNeedsByProperty = [
             {
-              id: 'alpine',
-              name: 'SOSEI Alpine Collection',
-              needs: [
-                { label: 'Private Ski Guide & Equipment Fitting', pct: '36%', pctNum: 36 },
-                { label: 'Thermal Onsen & Alpine Recovery Spa', pct: '28%', pctNum: 28 },
-                { label: 'Fireside Fondue & Private Dining', pct: '20%', pctNum: 20 },
-                { label: 'Helicopter Transfer & Concierge', pct: '16%', pctNum: 16 },
-              ],
-            },
-            {
-              id: 'ocean',
-              name: 'SOSEI Ocean Collection',
-              needs: [
-                { label: 'Private Catamaran & Coral Diving', pct: '38%', pctNum: 38 },
-                { label: 'Holistic Ayurveda & Ocean Spa', pct: '30%', pctNum: 30 },
-                { label: 'Sunset Sandbank Omakase', pct: '20%', pctNum: 20 },
-                { label: 'Bespoke Family Water Villas', pct: '12%', pctNum: 12 },
-              ],
-            },
-            {
-              id: 'city',
-              name: 'SOSEI City Collection',
+              id: 'urban',
+              name: 'SoSei Urban Collection',
               needs: [
                 { label: 'Michelin Dining & Rooftop Bar Reservations', pct: '34%', pctNum: 34 },
                 { label: 'Chauffeured Electric Maybach Fleet', pct: '26%', pctNum: 26 },
@@ -706,18 +698,28 @@ export function DashboardDrawer() {
               ],
             },
             {
-              id: 'countryside',
-              name: 'SOSEI Countryside Collection',
+              id: 'beach-resort',
+              name: 'Sosei Beach Resort Collection',
               needs: [
-                { label: 'Traditional Tea Ceremony & Zen Gardens', pct: '35%', pctNum: 35 },
-                { label: 'Farm-to-Table Organic Harvest Dining', pct: '27%', pctNum: 27 },
-                { label: 'Artisanal Pottery & Calligraphy Masters', pct: '22%', pctNum: 22 },
-                { label: 'Scenic Cycling & Temple Passes', pct: '16%', pctNum: 16 },
+                { label: 'Private Catamaran & Coral Diving', pct: '38%', pctNum: 38 },
+                { label: 'Holistic Ayurveda & Ocean Spa', pct: '30%', pctNum: 30 },
+                { label: 'Sunset Sandbank Omakase', pct: '20%', pctNum: 20 },
+                { label: 'Bespoke Family Water Villas', pct: '12%', pctNum: 12 },
               ],
             },
             {
-              id: 'forest',
-              name: 'SOSEI Forest Collection',
+              id: 'sky',
+              name: 'Sosei Sky Collection',
+              needs: [
+                { label: 'Private Ski Guide & Equipment Fitting', pct: '36%', pctNum: 36 },
+                { label: 'Thermal Onsen & Alpine Recovery Spa', pct: '28%', pctNum: 28 },
+                { label: 'Fireside Fondue & Private Dining', pct: '20%', pctNum: 20 },
+                { label: 'Helicopter Transfer & Concierge', pct: '16%', pctNum: 16 },
+              ],
+            },
+            {
+              id: 'nature',
+              name: 'Sosei Nature Collection',
               needs: [
                 { label: 'Shinrin-yoku (Forest Bathing) & Meditation', pct: '37%', pctNum: 37 },
                 { label: 'Treehouse Herbal Bath Therapy', pct: '29%', pctNum: 29 },
@@ -726,13 +728,13 @@ export function DashboardDrawer() {
               ],
             },
             {
-              id: 'desert',
-              name: 'SOSEI Desert Collection',
+              id: 'wellness',
+              name: 'Sosei Wellness Collection',
               needs: [
-                { label: 'Private Dune Camp & Starlight Dining', pct: '40%', pctNum: 40 },
-                { label: 'Bedouin Herbal Scrub & Hammam', pct: '26%', pctNum: 26 },
-                { label: 'Falconry & Desert Wildlife Safari', pct: '20%', pctNum: 20 },
-                { label: 'Helicopter Scenic Flight & Transfers', pct: '14%', pctNum: 14 },
+                { label: 'Cellular Longevity & Cryotherapy', pct: '36%', pctNum: 36 },
+                { label: 'Ayurvedic Thermal Mud & Hydrotherapy', pct: '28%', pctNum: 28 },
+                { label: 'Mindfulness & Sound Bath Healing', pct: '22%', pctNum: 22 },
+                { label: 'Personalized Nutrition & Detox Menu', pct: '14%', pctNum: 14 },
               ],
             },
           ];
@@ -821,78 +823,68 @@ export function DashboardDrawer() {
         {
           const spendByProperty = [
             {
-              id: 'alpine', name: 'SOSEI Alpine Collection', total: '$32.8M', avg: '$2,780', years: [
-                { year: '2026 YTD', avg: '$2,780', total: '$32.8M' }, { year: '2025', avg: '$2,690', total: '$29.8M' }, { year: '2024', avg: '$2,540', total: '$26.4M' }, { year: '2023', avg: '$2,380', total: '$23.2M' },
+              id: 'urban', name: 'SoSei Urban Collection', total: '$31.6M', avg: '$2,504', years: [
+                { year: '2026 YTD', avg: '$2,504', total: '$31.6M' }, { year: '2025', avg: '$2,420', total: '$28.5M' }, { year: '2024', avg: '$2,310', total: '$25.2M' }, { year: '2023', avg: '$2,200', total: '$22.0M' },
               ], categories: [
-                { cat: 'Suites & Chalets', avg2026: '$1,720', avg2025: '$1,660', avg2024: '$1,570', avg2023: '$1,470' },
-                { cat: 'F&B & Fine Dining', avg2026: '$560', avg2025: '$540', avg2024: '$510', avg2023: '$480' },
-                { cat: 'Thermal Spa & Recovery', avg2026: '$310', avg2025: '$300', avg2024: '$280', avg2023: '$260' },
-                { cat: 'Ski Guiding & Heli', avg2026: '$190', avg2025: '$190', avg2024: '$180', avg2023: '$170' },
+                { cat: 'Skyline Suites', avg2026: '$1,520', avg2025: '$1,480', avg2024: '$1,410', avg2023: '$1,340' },
+                { cat: 'Michelin F&B & Bar', avg2026: '$560', avg2025: '$540', avg2024: '$515', avg2023: '$490' },
+                { cat: 'Urban Wellness Club', avg2026: '$240', avg2025: '$230', avg2024: '$220', avg2023: '$210' },
+                { cat: 'Chauffeur & Concierge', avg2026: '$184', avg2025: '$170', avg2024: '$165', avg2023: '$160' },
               ]
             },
             {
-              id: 'ocean', name: 'SOSEI Ocean Collection', total: '$28.5M', avg: '$2,650', years: [
-                { year: '2026 YTD', avg: '$2,650', total: '$28.5M' }, { year: '2025', avg: '$2,580', total: '$25.9M' }, { year: '2024', avg: '$2,440', total: '$23.1M' }, { year: '2023', avg: '$2,310', total: '$20.5M' },
+              id: 'beach-resort', name: 'Sosei Beach Resort Collection', total: '$29.8M', avg: '$2,207', years: [
+                { year: '2026 YTD', avg: '$2,207', total: '$29.8M' }, { year: '2025', avg: '$2,140', total: '$27.2M' }, { year: '2024', avg: '$2,020', total: '$24.5M' }, { year: '2023', avg: '$1,920', total: '$21.8M' },
               ], categories: [
-                { cat: 'Water Villas & Suites', avg2026: '$1,640', avg2025: '$1,600', avg2024: '$1,510', avg2023: '$1,430' },
-                { cat: 'F&B & Sandbank Dining', avg2026: '$520', avg2025: '$505', avg2024: '$480', avg2023: '$455' },
-                { cat: 'Ocean Spa & Ayurveda', avg2026: '$310', avg2025: '$300', avg2024: '$285', avg2023: '$265' },
-                { cat: 'Catamaran & Diving', avg2026: '$180', avg2025: '$175', avg2024: '$165', avg2023: '$160' },
+                { cat: 'Water Villas & Suites', avg2026: '$1,450', avg2025: '$1,410', avg2024: '$1,330', avg2023: '$1,260' },
+                { cat: 'F&B & Sandbank Dining', avg2026: '$430', avg2025: '$420', avg2024: '$395', avg2023: '$380' },
+                { cat: 'Ocean Spa & Ayurveda', avg2026: '$210', avg2025: '$200', avg2024: '$190', avg2023: '$180' },
+                { cat: 'Catamaran & Diving', avg2026: '$117', avg2025: '$110', avg2024: '$105', avg2023: '$100' },
               ]
             },
             {
-              id: 'city', name: 'SOSEI City Collection', total: '$23.6M', avg: '$2,380', years: [
-                { year: '2026 YTD', avg: '$2,380', total: '$23.6M' }, { year: '2025', avg: '$2,310', total: '$21.5M' }, { year: '2024', avg: '$2,210', total: '$19.4M' }, { year: '2023', avg: '$2,100', total: '$17.2M' },
+              id: 'sky', name: 'Sosei Sky Collection', total: '$34.5M', avg: '$2,705', years: [
+                { year: '2026 YTD', avg: '$2,705', total: '$34.5M' }, { year: '2025', avg: '$2,610', total: '$31.2M' }, { year: '2024', avg: '$2,480', total: '$27.8M' }, { year: '2023', avg: '$2,320', total: '$24.5M' },
               ], categories: [
-                { cat: 'Skyline Suites', avg2026: '$1,440', avg2025: '$1,400', avg2024: '$1,340', avg2023: '$1,270' },
-                { cat: 'Michelin F&B & Bar', avg2026: '$530', avg2025: '$515', avg2024: '$490', avg2023: '$470' },
-                { cat: 'Urban Wellness Club', avg2026: '$230', avg2025: '$225', avg2024: '$215', avg2023: '$200' },
-                { cat: 'Chauffeur & Concierge', avg2026: '$180', avg2025: '$170', avg2024: '$165', avg2023: '$160' },
+                { cat: 'Suites & Chalets', avg2026: '$1,680', avg2025: '$1,620', avg2024: '$1,540', avg2023: '$1,440' },
+                { cat: 'F&B & Fine Dining', avg2026: '$540', avg2025: '$520', avg2024: '$490', avg2023: '$460' },
+                { cat: 'Thermal Spa & Recovery', avg2026: '$305', avg2025: '$290', avg2024: '$275', avg2023: '$255' },
+                { cat: 'Ski Guiding & Heli', avg2026: '$180', avg2025: '$180', avg2024: '$175', avg2023: '$165' },
               ]
             },
             {
-              id: 'countryside', name: 'SOSEI Countryside Collection', total: '$13.2M', avg: '$2,250', years: [
-                { year: '2026 YTD', avg: '$2,250', total: '$13.2M' }, { year: '2025', avg: '$2,180', total: '$12.1M' }, { year: '2024', avg: '$2,070', total: '$11.0M' }, { year: '2023', avg: '$1,960', total: '$9.8M' },
+              id: 'nature', name: 'Sosei Nature Collection', total: '$28.9M', avg: '$1,829', years: [
+                { year: '2026 YTD', avg: '$1,829', total: '$28.9M' }, { year: '2025', avg: '$1,760', total: '$26.4M' }, { year: '2024', avg: '$1,670', total: '$23.8M' }, { year: '2023', avg: '$1,580', total: '$21.2M' },
               ], categories: [
-                { cat: 'Estate Ryokan Villas', avg2026: '$1,380', avg2025: '$1,340', avg2024: '$1,270', avg2023: '$1,200' },
-                { cat: 'Farm-to-Table Dining', avg2026: '$440', avg2025: '$425', avg2024: '$405', avg2023: '$385' },
-                { cat: 'Zen Bath & Tea Spa', avg2026: '$250', avg2025: '$240', avg2024: '$230', avg2023: '$215' },
-                { cat: 'Cultural Experiences', avg2026: '$180', avg2025: '$175', avg2024: '$165', avg2023: '$160' },
+                { cat: 'Estate & Ryokan Villas', avg2026: '$1,150', avg2025: '$1,110', avg2024: '$1,050', avg2023: '$990' },
+                { cat: 'Farm-to-Table & Botanical', avg2026: '$370', avg2025: '$360', avg2024: '$340', avg2023: '$320' },
+                { cat: 'Zen Bath & Tea Spa', avg2026: '$190', avg2025: '$180', avg2024: '$175', avg2023: '$165' },
+                { cat: 'Cultural Experiences', avg2026: '$119', avg2025: '$110', avg2024: '$105', avg2023: '$105' },
               ]
             },
             {
-              id: 'forest', name: 'SOSEI Forest Collection', total: '$11.6M', avg: '$2,150', years: [
-                { year: '2026 YTD', avg: '$2,150', total: '$11.6M' }, { year: '2025', avg: '$2,090', total: '$10.6M' }, { year: '2024', avg: '$1,990', total: '$9.6M' }, { year: '2023', avg: '$1,890', total: '$8.5M' },
+              id: 'wellness', name: 'Sosei Wellness Collection', total: '$27.6M', avg: '$1,694', years: [
+                { year: '2026 YTD', avg: '$1,694', total: '$27.6M' }, { year: '2025', avg: '$1,630', total: '$24.8M' }, { year: '2024', avg: '$1,540', total: '$22.1M' }, { year: '2023', avg: '$1,450', total: '$19.5M' },
               ], categories: [
-                { cat: 'Canopy & Forest Villas', avg2026: '$1,320', avg2025: '$1,280', avg2024: '$1,220', avg2023: '$1,160' },
-                { cat: 'Foraged Forest Dining', avg2026: '$420', avg2025: '$410', avg2024: '$390', avg2023: '$370' },
-                { cat: 'Herbal Onsen & Spa', avg2026: '$245', avg2025: '$238', avg2024: '$225', avg2023: '$210' },
-                { cat: 'Botanical & Wilderness', avg2026: '$165', avg2025: '$162', avg2024: '$155', avg2023: '$150' },
-              ]
-            },
-            {
-              id: 'desert', name: 'SOSEI Desert Collection', total: '$8.3M', avg: '$1,980', years: [
-                { year: '2026 YTD', avg: '$1,980', total: '$8.3M' }, { year: '2025', avg: '$1,920', total: '$7.5M' }, { year: '2024', avg: '$1,820', total: '$6.8M' }, { year: '2023', avg: '$1,720', total: '$5.9M' },
-              ], categories: [
-                { cat: 'Dune Tent Lodges', avg2026: '$1,210', avg2025: '$1,170', avg2024: '$1,110', avg2023: '$1,050' },
-                { cat: 'Starlight Oasis Dining', avg2026: '$390', avg2025: '$380', avg2024: '$360', avg2023: '$340' },
-                { cat: 'Bedouin Hammam Spa', avg2026: '$210', avg2025: '$205', avg2024: '$190', avg2023: '$180' },
-                { cat: 'Desert Safari Excursions', avg2026: '$170', avg2025: '$165', avg2024: '$160', avg2023: '$150' },
+                { cat: 'Dune & Rainforest Lodges', avg2026: '$1,080', avg2025: '$1,040', avg2024: '$980', avg2023: '$920' },
+                { cat: 'Holistic Restorative Dining', avg2026: '$340', avg2025: '$330', avg2024: '$310', avg2023: '$290' },
+                { cat: 'Thermal Hammam & Healing', avg2026: '$170', avg2025: '$165', avg2024: '$155', avg2023: '$145' },
+                { cat: 'Desert & Nature Expeditions', avg2026: '$104', avg2025: '$95', avg2024: '$95', avg2023: '$95' },
               ]
             },
           ];
 
           const revenueTrend = [
-            { year: '2023', Alpine: 23.2, Ocean: 20.5, City: 17.2, Countryside: 9.8, Forest: 8.5, Desert: 5.9 },
-            { year: '2024', Alpine: 26.4, Ocean: 23.1, City: 19.4, Countryside: 11.0, Forest: 9.6, Desert: 6.8 },
-            { year: '2025', Alpine: 29.8, Ocean: 25.9, City: 21.5, Countryside: 12.1, Forest: 10.6, Desert: 7.5 },
-            { year: '2026 YTD', Alpine: 32.8, Ocean: 28.5, City: 23.6, Countryside: 13.2, Forest: 11.6, Desert: 8.3 },
+            { year: '2023', Urban: 22.0, BeachResort: 21.8, Sky: 24.5, Nature: 21.2, Wellness: 19.5 },
+            { year: '2024', Urban: 25.2, BeachResort: 24.5, Sky: 27.8, Nature: 23.8, Wellness: 22.1 },
+            { year: '2025', Urban: 28.5, BeachResort: 27.2, Sky: 31.2, Nature: 26.4, Wellness: 24.8 },
+            { year: '2026 YTD', Urban: 31.6, BeachResort: 29.8, Sky: 34.5, Nature: 28.9, Wellness: 27.6 },
           ];
 
           return (
             <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
               <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Total guest spend & revenue realization across all 6 collections, 2023â€“2026.</p>
+                <p className="text-xs text-zinc-500">Total guest spend & revenue realization across all 5 collections, 2023–2026.</p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                   $118.0M YTD Total
                 </span>
@@ -915,12 +907,11 @@ export function DashboardDrawer() {
                         boxShadow: '0 8px 20px rgba(0,0,0,0.1)'
                       }}
                     />
-                    <Bar dataKey="Alpine" fill="#18181b" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Ocean" fill="#3f3f46" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="City" fill="#71717a" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Countryside" fill="#059669" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Forest" fill="#0d9488" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Desert" fill="#d97706" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Urban" name="SoSei Urban" fill="#18181b" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="BeachResort" name="Sosei Beach Resort" fill="#3f3f46" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Sky" name="Sosei Sky" fill="#71717a" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Nature" name="Sosei Nature" fill="#059669" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Wellness" name="Sosei Wellness" fill="#0d9488" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

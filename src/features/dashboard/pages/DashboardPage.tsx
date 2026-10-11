@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { LiveOverviewMap } from '../components/widgets/LiveOverviewMap';
 import { PortfolioKpisWidget } from '../components/widgets/PortfolioKpisWidget';
@@ -24,9 +25,21 @@ export function DashboardPage() {
   const view = isCategories ? 'by_property_type' : 'all';
 
   const { openDrawer } = useDashboardDrawer();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Ensure scroll container is always reset to the top when navigating or switching views
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, [location.pathname, searchParams, view]);
 
   return (
-    <div className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col pt-4 lg:pt-6 bg-white">
+    <div
+      ref={scrollRef}
+      key={view}
+      className="w-full h-full overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col pt-4 lg:pt-6 bg-white"
+    >
       {/* Header Widget */}
       {view === 'all' && <DashboardHeaderWidget />}
 

@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash, AddSquare } from '@solar-icons/react';
+import { Magnifer, Filter, Eye, TrashBinTrash, AddSquare } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/pagination';
+import {
+  TableContainer,
+  TableScrollArea,
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableEmpty,
+} from '@/components/ui/table';
+import { TableActionMenu } from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -84,15 +97,11 @@ const mockBookings = [
 
 export function BookingsPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
   const navigate = useNavigate();
-
-  const toggleDropdown = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenDropdownId(openDropdownId === id ? null : id);
-  };
 
   const handlePreview = (id: string) => {
     navigate(`/dashboard/reservations/bookings/${id}`);
@@ -108,6 +117,13 @@ export function BookingsPage() {
     const matchesStatus = statusFilter === 'All' || bk.bookingStatus === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredBookings.length / PAGE_SIZE));
+  const pagedBookings = filteredBookings.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -141,10 +157,7 @@ export function BookingsPage() {
 
       {/* Main Table Area */}
       <div className="flex-1 min-h-0 flex flex-col">
-        <div
-          className="flex-1 flex flex-col rounded-[12px] bg-white/70 backdrop-blur-xs border border-zinc-200/80 shadow-xs overflow-hidden animate-card-enter"
-          style={{ animationDelay: '0.1s' }}
-        >
+        <TableContainer style={{ animationDelay: '0.1s' }}>
           {/* Toolbar */}
           <div className="p-3.5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
             <div className="relative w-72">
@@ -195,88 +208,76 @@ export function BookingsPage() {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-zinc-50/90 backdrop-blur-xs border-b border-zinc-100 z-10">
-                <tr>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Booking ID</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Booking Name</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Status</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">CRS Number</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Company</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Arrival</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Departure</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
-                  <th className="px-5 py-2.5 w-10"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
-                {filteredBookings.length > 0 ? (
-                  filteredBookings.map(bk => (
-                    <tr
+          <TableScrollArea>
+            <Table>
+              <TableHeader>
+                <TableRow clickable={false}>
+                  <TableHead>Booking ID</TableHead>
+                  <TableHead>Booking Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>CRS Number</TableHead>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Arrival</TableHead>
+                  <TableHead>Departure</TableHead>
+                  <TableHead align="right">Revenue</TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagedBookings.length > 0 ? (
+                  pagedBookings.map(bk => (
+                    <TableRow
                       key={bk.id}
                       onClick={() => handlePreview(bk.id)}
-                      className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
-                      <td className="px-5 py-3 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{bk.id}</td>
-                      <td className="px-5 py-3 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{bk.bookingName}</td>
-                      <td className="px-5 py-3">
+                      <TableCell className="font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{bk.id}</TableCell>
+                      <TableCell className="font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{bk.bookingName}</TableCell>
+                      <TableCell>
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(bk.bookingStatus)}`}>
                           {bk.bookingStatus}
                         </span>
-                      </td>
-                      <td className="px-5 py-3 font-mono text-[10px] text-zinc-500">{bk.crsNo}</td>
-                      <td className="px-5 py-3 text-zinc-600 text-[10px]">{bk.companies}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{bk.arrivalDate}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{bk.departureDate}</td>
-                      <td className="px-5 py-3 text-right font-medium text-zinc-900">{bk.revenue}</td>
-                      <td className="px-5 py-3 text-right relative" onClick={e => e.stopPropagation()}>
-                        <button
-                          onClick={e => toggleDropdown(bk.id, e)}
-                          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-800 transition-colors"
-                        >
-                          <MenuDots size={16} />
-                        </button>
-
-                        {openDropdownId === bk.id && (
-                          <div className="absolute right-5 top-9 z-50 w-32 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
-                            <button
-                              onClick={() => handlePreview(bk.id)}
-                              className="w-full px-3 py-1.5 text-left text-xs text-zinc-800 hover:bg-zinc-50 flex items-center gap-2 transition-colors"
-                            >
-                              <Eye size={13} className="text-zinc-500" /> View Detail
-                            </button>
-                            <button
-                              onClick={() => setOpenDropdownId(null)}
-                              className="w-full px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
-                            >
-                              <TrashBinTrash size={13} className="text-rose-500" /> Delete
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                      <TableCell className="font-mono text-[10px] text-zinc-500">{bk.crsNo}</TableCell>
+                      <TableCell className="text-zinc-600 text-[10px]">{bk.companies}</TableCell>
+                      <TableCell className="text-zinc-500 text-[10px]">{bk.arrivalDate}</TableCell>
+                      <TableCell className="text-zinc-500 text-[10px]">{bk.departureDate}</TableCell>
+                      <TableCell align="right" className="font-medium text-zinc-900">{bk.revenue}</TableCell>
+                      <TableCell align="right" onClick={e => e.stopPropagation()}>
+                        <TableActionMenu
+                          items={[
+                            {
+                              label: 'View Detail',
+                              icon: <Eye size={13} className="text-zinc-500" />,
+                              onClick: () => handlePreview(bk.id),
+                            },
+                            {
+                              label: 'Delete',
+                              icon: <TrashBinTrash size={13} className="text-rose-500" />,
+                              variant: 'danger',
+                              onClick: () => {},
+                            },
+                          ]}
+                        />
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={9} className="px-5 py-10 text-center text-zinc-400 text-xs italic">
-                      No bookings found matching your criteria.
-                    </td>
-                  </tr>
+                  <TableEmpty colSpan={9} message="No bookings found matching your criteria." />
                 )}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+          </TableScrollArea>
 
           {/* Pagination */}
-          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
-            <span>Showing <span className="font-medium text-zinc-900">{filteredBookings.length}</span> of <span className="font-medium text-zinc-900">{mockBookings.length}</span> bookings</span>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Previous</Button>
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Next</Button>
-            </div>
-          </div>
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredBookings.length}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+            itemLabel="bookings"
+          />
+        </TableContainer>
       </div>
     </div>
   );

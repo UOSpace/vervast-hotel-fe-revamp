@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Magnifer, Filter, AddSquare, TrashBinTrash, Letter } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -80,6 +81,8 @@ export function EmailMarketingPage() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [campaignsList, setCampaignsList] = useState<EmailCampaign[]>(initialCampaigns);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const filteredCampaigns = campaignsList.filter(camp => {
     const matchesSearch =
@@ -90,6 +93,13 @@ export function EmailMarketingPage() {
     const matchesStatus = statusFilter === 'All' || camp.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredCampaigns.length / PAGE_SIZE));
+  const pagedCampaigns = filteredCampaigns.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -191,8 +201,8 @@ export function EmailMarketingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
-                {filteredCampaigns.length > 0 ? (
-                  filteredCampaigns.map(camp => (
+                {pagedCampaigns.length > 0 ? (
+                  pagedCampaigns.map(camp => (
                     <tr
                       key={camp.id}
                       className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
@@ -234,13 +244,14 @@ export function EmailMarketingPage() {
           </div>
 
           {/* Pagination */}
-          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
-            <span>Showing <span className="font-medium text-zinc-900">{filteredCampaigns.length}</span> campaigns</span>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Previous</Button>
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Next</Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredCampaigns.length}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+            itemLabel="campaigns"
+          />
         </div>
       </div>
     </div>

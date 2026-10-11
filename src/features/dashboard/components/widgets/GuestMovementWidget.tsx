@@ -7,17 +7,16 @@ export function GuestMovementWidget() {
   const data = computed.guestMovementChart;
   const legend = computed.guestMovement;
 
-  const zincPalette = {
-    alpine: '#18181b',  // zinc-900
-    ocean: '#3f3f46',   // zinc-700
-    city: '#52525b',    // zinc-600
-    forest: '#71717a',  // zinc-500
-    desert: '#a1a1aa',  // zinc-400
-    country: '#d4d4d8', // zinc-300
+  const zincPalette: Record<string, string> = {
+    sky: '#18181b',        // zinc-900
+    beachResort: '#3f3f46', // zinc-700
+    urban: '#52525b',       // zinc-600
+    nature: '#71717a',      // zinc-500
+    wellness: '#a1a1aa',    // zinc-400
   };
 
   const legendWithPaletteColors = legend.map((item) => {
-    const key = item.category as keyof typeof zincPalette;
+    const key = item.category;
     return {
       ...item,
       color: zincPalette[key] || item.color,
@@ -43,12 +42,11 @@ export function GuestMovementWidget() {
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8.5, fill: '#71717a' }} dy={10} interval={0} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8.5, fill: '#71717a' }} domain={[0, 3500]} width={28} />
               <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
-              <Bar dataKey="country" stackId="a" name="Countryside" fill={zincPalette.country} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="desert" stackId="a" name="Desert" fill={zincPalette.desert} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="forest" stackId="a" name="Forest" fill={zincPalette.forest} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="city" stackId="a" name="City" fill={zincPalette.city} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="ocean" stackId="a" name="Ocean" fill={zincPalette.ocean} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="alpine" stackId="a" name="Alpine" fill={zincPalette.alpine} radius={[3, 3, 0, 0]} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="wellness" stackId="a" name="Sosei Wellness" fill={zincPalette.wellness} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="nature" stackId="a" name="Sosei Nature" fill={zincPalette.nature} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="urban" stackId="a" name="SoSei Urban" fill={zincPalette.urban} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="beachResort" stackId="a" name="Sosei Beach Resort" fill={zincPalette.beachResort} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="sky" stackId="a" name="Sosei Sky" fill={zincPalette.sky} radius={[3, 3, 0, 0]} barSize={16} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

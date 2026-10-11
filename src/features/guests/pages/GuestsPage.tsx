@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UsersGroupTwoRounded, Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
+import { UsersGroupTwoRounded, Magnifer, Filter, Eye, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { TableActionMenu } from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -29,17 +30,11 @@ const mockGuests = [
 
 export function GuestsPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
   const navigate = useNavigate();
   const toast = useToast();
-
-  const toggleDropdown = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenDropdownId(openDropdownId === id ? null : id);
-  };
 
   const handlePreview = (id: string) => {
     if (id === 'GST-001') {
@@ -205,24 +200,22 @@ export function GuestsPage() {
                       <td className="px-6 py-4 text-[#7d6b5e]">{guest.arrival}</td>
                       <td className="px-6 py-4 text-[#7d6b5e]">{guest.departure}</td>
                       <td className="px-6 py-4 text-right font-medium">{guest.spend}</td>
-                      <td className="px-6 py-4 text-right relative">
-                        <button
-                          onClick={(e) => toggleDropdown(guest.id, e)}
-                          className="p-1.5 rounded-full hover:bg-[#d4c4b7]/50 text-[#7d6b5e] hover:text-[#4a3c31] transition-colors"
-                        >
-                          <MenuDots size={18} />
-                        </button>
-
-                        {openDropdownId === guest.id && (
-                          <div className="absolute right-6 top-10 z-50 w-36 bg-[#f3eae1] border border-[#d4c4b7] rounded-xl shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
-                            <button onClick={() => handlePreview(guest.id)} className="w-full px-3 py-2 text-left text-xs text-[#4a3c31] hover:bg-[#e5d8cb] flex items-center gap-2 transition-colors">
-                              <Eye size={14} className="text-[#947b66]" /> Preview
-                            </button>
-                            <button className="w-full px-3 py-2 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors">
-                              <TrashBinTrash size={14} className="text-red-500" /> Delete
-                            </button>
-                          </div>
-                        )}
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <TableActionMenu
+                          items={[
+                            {
+                              label: 'Preview',
+                              icon: <Eye size={13} className="text-zinc-500" />,
+                              onClick: () => handlePreview(guest.id),
+                            },
+                            {
+                              label: 'Delete',
+                              icon: <TrashBinTrash size={13} className="text-rose-500" />,
+                              variant: 'danger',
+                              onClick: () => toast.info('Action', `Delete requested for ${guest.name}`),
+                            },
+                          ]}
+                        />
                       </td>
                     </tr>
                   ))

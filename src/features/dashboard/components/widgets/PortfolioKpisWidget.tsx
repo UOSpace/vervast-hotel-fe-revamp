@@ -359,15 +359,20 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
                   OCCUPANCY
                 </span>
               </InfoTooltip>
+              <span
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.occupancy.upLy
+                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
+              >
+                {data.occupancy.vsLy}
+              </span>
             </div>
             <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
               {data.occupancy.value}
             </div>
-            {/* Comparison Badges with percentage points (pts): vs LY, vs Budget, vs Forecast */}
+            {/* Comparison Badges: vs Budget, vs Forecast */}
             <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-                {data.occupancy.vsLy}
-              </span>
               <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
                 {data.occupancy.vsBudget}
               </span>
@@ -389,15 +394,20 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
                   ADR
                 </span>
               </InfoTooltip>
+              <span
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.adr.upLy
+                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
+              >
+                {data.adr.vsLy}
+              </span>
             </div>
             <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
               {data.adr.value}
             </div>
-            {/* Comparison Badges: vs LY, vs Budget, vs Forecast */}
+            {/* Comparison Badges: vs Budget, vs Forecast */}
             <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-                {data.adr.vsLy}
-              </span>
               <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
                 {data.adr.vsBudget}
               </span>
@@ -419,15 +429,20 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
                   REVPAR
                 </span>
               </InfoTooltip>
+              <span
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.revPar.upLy
+                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
+              >
+                {data.revPar.vsLy}
+              </span>
             </div>
             <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
               {data.revPar.value}
             </div>
-            {/* Comparison Badges: vs LY, vs Budget, vs Forecast */}
+            {/* Comparison Badges: vs Budget, vs Forecast */}
             <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-                {data.revPar.vsLy}
-              </span>
               <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
                 {data.revPar.vsBudget}
               </span>
@@ -449,15 +464,20 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
                   ROOM REVENUE
                 </span>
               </InfoTooltip>
+              <span
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.roomRevenue.upLy
+                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
+              >
+                {data.roomRevenue.vsLy}
+              </span>
             </div>
             <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
               {data.roomRevenue.value}
             </div>
-            {/* Comparison Badges: vs LY, vs Budget, vs Forecast (Standardized: Amount followed by %) */}
+            {/* Comparison Badges: vs Budget, vs Forecast (Standardized: Amount followed by %) */}
             <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-                {data.roomRevenue.vsLy}
-              </span>
               <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
                 {data.roomRevenue.vsBudget}
               </span>

@@ -15,28 +15,28 @@ export function PortfolioComparisonDrawerContent() {
   let items: any[] = defaultData.items;
   let heroTopRev = {
     title: 'Top Revenue Driver',
-    val: 'SOSEI Alpine',
+    val: 'Sosei Sky',
     tag: '↑ +18% vs LY',
-    sub: '$31.2M Total',
+    sub: '$34.5M Total',
     isPositive: true,
   };
   let heroTopOcc = {
     title: 'Highest Occupancy',
-    val: 'SOSEI City',
-    tag: '81.0% Occ',
-    sub: '↑ +4 pts vs LY',
+    val: 'Sosei Sky',
+    tag: '76.0% Occ',
+    sub: '↑ +4.8 pts vs LY',
   };
   let heroTopAdr = {
     title: 'Highest ADR Yield',
-    val: '$1,420 ADR',
+    val: '$2,705 ADR',
     sub: '+$85 vs LY',
-    tag: 'Alpine Collection',
+    tag: 'Sky Collection',
   };
   let heroAttention = {
     title: 'Attention / Softening',
-    val: 'SOSEI Desert',
-    tag: '↓ -3% YoY',
-    sub: '61% Occ',
+    val: 'Sosei Wellness',
+    tag: '58% Occ',
+    sub: 'Monitoring',
   };
 
   if (customData && customData.length > 0) {

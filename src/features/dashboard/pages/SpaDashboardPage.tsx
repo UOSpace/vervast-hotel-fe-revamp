@@ -113,7 +113,7 @@ export function SpaDashboardPage() {
       <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 lg:pt-6 animate-card-enter">
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Sanctuary Wellness</p>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Sanctuary</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Dashboard</h1>
           <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Delivering balance. Enhancing wellbeing. Elevating every stay.</p>
         </div>
 

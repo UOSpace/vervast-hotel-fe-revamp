@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { PortalRailSidebar } from './PortalRailSidebar';
@@ -10,6 +10,19 @@ export function MasterLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Automatically reset scroll position on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+      const scrollables = mainRef.current.querySelectorAll('.overflow-y-auto, .overflow-auto');
+      scrollables.forEach((el) => {
+        el.scrollTop = 0;
+      });
+    }
+  }, [location.pathname, location.search]);
 
   const handleNavigate = (path: string) => {
     // If it's the exact same full path including query parameters, do nothing
@@ -49,7 +62,7 @@ export function MasterLayout() {
           />
         </div>
 
-        <main className="flex-1 overflow-hidden relative z-10 flex flex-col h-full">
+        <main ref={mainRef} className="flex-1 overflow-hidden relative z-10 flex flex-col h-full">
           {/* Mobile Top Navigation Bar */}
           <div className="md:hidden flex items-center justify-between p-3 border-b border-border/60 bg-card/90 backdrop-blur-md sticky top-0 z-30 w-full shrink-0">
             <button 

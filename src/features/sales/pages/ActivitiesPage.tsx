@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Magnifer, Filter, Letter, Phone, AddSquare, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Pagination } from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -77,6 +79,9 @@ export function ActivitiesPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activitiesList, setActivitiesList] = useState<Activity[]>(initialActivities);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
+
   const toggleComplete = (id: string) => {
     setActivitiesList(prev => prev.map(a => a.id === id ? { ...a, completed: !a.completed } : a));
   };
@@ -92,6 +97,13 @@ export function ActivitiesPage() {
     
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredActivities.length / PAGE_SIZE));
+  const pagedActivities = filteredActivities.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden pb-8 px-4 lg:px-6">
@@ -197,19 +209,20 @@ export function ActivitiesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
-                {filteredActivities.length > 0 ? (
-                  filteredActivities.map(act => (
+                {pagedActivities.length > 0 ? (
+                  pagedActivities.map(act => (
                     <tr
                       key={act.id}
                       className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
                       <td className="px-5 py-3 text-center">
-                        <input
-                          type="checkbox"
-                          checked={act.completed}
-                          onChange={() => toggleComplete(act.id)}
-                          className="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500 cursor-pointer"
-                        />
+                        <div className="flex items-center justify-center">
+                          <Checkbox
+                            checked={act.completed}
+                            onCheckedChange={() => toggleComplete(act.id)}
+                            aria-label={`Mark ${act.title} as completed`}
+                          />
+                        </div>
                       </td>
                       <td className={`px-5 py-3 font-medium text-zinc-900 ${act.completed ? 'line-through text-zinc-400' : ''}`}>
                         {act.title}
@@ -246,13 +259,14 @@ export function ActivitiesPage() {
           </div>
 
           {/* Pagination */}
-          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
-            <span>Showing <span className="font-medium text-zinc-900">{filteredActivities.length}</span> activities</span>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Previous</Button>
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Next</Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredActivities.length}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+            itemLabel="activities"
+          />
         </div>
       </div>
     </div>

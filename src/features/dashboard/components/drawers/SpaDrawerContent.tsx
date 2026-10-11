@@ -71,11 +71,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'SOSEI Ocean Collection (Maldives & Amalfi)', count: 480, rate: '$240', rev: '$115,200' },
-                { name: 'SOSEI Alpine Collection (St. Moritz & Zermatt)', count: 390, rate: '$235', rev: '$91,650' },
-                { name: 'SOSEI Forest Collection (Kyoto & Black Forest)', count: 180, rate: '$210', rev: '$37,800' },
-                { name: 'SOSEI Desert Collection (Al Wadi & Sedona)', count: 110, rate: '$200', rev: '$22,000' },
-                { name: 'SOSEI City Collection (Tokyo & New York)', count: 88, rate: '$225', rev: '$19,800' },
+                { name: 'Sosei Beach Resort Collection (Maldives & Amalfi)', count: 480, rate: '$240', rev: '$115,200' },
+                { name: 'Sosei Sky Collection (St. Moritz & Zermatt)', count: 390, rate: '$235', rev: '$91,650' },
+                { name: 'Sosei Wellness Collection (Baden-Baden, Jebel Akhdar, Sedona)', count: 280, rate: '$250', rev: '$70,000' },
+                { name: 'Sosei Nature Collection (Kyoto, Black Forest, Provence)', count: 180, rate: '$210', rev: '$37,800' },
+                { name: 'SoSei Urban Collection (Tokyo & London)', count: 120, rate: '$225', rev: '$27,000' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -97,7 +97,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
         <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
           <p className="text-xs text-zinc-500">Average realized rate per spa treatment session by collection.</p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            Average Realized: $228
+            Average Realized: $232
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -112,11 +112,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'SOSEI Ocean Collection', standard: '$220', peak: '$260', realized: '$240' },
-                { name: 'SOSEI Alpine Collection', standard: '$215', peak: '$255', realized: '$235' },
-                { name: 'SOSEI City Collection', standard: '$210', peak: '$245', realized: '$225' },
-                { name: 'SOSEI Forest Collection', standard: '$195', peak: '$230', realized: '$210' },
-                { name: 'SOSEI Desert Collection', standard: '$180', peak: '$220', realized: '$200' },
+                { name: 'Sosei Wellness Collection', standard: '$230', peak: '$275', realized: '$250' },
+                { name: 'Sosei Beach Resort Collection', standard: '$220', peak: '$260', realized: '$240' },
+                { name: 'Sosei Sky Collection', standard: '$215', peak: '$255', realized: '$235' },
+                { name: 'SoSei Urban Collection', standard: '$210', peak: '$245', realized: '$225' },
+                { name: 'Sosei Nature Collection', standard: '$195', peak: '$230', realized: '$210' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>

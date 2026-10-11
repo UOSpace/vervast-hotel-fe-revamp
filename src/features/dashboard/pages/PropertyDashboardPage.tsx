@@ -10,31 +10,10 @@ import { GuestSatisfactionWidget } from '../components/widgets/property/GuestSat
 import { PropertyRhythmWidget } from '../components/widgets/property/PropertyRhythmWidget';
 import { UpcomingEventsWidget } from '../components/widgets/property/UpcomingEventsWidget';
 import { AlertsTasksWidget } from '../components/widgets/property/AlertsTasksWidget';
-import alpineImg from '@/assets/property_types/alpine-thumb.jpg';
-import oceanImg from '@/assets/property_types/ocean_hills.jpg';
-import cityImg from '@/assets/property_types/city_wabisabi.jpg';
-import forestImg from '@/assets/property_types/forest_rindang.jpg';
-import desertImg from '@/assets/property_types/desert.png';
-import countryImg from '@/assets/property_types/country_pedesaan.jpg';
+import { MASTER_PROPERTIES } from '@/constants/categories';
 
-export const PROPERTIES = [
-  // ── Europe ──────────────────────────────────────────────────────────────
-  { id: 'sosei-nocturne',  name: 'SOSEI Nocturne',  location: 'Switzerland',       img: alpineImg   },
-  { id: 'sosei-aurora',   name: 'SOSEI Aurora',     location: 'Finland',           img: alpineImg   },
-  { id: 'sosei-hearth',   name: 'SOSEI Hearth',     location: 'Tuscany, Italy',    img: countryImg  },
-  { id: 'sosei-pastoral', name: 'SOSEI Pastoral',   location: 'Provence, France',  img: countryImg  },
-  // ── Americas ────────────────────────────────────────────────────────────
-  { id: 'sosei-verper',   name: 'SOSEI Verper',     location: 'New York, USA',     img: cityImg     },
-  { id: 'sosei-elan',     name: 'SOSEI Élan',       location: 'Los Angeles, USA',  img: cityImg     },
-  // ── Asia Pacific ────────────────────────────────────────────────────────
-  { id: 'sosei-marea',    name: 'SOSEI Maréa',      location: 'Maldives',          img: oceanImg    },
-  { id: 'sosei-pelagia',  name: 'SOSEI Pelagia',    location: 'Indonesia',         img: oceanImg    },
-  { id: 'sosei-sylvan',   name: 'SOSEI Sylvan',     location: 'Kyoto',             img: forestImg   },
-  { id: 'sosei-verdant',  name: 'SOSEI Verdant',    location: 'Thailand',          img: forestImg   },
-  // ── Middle East & Africa ─────────────────────────────────────────────────
-  { id: 'sosei-mirage',   name: 'SOSEI Mirage',     location: 'Egypt',             img: desertImg   },
-  { id: 'sosei-solstice', name: 'SOSEI Solstice',   location: 'Oman',              img: desertImg   },
-];
+export const PROPERTIES = MASTER_PROPERTIES;
+
 
 
 export function PropertyDashboardPage() {

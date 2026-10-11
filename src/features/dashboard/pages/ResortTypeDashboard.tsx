@@ -1,10 +1,18 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ResortPickerWidget } from '../components/widgets/resort-type/ResortPickerWidget';
 import { DateRangeWidget } from '../components/widgets/resort-type/DateRangeWidget';
 import { ResortKPIWidget } from '../components/widgets/resort-type/ResortKPIWidget';
 import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
+import {
+  MASTER_PROPERTIES,
+  CATEGORY_ROOM_COUNTS,
+  formatCategorySelectionTitle,
+  resolveCategoryId,
+  type MasterHotelProperty,
+} from '@/constants/categories';
+
 export interface CalculatedPropertyRow {
   id: string;
   name: string;
@@ -33,200 +41,13 @@ export interface PropertyTableTotals {
   totalRevenue: number;
 }
 
-// Room counts per category across all 12 properties (total 789 rooms)
-export const categoryRooms: Record<string, number> = {
-  alpine: 116,
-  ocean: 130,
-  city: 198,
-  forest: 94,
-  countryside: 114,
-  desert: 137,
-};
+// Room counts per category across all 12 properties (total 789 rooms from Master Data)
+export const categoryRooms: Record<string, number> = CATEGORY_ROOM_COUNTS;
 
-// Master category-level hotel properties configuration (100% synchronized with global overview & PMS)
-export interface CategoryPropertyDefinition {
-  id: string;
-  name: string;
-  category: string;
-  location: string;
-  country: string;
-  rooms: number;
-  baseOcc: number;
-  baseAdr: number;
-  status: 'above_plan' | 'on_plan' | 'attention';
-  statusLabel: string;
-  propertyRoute: string;
-}
+// Master category-level hotel properties configuration (100% synchronized with Master Data)
+export type CategoryPropertyDefinition = MasterHotelProperty;
+export const CATEGORY_HOTEL_PROPERTIES: MasterHotelProperty[] = MASTER_PROPERTIES;
 
-export const CATEGORY_HOTEL_PROPERTIES: CategoryPropertyDefinition[] = [
-  // Alpine (116 rooms total)
-  {
-    id: 'sosei-nocturne',
-    name: 'SOSEI NOCTURNE',
-    category: 'alpine',
-    location: 'Zermatt, Switzerland',
-    country: 'Switzerland',
-    rooms: 72,
-    baseOcc: 77.8,
-    baseAdr: 2750,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=alpine',
-  },
-  {
-    id: 'sosei-aurora',
-    name: 'SOSEI AURORA',
-    category: 'alpine',
-    location: 'Rovaniemi, Finland',
-    country: 'Finland',
-    rooms: 44,
-    baseOcc: 73.1,
-    baseAdr: 2618,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=alpine',
-  },
-
-  // Ocean (130 rooms total)
-  {
-    id: 'sosei-marea',
-    name: 'SOSEI MARÉA',
-    category: 'ocean',
-    location: 'North Malé Atoll, Maldives',
-    country: 'Maldives',
-    rooms: 58,
-    baseOcc: 75.9,
-    baseAdr: 2380,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=ocean',
-  },
-  {
-    id: 'sosei-pelagia',
-    name: 'SOSEI PELAGIA',
-    category: 'ocean',
-    location: 'Uluwatu, Indonesia',
-    country: 'Indonesia',
-    rooms: 72,
-    baseOcc: 68.9,
-    baseAdr: 2055,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=ocean',
-  },
-
-  // City (198 rooms total -> exactly yields 68% occ, $2,500 ADR, $1,700 RevPAR, 1,212 RN, $3.03M rev for 9 days)
-  {
-    id: 'sosei-verper',
-    name: 'SOSEI VERPER',
-    category: 'city',
-    location: 'New York, USA',
-    country: 'USA',
-    rooms: 115,
-    baseOcc: 66.0,
-    baseAdr: 2580,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=city',
-  },
-  {
-    id: 'sosei-elan',
-    name: 'SOSEI ÉLAN',
-    category: 'city',
-    location: 'Los Angeles, USA',
-    country: 'USA',
-    rooms: 83,
-    baseOcc: 70.8,
-    baseAdr: 2397,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=city',
-  },
-
-  // Forest (94 rooms total)
-  {
-    id: 'sosei-sylvan',
-    name: 'SOSEI SYLVAN',
-    category: 'forest',
-    location: 'Kyoto, Japan',
-    country: 'Japan',
-    rooms: 46,
-    baseOcc: 67.4,
-    baseAdr: 1750,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=forest',
-  },
-  {
-    id: 'sosei-verdant',
-    name: 'SOSEI VERDANT',
-    category: 'forest',
-    location: 'Chiang Mai, Thailand',
-    country: 'Thailand',
-    rooms: 48,
-    baseOcc: 52.9,
-    baseAdr: 1456,
-    status: 'attention',
-    statusLabel: 'Attention',
-    propertyRoute: '/dashboard/property?id=forest',
-  },
-
-  // Countryside (114 rooms total)
-  {
-    id: 'sosei-hearth',
-    name: 'SOSEI HEARTH',
-    category: 'countryside',
-    location: 'Tuscany, Italy',
-    country: 'Italy',
-    rooms: 62,
-    baseOcc: 75.8,
-    baseAdr: 1920,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=countryside',
-  },
-  {
-    id: 'sosei-pastoral',
-    name: 'SOSEI PASTORAL',
-    category: 'countryside',
-    location: 'Provence, France',
-    country: 'France',
-    rooms: 52,
-    baseOcc: 67.4,
-    baseAdr: 1657,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=countryside',
-  },
-
-  // Desert (137 rooms total)
-  {
-    id: 'sosei-mirage',
-    name: 'SOSEI MIRAGE',
-    category: 'desert',
-    location: 'Giza / Siwa, Egypt',
-    country: 'Egypt',
-    rooms: 64,
-    baseOcc: 57.8,
-    baseAdr: 1720,
-    status: 'attention',
-    statusLabel: 'Attention',
-    propertyRoute: '/dashboard/property?id=desert',
-  },
-  {
-    id: 'sosei-solstice',
-    name: 'SOSEI SOLSTICE',
-    category: 'desert',
-    location: 'Jebel Akhdar, Oman',
-    country: 'Oman',
-    rooms: 73,
-    baseOcc: 62.0,
-    baseAdr: 1870,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=desert',
-  },
-];
 
 // Static breakdown configurations
 const geoConfigs = [
@@ -334,8 +155,12 @@ const getFormattedDateTime = () => {
 };
 
 export function ResortTypeDashboard() {
-  const [activeResorts, setActiveResorts] = useState<string[]>(['city']);
+  const [activeResorts, setActiveResorts] = useState<string[]>(['urban']);
   const { date, time, tz } = getFormattedDateTime();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -366,30 +191,17 @@ export function ResortTypeDashboard() {
   }, [compStartDate, compEndDate, days]);
 
   const activeList = useMemo(() => {
-    return activeResorts.length > 0 ? activeResorts : ['city'];
+    return activeResorts.length > 0 ? activeResorts.map(resolveCategoryId) : ['urban'];
   }, [activeResorts]);
 
-  // Active category display name
+  // Active category display name derived directly from Master Data helper
   const categoryDisplayName = useMemo(() => {
-    if (activeList.length === 6) return 'All Collections';
-    if (activeList.length === 1) {
-      const cat = activeList[0];
-      const names: Record<string, string> = {
-        city: 'City Collection',
-        alpine: 'Alpine Collection',
-        ocean: 'Ocean Collection',
-        forest: 'Forest Collection',
-        countryside: 'Countryside Collection',
-        desert: 'Desert Collection',
-      };
-      return names[cat] || 'Category';
-    }
-    return `${activeList.length} Collections`;
+    return formatCategorySelectionTitle(activeList);
   }, [activeList]);
 
   // Filter properties belonging to active selected categories
   const activeProperties = useMemo(() => {
-    return CATEGORY_HOTEL_PROPERTIES.filter(p => activeList.includes(p.category));
+    return MASTER_PROPERTIES.filter(p => activeList.includes(p.categoryId));
   }, [activeList]);
 
   // Dynamically calculate individual properties based on selected date range days
@@ -403,7 +215,7 @@ export function ResortTypeDashboard() {
       return {
         id: prop.id,
         name: prop.name,
-        category: prop.category,
+        category: prop.categoryName,
         location: prop.location,
         country: prop.country,
         rooms: prop.rooms,
@@ -711,7 +523,7 @@ export function ResortTypeDashboard() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            Resort & Destination Analytics
+            Regional Or Hotel Type Level
           </h2>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 shrink-0">

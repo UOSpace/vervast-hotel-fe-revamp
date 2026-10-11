@@ -171,12 +171,17 @@ export interface DashboardComputedData {
   }>;
   guestMovementChart: Array<{
     name: string;
-    alpine: number;
-    ocean: number;
-    city: number;
-    forest: number;
-    desert: number;
-    country: number;
+    sky: number;
+    beachResort: number;
+    urban: number;
+    nature: number;
+    wellness: number;
+    alpine?: number;
+    ocean?: number;
+    city?: number;
+    forest?: number;
+    desert?: number;
+    country?: number;
     total: number;
   }>;
   topNationalities: Array<{
@@ -463,101 +468,88 @@ export function getDashboardComputedData(): DashboardComputedData {
   const guestsTodayCount = 2847;
   const guestsTodaySparkline = [2150, 2300, 2480, 2620, 2750, 2847];
 
-  // 5. Portfolio Performance per Category (Alpine, Ocean, City, Forest, Countryside, Desert)
-  // Matching World Map totals ($118M YTD, $5.9M MTD base sum)
+  // 5. Portfolio Performance per Category (Urban, Beach Resort, Sky, Nature, Wellness)
+  // Matching Master Data totals
   const portfolioPerformance = [
     {
-      category: 'alpine',
-      label: 'SOSEI Alpine',
-      value: '$2.10M',
+      category: 'urban',
+      label: 'SoSei Urban',
+      value: '$3.03M',
       trend: '+12%',
       up: true,
-      ytdRevenue: '$42.00M',
-      mtdRevenue: '$2.10M',
-      occupancy: '76%',
-      adr: '$2,700',
-      revpar: '$2,052',
+      ytdRevenue: '$36.00M',
+      mtdRevenue: '$3.03M',
+      occupancy: '67%',
+      adr: '$2,504',
+      revpar: '$1,682',
     },
     {
-      category: 'ocean',
-      label: 'SOSEI Ocean',
-      value: '$1.30M',
-      trend: '+15%',
+      category: 'beach-resort',
+      label: 'Sosei Beach Resort',
+      value: '$2.60M',
+      trend: '+14%',
+      up: true,
+      ytdRevenue: '$28.00M',
+      mtdRevenue: '$2.60M',
+      occupancy: '72%',
+      adr: '$2,207',
+      revpar: '$1,596',
+    },
+    {
+      category: 'sky',
+      label: 'Sosei Sky',
+      value: '$4.20M',
+      trend: '+18%',
+      up: true,
+      ytdRevenue: '$42.00M',
+      mtdRevenue: '$4.20M',
+      occupancy: '76%',
+      adr: '$2,705',
+      revpar: '$2,104',
+    },
+    {
+      category: 'nature',
+      label: 'Sosei Nature',
+      value: '$2.80M',
+      trend: '+11%',
       up: true,
       ytdRevenue: '$26.00M',
-      mtdRevenue: '$1.30M',
-      occupancy: '72%',
-      adr: '$2,200',
-      revpar: '$1,584',
+      mtdRevenue: '$2.80M',
+      occupancy: '71%',
+      adr: '$1,829',
+      revpar: '$1,303',
     },
     {
-      category: 'countryside',
-      label: 'SOSEI Countryside',
-      value: '$1.00M',
-      trend: '+9%',
+      category: 'wellness',
+      label: 'Sosei Wellness',
+      value: '$2.60M',
+      trend: '+7%',
       up: true,
       ytdRevenue: '$20.00M',
-      mtdRevenue: '$1.00M',
-      occupancy: '72%',
-      adr: '$1,800',
-      revpar: '$1,296',
-    },
-    {
-      category: 'forest',
-      label: 'SOSEI Forest',
-      value: '$0.70M',
-      trend: '+6%',
-      up: true,
-      ytdRevenue: '$14.00M',
-      mtdRevenue: '$0.70M',
-      occupancy: '60%',
-      adr: '$1,600',
-      revpar: '$960',
-    },
-    {
-      category: 'city',
-      label: 'SOSEI City',
-      value: '$0.60M',
-      trend: '+8%',
-      up: true,
-      ytdRevenue: '$12.00M',
-      mtdRevenue: '$0.60M',
-      occupancy: '68%',
-      adr: '$2,500',
-      revpar: '$1,700',
-    },
-    {
-      category: 'desert',
-      label: 'SOSEI Desert',
-      value: '$0.20M',
-      trend: '-2%',
-      up: false,
-      ytdRevenue: '$4.00M',
-      mtdRevenue: '$0.20M',
-      occupancy: '60%',
-      adr: '$1,800',
-      revpar: '$1,080',
+      mtdRevenue: '$2.60M',
+      occupancy: '58%',
+      adr: '$1,694',
+      revpar: '$989',
     },
   ];
 
   // 6. Guest Movement 7 Days History
   const guestMovement = [
-    { name: 'Alpine', category: 'alpine', color: '#1F1D1C', guests: 680 },
-    { name: 'Ocean', category: 'ocean', color: '#3D3A38', guests: 620 },
-    { name: 'City', category: 'city', color: '#5E5A56', guests: 490 },
-    { name: 'Forest', category: 'forest', color: '#857E78', guests: 380 },
-    { name: 'Desert', category: 'desert', color: '#B2A9A0', guests: 340 },
-    { name: 'Countryside', category: 'country', color: '#DDD5CC', guests: 337 },
+    { name: 'Sky', category: 'sky', color: '#1F1D1C', guests: 720 },
+    { name: 'Beach Resort', category: 'beach-resort', color: '#3D3A38', guests: 640 },
+    { name: 'Urban', category: 'urban', color: '#5E5A56', guests: 580 },
+    { name: 'Nature', category: 'nature', color: '#857E78', guests: 480 },
+    { name: 'Wellness', category: 'wellness', color: '#B2A9A0', guests: 427 },
   ];
 
   const guestMovementChart = [
-    { name: '25 Aug', alpine: 540, ocean: 480, city: 390, forest: 310, desert: 270, country: 260, total: 2250 },
-    { name: '26 Aug', alpine: 570, ocean: 510, city: 420, forest: 330, desert: 290, country: 280, total: 2400 },
-    { name: '27 Aug', alpine: 610, ocean: 540, city: 440, forest: 350, desert: 310, country: 300, total: 2550 },
-    { name: '28 Aug', alpine: 640, ocean: 580, city: 460, forest: 360, desert: 320, country: 310, total: 2670 },
-    { name: '29 Aug', alpine: 660, ocean: 600, city: 470, forest: 370, desert: 330, country: 320, total: 2750 },
-    { name: '30 Aug', alpine: 675, ocean: 615, city: 485, forest: 375, desert: 335, country: 330, total: 2815 },
-    { name: '31 Aug', alpine: 680, ocean: 620, city: 490, forest: 380, desert: 340, country: 337, total: 2847 },
+    { name: '25 Aug', sky: 580, beachResort: 510, urban: 450, nature: 380, wellness: 330, total: 2250 },
+    { name: '26 Aug', sky: 610, beachResort: 540, urban: 480, nature: 410, wellness: 360, total: 2400 },
+    { name: '27 Aug', sky: 650, beachResort: 570, urban: 510, nature: 440, wellness: 380, total: 2550 },
+    { name: '28 Aug', sky: 680, beachResort: 600, urban: 530, nature: 460, wellness: 400, total: 2670 },
+    { name: '29 Aug', sky: 700, beachResort: 620, urban: 550, nature: 470, wellness: 410, total: 2750 },
+    { name: '30 Aug', sky: 715, beachResort: 635, urban: 570, nature: 475, wellness: 420, total: 2815 },
+    { name: '31 Aug', sky: 720, beachResort: 640, urban: 580, nature: 480, wellness: 427, total: 2847 },
   ];
 
   // 7. Top Nationalities Share & RevPAR

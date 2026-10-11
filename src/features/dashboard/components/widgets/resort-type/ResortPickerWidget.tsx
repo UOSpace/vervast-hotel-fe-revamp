@@ -1,62 +1,60 @@
-import alpineImg from '@/assets/property_types/alpine-thumb.jpg';
-import oceanImg from '@/assets/property_types/ocean_hills.jpg';
-import cityImg from '@/assets/property_types/city-thumb.jpg';
-import forestImg from '@/assets/property_types/forest_rindang.jpg';
-import desertImg from '@/assets/property_types/desert.png';
-import countryImg from '@/assets/property_types/country_pedesaan.jpg';
+import { MASTER_CATEGORIES, resolveCategoryId } from '@/constants/categories';
 
-const resorts = [
-  { id: 'alpine', name: 'SOSEI ALPINE', img: alpineImg },
-  { id: 'city', name: 'SOSEI CITY', img: cityImg },
-  { id: 'countryside', name: 'SOSEI COUNTRYSIDE', img: countryImg },
-  { id: 'desert', name: 'SOSEI DESERT', img: desertImg },
-  { id: 'forest', name: 'SOSEI FOREST', img: forestImg },
-  { id: 'ocean', name: 'SOSEI OCEAN', img: oceanImg },
-];
+export function ResortPickerWidget({
+  activeResorts,
+  setActiveResorts,
+}: {
+  activeResorts: string[];
+  setActiveResorts: (ids: string[]) => void;
+}) {
+  // Normalize active IDs to canonical master category IDs
+  const canonicalActive = activeResorts.map(resolveCategoryId);
 
-export function ResortPickerWidget({ activeResorts, setActiveResorts }: { activeResorts: string[], setActiveResorts: (ids: string[]) => void }) {
   return (
     <div className="w-full animate-card-enter pb-0">
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-6 items-end w-full">
-        {resorts.map((r) => {
-          const isActive = activeResorts.includes(r.id);
-          const shortName = r.id === 'countryside' ? 'COUNTRY' : r.id.toUpperCase();
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 items-end w-full">
+        {MASTER_CATEGORIES.map((category) => {
+          const isActive = canonicalActive.includes(category.id);
 
           const handleToggle = () => {
             if (isActive) {
-              if (activeResorts.length > 1) {
-                setActiveResorts(activeResorts.filter(id => id !== r.id));
+              if (canonicalActive.length > 1) {
+                setActiveResorts(canonicalActive.filter((id) => id !== category.id));
               }
             } else {
-              setActiveResorts([...activeResorts, r.id]);
+              setActiveResorts([...canonicalActive, category.id]);
             }
           };
 
           return (
             <div
-              key={r.id}
+              key={category.id}
               className="flex flex-col transition-all duration-300"
             >
               <button
+                type="button"
                 onClick={handleToggle}
-                className={`relative w-full aspect-[5/4] overflow-hidden rounded-[2px] transition-all duration-300 cursor-pointer outline-none focus:outline-none select-none ${isActive
+                className={`relative w-full aspect-[5/4] overflow-hidden rounded-[2px] transition-all duration-300 cursor-pointer outline-none focus:outline-none select-none ${
+                  isActive
                     ? 'border border-zinc-900/40 p-[3px] bg-zinc-900/5 shadow-sm'
                     : 'border border-transparent p-[3px]'
-                  }`}
+                }`}
               >
                 <img
-                  src={r.img}
-                  alt={r.name}
-                  className={`w-full h-full object-cover filter grayscale transition-all duration-500 ${isActive ? 'opacity-100 contrast-[1.05]' : 'opacity-35 hover:opacity-55'
-                    }`}
+                  src={category.img}
+                  alt={category.name}
+                  className={`w-full h-full object-cover filter grayscale transition-all duration-500 ${
+                    isActive ? 'opacity-100 contrast-[1.05]' : 'opacity-35 hover:opacity-55'
+                  }`}
                 />
                 <div className="absolute bottom-1.5 left-2 z-10 pointer-events-none">
                   <span
-                    className={`text-[7px] md:text-[8px] tracking-[0.16em] uppercase transition-all duration-300 ${isActive ? 'text-white font-bold' : 'text-white/70 font-light'
-                      }`}
+                    className={`text-[7px] md:text-[8px] tracking-[0.16em] uppercase transition-all duration-300 ${
+                      isActive ? 'text-white font-bold' : 'text-white/70 font-light'
+                    }`}
                     style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}
                   >
-                    {shortName}
+                    {category.shortName}
                   </span>
                 </div>
               </button>
@@ -67,3 +65,4 @@ export function ResortPickerWidget({ activeResorts, setActiveResorts }: { active
     </div>
   );
 }
+

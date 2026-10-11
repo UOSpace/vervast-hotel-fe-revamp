@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash, Buildings } from '@solar-icons/react';
+import { useState, useEffect } from 'react';
+import { Magnifer, Filter, Eye, TrashBinTrash, Buildings } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
+import { Pagination } from '@/components/ui/pagination';
+import {
+  TableContainer,
+  TableScrollArea,
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableEmpty,
+} from '@/components/ui/table';
+import { TableActionMenu } from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -147,7 +160,6 @@ const getStatusColor = (status: string) => {
 
 export function TravelAgenciesPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('All');
   const [regionFilter, setRegionFilter] = useState('All');
@@ -161,14 +173,8 @@ export function TravelAgenciesPage() {
     setShowDevModal(true);
   };
 
-  const toggleDropdown = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenDropdownId(openDropdownId === id ? null : id);
-  };
-
   const handleDetail = (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setOpenDropdownId(null);
     openDevModal('Agency Detail');
   };
 
@@ -211,10 +217,7 @@ export function TravelAgenciesPage() {
 
       {/* Main Table Area */}
       <div className="flex-1 min-h-0 flex flex-col">
-        <div
-          className="flex-1 flex flex-col rounded-[12px] bg-white/70 backdrop-blur-xs border border-zinc-200/80 shadow-xs overflow-hidden animate-card-enter"
-          style={{ animationDelay: '0.1s' }}
-        >
+        <TableContainer style={{ animationDelay: '0.1s' }}>
           {/* Toolbar */}
           <div className="p-3.5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
             <div className="relative w-72">
@@ -283,106 +286,77 @@ export function TravelAgenciesPage() {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-zinc-50/90 backdrop-blur-xs border-b border-zinc-100 z-10">
-                <tr>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Agency ID</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Agency Name</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Email Address</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Source</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Region</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Owner</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Status</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Created At</th>
-                  <th className="px-5 py-2.5 w-10"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
+          <TableScrollArea>
+            <Table>
+              <TableHeader>
+                <TableRow clickable={false}>
+                  <TableHead className="px-5">Agency ID</TableHead>
+                  <TableHead className="px-5">Agency Name</TableHead>
+                  <TableHead className="px-5">Email Address</TableHead>
+                  <TableHead className="px-5">Source</TableHead>
+                  <TableHead className="px-5">Region</TableHead>
+                  <TableHead className="px-5">Owner</TableHead>
+                  <TableHead className="px-5">Status</TableHead>
+                  <TableHead className="px-5">Created At</TableHead>
+                  <TableHead className="px-5 w-10 text-right"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {pagedData.length > 0 ? (
                   pagedData.map(agency => (
-                    <tr
+                    <TableRow
                       key={agency.id}
                       onClick={() => handleDetail()}
-                      className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
-                      <td className="px-5 py-3 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{agency.id}</td>
-                      <td className="px-5 py-3 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{agency.name}</td>
-                      <td className="px-5 py-3 text-zinc-600 text-[10px]">{agency.email}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{agency.source}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{agency.region}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{agency.owner}</td>
-                      <td className="px-5 py-3">
+                      <TableCell className="px-5 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{agency.id}</TableCell>
+                      <TableCell className="px-5 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{agency.name}</TableCell>
+                      <TableCell className="px-5 text-zinc-600 text-[10px]">{agency.email}</TableCell>
+                      <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.source}</TableCell>
+                      <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.region}</TableCell>
+                      <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.owner}</TableCell>
+                      <TableCell className="px-5">
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(agency.status)}`}>
                           {agency.status}
                         </span>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{agency.createdAt}</td>
-                      <td className="px-5 py-3 text-right relative" onClick={e => e.stopPropagation()}>
-                        <button
-                          onClick={e => toggleDropdown(agency.id, e)}
-                          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-800 transition-colors"
-                        >
-                          <MenuDots size={16} />
-                        </button>
-
-                        {openDropdownId === agency.id && (
-                          <div className="absolute right-5 top-9 z-50 w-32 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
-                            <button
-                              onClick={handleDetail}
-                              className="w-full px-3 py-1.5 text-left text-xs text-zinc-800 hover:bg-zinc-50 flex items-center gap-2 transition-colors"
-                            >
-                              <Eye size={13} className="text-zinc-500" /> Detail
-                            </button>
-                            <button
-                              onClick={() => { setOpenDropdownId(null); openDevModal('Delete Agency'); }}
-                              className="w-full px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
-                            >
-                              <TrashBinTrash size={13} className="text-rose-500" /> Delete
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                      <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.createdAt}</TableCell>
+                      <TableCell className="px-5 text-right" onClick={e => e.stopPropagation()}>
+                        <TableActionMenu
+                          vertical={false}
+                          items={[
+                            {
+                              label: 'Detail',
+                              icon: <Eye size={13} className="text-zinc-500" />,
+                              onClick: () => handleDetail(),
+                            },
+                            {
+                              label: 'Delete',
+                              icon: <TrashBinTrash size={13} className="text-rose-500" />,
+                              variant: 'danger',
+                              onClick: () => openDevModal('Delete Agency'),
+                            },
+                          ]}
+                        />
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={9} className="px-5 py-10 text-center text-zinc-400 text-xs italic">
-                      No agencies found matching your criteria.
-                    </td>
-                  </tr>
+                  <TableEmpty colSpan={9} message="No agencies found matching your criteria." />
                 )}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+          </TableScrollArea>
 
           {/* Pagination */}
-          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
-            <span>
-              Showing <span className="font-medium text-zinc-900">{pagedData.length}</span> of <span className="font-medium text-zinc-900">{filteredAgencies.length}</span> agencies
-            </span>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredAgencies.length}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+            itemLabel="agencies"
+          />
+        </TableContainer>
       </div>
 
       <UnderDevelopmentModal

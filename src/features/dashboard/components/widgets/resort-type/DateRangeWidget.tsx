@@ -9,6 +9,7 @@ export function DateRangeWidget({
     <div className="flex items-center gap-2 animate-card-enter shrink-0" style={{ animationDelay: '0.1s' }}>
       <div className="relative flex items-center">
         <DatePicker
+          autoFocus={false}
           portalId="datepicker-portal"
           selectsRange={true}
           startDate={startDate}

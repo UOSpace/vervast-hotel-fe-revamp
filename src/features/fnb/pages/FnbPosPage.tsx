@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Magnifer,
   CloseCircle,
@@ -340,12 +341,11 @@ export function FnbPosPage() {
 
               {/* Safe Only Switch */}
               <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300 font-medium cursor-pointer select-none">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={hideAllergens}
-                  onChange={(e) => setHideAllergens(e.target.checked)}
+                  onCheckedChange={(checked) => setHideAllergens(checked === true)}
                   disabled={!selectedGuest || selectedGuest.allergies.length === 0}
-                  className="w-3.5 h-3.5 rounded text-zinc-900 accent-zinc-900 dark:accent-zinc-100 cursor-pointer"
+                  className="size-3.5"
                 />
                 <span>Hide Conflicting Allergens</span>
               </label>

@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Magnifer, Filter, MenuDots, Eye, TrashBinTrash } from '@solar-icons/react';
+import { Magnifer, Filter, Eye, TrashBinTrash } from '@solar-icons/react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Pagination } from '@/components/ui/pagination';
+import {
+  TableContainer,
+  TableScrollArea,
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableEmpty,
+} from '@/components/ui/table';
+import { TableActionMenu } from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -13,33 +27,202 @@ import {
 } from '../../../components/ui/select';
 import { useToast } from '../../../components/ui/toast';
 
-// Mock data for families
-const mockGuests = [
-  { id: 'GST-001', name: 'John Anderson (The Anderson Family)', status: 'Confirmed', room: 'TBD', type: 'Gold', arrival: '2027-05-24', departure: '2027-05-30', spend: '$78,460' },
-  { id: 'GST-002', name: 'Theodore Laurence', status: 'Arriving', room: '201', type: 'Member', arrival: '2023-10-26', departure: '2023-10-30', spend: '$800' },
-  { id: 'GST-003', name: 'Josephine March', status: 'Departed', room: '305', type: 'Standard', arrival: '2023-10-20', departure: '2023-10-25', spend: '$450' },
-  { id: 'GST-004', name: 'Amy Curtis', status: 'In House', room: '412', type: 'VIP', arrival: '2023-10-25', departure: '2023-11-02', spend: '$3,100' },
-  { id: 'GST-005', name: 'John Brooke', status: 'Arriving', room: '108', type: 'Standard', arrival: '2023-10-27', departure: '2023-10-29', spend: '$300' },
-  { id: 'GST-006', name: 'Margaret March', status: 'In House', room: '220', type: 'Member', arrival: '2023-10-22', departure: '2023-10-27', spend: '$920' },
-  { id: 'GST-007', name: 'Arthur Pendennis', status: 'Departed', room: '501', type: 'VIP', arrival: '2023-10-18', departure: '2023-10-21', spend: '$2,400' },
-  { id: 'GST-008', name: 'Marian Halcombe', status: 'In House', room: '315', type: 'Standard', arrival: '2023-10-25', departure: '2023-10-31', spend: '$1,050' },
-  { id: 'GST-009', name: 'Walter Hartright', status: 'Arriving', room: '402', type: 'Member', arrival: '2023-10-28', departure: '2023-11-05', spend: '$1,800' },
-  { id: 'GST-010', name: 'Laura Fairlie', status: 'In House', room: '110', type: 'VIP', arrival: '2023-10-20', departure: '2023-10-26', spend: '$2,100' },
+interface FamilyContactGuest {
+  id: string;
+  contact: string;
+  initials: string;
+  createdAt: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  country: string;
+}
+
+// Mock data for families matching CRM directory structure
+const mockGuests: FamilyContactGuest[] = [
+  {
+    id: 'GST-001',
+    contact: 'John Anderson (The Anderson Family)',
+    initials: 'AF',
+    createdAt: '2021-05-14',
+    firstName: 'John',
+    lastName: 'Anderson',
+    email: 'anderson.family@vervast.com',
+    phone: '+1 (212) 555-7842',
+    streetAddress: '742 Park Avenue, Apt 4B',
+    city: 'New York',
+    state: 'NY',
+    country: 'United States',
+  },
+  {
+    id: 'GST-002',
+    contact: 'Theodore Laurence (The Laurence Family)',
+    initials: 'LF',
+    createdAt: '2022-01-10',
+    firstName: 'Theodore',
+    lastName: 'Laurence',
+    email: 'laurence.family@laurence.org',
+    phone: '+1 (617) 555-0143',
+    streetAddress: '12 Commonwealth Avenue',
+    city: 'Boston',
+    state: 'MA',
+    country: 'United States',
+  },
+  {
+    id: 'GST-003',
+    contact: 'Josephine March (The March Family)',
+    initials: 'MF',
+    createdAt: '2022-03-22',
+    firstName: 'Josephine',
+    lastName: 'March',
+    email: 'march.family@plumfield.edu',
+    phone: '+1 (617) 555-0188',
+    streetAddress: '45 Orchard House Lane',
+    city: 'Concord',
+    state: 'MA',
+    country: 'United States',
+  },
+  {
+    id: 'GST-004',
+    contact: 'Amy Curtis (The Curtis Family)',
+    initials: 'CF',
+    createdAt: '2022-08-05',
+    firstName: 'Amy',
+    lastName: 'Curtis',
+    email: 'curtis.family@atelier-paris.fr',
+    phone: '+33 1 42 68 55 00',
+    streetAddress: '18 Rue de Rivoli',
+    city: 'Paris',
+    state: 'Île-de-France',
+    country: 'France',
+  },
+  {
+    id: 'GST-005',
+    contact: 'John Brooke (The Brooke Family)',
+    initials: 'BF',
+    createdAt: '2022-11-12',
+    firstName: 'John',
+    lastName: 'Brooke',
+    email: 'brooke.family@megandjohn.com',
+    phone: '+1 (617) 555-0199',
+    streetAddress: '24 Dovecote Path',
+    city: 'Concord',
+    state: 'MA',
+    country: 'United States',
+  },
+  {
+    id: 'GST-006',
+    contact: 'Margaret March (The March-Vane Family)',
+    initials: 'MV',
+    createdAt: '2022-12-03',
+    firstName: 'Margaret',
+    lastName: 'March',
+    email: 'march.vane@manor-estate.co.uk',
+    phone: '+44 20 7946 0912',
+    streetAddress: '8 Kensington High St',
+    city: 'London',
+    state: 'Greater London',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-007',
+    contact: 'Arthur Pendennis (The Pendennis Family)',
+    initials: 'PF',
+    createdAt: '2023-02-18',
+    firstName: 'Arthur',
+    lastName: 'Pendennis',
+    email: 'pendennis.estate@fairoaks.co.uk',
+    phone: '+44 18 6549 6001',
+    streetAddress: '14 St. James Square',
+    city: 'London',
+    state: 'Greater London',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-008',
+    contact: 'Marian Halcombe (The Halcombe Family)',
+    initials: 'HF',
+    createdAt: '2023-04-29',
+    firstName: 'Marian',
+    lastName: 'Halcombe',
+    email: 'halcombe.family@limmeridge.co.uk',
+    phone: '+44 12 2855 0122',
+    streetAddress: '5 Limmeridge House',
+    city: 'Cumberland',
+    state: 'Cumbria',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-009',
+    contact: 'Walter Hartright (The Hartright Family)',
+    initials: 'WH',
+    createdAt: '2023-07-14',
+    firstName: 'Walter',
+    lastName: 'Hartright',
+    email: 'hartright.family@drawing-academy.org',
+    phone: '+44 20 7946 0885',
+    streetAddress: '7 Clement’s Inn',
+    city: 'London',
+    state: 'Greater London',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-010',
+    contact: 'Laura Fairlie (The Fairlie Family)',
+    initials: 'LF',
+    createdAt: '2023-09-02',
+    firstName: 'Laura',
+    lastName: 'Fairlie',
+    email: 'fairlie.estate@limmeridge.co.uk',
+    phone: '+44 12 2855 0144',
+    streetAddress: '6 Limmeridge House',
+    city: 'Cumberland',
+    state: 'Cumbria',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-011',
+    contact: 'Gabriel Betteredge (The Betteredge Family)',
+    initials: 'GB',
+    createdAt: '2023-10-18',
+    firstName: 'Gabriel',
+    lastName: 'Betteredge',
+    email: 'betteredge.family@vervast-vip.org',
+    phone: '+44 19 8221 4401',
+    streetAddress: '12 Cobblestone Walk',
+    city: 'Yorkshire',
+    state: 'North Yorkshire',
+    country: 'United Kingdom',
+  },
+  {
+    id: 'GST-012',
+    contact: 'Rachel Verinder (The Verinder Family)',
+    initials: 'RV',
+    createdAt: '2023-11-05',
+    firstName: 'Rachel',
+    lastName: 'Verinder',
+    email: 'verinder.family@moonstone.co.uk',
+    phone: '+44 20 7946 0773',
+    streetAddress: '42 Belgrave Square',
+    city: 'London',
+    state: 'Greater London',
+    country: 'United Kingdom',
+  },
 ];
 
 export function FamilyGuestsPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
+  const [countryFilter, setCountryFilter] = useState('All');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
   const navigate = useNavigate();
   const toast = useToast();
-
-  const toggleDropdown = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenDropdownId(openDropdownId === id ? null : id);
-  };
 
   const handlePreview = (id: string) => {
     if (id === 'GST-001') {
@@ -47,37 +230,47 @@ export function FamilyGuestsPage() {
     } else {
       toast.error(
         'Data Not Found',
-        `Detail data for guest ${id} cannot be displayed because the profile data is not yet available in the system.`,
+        `Detail data for family ${id} cannot be displayed because the profile data is not yet available in the system.`,
         4000
       );
     }
   };
 
-  const formatGuestName = (name: string) => {
-    if (name.includes('Family')) {
-      return name;
-    }
-    const parts = name.split(' ');
-    const lastName = parts[parts.length - 1];
-    return `${name} (The ${lastName} Family)`;
-  };
-
-  const filteredGuests = mockGuests.filter(guest => {
-    const displayName = formatGuestName(guest.name);
-    const matchesSearch = displayName.toLowerCase().includes(searchTerm.toLowerCase()) || guest.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || guest.status === statusFilter;
-    const matchesType = typeFilter === 'All' || guest.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
+  const filteredGuests = mockGuests.filter((guest) => {
+    const q = searchTerm.toLowerCase();
+    const matchesSearch =
+      guest.contact.toLowerCase().includes(q) ||
+      guest.firstName.toLowerCase().includes(q) ||
+      guest.lastName.toLowerCase().includes(q) ||
+      guest.email.toLowerCase().includes(q) ||
+      guest.phone.toLowerCase().includes(q) ||
+      guest.streetAddress.toLowerCase().includes(q) ||
+      guest.city.toLowerCase().includes(q) ||
+      guest.state.toLowerCase().includes(q) ||
+      guest.country.toLowerCase().includes(q);
+    const matchesCountry = countryFilter === 'All' || guest.country === countryFilter;
+    return matchesSearch && matchesCountry;
   });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'In House': return 'bg-zinc-100 text-zinc-900 border-zinc-200';
-      case 'Arriving': return 'bg-amber-50 text-amber-800 border-amber-200';
-      case 'Departed': return 'bg-zinc-100 text-zinc-500 border-zinc-200';
-      case 'Confirmed': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      default: return 'bg-zinc-100 text-zinc-700 border-zinc-200';
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, countryFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredGuests.length / PAGE_SIZE));
+  const pagedGuests = filteredGuests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const handleSelectAll = (checked: boolean | 'indeterminate') => {
+    if (checked === true) {
+      setSelectedIds(pagedGuests.map((g) => g.id));
+    } else {
+      setSelectedIds([]);
     }
+  };
+
+  const handleSelect = (id: string, checked: boolean | 'indeterminate') => {
+    setSelectedIds((prev) =>
+      checked === true ? [...prev, id] : prev.filter((item) => item !== id)
+    );
   };
 
   return (
@@ -97,13 +290,13 @@ export function FamilyGuestsPage() {
       {/* Main Content Area */}
       <div className="flex-1 min-h-0 flex flex-col">
         {/* Table Container Card */}
-        <div className="flex-1 flex flex-col rounded-[12px] bg-white/70 backdrop-blur-xs border border-zinc-200/80 shadow-xs overflow-hidden animate-card-enter" style={{ animationDelay: '0.1s' }}>
+        <TableContainer style={{ animationDelay: '0.1s' }}>
           {/* Toolbar */}
           <div className="p-3.5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
-            <div className="relative w-72">
+            <div className="relative w-80">
               <Magnifer size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
               <Input
-                placeholder="Search families by name or ID..."
+                placeholder="Search families by contact, email, phone, city..."
                 className="pl-9 h-8.5 bg-white border-zinc-200 text-zinc-900 focus-visible:ring-zinc-400 rounded-lg text-xs"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -121,36 +314,20 @@ export function FamilyGuestsPage() {
 
               {isFilterOpen && (
                 <div className="absolute right-0 top-10 z-50 w-52 bg-white border border-zinc-200 rounded-xl shadow-lg p-3 animate-in fade-in zoom-in-95 duration-100">
-                  <div className="mb-3">
-                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Status</label>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
-                        <SelectValue placeholder="All Statuses" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="All">All Statuses</SelectItem>
-                          <SelectItem value="Confirmed">Confirmed</SelectItem>
-                          <SelectItem value="Arriving">Arriving</SelectItem>
-                          <SelectItem value="In House">In House</SelectItem>
-                          <SelectItem value="Departed">Departed</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div>
-                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Type</label>
-                    <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <label className="block text-[9.5px] font-bold uppercase tracking-widest text-zinc-500 mb-1">
+                      Country
+                    </label>
+                    <Select value={countryFilter} onValueChange={setCountryFilter}>
                       <SelectTrigger className="w-full h-8 text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 text-zinc-800 outline-none cursor-pointer">
-                        <SelectValue placeholder="All Types" />
+                        <SelectValue placeholder="All Countries" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="All">All Types</SelectItem>
-                          <SelectItem value="VIP">VIP</SelectItem>
-                          <SelectItem value="Gold">Gold</SelectItem>
-                          <SelectItem value="Member">Member</SelectItem>
-                          <SelectItem value="Standard">Standard</SelectItem>
+                          <SelectItem value="All">All Countries</SelectItem>
+                          <SelectItem value="United States">United States</SelectItem>
+                          <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                          <SelectItem value="France">France</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -161,84 +338,127 @@ export function FamilyGuestsPage() {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-zinc-50/90 backdrop-blur-xs border-b border-zinc-100 z-10">
-                <tr>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Guest ID</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Name</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Status</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Room</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Type</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Arrival</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400">Departure</th>
-                  <th className="px-5 py-2.5 text-[9.5px] font-medium text-zinc-400 text-right">Spend YTD</th>
-                  <th className="px-5 py-2.5 w-10"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 text-xs text-zinc-800">
-                {filteredGuests.length > 0 ? (
-                  filteredGuests.map((guest) => (
-                    <tr
+          <TableScrollArea>
+            <Table className="min-w-[1100px]">
+              <TableHeader>
+                <TableRow clickable={false}>
+                  <TableHead className="min-w-[220px]">
+                    <div className="flex items-center gap-2.5">
+                      <Checkbox
+                        checked={
+                          pagedGuests.length > 0 && selectedIds.length === pagedGuests.length
+                            ? true
+                            : selectedIds.length > 0
+                            ? 'indeterminate'
+                            : false
+                        }
+                        onCheckedChange={handleSelectAll}
+                        aria-label="Select all families"
+                      />
+                      <span>Contact</span>
+                    </div>
+                  </TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>First Name</TableHead>
+                  <TableHead>Last Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Street Address</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead>State</TableHead>
+                  <TableHead>Country</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pagedGuests.length > 0 ? (
+                  pagedGuests.map((guest) => (
+                    <TableRow
                       key={guest.id}
                       onClick={() => handlePreview(guest.id)}
-                      className="hover:bg-zinc-50/80 transition-colors cursor-pointer group"
                     >
-                      <td className="px-5 py-3 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{guest.id}</td>
-                      <td className="px-5 py-3 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{formatGuestName(guest.name)}</td>
-                      <td className="px-5 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-medium border ${getStatusColor(guest.status)}`}>
-                          {guest.status}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-700">{guest.room}</td>
-                      <td className="px-5 py-3">
-                        <span className="text-[10px] text-zinc-500 font-medium">{guest.type}</span>
-                      </td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{guest.arrival}</td>
-                      <td className="px-5 py-3 text-zinc-500 text-[10px]">{guest.departure}</td>
-                      <td className="px-5 py-3 text-right font-medium text-zinc-900">{guest.spend}</td>
-                      <td className="px-5 py-3 text-right relative">
-                        <button
-                          onClick={(e) => toggleDropdown(guest.id, e)}
-                          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-800 transition-colors"
-                        >
-                          <MenuDots size={16} />
-                        </button>
-
-                        {openDropdownId === guest.id && (
-                          <div className="absolute right-5 top-9 z-50 w-32 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 animate-in fade-in zoom-in-95 duration-100">
-                            <button onClick={() => handlePreview(guest.id)} className="w-full px-3 py-1.5 text-left text-xs text-zinc-800 hover:bg-zinc-50 flex items-center gap-2 transition-colors">
-                              <Eye size={13} className="text-zinc-500" /> Preview
-                            </button>
-                            <button className="w-full px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors">
-                              <TrashBinTrash size={13} className="text-rose-500" /> Delete
-                            </button>
+                      <TableCell>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <Checkbox
+                                checked={selectedIds.includes(guest.id)}
+                                onCheckedChange={(checked) => handleSelect(guest.id, checked)}
+                                aria-label={`Select ${guest.contact}`}
+                              />
+                            </div>
+                            <div className="w-6 h-6 rounded-full bg-zinc-100 text-zinc-800 text-[9.5px] font-semibold flex items-center justify-center border border-zinc-200/80 shrink-0">
+                              {guest.initials}
+                            </div>
+                            <span className="font-medium text-zinc-900 text-[10.5px] whitespace-nowrap">
+                              {guest.contact}
+                            </span>
                           </div>
-                        )}
-                      </td>
-                    </tr>
+
+                          {/* Action MenuDots using portal to prevent frame clipping */}
+                          <TableActionMenu
+                            vertical={true}
+                            items={[
+                              {
+                                label: 'Preview',
+                                icon: <Eye size={13} className="text-zinc-500" />,
+                                onClick: () => handlePreview(guest.id),
+                              },
+                              {
+                                label: 'Delete',
+                                icon: <TrashBinTrash size={13} className="text-rose-500" />,
+                                variant: 'danger',
+                                onClick: () => toast.info('Action', `Delete requested for ${guest.contact}`),
+                              },
+                            ]}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-500 whitespace-nowrap">
+                        {guest.createdAt}
+                      </TableCell>
+                      <TableCell className="text-[10px] font-medium text-zinc-700 whitespace-nowrap">
+                        {guest.firstName}
+                      </TableCell>
+                      <TableCell className="text-[10px] font-medium text-zinc-700 whitespace-nowrap">
+                        {guest.lastName}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-600 font-mono whitespace-nowrap hover:text-zinc-900">
+                        {guest.email}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-600 font-mono whitespace-nowrap">
+                        {guest.phone}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-600 whitespace-nowrap truncate max-w-[200px]" title={guest.streetAddress}>
+                        {guest.streetAddress}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-700 whitespace-nowrap">
+                        {guest.city}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-700 whitespace-nowrap">
+                        {guest.state}
+                      </TableCell>
+                      <TableCell className="text-[10px] text-zinc-700 whitespace-nowrap">
+                        {guest.country}
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={9} className="px-5 py-10 text-center text-zinc-400 text-xs italic">
-                      No guests found matching your criteria.
-                    </td>
-                  </tr>
+                  <TableEmpty colSpan={10} message="No families found matching your criteria." />
                 )}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+          </TableScrollArea>
 
           {/* Pagination Footer */}
-          <div className="p-3 border-t border-zinc-100 flex justify-between items-center bg-zinc-50/50 text-[10px] text-zinc-500">
-            <span>Showing <span className="font-medium text-zinc-900">{filteredGuests.length}</span> of <span className="font-medium text-zinc-900">{mockGuests.length}</span> families</span>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Previous</Button>
-              <Button variant="ghost" size="sm" className="h-6.5 text-[10px] text-zinc-600 hover:bg-zinc-100 opacity-50 cursor-not-allowed">Next</Button>
-            </div>
-          </div>
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredGuests.length}
+            itemsPerPage={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+            itemLabel="families"
+          />
+        </TableContainer>
       </div>
     </div>
   );

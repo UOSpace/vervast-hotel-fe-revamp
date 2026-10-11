@@ -161,23 +161,20 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
                 OCCUPANCY
               </span>
             </InfoTooltip>
-            <span className="text-[8.5px] font-medium text-zinc-400 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
-              details →
-            </span>
-          </div>
-          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
-            {data.occupancy.value}
-          </div>
-          {/* Comparison Badges with percentage points (pts) */}
-          <div className="flex items-center gap-1 flex-wrap">
             <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded ${data.occupancy.upLy
+              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.occupancy.upLy
                 ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
                 : 'bg-rose-50 text-rose-700 border border-rose-200/80'
                 }`}
             >
               {data.occupancy.vsLy}
             </span>
+          </div>
+          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
+            {data.occupancy.value}
+          </div>
+          {/* Comparison Badges: vs Budget, vs Forecast */}
+          <div className="flex items-center gap-1 flex-wrap">
             <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
               {data.occupancy.vsBudget}
             </span>
@@ -205,22 +202,20 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
                 ADR (USD)
               </span>
             </InfoTooltip>
-            <span className="text-[8.5px] font-medium text-zinc-400 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
-              details →
-            </span>
-          </div>
-          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
-            {data.adr.value}
-          </div>
-          <div className="flex items-center gap-1 flex-wrap">
             <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded ${data.adr.upLy
+              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.adr.upLy
                 ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
                 : 'bg-rose-50 text-rose-700 border border-rose-200/80'
                 }`}
             >
               {data.adr.vsLy}
             </span>
+          </div>
+          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
+            {data.adr.value}
+          </div>
+          {/* Comparison Badges: vs Budget, vs Forecast */}
+          <div className="flex items-center gap-1 flex-wrap">
             <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
               {data.adr.vsBudget}
             </span>
@@ -248,22 +243,20 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
                 REVPAR (USD)
               </span>
             </InfoTooltip>
-            <span className="text-[8.5px] font-medium text-zinc-400 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
-              details →
-            </span>
-          </div>
-          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
-            {data.revPar.value}
-          </div>
-          <div className="flex items-center gap-1 flex-wrap">
             <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded ${data.revPar.upLy
+              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.revPar.upLy
                 ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
                 : 'bg-rose-50 text-rose-700 border border-rose-200/80'
                 }`}
             >
               {data.revPar.vsLy}
             </span>
+          </div>
+          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
+            {data.revPar.value}
+          </div>
+          {/* Comparison Badges: vs Budget, vs Forecast */}
+          <div className="flex items-center gap-1 flex-wrap">
             <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
               {data.revPar.vsBudget}
             </span>
@@ -291,22 +284,20 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
                 ROOM REVENUE (USD)
               </span>
             </InfoTooltip>
-            <span className="text-[8.5px] font-medium text-zinc-400 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
-              details →
-            </span>
-          </div>
-          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
-            {data.roomRevenue.value}
-          </div>
-          <div className="flex items-center gap-1 flex-wrap">
             <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded ${data.roomRevenue.upLy
+              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.roomRevenue.upLy
                 ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
                 : 'bg-rose-50 text-rose-700 border border-rose-200/80'
                 }`}
             >
               {data.roomRevenue.vsLy}
             </span>
+          </div>
+          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
+            {data.roomRevenue.value}
+          </div>
+          {/* Comparison Badges: vs Budget, vs Forecast */}
+          <div className="flex items-center gap-1 flex-wrap">
             <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
               {data.roomRevenue.vsBudget}
             </span>

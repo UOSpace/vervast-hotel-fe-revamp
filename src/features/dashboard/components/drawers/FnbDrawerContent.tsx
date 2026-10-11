@@ -161,12 +161,11 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { prop: 'SOSEI Ocean Collection', items: 12, bookings: 780, ticket: '$100.79', rev: '$78,620' },
-                { prop: 'SOSEI Alpine Collection', items: 15, bookings: 510, ticket: '$106.49', rev: '$54,310' },
-                { prop: 'SOSEI Forest Collection', items: 8, bookings: 320, ticket: '$98.12', rev: '$31,400' },
-                { prop: 'SOSEI Countryside Collection', items: 10, bookings: 240, ticket: '$100.80', rev: '$24,200' },
-                { prop: 'SOSEI Desert Collection', items: 10, bookings: 180, ticket: '$84.61', rev: '$15,230' },
-                { prop: 'SOSEI City Collection', items: 5, bookings: 110, ticket: '$88.00', rev: '$9,680' },
+                { prop: 'Sosei Beach Resort Collection', items: 12, bookings: 780, ticket: '$100.79', rev: '$78,620' },
+                { prop: 'Sosei Sky Collection', items: 15, bookings: 510, ticket: '$106.49', rev: '$54,310' },
+                { prop: 'Sosei Wellness Collection', items: 10, bookings: 360, ticket: '$98.50', rev: '$35,460' },
+                { prop: 'Sosei Nature Collection', items: 10, bookings: 320, ticket: '$98.12', rev: '$31,400' },
+                { prop: 'SoSei Urban Collection', items: 6, bookings: 160, ticket: '$92.00', rev: '$14,720' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.prop}</td>
@@ -554,12 +553,11 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'SOSEI Ocean Collection', fnb: '$165', act: '$112', combined: '$277' },
-                { name: 'SOSEI Alpine Collection', fnb: '$150', act: '$98', combined: '$248' },
-                { name: 'SOSEI Desert Collection', fnb: '$135', act: '$85', combined: '$220' },
-                { name: 'SOSEI Forest Collection', fnb: '$120', act: '$72', combined: '$192' },
-                { name: 'SOSEI Countryside Collection', fnb: '$118', act: '$68', combined: '$186' },
-                { name: 'SOSEI City Collection', fnb: '$110', act: '$48', combined: '$158' },
+                { name: 'Sosei Beach Resort Collection', fnb: '$165', act: '$112', combined: '$277' },
+                { name: 'Sosei Sky Collection', fnb: '$150', act: '$98', combined: '$248' },
+                { name: 'Sosei Wellness Collection', fnb: '$140', act: '$95', combined: '$235' },
+                { name: 'Sosei Nature Collection', fnb: '$120', act: '$72', combined: '$192' },
+                { name: 'SoSei Urban Collection', fnb: '$110', act: '$55', combined: '$165' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
