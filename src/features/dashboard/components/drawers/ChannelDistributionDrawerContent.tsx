@@ -103,53 +103,21 @@ export function ChannelDistributionDrawerContent() {
 
       {/* Top 4 Hero KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Top Booking Channel
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {volumeLeader.channel} ({volumeLeader.rnights})
+        {[
+          { title: 'Top Booking Channel', value: volumeLeader.rnights, name: volumeLeader.channel, sub: `${volumeLeader.revenue} · 0% Commission`, tone: 'text-emerald-700' },
+          { title: 'Highest ADR Realization', value: highestAdr.adr, name: highestAdr.channel, sub: `${highestAdr.rnights} Share · Peak Rate`, tone: 'text-emerald-700' },
+          { title: 'Proprietary Digital Web', value: directWeb.rnights, name: directWeb.channel, sub: `${directWeb.revenue} · ${directWeb.adr} ADR`, tone: 'text-emerald-700' },
+          { title: 'Third-Party OTA Reach', value: otaChannel.rnights, name: otaChannel.channel, sub: `${otaChannel.revenue} · 15–18% Fee`, tone: 'text-zinc-600' },
+        ].map((c) => (
+          <div key={c.title} className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{c.title}</span>
+            <div>
+              <div className="text-xl font-bold text-zinc-900 leading-tight">{c.value}</div>
+              <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{c.name}</div>
+              <div className={`text-[10px] font-medium mt-1 ${c.tone}`}>{c.sub}</div>
+            </div>
           </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {volumeLeader.revenue} · 0% Commission
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Highest ADR Realization
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {highestAdr.channel} ({highestAdr.adr})
-          </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {highestAdr.rnights} Share · Peak Rate
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Proprietary Digital Web
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {directWeb.channel} ({directWeb.rnights})
-          </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {directWeb.revenue} · {directWeb.adr} ADR
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Third-Party OTA Reach
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {otaChannel.channel} ({otaChannel.rnights})
-          </div>
-          <div className="text-[10px] font-medium text-zinc-600 mt-0.5">
-            {otaChannel.revenue} · 15–18% Fee
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Main Channel Breakdown Table */}

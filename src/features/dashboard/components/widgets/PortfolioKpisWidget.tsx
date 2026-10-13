@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
 
 export type TimeHorizon = 'today' | 'mtd' | 'ytd';
@@ -248,10 +249,11 @@ function getDynamicPeriodLabel(h: TimeHorizon): string {
 }
 
 interface PortfolioKpisWidgetProps {
-  onOpenMetricDrawer?: (metric: string, value: string) => void;
+  onOpenMetricDrawer?: (metric: string, value: string, horizon: TimeHorizon) => void;
+  onOpenPortfolioPerformance?: (horizon: TimeHorizon) => void;
 }
 
-export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetProps) {
+export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerformance }: PortfolioKpisWidgetProps) {
   // Primary default timeframe is MTD as specified in rules
   const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
   const data = horizonsData[horizon];
@@ -259,12 +261,23 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
-      {/* Header: Title + Period Indicator + Timeframe Tabs */}
+      {/* Header: Title + Details Link + Period Indicator + Timeframe Tabs */}
       <div className="px-1 flex items-center justify-between shrink-0 mb-2 min-h-[32px]">
         <div>
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
-            Portfolio Performance
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
+              Portfolio Performance
+            </h3>
+            {onOpenPortfolioPerformance && (
+              <button
+                type="button"
+                onClick={() => onOpenPortfolioPerformance(horizon)}
+                className="text-[9px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer"
+              >
+                <span>Details</span> <RoundAltArrowRight size={9} />
+              </button>
+            )}
+          </div>
           <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
             Period: <span className="font-semibold text-zinc-800">{activePeriodLabel}</span>
           </p>
@@ -297,7 +310,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
         <div
           className="relative rounded-[12px] p-3 flex flex-col justify-between animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.15s' }}
-          onClick={() => onOpenMetricDrawer?.('Total Hotel Revenue', data.totalRevenue.value)}
+          onClick={() => onOpenMetricDrawer?.('Total Hotel Revenue', data.totalRevenue.value, horizon)}
         >
           <div className="flex items-start justify-between gap-2">
             <div>
@@ -351,7 +364,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
           <div
             className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.2s' }}
-            onClick={() => onOpenMetricDrawer?.('Occupancy', data.occupancy.value)}
+            onClick={() => onOpenMetricDrawer?.('Occupancy', data.occupancy.value, horizon)}
           >
             <div className="flex items-center justify-between gap-1">
               <InfoTooltip text={data.occupancy.tooltip}>
@@ -386,7 +399,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
           <div
             className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.25s' }}
-            onClick={() => onOpenMetricDrawer?.('ADR', data.adr.value)}
+            onClick={() => onOpenMetricDrawer?.('ADR', data.adr.value, horizon)}
           >
             <div className="flex items-center justify-between gap-1">
               <InfoTooltip text={data.adr.tooltip}>
@@ -421,7 +434,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
           <div
             className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.3s' }}
-            onClick={() => onOpenMetricDrawer?.('RevPAR', data.revPar.value)}
+            onClick={() => onOpenMetricDrawer?.('RevPAR', data.revPar.value, horizon)}
           >
             <div className="flex items-center justify-between gap-1">
               <InfoTooltip text={data.revPar.tooltip}>
@@ -456,7 +469,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer }: PortfolioKpisWidgetP
           <div
             className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.35s' }}
-            onClick={() => onOpenMetricDrawer?.('Room Revenue', data.roomRevenue.value)}
+            onClick={() => onOpenMetricDrawer?.('Room Revenue', data.roomRevenue.value, horizon)}
           >
             <div className="flex items-center justify-between gap-1">
               <InfoTooltip text={data.roomRevenue.tooltip}>

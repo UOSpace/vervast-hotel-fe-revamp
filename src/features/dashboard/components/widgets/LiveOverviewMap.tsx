@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import { simulatedPropertiesData, type SimulatedPropertyMapItem } from '../../services/propertySimulation';
 
@@ -30,6 +31,7 @@ const statusConfig: Record<string, { dotColor: string; badgeBg: string; badgeTex
 };
 
 export function LiveOverviewMap() {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ coordinates: [18, 25] as [number, number], zoom: 1.35 });
   const [hoveredData, setHoveredData] = useState<{
@@ -37,6 +39,10 @@ export function LiveOverviewMap() {
     x: number;
     y: number;
   } | null>(null);
+
+  const handleSelectProperty = (propertyId: string) => {
+    navigate(`/dashboard/property?id=${propertyId}`);
+  };
 
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
     setPosition(newPosition);
@@ -155,6 +161,7 @@ export function LiveOverviewMap() {
               <Marker key={id} coordinates={coordinates as [number, number]}>
                 <g
                   className="cursor-pointer"
+                  onClick={() => handleSelectProperty(id)}
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const containerRect = containerRef.current?.getBoundingClientRect();
@@ -254,21 +261,24 @@ export function LiveOverviewMap() {
       {/* Floating Luxury Popover Overlay - Placed outside overflow-hidden with high z-index */}
       {hoveredData && (
         <div
-          className="absolute pointer-events-none z-50 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute pointer-events-auto z-50 animate-in fade-in zoom-in-95 duration-150"
           style={{
             top: `${top}px`,
             left: `${left}px`,
             width: `${CARD_WIDTH}px`,
           }}
+          onMouseLeave={() => setHoveredData(null)}
         >
           <div
-            className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10"
+            className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10 cursor-pointer hover:border-zinc-400 hover:shadow-2xl transition-all group"
+            onClick={() => handleSelectProperty(hoveredData.item.id)}
           >
             {/* Header: Property Name + Grouping & Status */}
             <div className="flex items-start justify-between gap-1.5 pb-1.5 border-b border-zinc-100">
               <div>
-                <div className="text-[13px] font-bold text-zinc-900 leading-tight tracking-wide uppercase">
-                  {hoveredData.item.name}
+                <div className="text-[13px] font-bold text-zinc-900 leading-tight tracking-wide uppercase flex items-center gap-1 group-hover:text-zinc-700 transition-colors">
+                  <span>{hoveredData.item.name}</span>
+                  <span className="text-[10px] text-zinc-400 group-hover:text-zinc-900">→</span>
                 </div>
                 <div className="text-[9.5px] font-medium text-zinc-500 mt-0.5">
                   {hoveredData.item.grouping} · {hoveredData.item.city} · <span className="font-semibold text-zinc-700">{hoveredData.item.totalRooms} Keys</span>
@@ -331,8 +341,8 @@ export function LiveOverviewMap() {
                 {(statusConfig[hoveredData.item.status] || statusConfig.on_plan).label}
               </span>
 
-              <span className="text-[9px] font-medium text-zinc-400">
-                Month to Date
+              <span className="text-[9px] font-medium text-zinc-500 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
+                View property <span className="text-zinc-400 group-hover:text-zinc-900">→</span>
               </span>
             </div>
 

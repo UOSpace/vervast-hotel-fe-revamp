@@ -148,7 +148,7 @@ export function SOSEISignalsDrawerContent() {
         ))}
       </div>
 
-      {/* Cross-Reference Table with All 12 Sanctuaries */}
+      {/* Cross-Reference Table with All 10 Sanctuaries */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
@@ -185,8 +185,8 @@ export function SOSEISignalsDrawerContent() {
             </thead>
             <tbody>
               {simulatedPropertiesData.map((prop, idx) => {
-                const hasOpportunity = ['SOSEI MAREA', 'SOSEI ELAN', 'SOSEI SYLVAN', 'SOSEI NOCTURNE', 'SOSEI AURORA'].includes(prop.name);
-                const hasRisk = ['SOSEI PELAGIA', 'SOSEI SOLSTICE', 'SOSEI MIRAGE', 'SOSEI VERPER', 'SOSEI HEARTH'].includes(prop.name);
+                const hasOpportunity = ['SOSEI MALDIVES', 'SOSEI BALI', 'SOSEI JAPAN', 'SOSEI SWITZERLAND', 'SOSEI CANADA'].includes(prop.name);
+                const hasRisk = ['SOSEI EGYPT', 'SOSEI OMAN', 'SOSEI BARCELONA'].includes(prop.name);
 
                 return (
                   <tr

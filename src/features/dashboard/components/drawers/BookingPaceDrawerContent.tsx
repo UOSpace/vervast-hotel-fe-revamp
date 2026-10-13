@@ -1,5 +1,5 @@
 import { AreaChart, Area, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { simulatedBookingPaceData, simulatedCategoryPerformance } from '../../services/propertySimulation';
+import { simulatedBookingPaceData } from '../../services/propertySimulation';
 
 interface BookingPaceDrawerContentProps {
   theme?: string;
@@ -120,47 +120,6 @@ export function BookingPaceDrawerContent({ theme }: BookingPaceDrawerContentProp
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Collection Pacing Breakdown */}
-      <div>
-        <div className="flex justify-between items-center mb-2 px-0.5">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100">
-            Pacing Breakdown by Collection (Unified Data Portal)
-          </h4>
-          <span className="text-[9.5px] text-zinc-400">All 12 sanctuaries</span>
-        </div>
-
-        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
-            <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 backdrop-blur-sm">
-              <tr className="text-left text-zinc-400">
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Collection</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Destinations</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Total Keys</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Pace vs LY</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Revenue OTB</th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Pace Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {simulatedCategoryPerformance.map((c) => (
-                <tr key={c.id} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{c.name}</td>
-                  <td className="py-2.5 px-3 text-zinc-500">{c.location}</td>
-                  <td className="py-2.5 px-3 text-right font-medium text-zinc-700 dark:text-zinc-300">{c.totalRooms} keys</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-[#14532d]">+12%</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{c.revenue}</td>
-                  <td className="py-2.5 px-3 text-right">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-semibold bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-                      Ahead of LY
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

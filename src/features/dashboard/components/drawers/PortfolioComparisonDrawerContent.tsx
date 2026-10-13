@@ -15,27 +15,27 @@ export function PortfolioComparisonDrawerContent() {
   let items: any[] = defaultData.items;
   let heroTopRev = {
     title: 'Top Revenue Driver',
-    val: 'Sosei Sky',
+    val: 'SOSEI Ski',
     tag: '↑ +18% vs LY',
     sub: '$34.5M Total',
     isPositive: true,
   };
   let heroTopOcc = {
     title: 'Highest Occupancy',
-    val: 'Sosei Sky',
-    tag: '76.0% Occ',
+    val: 'SOSEI Ski',
+    tag: '76.2% Occ',
     sub: '↑ +4.8 pts vs LY',
   };
   let heroTopAdr = {
     title: 'Highest ADR Yield',
-    val: '$2,705 ADR',
+    val: '$2,709 ADR',
     sub: '+$85 vs LY',
-    tag: 'Sky Collection',
+    tag: 'Ski Collection',
   };
   let heroAttention = {
     title: 'Attention / Softening',
-    val: 'Sosei Wellness',
-    tag: '58% Occ',
+    val: 'SOSEI Wellness',
+    tag: '62% Occ',
     sub: 'Monitoring',
   };
 
@@ -284,11 +284,11 @@ export function PortfolioComparisonDrawerContent() {
         </div>
       </div>
 
-      {/* Sanctuary Level Roster (All 12 Sanctuaries - 100% SSOT Data) */}
+      {/* Sanctuary Level Roster (All 10 Sanctuaries - 100% SSOT Data) */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Sanctuary Roster (12 Properties Live Audit)
+            Sanctuary Roster (10 Properties Live Audit)
           </h5>
           <span className="text-[10px] text-zinc-400">
             Click any sanctuary to inspect inventory

@@ -3,11 +3,11 @@
     "date": "2026-08-31",
     "total_properties": 12,
     "categories": [
-      { "id": "urban", "name": "SoSei Urban", "revenue": "$3.03M", "occ": "67%", "adr": "$2,504", "revpar": "$1,682" },
-      { "id": "beach-resort", "name": "Sosei Beach Resort", "revenue": "$2.60M", "occ": "72%", "adr": "$2,207", "revpar": "$1,596" },
-      { "id": "sky", "name": "Sosei Sky", "revenue": "$4.20M", "occ": "76%", "adr": "$2,705", "revpar": "$2,104" },
-      { "id": "nature", "name": "Sosei Nature", "revenue": "$2.80M", "occ": "71%", "adr": "$1,829", "revpar": "$1,303" },
-      { "id": "wellness", "name": "Sosei Wellness", "revenue": "$2.60M", "occ": "58%", "adr": "$1,694", "revpar": "$989" }
+      { "id": "urban", "name": "SOSEI Urban", "revenue": "$3.03M", "occ": "67%", "adr": "$2,504", "revpar": "$1,682" },
+      { "id": "beach-resort", "name": "SOSEI Beach Resort", "revenue": "$2.60M", "occ": "72%", "adr": "$2,207", "revpar": "$1,596" },
+      { "id": "sky", "name": "SOSEI Sky", "revenue": "$4.20M", "occ": "76%", "adr": "$2,705", "revpar": "$2,104" },
+      { "id": "nature", "name": "SOSEI Nature", "revenue": "$2.80M", "occ": "71%", "adr": "$1,829", "revpar": "$1,303" },
+      { "id": "wellness", "name": "SOSEI Wellness", "revenue": "$2.60M", "occ": "58%", "adr": "$1,694", "revpar": "$989" }
     ],
     "total_rooms": 789,
     "total_guests_today": 2847,

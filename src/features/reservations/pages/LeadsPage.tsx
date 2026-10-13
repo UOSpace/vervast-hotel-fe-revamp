@@ -24,88 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../components/ui/select';
+import { LEADS } from '../data/leads';
 
-// Mock data for Reservations Leads
-const mockLeads = [
-  {
-    id: 'LD-001',
-    leadName: 'Grand Hyatt Corporate Retreat',
-    leadStatus: 'Ongoing',
-    totalValue: '$45,000',
-    expectedClose: 'Jul 15, 2026',
-    owner: 'Sarah Jenkins',
-    createdAt: 'Jun 10, 2026',
-    source: 'Corporate',
-    sourceDetails: 'TechCorp Annual Request',
-    crsNo: 'CRS-90812',
-    confidenceLevel: 'High',
-  },
-  {
-    id: 'LD-002',
-    leadName: 'Smith Family Reunion Block',
-    leadStatus: 'Ongoing',
-    totalValue: '$12,500',
-    expectedClose: 'Aug 01, 2026',
-    owner: 'David Miller',
-    createdAt: 'Jun 12, 2026',
-    source: 'Direct',
-    sourceDetails: 'Website Query Form',
-    crsNo: 'CRS-90815',
-    confidenceLevel: 'Medium',
-  },
-  {
-    id: 'LD-003',
-    leadName: 'Luxury Travel VIP Group',
-    leadStatus: 'Completed',
-    totalValue: '$68,000',
-    expectedClose: 'Jun 20, 2026',
-    owner: 'Sarah Jenkins',
-    createdAt: 'Jun 01, 2026',
-    source: 'Travel Agent',
-    sourceDetails: 'Virtuoso Consortium',
-    crsNo: 'CRS-89211',
-    confidenceLevel: 'High',
-  },
-  {
-    id: 'LD-004',
-    leadName: 'Asia Wedding Expo Lead',
-    leadStatus: 'Canceled',
-    totalValue: '$32,000',
-    expectedClose: 'Jun 15, 2026',
-    owner: 'Emma Watson',
-    createdAt: 'May 24, 2026',
-    source: 'OTA',
-    sourceDetails: 'Expedia Event Referral',
-    crsNo: 'CRS-77312',
-    confidenceLevel: 'Low',
-  },
-  {
-    id: 'LD-005',
-    leadName: 'Executive Team Board Meeting',
-    leadStatus: 'Draft',
-    totalValue: '$18,000',
-    expectedClose: 'Jul 28, 2026',
-    owner: 'David Miller',
-    createdAt: 'Jun 22, 2026',
-    source: 'Corporate',
-    sourceDetails: 'Global Finance Inc.',
-    crsNo: 'CRS-91100',
-    confidenceLevel: 'Medium',
-  },
-  {
-    id: 'LD-006',
-    leadName: 'Weekend Wellness Retreat Group',
-    leadStatus: 'Ongoing',
-    totalValue: '$21,500',
-    expectedClose: 'Aug 10, 2026',
-    owner: 'Emma Watson',
-    createdAt: 'Jun 18, 2026',
-    source: 'Direct',
-    sourceDetails: 'Instagram Campaign',
-    crsNo: 'N/A',
-    confidenceLevel: 'Medium',
-  },
-];
+// Mock data for Reservations Leads (shared with the detail page)
+const mockLeads = LEADS;
 
 export function LeadsPage() {
   const [searchTerm, setSearchTerm] = useState('');

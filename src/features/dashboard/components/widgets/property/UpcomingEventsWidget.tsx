@@ -1,25 +1,27 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '../../../../../constants/categories';
 
 export function UpcomingEventsWidget({
-  propertyId = 'sosei-nocturne',
-  propertyName = 'SOSEI Nocturne',
+  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyName = 'SOSEI Barcelona',
 }: {
   propertyId?: string;
   propertyName?: string;
 }) {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
   const propertyEventsMap: Record<string, Array<{ title: string; date: string; category: string; attendees: number; revenue: string }>> = {
-    'sosei-nocturne': [
+    'sosei-barcelona': [
+      { title: 'Catalan Architecture & Design Forum', date: 'Oct 16 – Oct 19, 2026', category: 'Executive Forum', attendees: 32, revenue: '$165,000' },
+      { title: 'Gothic Quarter Private Rooftop Buyout', date: 'Oct 23 – Oct 26, 2026', category: 'Private Buyout', attendees: 45, revenue: '$295,000' },
+      { title: 'Mediterranean Sommelier Grand Tasting', date: 'Nov 03, 2026', category: 'Culinary Gala', attendees: 50, revenue: '$48,000' },
+    ],
+    'sosei-switzerland': [
       { title: 'Alpine Peak Wellness Retreat', date: 'Oct 14 – Oct 18, 2026', category: 'Wellness Sanctuary', attendees: 24, revenue: '$148,000' },
       { title: 'Zermatt Private Chalet Buyout', date: 'Oct 22 – Oct 25, 2026', category: 'Corporate Buyout', attendees: 38, revenue: '$285,000' },
       { title: 'Matterhorn Sommeliers Evening', date: 'Nov 02, 2026', category: 'Culinary Gala', attendees: 45, revenue: '$42,000' },
-    ],
-    'sosei-aurora': [
-      { title: 'Northern Lights Photography Expedition', date: 'Oct 15 – Oct 19, 2026', category: 'Expedition', attendees: 18, revenue: '$112,000' },
-      { title: 'Arctic Thermal Recovery Weekend', date: 'Oct 24 – Oct 27, 2026', category: 'Wellness', attendees: 22, revenue: '$135,000' },
-      { title: 'Lapland Private Estate Buyout', date: 'Nov 05 – Nov 09, 2026', category: 'Private Buyout', attendees: 30, revenue: '$210,000' },
     ],
   };
 

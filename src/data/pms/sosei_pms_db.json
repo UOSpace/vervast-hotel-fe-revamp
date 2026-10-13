@@ -8,11 +8,11 @@
     "generated_at": "2026-08-31T10:00:00Z",
     "total_properties": 12,
     "categories": [
-      { "id": "urban", "name": "SoSei Urban", "concept": "Urban Ultra-Luxury Flagships", "properties_count": 2 },
-      { "id": "beach-resort", "name": "Sosei Beach Resort", "concept": "Overwater Villas & Coastal Sanctuaries", "properties_count": 2 },
-      { "id": "sky", "name": "Sosei Sky", "concept": "Mountain & Arctic Ski Sanctuaries", "properties_count": 2 },
-      { "id": "nature", "name": "Sosei Nature", "concept": "Zen Forest & Tuscan Vineyard Estates", "properties_count": 3 },
-      { "id": "wellness", "name": "Sosei Wellness", "concept": "Holistic Healing & Desert Sanctuaries", "properties_count": 3 }
+      { "id": "urban", "name": "SOSEI Urban", "concept": "Urban Ultra-Luxury Flagships", "properties_count": 2 },
+      { "id": "beach-resort", "name": "SOSEI Beach Resort", "concept": "Overwater Villas & Coastal Sanctuaries", "properties_count": 2 },
+      { "id": "sky", "name": "SOSEI Sky", "concept": "Mountain & Arctic Ski Sanctuaries", "properties_count": 2 },
+      { "id": "nature", "name": "SOSEI Nature", "concept": "Zen Forest & Tuscan Vineyard Estates", "properties_count": 3 },
+      { "id": "wellness", "name": "SOSEI Wellness", "concept": "Holistic Healing & Desert Sanctuaries", "properties_count": 3 }
     ]
   },
   "tables": {

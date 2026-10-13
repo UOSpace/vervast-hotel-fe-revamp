@@ -89,51 +89,39 @@ export function GeoMarketDrawerContent() {
 
       {/* Top 4 Hero KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Volume Leader
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {volumeLeader ? `${volumeLeader.region} (${volumeLeader.rnights})` : 'Asia Pacific (35%)'}
-          </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {volumeLeader ? `${volumeLeader.revenue} · Rank 1 Share` : '↑ +16% vs LY'}
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Volume Leader</span>
+          <div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">{volumeLeader ? volumeLeader.rnights : '35%'}</div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{volumeLeader ? volumeLeader.region : 'Asia Pacific'}</div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">{volumeLeader ? `${volumeLeader.revenue} · Rank 1 Share` : '↑ +16% vs LY'}</div>
           </div>
         </div>
 
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Highest Yield ADR
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {highestAdr ? highestAdr.region : 'Middle East'}
-          </div>
-          <div className="text-[10px] font-medium text-zinc-600 mt-0.5">
-            {highestAdr ? `${highestAdr.adr} ADR · Peak Rate` : '$1,650 ADR (↑ +9%)'}
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Highest Yield ADR</span>
+          <div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">{highestAdr ? highestAdr.adr : '$1,650'}</div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{highestAdr ? highestAdr.region : 'Middle East'}</div>
+            <div className="text-[10px] font-medium text-zinc-500 mt-1">Peak Rate</div>
           </div>
         </div>
 
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Revenue Anchor
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {revenueAnchor ? `${revenueAnchor.region} (${revenueAnchor.revenue})` : 'Asia Pacific ($41M)'}
-          </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {revenueAnchor ? `${revenueAnchor.rnights} Room Nights` : '35% Room Nights'}
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Revenue Anchor</span>
+          <div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">{revenueAnchor ? revenueAnchor.revenue : '$41M'}</div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{revenueAnchor ? revenueAnchor.region : 'Asia Pacific'}</div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">{revenueAnchor ? `${revenueAnchor.rnights} Room Nights` : '35% Room Nights'}</div>
           </div>
         </div>
 
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Emerging Feeder
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {emergingMarket ? `${emergingMarket.region} (${emergingMarket.revenue})` : '$24M Rev (America)'}
-          </div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">
-            {emergingMarket ? `${emergingMarket.rnights} Feeder Share` : 'Africa: $7M · 8% RN'}
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Emerging Feeder</span>
+          <div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">{emergingMarket ? emergingMarket.revenue : '$7M'}</div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{emergingMarket ? emergingMarket.region : 'Africa'}</div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">{emergingMarket ? `${emergingMarket.rnights} Feeder Share` : '8% RN'}</div>
           </div>
         </div>
       </div>
@@ -216,7 +204,7 @@ export function GeoMarketDrawerContent() {
       <div className="border border-zinc-200 rounded-xl overflow-hidden bg-white">
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70">
           <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-            Property-Level Feeder Distribution (12 Sanctuaries)
+            Property-Level Feeder Distribution (10 Sanctuaries)
           </h5>
           <p className="text-[11px] text-zinc-500 mt-0.5">
             Single Source of Truth cross-referenced with simulated PMS live property records

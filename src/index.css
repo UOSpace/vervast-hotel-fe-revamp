@@ -605,6 +605,38 @@
   animation: card-enter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+@keyframes tab-slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes tab-slide-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-tab-from-right {
+  animation: tab-slide-from-right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-tab-from-left {
+  animation: tab-slide-from-left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
 /* Customizing React Datepicker Theme — Modern Monochrome / Dark Charcoal */
 .react-datepicker-wrapper {
   width: 100%;

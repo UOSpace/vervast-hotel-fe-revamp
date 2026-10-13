@@ -4,8 +4,8 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
   const deps = data?.deps ?? 18;
   const inhouse = data?.inhouse ?? 144;
   const vip = data?.vip ?? 14;
-  const propName = data?.propertyName || 'SOSEI Nocturne';
-  const location = data?.location || 'Zermatt, Switzerland';
+  const propName = data?.propertyName || 'SOSEI Barcelona';
+  const location = data?.location || 'Barcelona, Spain';
 
   const arrivalList = [
     { name: 'Lord & Lady Harrington', suite: 'Matterhorn Chalet 12', time: '14:30', vip: 'Ultra VIP', butler: 'Jean-Paul', notes: 'Private helicopter transfer, vintage Krug in suite' },
@@ -93,7 +93,7 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
 
 // ── 2. Property Rhythm & Peak Load Schedule Drawer ──────────────────────────
 export function PropertyRhythmDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Nocturne';
+  const propName = data?.propertyName || 'SOSEI Barcelona';
 
   const hourlyTimeline = [
     { time: '07:00 – 09:30', dept: 'In-Room Breakfast & Alpine Dining', load: 78, staff: '10 Culinary / Waitstaff', status: 'Moderate Flow' },
@@ -182,7 +182,7 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
 
 // ── 3. Property Room Tier Occupancy Drawer ───────────────────────────────────
 export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Nocturne';
+  const propName = data?.propertyName || 'SOSEI Barcelona';
   const totals = data?.totals || { occ: 76, occupied: 72, available: 95 };
   const types = data?.types || [
     { type: 'Mountain Chalet', occ: 80, available: 30 },
@@ -234,8 +234,9 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
         </div>
         <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Top Performing Tier</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">Mountain Chalet</div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-0.5 block">80% Occupancy · $3,200 ADR</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-tight">$3,200</div>
+          <div className="text-[11px] font-normal text-zinc-600 dark:text-zinc-400 mt-0.5">Mountain Chalet</div>
+          <span className="text-[10px] text-emerald-700 font-semibold mt-1 block">80% Occupancy · ADR</span>
         </div>
       </div>
 
@@ -288,7 +289,7 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
 
 // ── 4. Property Department Revenue Drawer ────────────────────────────────────
 export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Nocturne';
+  const propName = data?.propertyName || 'SOSEI Barcelona';
   const totalRev = data?.totalRev ?? 1680000;
   const roomRev = data?.roomRev ?? 1150000;
   const fnbRev = data?.fnbRev ?? 368000;
@@ -384,7 +385,7 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
 
 // ── 5. Property Upcoming Events Drawer ───────────────────────────────────────
 export function PropertyUpcomingEventsDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Nocturne';
+  const propName = data?.propertyName || 'SOSEI Barcelona';
   const events = data?.events || [
     { title: 'Alpine Peak Wellness Retreat', date: 'Oct 14 – Oct 18, 2026', category: 'Wellness Sanctuary', attendees: 24, revenue: '$148,000' },
     { title: 'Zermatt Private Chalet Buyout', date: 'Oct 22 – Oct 25, 2026', category: 'Corporate Buyout', attendees: 38, revenue: '$285,000' },

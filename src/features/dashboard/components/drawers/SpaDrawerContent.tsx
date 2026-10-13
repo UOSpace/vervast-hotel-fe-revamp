@@ -71,11 +71,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Beach Resort Collection (Maldives & Amalfi)', count: 480, rate: '$240', rev: '$115,200' },
-                { name: 'Sosei Sky Collection (St. Moritz & Zermatt)', count: 390, rate: '$235', rev: '$91,650' },
-                { name: 'Sosei Wellness Collection (Baden-Baden, Jebel Akhdar, Sedona)', count: 280, rate: '$250', rev: '$70,000' },
-                { name: 'Sosei Nature Collection (Kyoto, Black Forest, Provence)', count: 180, rate: '$210', rev: '$37,800' },
-                { name: 'SoSei Urban Collection (Tokyo & London)', count: 120, rate: '$225', rev: '$27,000' },
+                { name: 'SOSEI Urban Collection (Barcelona & Tokyo)', count: 120, rate: '$225', rev: '$27,000' },
+                { name: 'SOSEI Beach Resort Collection (Bali & Maldives)', count: 480, rate: '$240', rev: '$115,200' },
+                { name: 'SOSEI Ski Collection (Switzerland & Canada)', count: 390, rate: '$235', rev: '$91,650' },
+                { name: 'SOSEI Nature Collection (Costa Rica & Japan)', count: 180, rate: '$210', rev: '$37,800' },
+                { name: 'SOSEI Wellness Collection (Oman & Egypt)', count: 280, rate: '$250', rev: '$70,000' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
@@ -112,11 +112,11 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             </thead>
             <tbody>
               {[
-                { name: 'Sosei Wellness Collection', standard: '$230', peak: '$275', realized: '$250' },
-                { name: 'Sosei Beach Resort Collection', standard: '$220', peak: '$260', realized: '$240' },
-                { name: 'Sosei Sky Collection', standard: '$215', peak: '$255', realized: '$235' },
-                { name: 'SoSei Urban Collection', standard: '$210', peak: '$245', realized: '$225' },
-                { name: 'Sosei Nature Collection', standard: '$195', peak: '$230', realized: '$210' },
+                { name: 'SOSEI Wellness Collection', standard: '$230', peak: '$275', realized: '$250' },
+                { name: 'SOSEI Beach Resort Collection', standard: '$220', peak: '$260', realized: '$240' },
+                { name: 'SOSEI Ski Collection', standard: '$215', peak: '$255', realized: '$235' },
+                { name: 'SOSEI Urban Collection', standard: '$210', peak: '$245', realized: '$225' },
+                { name: 'SOSEI Nature Collection', standard: '$195', peak: '$230', realized: '$210' },
               ].map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>

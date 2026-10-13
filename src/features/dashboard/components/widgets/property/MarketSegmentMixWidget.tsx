@@ -1,32 +1,32 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '../../../../../constants/categories';
 
 export function MarketSegmentMixWidget({
-  propertyId = 'sosei-nocturne',
-  propertyName = 'SOSEI Nocturne',
+  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyName = 'SOSEI Barcelona',
 }: {
   propertyId?: string;
   propertyName?: string;
 }) {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
   // Property room revenue & ADR mapping for mathematical consistency
   const propertyBaseMetrics: Record<string, { roomRev: number; adr: number }> = {
-    'sosei-nocturne': { roomRev: 1150000, adr: 2700 },
-    'sosei-aurora': { roomRev: 950000, adr: 2650 },
-    'sosei-hearth': { roomRev: 450000, adr: 1920 },
-    'sosei-pastoral': { roomRev: 400000, adr: 1880 },
-    'sosei-verper': { roomRev: 800000, adr: 2450 },
-    'sosei-elan': { roomRev: 650000, adr: 2350 },
-    'sosei-marea': { roomRev: 1000000, adr: 2550 },
-    'sosei-pelagia': { roomRev: 850000, adr: 2450 },
-    'sosei-sylvan': { roomRev: 500000, adr: 1880 },
-    'sosei-verdant': { roomRev: 450000, adr: 1820 },
-    'sosei-mirage': { roomRev: 380000, adr: 2120 },
-    'sosei-solstice': { roomRev: 320000, adr: 2080 },
+    'sosei-barcelona': { roomRev: 1480000, adr: 1320 },
+    'sosei-tokyo': { roomRev: 1350000, adr: 1450 },
+    'sosei-bali': { roomRev: 980000, adr: 1180 },
+    'sosei-maldives': { roomRev: 1850000, adr: 2650 },
+    'sosei-switzerland': { roomRev: 1950000, adr: 2850 },
+    'sosei-canada': { roomRev: 1120000, adr: 1680 },
+    'sosei-costa-rica': { roomRev: 820000, adr: 1220 },
+    'sosei-japan': { roomRev: 1050000, adr: 1580 },
+    'sosei-oman': { roomRev: 920000, adr: 1380 },
+    'sosei-egypt': { roomRev: 760000, adr: 1150 },
   };
 
-  const base = propertyBaseMetrics[propertyId] ?? propertyBaseMetrics['sosei-nocturne'];
+  const base = propertyBaseMetrics[propertyId] ?? propertyBaseMetrics['sosei-barcelona'];
 
   // Standardized 5 market segments matching global overview & category dashboards
   const data = [

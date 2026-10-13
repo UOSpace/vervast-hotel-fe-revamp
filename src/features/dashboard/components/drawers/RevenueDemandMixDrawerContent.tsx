@@ -113,16 +113,14 @@ export function RevenueDemandMixDrawerContent({
           </div>
         </div>
 
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Peak Growth Driver
           </span>
-          <div className="text-xl font-bold text-emerald-700 mt-1">Wellness &amp; Med</div>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-              ↑ +18% Pace
-            </span>
-            <span className="text-[10px] text-zinc-500">$7.0M generated</span>
+          <div>
+            <div className="text-xl font-bold text-emerald-700 leading-tight">+18%</div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">Wellness &amp; Med</div>
+            <div className="text-[10px] text-zinc-500 font-medium mt-1">$7.0M generated · ↑ Pace</div>
           </div>
         </div>
       </div>
@@ -225,7 +223,7 @@ export function RevenueDemandMixDrawerContent({
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Property Contribution Across All 12 Sanctuaries
+            Property Contribution Across All 10 Sanctuaries
           </h5>
           <span className="text-[10px] text-zinc-400">
             Live PMS Sync (100% SSOT Data)

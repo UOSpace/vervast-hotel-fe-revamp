@@ -2,16 +2,15 @@ import alpineImg from '@/assets/property_types/alpine-thumb.jpg';
 import oceanImg from '@/assets/property_types/ocean_hills.jpg';
 import cityImg from '@/assets/property_types/city-thumb.jpg';
 import forestImg from '@/assets/property_types/forest_rindang.jpg';
-import countryImg from '@/assets/property_types/country_pedesaan.jpg';
 import desertImg from '@/assets/property_types/desert.png';
 import wellnessImg from '@/assets/contents/wellness_retreat.png';
 
-export type HotelCategoryId = 'urban' | 'beach-resort' | 'sky' | 'nature' | 'wellness';
+export type HotelCategoryId = 'urban' | 'beach-resort' | 'ski' | 'nature' | 'wellness';
 
 export interface HotelCategory {
   id: HotelCategoryId;
-  name: string;           // e.g. "SoSei Urban", "Sosei Beach Resort"
-  displayName: string;    // e.g. "SoSei Urban"
+  name: string;           // e.g. "SOSEI Urban", "SOSEI Beach Resort"
+  displayName: string;    // e.g. "SOSEI Urban"
   shortName: string;      // e.g. "URBAN", "BEACH RESORT"
   collectionName: string; // e.g. "Urban Collection"
   description: string;
@@ -41,273 +40,241 @@ export interface MasterHotelProperty {
 /**
  * MASTER CATEGORY DEFINITIONS
  * Single Source of Truth for all 5 Luxury Collections across the application:
- * 1. SoSei Urban
- * 2. Sosei Beach Resort
- * 3. Sosei Sky
- * 4. Sosei Nature
- * 5. Sosei Wellness
+ * 1. SOSEI Urban (Barcelona, Tokyo)
+ * 2. SOSEI Beach Resort (Bali, Maldives)
+ * 3. SOSEI Ski (Switzerland, Canada)
+ * 4. SOSEI Nature (Costa Rica, Japan)
+ * 5. SOSEI Wellness (Oman, Egypt)
  */
 export const MASTER_CATEGORIES: HotelCategory[] = [
   {
     id: 'urban',
-    name: 'SoSei Urban',
-    displayName: 'SoSei Urban',
+    name: 'SOSEI Urban',
+    displayName: 'SOSEI Urban',
     shortName: 'URBAN',
     collectionName: 'Urban Collection',
     description: 'Metropolitan luxury landmark residences in global cultural capitals',
     img: cityImg,
-    propertyIds: ['sosei-verper', 'sosei-elan'],
-    totalRooms: 198,
+    propertyIds: ['sosei-barcelona', 'sosei-tokyo'],
+    totalRooms: 200,
   },
   {
     id: 'beach-resort',
-    name: 'Sosei Beach Resort',
-    displayName: 'Sosei Beach Resort',
+    name: 'SOSEI Beach Resort',
+    displayName: 'SOSEI Beach Resort',
     shortName: 'BEACH RESORT',
     collectionName: 'Beach Resort Collection',
     description: 'Private island sanctums, overwater pavilions, and dramatic coastal retreats',
     img: oceanImg,
-    propertyIds: ['sosei-marea', 'sosei-pelagia'],
+    propertyIds: ['sosei-bali', 'sosei-maldives'],
+    totalRooms: 140,
+  },
+  {
+    id: 'ski',
+    name: 'SOSEI Ski',
+    displayName: 'SOSEI Ski',
+    shortName: 'SKI',
+    collectionName: 'Ski Collection',
+    description: 'High-altitude panoramic mountain peaks, glacier chalets, and alpine ski retreats',
+    img: alpineImg,
+    propertyIds: ['sosei-switzerland', 'sosei-canada'],
     totalRooms: 130,
   },
   {
-    id: 'sky',
-    name: 'Sosei Sky',
-    displayName: 'Sosei Sky',
-    shortName: 'SKY',
-    collectionName: 'Sky Collection',
-    description: 'High-altitude panoramic mountain peaks, glacier chalets, and northern lights retreats',
-    img: alpineImg,
-    propertyIds: ['sosei-nocturne', 'sosei-aurora'],
-    totalRooms: 116,
-  },
-  {
     id: 'nature',
-    name: 'Sosei Nature',
-    displayName: 'Sosei Nature',
+    name: 'SOSEI Nature',
+    displayName: 'SOSEI Nature',
     shortName: 'NATURE',
     collectionName: 'Nature Collection',
-    description: 'Lush historic forests, ancient bamboo groves, and pastoral rolling hills',
+    description: 'Lush tropical rainforests, pristine coastal sanctuaries, and historic bamboo groves',
     img: forestImg,
-    propertyIds: ['sosei-hearth', 'sosei-pastoral', 'sosei-sylvan'],
-    totalRooms: 160,
+    propertyIds: ['sosei-costa-rica', 'sosei-japan'],
+    totalRooms: 145,
   },
   {
     id: 'wellness',
-    name: 'Sosei Wellness',
-    displayName: 'Sosei Wellness',
+    name: 'SOSEI Wellness',
+    displayName: 'SOSEI Wellness',
     shortName: 'WELLNESS',
     collectionName: 'Wellness Collection',
     description: 'Holistic restorative sanctuaries, thermal mineral springs, and desert healing oases',
     img: wellnessImg || desertImg,
-    propertyIds: ['sosei-verdant', 'sosei-mirage', 'sosei-solstice'],
-    totalRooms: 185,
+    propertyIds: ['sosei-oman', 'sosei-egypt'],
+    totalRooms: 165,
   },
 ];
 
 /**
  * MASTER HOTEL PROPERTIES
- * 100% Synchronized with PMS and Global Portfolio Overview (Total 789 Rooms across 12 Properties)
+ * 100% Synchronized with PMS and Global Portfolio Overview (Total 780 Rooms across 10 Properties)
  */
 export const MASTER_PROPERTIES: MasterHotelProperty[] = [
-  // ── Sosei Sky (116 Rooms) ────────────────────────────────────────────────
+  // ── SOSEI Urban (200 Rooms) ──────────────────────────────────────────────
   {
-    id: 'sosei-nocturne',
-    name: 'SOSEI NOCTURNE',
-    categoryId: 'sky',
-    categoryName: 'Sosei Sky',
-    location: 'Zermatt, Switzerland',
-    country: 'Switzerland',
+    id: 'sosei-barcelona',
+    name: 'SOSEI BARCELONA',
+    categoryId: 'urban',
+    categoryName: 'SOSEI Urban',
+    location: 'Barcelona, Spain',
+    country: 'Spain',
     region: 'Europe',
-    rooms: 72,
-    baseOcc: 77.8,
-    baseAdr: 2750,
+    rooms: 110,
+    baseOcc: 68.2,
+    baseAdr: 2540,
     status: 'above_plan',
     statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=sky',
-    img: alpineImg,
+    propertyRoute: '/dashboard/property?id=urban',
+    img: cityImg,
   },
   {
-    id: 'sosei-aurora',
-    name: 'SOSEI AURORA',
-    categoryId: 'sky',
-    categoryName: 'Sosei Sky',
-    location: 'Rovaniemi, Finland',
-    country: 'Finland',
-    region: 'Europe',
-    rooms: 44,
-    baseOcc: 73.1,
-    baseAdr: 2618,
+    id: 'sosei-tokyo',
+    name: 'SOSEI TOKYO',
+    categoryId: 'urban',
+    categoryName: 'SOSEI Urban',
+    location: 'Tokyo, Japan',
+    country: 'Japan',
+    region: 'Asia Pacific',
+    rooms: 90,
+    baseOcc: 71.5,
+    baseAdr: 2450,
     status: 'above_plan',
     statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=sky',
-    img: alpineImg,
+    propertyRoute: '/dashboard/property?id=urban',
+    img: cityImg,
   },
 
-  // ── Sosei Beach Resort (130 Rooms) ───────────────────────────────────────
+  // ── SOSEI Beach Resort (140 Rooms) ───────────────────────────────────────
   {
-    id: 'sosei-marea',
-    name: 'SOSEI MARÉA',
+    id: 'sosei-bali',
+    name: 'SOSEI BALI',
     categoryId: 'beach-resort',
-    categoryName: 'Sosei Beach Resort',
+    categoryName: 'SOSEI Beach Resort',
+    location: 'Uluwatu, Bali, Indonesia',
+    country: 'Indonesia',
+    region: 'Asia Pacific',
+    rooms: 75,
+    baseOcc: 70.5,
+    baseAdr: 2150,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
+    propertyRoute: '/dashboard/property?id=beach-resort',
+    img: oceanImg,
+  },
+  {
+    id: 'sosei-maldives',
+    name: 'SOSEI MALDIVES',
+    categoryId: 'beach-resort',
+    categoryName: 'SOSEI Beach Resort',
     location: 'North Malé Atoll, Maldives',
     country: 'Maldives',
     region: 'Asia Pacific',
-    rooms: 58,
-    baseOcc: 75.9,
-    baseAdr: 2380,
+    rooms: 65,
+    baseOcc: 76.5,
+    baseAdr: 2420,
     status: 'above_plan',
     statusLabel: 'Above Plan',
     propertyRoute: '/dashboard/property?id=beach-resort',
     img: oceanImg,
   },
-  {
-    id: 'sosei-pelagia',
-    name: 'SOSEI PELAGIA',
-    categoryId: 'beach-resort',
-    categoryName: 'Sosei Beach Resort',
-    location: 'Uluwatu, Indonesia',
-    country: 'Indonesia',
-    region: 'Asia Pacific',
-    rooms: 72,
-    baseOcc: 68.9,
-    baseAdr: 2055,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=beach-resort',
-    img: oceanImg,
-  },
 
-  // ── SoSei Urban (198 Rooms) ──────────────────────────────────────────────
+  // ── SOSEI Ski (130 Rooms) ────────────────────────────────────────────────
   {
-    id: 'sosei-verper',
-    name: 'SOSEI VERPER',
-    categoryId: 'urban',
-    categoryName: 'SoSei Urban',
-    location: 'New York, USA',
-    country: 'USA',
-    region: 'Americas',
-    rooms: 115,
-    baseOcc: 66.0,
-    baseAdr: 2580,
+    id: 'sosei-switzerland',
+    name: 'SOSEI SWITZERLAND',
+    categoryId: 'ski',
+    categoryName: 'SOSEI Ski',
+    location: 'Zermatt, Switzerland',
+    country: 'Switzerland',
+    region: 'Europe',
+    rooms: 70,
+    baseOcc: 78.5,
+    baseAdr: 2780,
     status: 'above_plan',
     statusLabel: 'Above Plan',
-    propertyRoute: '/dashboard/property?id=urban',
-    img: cityImg,
+    propertyRoute: '/dashboard/property?id=ski',
+    img: alpineImg,
   },
   {
-    id: 'sosei-elan',
-    name: 'SOSEI ÉLAN',
-    categoryId: 'urban',
-    categoryName: 'SoSei Urban',
-    location: 'Los Angeles, USA',
-    country: 'USA',
+    id: 'sosei-canada',
+    name: 'SOSEI CANADA',
+    categoryId: 'ski',
+    categoryName: 'SOSEI Ski',
+    location: 'Whistler, Canada',
+    country: 'Canada',
     region: 'Americas',
-    rooms: 83,
-    baseOcc: 70.8,
-    baseAdr: 2397,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=urban',
-    img: cityImg,
+    rooms: 60,
+    baseOcc: 73.0,
+    baseAdr: 2620,
+    status: 'above_plan',
+    statusLabel: 'Above Plan',
+    propertyRoute: '/dashboard/property?id=ski',
+    img: alpineImg,
   },
 
-  // ── Sosei Nature (160 Rooms) ─────────────────────────────────────────────
+  // ── SOSEI Nature (145 Rooms) ─────────────────────────────────────────────
   {
-    id: 'sosei-hearth',
-    name: 'SOSEI HEARTH',
+    id: 'sosei-costa-rica',
+    name: 'SOSEI COSTA RICA',
     categoryId: 'nature',
-    categoryName: 'Sosei Nature',
-    location: 'Tuscany, Italy',
-    country: 'Italy',
-    region: 'Europe',
-    rooms: 62,
-    baseOcc: 75.8,
-    baseAdr: 1920,
+    categoryName: 'SOSEI Nature',
+    location: 'Papagayo, Costa Rica',
+    country: 'Costa Rica',
+    region: 'Americas',
+    rooms: 70,
+    baseOcc: 72.8,
+    baseAdr: 1950,
     status: 'above_plan',
     statusLabel: 'Above Plan',
     propertyRoute: '/dashboard/property?id=nature',
-    img: countryImg,
+    img: forestImg,
   },
   {
-    id: 'sosei-pastoral',
-    name: 'SOSEI PASTORAL',
+    id: 'sosei-japan',
+    name: 'SOSEI JAPAN',
     categoryId: 'nature',
-    categoryName: 'Sosei Nature',
-    location: 'Provence, France',
-    country: 'France',
-    region: 'Europe',
-    rooms: 52,
-    baseOcc: 67.4,
-    baseAdr: 1657,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
-    propertyRoute: '/dashboard/property?id=nature',
-    img: countryImg,
-  },
-  {
-    id: 'sosei-sylvan',
-    name: 'SOSEI SYLVAN',
-    categoryId: 'nature',
-    categoryName: 'Sosei Nature',
+    categoryName: 'SOSEI Nature',
     location: 'Kyoto, Japan',
     country: 'Japan',
     region: 'Asia Pacific',
-    rooms: 46,
-    baseOcc: 67.4,
-    baseAdr: 1750,
-    status: 'above_plan',
-    statusLabel: 'Above Plan',
+    rooms: 75,
+    baseOcc: 69.5,
+    baseAdr: 1780,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
     propertyRoute: '/dashboard/property?id=nature',
     img: forestImg,
   },
 
-  // ── Sosei Wellness (185 Rooms) ───────────────────────────────────────────
+  // ── SOSEI Wellness (165 Rooms) ───────────────────────────────────────────
   {
-    id: 'sosei-verdant',
-    name: 'SOSEI VERDANT',
+    id: 'sosei-oman',
+    name: 'SOSEI OMAN',
     categoryId: 'wellness',
-    categoryName: 'Sosei Wellness',
-    location: 'Chiang Mai, Thailand',
-    country: 'Thailand',
-    region: 'Asia Pacific',
-    rooms: 48,
-    baseOcc: 52.9,
-    baseAdr: 1456,
-    status: 'attention',
-    statusLabel: 'Attention',
-    propertyRoute: '/dashboard/property?id=wellness',
-    img: forestImg,
-  },
-  {
-    id: 'sosei-mirage',
-    name: 'SOSEI MIRAGE',
-    categoryId: 'wellness',
-    categoryName: 'Sosei Wellness',
-    location: 'Siwa Oasis, Egypt',
-    country: 'Egypt',
+    categoryName: 'SOSEI Wellness',
+    location: 'Jebel Akhdar, Oman',
+    country: 'Oman',
     region: 'Middle East & Africa',
-    rooms: 64,
-    baseOcc: 57.8,
-    baseAdr: 1720,
-    status: 'attention',
-    statusLabel: 'Attention',
+    rooms: 85,
+    baseOcc: 65.5,
+    baseAdr: 1860,
+    status: 'on_plan',
+    statusLabel: 'On Plan',
     propertyRoute: '/dashboard/property?id=wellness',
     img: desertImg,
   },
   {
-    id: 'sosei-solstice',
-    name: 'SOSEI SOLSTICE',
+    id: 'sosei-egypt',
+    name: 'SOSEI EGYPT',
     categoryId: 'wellness',
-    categoryName: 'Sosei Wellness',
-    location: 'Jebel Akhdar, Oman',
-    country: 'Oman',
+    categoryName: 'SOSEI Wellness',
+    location: 'Siwa Oasis, Egypt',
+    country: 'Egypt',
     region: 'Middle East & Africa',
-    rooms: 73,
-    baseOcc: 65.2,
-    baseAdr: 1850,
-    status: 'on_plan',
-    statusLabel: 'On Plan',
+    rooms: 80,
+    baseOcc: 58.2,
+    baseAdr: 1740,
+    status: 'attention',
+    statusLabel: 'Attention',
     propertyRoute: '/dashboard/property?id=wellness',
     img: desertImg,
   },
@@ -317,19 +284,38 @@ export const MASTER_PROPERTIES: MasterHotelProperty[] = [
  * Backward compatibility alias map for legacy category IDs
  */
 export const LEGACY_CATEGORY_MAP: Record<string, HotelCategoryId> = {
-  alpine: 'sky',
+  alpine: 'ski',
   city: 'urban',
   ocean: 'beach-resort',
   countryside: 'nature',
   forest: 'nature',
   desert: 'wellness',
-  sky: 'sky',
+  sky: 'ski',
+  ski: 'ski',
   urban: 'urban',
   'beach-resort': 'beach-resort',
   beach: 'beach-resort',
   nature: 'nature',
   wellness: 'wellness',
   welness: 'wellness',
+};
+
+/**
+ * Backward compatibility alias map for legacy property IDs
+ */
+export const LEGACY_PROPERTY_ID_MAP: Record<string, string> = {
+  'sosei-nocturne': 'sosei-switzerland',
+  'sosei-aurora': 'sosei-canada',
+  'sosei-marea': 'sosei-maldives',
+  'sosei-pelagia': 'sosei-bali',
+  'sosei-verper': 'sosei-barcelona',
+  'sosei-elan': 'sosei-tokyo',
+  'sosei-hearth': 'sosei-costa-rica',
+  'sosei-pastoral': 'sosei-costa-rica',
+  'sosei-sylvan': 'sosei-japan',
+  'sosei-verdant': 'sosei-oman',
+  'sosei-mirage': 'sosei-egypt',
+  'sosei-solstice': 'sosei-oman',
 };
 
 /**
@@ -366,12 +352,21 @@ export const CATEGORY_DISPLAY_NAMES: Record<string, string> = MASTER_CATEGORIES.
 );
 
 /**
- * Resolves any category ID (including legacy IDs like 'alpine', 'city') to the canonical ID
+ * Resolves any category ID (including legacy IDs like 'alpine', 'city', 'sky') to the canonical ID
  */
 export function resolveCategoryId(rawId?: string): HotelCategoryId {
   if (!rawId) return 'urban';
   const clean = rawId.toLowerCase().trim();
   return LEGACY_CATEGORY_MAP[clean] || 'urban';
+}
+
+/**
+ * Resolves any property ID (including legacy IDs like 'sosei-nocturne') to the canonical ID
+ */
+export function resolvePropertyId(rawId?: string): string {
+  if (!rawId) return 'sosei-barcelona';
+  const clean = rawId.toLowerCase().trim();
+  return LEGACY_PROPERTY_ID_MAP[clean] || clean;
 }
 
 /**
@@ -394,7 +389,8 @@ export function getPropertiesByCategoryId(categoryId?: string): MasterHotelPrope
  * Gets category by a specific hotel property ID
  */
 export function getCategoryByPropertyId(propertyId: string): HotelCategory | undefined {
-  const prop = MASTER_PROPERTIES.find(p => p.id === propertyId);
+  const canonicalPropId = resolvePropertyId(propertyId);
+  const prop = MASTER_PROPERTIES.find(p => p.id === canonicalPropId);
   return prop ? CATEGORY_MAP[prop.categoryId] : undefined;
 }
 

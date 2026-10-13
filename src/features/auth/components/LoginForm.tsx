@@ -24,7 +24,7 @@ export function LoginForm() {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-7">
+      <div className="text-left mb-7">
         <h1 className="text-2xl sm:text-[26px] font-medium tracking-tight text-neutral-900">
           Welcome back
         </h1>

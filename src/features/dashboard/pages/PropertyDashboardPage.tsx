@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PropertyHeaderWidget } from '../components/widgets/property/PropertyHeaderWidget';
 import { PropertyKPIWidget } from '../components/widgets/property/PropertyKPIWidget';
 import { OccupancyByRoomTypeWidget } from '../components/widgets/property/OccupancyByRoomTypeWidget';
@@ -10,13 +11,23 @@ import { GuestSatisfactionWidget } from '../components/widgets/property/GuestSat
 import { PropertyRhythmWidget } from '../components/widgets/property/PropertyRhythmWidget';
 import { UpcomingEventsWidget } from '../components/widgets/property/UpcomingEventsWidget';
 import { AlertsTasksWidget } from '../components/widgets/property/AlertsTasksWidget';
-import { MASTER_PROPERTIES } from '@/constants/categories';
+import { MASTER_PROPERTIES, resolvePropertyId } from '@/constants/categories';
 
 export const PROPERTIES = MASTER_PROPERTIES;
 
-
-
 export function PropertyDashboardPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const propIdParam = searchParams.get('id') || searchParams.get('property');
+
+  const getInitialProperty = () => {
+    if (propIdParam) {
+      const canonicalId = resolvePropertyId(propIdParam);
+      const found = PROPERTIES.find(p => p.id === canonicalId || p.id === propIdParam);
+      if (found) return found;
+    }
+    return PROPERTIES[0];
+  };
+
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const prevMonthToday = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
@@ -26,7 +37,22 @@ export function PropertyDashboardPage() {
   const [endDate, setEndDate] = useState<Date | null>(today);
   const [compStartDate, setCompStartDate] = useState<Date | null>(firstDayOfPrevMonth);
   const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
-  const [selectedProperty, setSelectedProperty] = useState(PROPERTIES[0]);
+  const [selectedProperty, setSelectedProperty] = useState(getInitialProperty);
+
+  useEffect(() => {
+    if (propIdParam) {
+      const canonicalId = resolvePropertyId(propIdParam);
+      const found = PROPERTIES.find(p => p.id === canonicalId || p.id === propIdParam);
+      if (found && found.id !== selectedProperty.id) {
+        setSelectedProperty(found);
+      }
+    }
+  }, [propIdParam]);
+
+  const handlePropertyChange = (property: typeof PROPERTIES[0]) => {
+    setSelectedProperty(property);
+    setSearchParams({ id: property.id }, { replace: true });
+  };
 
   const handleDateChange = (type: 'main' | 'comp', dates: [Date | null, Date | null]) => {
     if (type === 'main') {
@@ -47,7 +73,7 @@ export function PropertyDashboardPage() {
           startDate={startDate} endDate={endDate} onDateChange={(dates: [Date | null, Date | null]) => handleDateChange('main', dates)}
           compStartDate={compStartDate} compEndDate={compEndDate} onCompDateChange={(dates: [Date | null, Date | null]) => handleDateChange('comp', dates)}
           selectedProperty={selectedProperty}
-          onPropertyChange={setSelectedProperty}
+          onPropertyChange={handlePropertyChange}
           propertiesList={PROPERTIES}
         />
       </header>

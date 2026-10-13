@@ -41,7 +41,7 @@ export interface PropertyTableTotals {
   totalRevenue: number;
 }
 
-// Room counts per category across all 12 properties (total 789 rooms from Master Data)
+// Room counts per category across all 10 properties (total 780 rooms from Master Data)
 export const categoryRooms: Record<string, number> = CATEGORY_ROOM_COUNTS;
 
 // Master category-level hotel properties configuration (100% synchronized with Master Data)
@@ -523,7 +523,7 @@ export function ResortTypeDashboard() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            Regional Or Hotel Type Level
+            Regional Level Dashboard
           </h2>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 shrink-0">

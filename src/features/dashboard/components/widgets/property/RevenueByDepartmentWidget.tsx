@@ -1,31 +1,31 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '../../../../../constants/categories';
 
 export function RevenueByDepartmentWidget({ 
-  propertyId = 'sosei-nocturne',
+  propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName,
 }: { 
   propertyId?: string;
   propertyName?: string;
 }) {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
   const propertyRevenueMap: Record<string, number> = {
-    'sosei-nocturne': 1150000,
-    'sosei-aurora': 950000,
-    'sosei-hearth': 450000,
-    'sosei-pastoral': 400000,
-    'sosei-verper': 800000,
-    'sosei-elan': 650000,
-    'sosei-marea': 1000000,
-    'sosei-pelagia': 850000,
-    'sosei-sylvan': 500000,
-    'sosei-verdant': 450000,
-    'sosei-mirage': 380000,
-    'sosei-solstice': 320000,
+    'sosei-barcelona': 1480000,
+    'sosei-tokyo': 1350000,
+    'sosei-bali': 980000,
+    'sosei-maldives': 1850000,
+    'sosei-switzerland': 1950000,
+    'sosei-canada': 1120000,
+    'sosei-costa-rica': 820000,
+    'sosei-japan': 1050000,
+    'sosei-oman': 920000,
+    'sosei-egypt': 760000,
   };
 
-  const roomRev = propertyRevenueMap[propertyId] ?? 1150000;
+  const roomRev = propertyRevenueMap[propertyId] ?? 1480000;
   const fnbRev = Math.round(roomRev * 0.32);
   const spaRev = Math.round(roomRev * 0.11);
   const otherRev = Math.round(roomRev * 0.03);
@@ -39,7 +39,7 @@ export function RevenueByDepartmentWidget({
   ];
 
   const totals = { today: `$${totalRev.toLocaleString()}`, trend: '↑ 12.8%', up: true };
-  const activePropName = propertyName || 'SOSEI Nocturne';
+  const activePropName = propertyName || 'SOSEI Barcelona';
 
   return (
     <div 

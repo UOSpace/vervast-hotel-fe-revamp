@@ -58,11 +58,11 @@ const revenueByCategory = [
 ];
 
 const performanceByProperty = [
-  { property: 'SOSEI Nocturne', treatments: 384, revenue: '$94.5k', share: '33%' },
-  { property: 'SOSEI Maréa', treatments: 312, revenue: '$77.3k', share: '27%' },
-  { property: 'SOSEI Sylvan', treatments: 236, revenue: '$51.6k', share: '18%' },
-  { property: 'SOSEI Solstice', treatments: 182, revenue: '$37.2k', share: '13%' },
-  { property: 'SOSEI Hearth', treatments: 134, revenue: '$25.8k', share: '9%' },
+  { property: 'SOSEI Switzerland', treatments: 384, revenue: '$94.5k', share: '33%' },
+  { property: 'SOSEI Maldives', treatments: 312, revenue: '$77.3k', share: '27%' },
+  { property: 'SOSEI Japan', treatments: 236, revenue: '$51.6k', share: '18%' },
+  { property: 'SOSEI Oman', treatments: 182, revenue: '$37.2k', share: '13%' },
+  { property: 'SOSEI Bali', treatments: 134, revenue: '$25.8k', share: '9%' },
 ];
 
 const upcomingPeakTimes = [

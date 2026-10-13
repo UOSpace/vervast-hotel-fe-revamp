@@ -126,16 +126,22 @@ export function GuestProfilePage() {
           </div>
 
           {/* Upcoming Stay (col-span-5) */}
-          <div className="col-span-1 lg:col-span-5 rounded-[12px] p-3 transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer flex flex-col h-full">
+          <div
+            onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-01')}
+            className="col-span-1 lg:col-span-5 rounded-[12px] p-3 transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer flex flex-col h-full"
+          >
             <div className="flex justify-between items-center mb-3 h-4">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Upcoming Stay</h3>
+              <span className="text-[9.5px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                Confirmed
+              </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5 flex-1 items-stretch">
               {/* Left: Image on Top, Clean Key Details Below (col-7) */}
               <div className="col-span-1 md:col-span-7 flex flex-col justify-between h-full gap-2.5">
                 <div className="rounded-lg overflow-hidden shrink-0">
-                  <img src={stayMizuImg} alt="SOSEI Mizu" className="w-full h-[125px] object-cover" />
+                  <img src={stayMizuImg} alt="SOSEI Mizu" className="w-full h-[125px] object-cover hover:scale-105 transition-transform duration-500" />
                 </div>
 
                 <div className="flex flex-col flex-1 justify-between gap-2.5">
@@ -192,21 +198,28 @@ export function GuestProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 animate-card-enter pt-5 border-t border-zinc-100 -mx-3" style={{ animationDelay: '0.2s' }}>
 
           {/* Journey Timeline (col-span-3) */}
-          <div className="col-span-1 lg:col-span-3 rounded-[12px] p-4 transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer flex flex-col h-full">
+          <div className="col-span-1 lg:col-span-3 rounded-[12px] p-4 transition-all duration-300 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 flex flex-col h-full bg-white">
             <div className="flex justify-between items-center mb-3 h-4">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Journey Timeline</h3>
             </div>
-            <div className="flex flex-col justify-between flex-1 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 py-1 gap-3">
+            <div className="flex flex-col justify-between flex-1 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 py-1 gap-2">
               {[
-                { date: 'Mar 2025', name: 'SOSEI Alpine', loc: 'Switzerland', img: journeyAlpineImg },
-                { date: 'Aug 2024', name: 'SOSEI City', loc: 'Singapore', img: journeySingaporeImg },
-                { date: 'Feb 2024', name: 'SOSEI Desert', loc: 'Oman', img: journeyOmanImg },
-                { date: 'May 2023', name: 'SOSEI Ocean', loc: 'Maldives', img: journeyMaldivesImg },
+                { date: 'Mar 2025', name: 'SOSEI Alpine', loc: 'Switzerland', img: journeyAlpineImg, bookingId: 'BK-JA-02' },
+                { date: 'Aug 2024', name: 'SOSEI City', loc: 'Singapore', img: journeySingaporeImg, bookingId: 'BK-JA-03' },
+                { date: 'Feb 2024', name: 'SOSEI Desert', loc: 'Oman', img: journeyOmanImg, bookingId: 'BK-JA-04' },
+                { date: 'May 2023', name: 'SOSEI Ocean', loc: 'Maldives', img: journeyMaldivesImg, bookingId: 'BK-JA-05' },
               ].map((stay, idx) => (
-                <div key={idx} className="flex gap-3 relative z-10 items-center">
-                  <img src={stay.img} className="w-8 h-8 rounded-full object-cover border border-white shadow-xs shrink-0" alt={stay.name} />
-                  <div className="flex flex-col">
-                    <span className="font-bold text-zinc-900 text-[10.5px] leading-tight">{stay.name}</span>
+                <div
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/dashboard/reservations/bookings/${stay.bookingId}`);
+                  }}
+                  className="flex gap-3 relative z-10 items-center p-2 -mx-2 rounded-lg hover:bg-zinc-100/80 transition-all cursor-pointer group"
+                >
+                  <img src={stay.img} className="w-8 h-8 rounded-full object-cover border border-white shadow-xs shrink-0 group-hover:scale-105 transition-transform" alt={stay.name} />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-zinc-900 text-[10.5px] leading-tight group-hover:text-zinc-950 truncate">{stay.name}</span>
                     <div className="flex items-center gap-1.5 text-[9.5px] text-zinc-500 font-normal mt-0.5">
                       <span>{stay.date}</span>
                       <span className="text-zinc-300">·</span>
@@ -219,28 +232,37 @@ export function GuestProfilePage() {
           </div>
 
           {/* Moments that Matter (col-span-3) */}
-          <div className="col-span-1 lg:col-span-3 rounded-[12px] p-4 transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer flex flex-col h-full">
+          <div className="col-span-1 lg:col-span-3 rounded-[12px] p-4 transition-all duration-300 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 flex flex-col h-full bg-white">
             <div className="flex justify-between items-center mb-3 h-4">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Moments That Matter</h3>
             </div>
-            <div className="flex flex-col justify-between flex-1 py-1 gap-3">
-              <div>
+            <div className="flex flex-col justify-between flex-1 py-1 gap-2">
+              <div
+                onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-01')}
+                className="p-1.5 -mx-1.5 rounded-lg hover:bg-zinc-100/80 transition-all cursor-pointer group"
+              >
                 <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="font-bold text-zinc-900 text-[10.5px]">Anniversary Celebration</span>
+                  <span className="font-bold text-zinc-900 text-[10.5px] group-hover:text-zinc-950">Anniversary Celebration</span>
                   <span className="text-[9px] font-semibold text-zinc-500">Jun 12</span>
                 </div>
                 <div className="text-zinc-500 text-[10px] font-normal leading-snug">Private sunset dinner setup on terrace.</div>
               </div>
-              <div>
+              <div
+                onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-01')}
+                className="p-1.5 -mx-1.5 rounded-lg hover:bg-zinc-100/80 transition-all cursor-pointer group"
+              >
                 <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="font-bold text-zinc-900 text-[10.5px]">Preferred Butler</span>
+                  <span className="font-bold text-zinc-900 text-[10.5px] group-hover:text-zinc-950">Preferred Butler</span>
                   <span className="text-[9px] font-semibold text-zinc-500">Maria</span>
                 </div>
                 <div className="text-zinc-500 text-[10px] font-normal leading-snug">Always requests Butler Maria when available.</div>
               </div>
-              <div>
+              <div
+                onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-02')}
+                className="p-1.5 -mx-1.5 rounded-lg hover:bg-zinc-100/80 transition-all cursor-pointer group"
+              >
                 <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="font-bold text-zinc-900 text-[10.5px]">Family Highlights</span>
+                  <span className="font-bold text-zinc-900 text-[10.5px] group-hover:text-zinc-950">Family Highlights</span>
                   <span className="text-[9px] font-semibold text-zinc-500">Activities</span>
                 </div>
                 <div className="text-zinc-500 text-[10px] font-normal leading-snug">Loves marine snorkeling & morning nature walks.</div>

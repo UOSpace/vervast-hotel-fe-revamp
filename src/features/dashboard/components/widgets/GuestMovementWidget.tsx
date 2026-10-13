@@ -42,11 +42,11 @@ export function GuestMovementWidget() {
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 8.5, fill: '#71717a' }} dy={10} interval={0} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8.5, fill: '#71717a' }} domain={[0, 3500]} width={28} />
               <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
-              <Bar dataKey="wellness" stackId="a" name="Sosei Wellness" fill={zincPalette.wellness} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="nature" stackId="a" name="Sosei Nature" fill={zincPalette.nature} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="urban" stackId="a" name="SoSei Urban" fill={zincPalette.urban} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="beachResort" stackId="a" name="Sosei Beach Resort" fill={zincPalette.beachResort} barSize={16} isAnimationActive={false} />
-              <Bar dataKey="sky" stackId="a" name="Sosei Sky" fill={zincPalette.sky} radius={[3, 3, 0, 0]} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="wellness" stackId="a" name="SOSEI Wellness" fill={zincPalette.wellness} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="nature" stackId="a" name="SOSEI Nature" fill={zincPalette.nature} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="urban" stackId="a" name="SOSEI Urban" fill={zincPalette.urban} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="beachResort" stackId="a" name="SOSEI Beach Resort" fill={zincPalette.beachResort} barSize={16} isAnimationActive={false} />
+              <Bar dataKey="sky" stackId="a" name="SOSEI Ski" fill={zincPalette.sky} radius={[3, 3, 0, 0]} barSize={16} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

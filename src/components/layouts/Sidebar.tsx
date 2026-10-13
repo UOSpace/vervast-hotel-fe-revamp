@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSidebarMenu, type MenuItem } from '../../config/menu';
+import { getSidebarMenu, getGeneralMenu, type MenuItem } from '../../config/menu';
 import { AltArrowDown, Palette } from '@solar-icons/react';
 import { Logo } from '../ui/Logo';
 import { usePortal, PORTAL_LABELS } from '../../context/PortalContext';
@@ -67,6 +67,11 @@ export function Sidebar({
   };
 
   const menuItems = getSidebarMenu(activePortal);
+  const generalItems = getGeneralMenu();
+  const sections: { label: string | null; items: MenuItem[] }[] = [
+    { label: null, items: menuItems },
+    { label: 'General', items: generalItems },
+  ];
 
   const isMenuActive = (item: MenuItem) => {
     if (item.name === 'Group View') {
@@ -134,8 +139,17 @@ export function Sidebar({
             </div>
           </div>
         ) : (
-          <nav className="space-y-1">
-          {menuItems.map((item) => {
+          <div>
+          {sections.map((section) => (
+          <nav key={section.label ?? 'portal'} className="space-y-1">
+          {section.label && (
+            <div className="px-2.5 pt-4 pb-1.5 mt-3 border-t border-zinc-100">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 select-none">
+                {section.label}
+              </p>
+            </div>
+          )}
+          {section.items.map((item) => {
             const isActive = isMenuActive(item);
             const isExpanded = expandedMenu === item.name || (expandedMenu === null && isActive);
             const Icon = item.icon;
@@ -158,8 +172,8 @@ export function Sidebar({
                   }}
                   className={`w-full h-[34px] flex items-center justify-between px-2.5 rounded-xl text-[11px] transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-zinc-900/[0.06] text-zinc-900 font-semibold border border-zinc-900/[0.08] shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
-                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/[0.025] font-medium border border-transparent'
+                      ? 'bg-zinc-100/80 text-zinc-900 font-medium'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 font-medium'
                   }`}
                 >
                   <div className="flex items-center space-x-2 min-w-0">
@@ -193,16 +207,13 @@ export function Sidebar({
                             }
                             if (onClose) onClose();
                           }}
-                          className={`w-full flex items-center justify-between text-left px-2 py-1.5 rounded-lg text-[10px] transition-all duration-150 cursor-pointer ${
+                          className={`w-full flex items-center text-left px-2 py-1.5 rounded-lg text-[10px] transition-all duration-150 cursor-pointer ${
                             childActive
-                              ? 'bg-zinc-900/[0.05] text-zinc-900 font-semibold'
-                              : 'text-zinc-400 hover:text-zinc-800 hover:bg-zinc-900/[0.02] font-normal'
+                              ? 'text-zinc-900 font-medium'
+                              : 'text-zinc-400 hover:text-zinc-800 font-normal'
                           }`}
                         >
                           <span className="truncate block">{child.name}</span>
-                          {childActive && (
-                            <span className="w-1 h-1 rounded-full bg-zinc-700 opacity-60 shrink-0 ml-1.5" />
-                          )}
                         </button>
                       );
                     })}
@@ -212,6 +223,8 @@ export function Sidebar({
             );
           })}
         </nav>
+          ))}
+          </div>
         )}
       </div>
 

@@ -11,10 +11,10 @@ export function MarketSegmentDrawerContent() {
 
   let totalRevenue = defaultData.totalRevenue;
   let items: any[] = defaultData.items;
-  let heroLeisure = { label: 'Leisure (55%)', sub: '$65M · ↑ +14% vs LY' };
-  let heroBusiness = { label: 'Business (25%)', sub: '$30M · ↑ +8% vs LY' };
-  let heroSocial = { label: 'Social (10%)', sub: '$11M · ↑ +10% vs LY' };
-  let heroTopYield = { label: 'MICE ($1,720)', sub: '$9M · ↑ +12% vs LY Pace' };
+  let heroLeisure = { value: '55%', name: 'Leisure', sub: '$65M · ↑ +14% vs LY' };
+  let heroBusiness = { value: '25%', name: 'Business', sub: '$30M · ↑ +8% vs LY' };
+  let heroSocial = { value: '10%', name: 'Social', sub: '$11M · ↑ +10% vs LY' };
+  let heroTopYield = { value: '$1,720', name: 'MICE', sub: '$9M · ↑ +12% vs LY Pace' };
 
   if (customData) {
     const totalRow = customData.find(
@@ -40,19 +40,22 @@ export function MarketSegmentDrawerContent() {
 
     if (leisure) {
       heroLeisure = {
-        label: `Leisure (${leisure.rnights || '55%'})`,
+        value: leisure.rnights || '55%',
+        name: 'Leisure',
         sub: `${leisure.revenue || '$1.64M'} · ADR ${leisure.adr || '$2,465'}`,
       };
     }
     if (business) {
       heroBusiness = {
-        label: `Business (${business.rnights || '25%'})`,
+        value: business.rnights || '25%',
+        name: 'Business',
         sub: `${business.revenue || '$0.88M'} · ADR ${business.adr || '$2,921'}`,
       };
     }
     if (social) {
       heroSocial = {
-        label: `Social (${social.rnights || '10%'})`,
+        value: social.rnights || '10%',
+        name: 'Social',
         sub: `${social.revenue || '$0.22M'} · ADR ${social.adr || '$1,822'}`,
       };
     }
@@ -70,7 +73,8 @@ export function MarketSegmentDrawerContent() {
 
     if (topAdrItem) {
       heroTopYield = {
-        label: `${topAdrItem.segment} (${topAdrItem.adr})`,
+        value: topAdrItem.adr,
+        name: topAdrItem.segment,
         sub: `${topAdrItem.revenue} · ${topAdrItem.rnights} Volume`,
       };
     }
@@ -143,37 +147,21 @@ export function MarketSegmentDrawerContent() {
 
       {/* Top 4 Hero KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Core Leisure Driver
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{heroLeisure.label}</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroLeisure.sub}</div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Corporate & Business
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{heroBusiness.label}</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroBusiness.sub}</div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Social & Gatherings
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{heroSocial.label}</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroSocial.sub}</div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Top Yield Segment
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{heroTopYield.label}</div>
-          <div className="text-[10px] font-medium text-emerald-700 mt-0.5">{heroTopYield.sub}</div>
-        </div>
+        {[
+          { title: 'Core Leisure Driver', hero: heroLeisure },
+          { title: 'Corporate & Business', hero: heroBusiness },
+          { title: 'Social & Gatherings', hero: heroSocial },
+          { title: 'Top Yield Segment', hero: heroTopYield },
+        ].map(({ title, hero }) => (
+          <div key={title} className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{title}</span>
+            <div>
+              <div className="text-xl font-bold text-zinc-900 leading-tight">{hero.value}</div>
+              <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{hero.name}</div>
+              <div className="text-[10px] font-medium text-emerald-700 mt-1">{hero.sub}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Market Segment Breakdown Table */}
@@ -269,7 +257,7 @@ export function MarketSegmentDrawerContent() {
       <div className="border border-zinc-200 rounded-xl overflow-hidden bg-white">
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70">
           <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-            Property-Level Segment Mix (12 Sanctuaries)
+            Property-Level Segment Mix (10 Sanctuaries)
           </h5>
           <p className="text-[11px] text-zinc-500 mt-0.5">
             Single Source of Truth cross-referenced with simulated PMS live property records

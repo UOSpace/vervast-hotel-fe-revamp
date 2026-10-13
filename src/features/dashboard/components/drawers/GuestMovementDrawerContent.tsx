@@ -6,11 +6,11 @@ interface GuestMovementDrawerContentProps {
 
 export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContentProps) {
   const movementData = [
-    { name: 'Sky', arr: 145, in: 580, dep: 95, vip: 18, collection: 'Sosei Sky (Switzerland & Finland)' },
-    { name: 'Beach Resort', arr: 110, in: 520, dep: 80, vip: 14, collection: 'Sosei Beach Resort (Maldives & Bali)' },
-    { name: 'Urban', arr: 160, in: 640, dep: 120, vip: 22, collection: 'SoSei Urban (New York & Los Angeles)' },
-    { name: 'Nature', arr: 120, in: 597, dep: 85, vip: 16, collection: 'Sosei Nature (Tuscany, Provence & Kyoto)' },
-    { name: 'Wellness', arr: 100, in: 510, dep: 75, vip: 16, collection: 'Sosei Wellness (Chiang Mai, Siwa & Al Hajar)' },
+    { name: 'Urban', arr: 160, in: 640, dep: 120, vip: 22, collection: 'SOSEI Urban (Barcelona & Tokyo)' },
+    { name: 'Beach Resort', arr: 110, in: 520, dep: 80, vip: 14, collection: 'SOSEI Beach Resort (Bali & Maldives)' },
+    { name: 'Ski', arr: 145, in: 580, dep: 95, vip: 18, collection: 'SOSEI Ski (Switzerland & Canada)' },
+    { name: 'Nature', arr: 120, in: 597, dep: 85, vip: 16, collection: 'SOSEI Nature (Costa Rica & Japan)' },
+    { name: 'Wellness', arr: 100, in: 510, dep: 75, vip: 16, collection: 'SOSEI Wellness (Oman & Egypt)' },
   ];
 
   return (
@@ -69,7 +69,7 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (12 Sanctuaries)</td>
+              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (10 Sanctuaries)</td>
               <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">2,847</td>
               <td className="py-3 px-3 text-right text-emerald-700">+535</td>
               <td className="py-3 px-3 text-right text-zinc-500">-455</td>

@@ -6,6 +6,7 @@ import dashboardData from '../../../data/dashboardData.json';
 import { getDashboardComputedData } from '../../../data/pms';
 import { useTheme } from '../../../config/theme-provider';
 import { MetricDrawerContent, accuratePropertiesData } from './drawers/MetricDrawerContent';
+import { PortfolioPerformanceDrawerContent } from './drawers/PortfolioPerformanceDrawerContent';
 import { BookingPaceDrawerContent } from './drawers/BookingPaceDrawerContent';
 import { RevenueDemandMixDrawerContent } from './drawers/RevenueDemandMixDrawerContent';
 import { ForwardBusinessDrawerContent } from './drawers/ForwardBusinessDrawerContent';
@@ -59,16 +60,16 @@ export function DashboardDrawer() {
             </div>
             <div className="flex flex-col gap-3">
               {[
-                { name: 'SoSei Urban Collection', location: 'Tokyo & London', time: '22:30 JST', occ: '76.8%', status: 'Normal Pace', count: '198 Rms' },
-                { name: 'Sosei Beach Resort Collection', location: 'Maldives & Amalfi', time: '18:30 MVT', occ: '84.1%', status: 'High Demand', count: '130 Rms' },
-                { name: 'Sosei Sky Collection', location: 'St. Moritz & Zermatt', time: '14:30 CET', occ: '87.2%', status: 'Peak Season', count: '116 Rms' },
-                { name: 'Sosei Nature Collection', location: 'Kyoto, Black Forest, Provence', time: '22:30 JST', occ: '72.3%', status: 'Normal Pace', count: '160 Rms' },
-                { name: 'Sosei Wellness Collection', location: 'Baden-Baden, Jebel Akhdar, Sedona', time: '17:30 GST', occ: '65.2%', status: 'Steady Flow', count: '185 Rms' },
+                { name: 'SOSEI Urban Collection', location: 'Barcelona & Tokyo', occ: '69.5%', status: 'Normal Pace', count: '200 Rms' },
+                { name: 'SOSEI Beach Resort Collection', location: 'Bali & Maldives', occ: '73.6%', status: 'High Demand', count: '140 Rms' },
+                { name: 'SOSEI Ski Collection', location: 'Switzerland & Canada', occ: '76.2%', status: 'Peak Season', count: '130 Rms' },
+                { name: 'SOSEI Nature Collection', location: 'Costa Rica & Japan', occ: '71.0%', status: 'Normal Pace', count: '145 Rms' },
+                { name: 'SOSEI Wellness Collection', location: 'Oman & Egypt', occ: '62.4%', status: 'Steady Flow', count: '165 Rms' },
               ].map((resort) => (
                 <div key={resort.name} className="p-3.5 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/40 flex justify-between items-center hover:bg-zinc-100/60 dark:hover:bg-zinc-800/70 transition-all">
                   <div>
                     <div className="font-bold text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">{resort.name}</div>
-                    <div className="text-[10px] text-zinc-500 mt-0.5">{resort.location} Â· Local Time: <span className="font-medium text-zinc-700 dark:text-zinc-300">{resort.time}</span></div>
+                    <div className="text-[10px] text-zinc-500 mt-0.5">{resort.location}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">{resort.occ}</div>
@@ -256,79 +257,15 @@ export function DashboardDrawer() {
         return <PortfolioComparisonDrawerContent />;
 
       case 'PORTFOLIO_PERFORMANCE':
-        return (
-          <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-            <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">Portfolio performance and yield metrics across all 6 collections MTD.</p>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                12 Sanctuaries MTD Actuals
-              </span>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-              <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
-                <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 shadow-2xs">
-                  <tr className="text-left text-zinc-400">
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Collection</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Occupancy</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Revenue (USD)</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">RevPAR (USD)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {propertiesPerformanceData.map((prop) => {
-                    const isExpanded = !!expandedRows[prop.id];
-                    return (
-                      <React.Fragment key={prop.id}>
-                        <tr
-                          className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors"
-                          onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
-                        >
-                          <td className="py-3 px-3 font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 whitespace-nowrap">
-                            {isExpanded ? (
-                              <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
-                            ) : (
-                              <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                            )}
-                            {prop.name}
-                          </td>
-                          <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.occ}</td>
-                          <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.adr}</td>
-                          <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
-                          <td className="py-3 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revpar}</td>
-                        </tr>
-                        {isExpanded && prop.children.map((child, cIdx) => (
-                          <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20 text-zinc-600 dark:text-zinc-400">
-                            <td className="py-2.5 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{child.name}</td>
-                            <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.occ}</td>
-                            <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.adr}</td>
-                            <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
-                            <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.revpar}</td>
-                          </tr>
-                        ))}
-                      </React.Fragment>
-                    );
-                  })}
-                  <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-                    <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
-                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$118.00M</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
+        return <PortfolioPerformanceDrawerContent config={config} />;
 
       case 'WORLD_MAP':
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">Geographic distribution, timezone, and operational property status.</p>
+              <p className="text-xs text-zinc-500">Geographic distribution and operational property status.</p>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                12 Sanctuaries Worldwide
+                10 Sanctuaries Worldwide
               </span>
             </div>
             <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -337,7 +274,6 @@ export function DashboardDrawer() {
                   <tr className="text-left text-zinc-400">
                     <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Collection</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Region / Location</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Local Time</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Occupancy</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Revenue (USD)</th>
@@ -362,7 +298,6 @@ export function DashboardDrawer() {
                             {prop.name}
                           </td>
                           <td className="py-3 px-3 text-zinc-500 whitespace-nowrap">{prop.location}</td>
-                          <td className="py-3 px-3 text-right text-zinc-500 whitespace-nowrap">{prop.localTime}</td>
                           <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.occ}</td>
                           <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.adr}</td>
                           <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
@@ -372,7 +307,6 @@ export function DashboardDrawer() {
                           <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20 text-zinc-600 dark:text-zinc-400">
                             <td className="py-2.5 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{child.name}</td>
                             <td className="py-2.5 px-3 text-[10px] text-zinc-400 whitespace-nowrap">{child.location}</td>
-                            <td className="py-2.5 px-3 text-right text-[10px] text-zinc-400 whitespace-nowrap">Operational Node</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.occ}</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.adr}</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
@@ -384,8 +318,7 @@ export function DashboardDrawer() {
                   })}
                   <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
-                    <td className="py-3 px-3 text-zinc-500">12 Sanctuaries Worldwide</td>
-                    <td className="py-3 px-3 text-right text-zinc-400">-</td>
+                    <td className="py-3 px-3 text-zinc-500">10 Sanctuaries Worldwide</td>
                     <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$118.00M</td>
@@ -465,7 +398,7 @@ export function DashboardDrawer() {
           const sentimentByProperty = [
             {
               id: 'urban',
-              name: 'SoSei Urban',
+              name: 'SOSEI Urban',
               score: '4.8',
               children: [
                 { name: 'Location', score: '4.9' },
@@ -478,7 +411,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'beach-resort',
-              name: 'Sosei Beach Resort',
+              name: 'SOSEI Beach Resort',
               score: '4.9',
               children: [
                 { name: 'Location', score: '5.0' },
@@ -490,8 +423,8 @@ export function DashboardDrawer() {
               ],
             },
             {
-              id: 'sky',
-              name: 'Sosei Sky',
+              id: 'ski',
+              name: 'SOSEI Ski',
               score: '4.8',
               children: [
                 { name: 'Location', score: '4.9' },
@@ -504,7 +437,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'nature',
-              name: 'Sosei Nature',
+              name: 'SOSEI Nature',
               score: '4.7',
               children: [
                 { name: 'Location', score: '4.8' },
@@ -517,7 +450,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'wellness',
-              name: 'Sosei Wellness',
+              name: 'SOSEI Wellness',
               score: '4.9',
               children: [
                 { name: 'Location', score: '4.8' },
@@ -596,14 +529,14 @@ export function DashboardDrawer() {
         {
           const generateReviews = () => {
             const reviews = [
-              { guest: 'Anderson Family', property: 'Sosei Sky', score: 4.8, rating: 'Excellent', comment: 'Absolutely stunning resort. The ski concierge at Sky was world-class.', color: '#059669' },
-              { guest: 'James Wilson', property: 'Sosei Nature', score: 4.6, rating: 'Excellent', comment: 'Impeccable forest service, though dining options slightly limited at night.', color: '#059669' },
-              { guest: 'Maria Schmidt', property: 'Sosei Beach Resort', score: 4.9, rating: 'Excellent', comment: 'Beautiful ocean views. The private overwater villa was a highlight.', color: '#059669' },
-              { guest: 'Park Family', property: 'Sosei Wellness', score: 4.8, rating: 'Excellent', comment: 'Unique thermal wellness experience. Thermal mud and hydrotherapy were sublime.', color: '#059669' },
-              { guest: 'Robert Chen', property: 'SoSei Urban', score: 4.7, rating: 'Very Good', comment: 'Great city center location. Room was comfortable and Maybach chauffeur on point.', color: '#71717a' },
-              { guest: 'Emma Watson', property: 'Sosei Nature', score: 4.5, rating: 'Very Good', comment: 'Lovely countryside retreat. The tea ceremony was wonderful.', color: '#71717a' },
-              { guest: 'Hiroshi Tanaka', property: 'Sosei Wellness', score: 4.9, rating: 'Excellent', comment: 'A magical healing sanctuary. The medical longevity consultation was unforgettable.', color: '#059669' },
-              { guest: 'Sarah Davis', property: 'Sosei Sky', score: 4.2, rating: 'Very Good', comment: 'Nice mountain property and great ski access. Room views were breathtaking.', color: '#71717a' },
+              { guest: 'Anderson Family', property: 'SOSEI Ski', score: 4.8, rating: 'Excellent', comment: 'Absolutely stunning resort. The ski concierge at Ski was world-class.', color: '#059669' },
+              { guest: 'James Wilson', property: 'SOSEI Nature', score: 4.6, rating: 'Excellent', comment: 'Impeccable forest service, though dining options slightly limited at night.', color: '#059669' },
+              { guest: 'Maria Schmidt', property: 'SOSEI Beach Resort', score: 4.9, rating: 'Excellent', comment: 'Beautiful ocean views. The private overwater villa was a highlight.', color: '#059669' },
+              { guest: 'Park Family', property: 'SOSEI Wellness', score: 4.8, rating: 'Excellent', comment: 'Unique thermal wellness experience. Thermal mud and hydrotherapy were sublime.', color: '#059669' },
+              { guest: 'Robert Chen', property: 'SOSEI Urban', score: 4.7, rating: 'Very Good', comment: 'Great city center location. Room was comfortable and Maybach chauffeur on point.', color: '#71717a' },
+              { guest: 'Emma Watson', property: 'SOSEI Nature', score: 4.5, rating: 'Very Good', comment: 'Lovely countryside retreat. The tea ceremony was wonderful.', color: '#71717a' },
+              { guest: 'Hiroshi Tanaka', property: 'SOSEI Wellness', score: 4.9, rating: 'Excellent', comment: 'A magical healing sanctuary. The medical longevity consultation was unforgettable.', color: '#059669' },
+              { guest: 'Sarah Davis', property: 'SOSEI Ski', score: 4.2, rating: 'Very Good', comment: 'Nice mountain property and great ski access. Room views were breathtaking.', color: '#71717a' },
             ];
             return reviews.map((r, i) => {
               const d = new Date();
@@ -689,7 +622,7 @@ export function DashboardDrawer() {
           const guestNeedsByProperty = [
             {
               id: 'urban',
-              name: 'SoSei Urban Collection',
+              name: 'SOSEI Urban Collection',
               needs: [
                 { label: 'Michelin Dining & Rooftop Bar Reservations', pct: '34%', pctNum: 34 },
                 { label: 'Chauffeured Electric Maybach Fleet', pct: '26%', pctNum: 26 },
@@ -699,7 +632,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'beach-resort',
-              name: 'Sosei Beach Resort Collection',
+              name: 'SOSEI Beach Resort Collection',
               needs: [
                 { label: 'Private Catamaran & Coral Diving', pct: '38%', pctNum: 38 },
                 { label: 'Holistic Ayurveda & Ocean Spa', pct: '30%', pctNum: 30 },
@@ -708,8 +641,8 @@ export function DashboardDrawer() {
               ],
             },
             {
-              id: 'sky',
-              name: 'Sosei Sky Collection',
+              id: 'ski',
+              name: 'SOSEI Ski Collection',
               needs: [
                 { label: 'Private Ski Guide & Equipment Fitting', pct: '36%', pctNum: 36 },
                 { label: 'Thermal Onsen & Alpine Recovery Spa', pct: '28%', pctNum: 28 },
@@ -719,7 +652,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'nature',
-              name: 'Sosei Nature Collection',
+              name: 'SOSEI Nature Collection',
               needs: [
                 { label: 'Shinrin-yoku (Forest Bathing) & Meditation', pct: '37%', pctNum: 37 },
                 { label: 'Treehouse Herbal Bath Therapy', pct: '29%', pctNum: 29 },
@@ -729,7 +662,7 @@ export function DashboardDrawer() {
             },
             {
               id: 'wellness',
-              name: 'Sosei Wellness Collection',
+              name: 'SOSEI Wellness Collection',
               needs: [
                 { label: 'Cellular Longevity & Cryotherapy', pct: '36%', pctNum: 36 },
                 { label: 'Ayurvedic Thermal Mud & Hydrotherapy', pct: '28%', pctNum: 28 },
@@ -823,7 +756,7 @@ export function DashboardDrawer() {
         {
           const spendByProperty = [
             {
-              id: 'urban', name: 'SoSei Urban Collection', total: '$31.6M', avg: '$2,504', years: [
+              id: 'urban', name: 'SOSEI Urban Collection', total: '$31.6M', avg: '$2,504', years: [
                 { year: '2026 YTD', avg: '$2,504', total: '$31.6M' }, { year: '2025', avg: '$2,420', total: '$28.5M' }, { year: '2024', avg: '$2,310', total: '$25.2M' }, { year: '2023', avg: '$2,200', total: '$22.0M' },
               ], categories: [
                 { cat: 'Skyline Suites', avg2026: '$1,520', avg2025: '$1,480', avg2024: '$1,410', avg2023: '$1,340' },
@@ -833,7 +766,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'beach-resort', name: 'Sosei Beach Resort Collection', total: '$29.8M', avg: '$2,207', years: [
+              id: 'beach-resort', name: 'SOSEI Beach Resort Collection', total: '$29.8M', avg: '$2,207', years: [
                 { year: '2026 YTD', avg: '$2,207', total: '$29.8M' }, { year: '2025', avg: '$2,140', total: '$27.2M' }, { year: '2024', avg: '$2,020', total: '$24.5M' }, { year: '2023', avg: '$1,920', total: '$21.8M' },
               ], categories: [
                 { cat: 'Water Villas & Suites', avg2026: '$1,450', avg2025: '$1,410', avg2024: '$1,330', avg2023: '$1,260' },
@@ -843,7 +776,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'sky', name: 'Sosei Sky Collection', total: '$34.5M', avg: '$2,705', years: [
+              id: 'ski', name: 'SOSEI Ski Collection', total: '$34.5M', avg: '$2,705', years: [
                 { year: '2026 YTD', avg: '$2,705', total: '$34.5M' }, { year: '2025', avg: '$2,610', total: '$31.2M' }, { year: '2024', avg: '$2,480', total: '$27.8M' }, { year: '2023', avg: '$2,320', total: '$24.5M' },
               ], categories: [
                 { cat: 'Suites & Chalets', avg2026: '$1,680', avg2025: '$1,620', avg2024: '$1,540', avg2023: '$1,440' },
@@ -853,7 +786,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'nature', name: 'Sosei Nature Collection', total: '$28.9M', avg: '$1,829', years: [
+              id: 'nature', name: 'SOSEI Nature Collection', total: '$28.9M', avg: '$1,829', years: [
                 { year: '2026 YTD', avg: '$1,829', total: '$28.9M' }, { year: '2025', avg: '$1,760', total: '$26.4M' }, { year: '2024', avg: '$1,670', total: '$23.8M' }, { year: '2023', avg: '$1,580', total: '$21.2M' },
               ], categories: [
                 { cat: 'Estate & Ryokan Villas', avg2026: '$1,150', avg2025: '$1,110', avg2024: '$1,050', avg2023: '$990' },
@@ -863,7 +796,7 @@ export function DashboardDrawer() {
               ]
             },
             {
-              id: 'wellness', name: 'Sosei Wellness Collection', total: '$27.6M', avg: '$1,694', years: [
+              id: 'wellness', name: 'SOSEI Wellness Collection', total: '$27.6M', avg: '$1,694', years: [
                 { year: '2026 YTD', avg: '$1,694', total: '$27.6M' }, { year: '2025', avg: '$1,630', total: '$24.8M' }, { year: '2024', avg: '$1,540', total: '$22.1M' }, { year: '2023', avg: '$1,450', total: '$19.5M' },
               ], categories: [
                 { cat: 'Dune & Rainforest Lodges', avg2026: '$1,080', avg2025: '$1,040', avg2024: '$980', avg2023: '$920' },
@@ -907,11 +840,11 @@ export function DashboardDrawer() {
                         boxShadow: '0 8px 20px rgba(0,0,0,0.1)'
                       }}
                     />
-                    <Bar dataKey="Urban" name="SoSei Urban" fill="#18181b" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="BeachResort" name="Sosei Beach Resort" fill="#3f3f46" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Sky" name="Sosei Sky" fill="#71717a" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Nature" name="Sosei Nature" fill="#059669" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Wellness" name="Sosei Wellness" fill="#0d9488" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Urban" name="SOSEI Urban" fill="#18181b" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="BeachResort" name="SOSEI Beach Resort" fill="#3f3f46" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Sky" name="SOSEI Ski" fill="#71717a" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Nature" name="SOSEI Nature" fill="#059669" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Wellness" name="SOSEI Wellness" fill="#0d9488" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

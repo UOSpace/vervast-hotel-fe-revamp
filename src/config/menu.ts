@@ -9,6 +9,7 @@ export interface MenuItem {
   children?: { name: string; path: string; isDynamicOverview?: boolean }[];
 }
 
+/** Portal-specific menu (rendered under the portal name). */
 export const sidebarMenu: MenuItem[] = [
   {
     name: 'Group View',
@@ -20,25 +21,6 @@ export const sidebarMenu: MenuItem[] = [
     ],
   },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
-  {
-    name: 'Guest',
-    icon: UsersGroupTwoRounded,
-    path: '/dashboard/guests',
-    children: [
-      { name: 'Individual', path: '/dashboard/guests/individual' },
-      { name: 'Group', path: '/dashboard/guests/family' },
-    ],
-  },
-  {
-    name: 'Partners',
-    icon: HandShake,
-    path: '/dashboard/partners',
-    children: [
-      { name: 'Relationship Intelligence', path: '/dashboard/partners/relationship' },
-      { name: 'Travel Agencies', path: '/dashboard/partners/agencies' },
-      { name: 'Corporate', path: '/dashboard/partners/corporate' },
-    ],
-  },
   {
     name: 'Reservations',
     icon: Calendar,
@@ -59,9 +41,6 @@ export const sidebarMenu: MenuItem[] = [
       { name: 'Communication', path: '/dashboard/sales/forms' },
     ],
   },
-  { name: 'Reports', icon: PieChart, path: '/dashboard/reports' },
-  { name: 'Settings', icon: Settings, path: '/dashboard/settings' },
-  { name: 'User Profile', icon: User, path: '/dashboard/profile' },
 ];
 
 export const fnbSidebarMenu: MenuItem[] = [
@@ -81,25 +60,6 @@ export const fnbSidebarMenu: MenuItem[] = [
   },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
   {
-    name: 'Guest',
-    icon: UsersGroupTwoRounded,
-    path: '/dashboard/guests',
-    children: [
-      { name: 'Individual', path: '/dashboard/guests/individual' },
-      { name: 'Group', path: '/dashboard/guests/family' },
-    ],
-  },
-  {
-    name: 'Partners',
-    icon: HandShake,
-    path: '/dashboard/partners',
-    children: [
-      { name: 'Relationship Intelligence', path: '/dashboard/partners/relationship' },
-      { name: 'Travel Agencies', path: '/dashboard/partners/agencies' },
-      { name: 'Corporate', path: '/dashboard/partners/corporate' },
-    ],
-  },
-  {
     name: 'Reservations',
     icon: Calendar,
     path: '/dashboard/reservations',
@@ -119,6 +79,29 @@ export const fnbSidebarMenu: MenuItem[] = [
       { name: 'Communication', path: '/dashboard/sales/forms' },
     ],
   },
+];
+
+/** Shared across every portal (rendered under the "General" label). */
+export const generalSidebarMenu: MenuItem[] = [
+  {
+    name: 'Contacts',
+    icon: UsersGroupTwoRounded,
+    path: '/dashboard/guests',
+    children: [
+      { name: 'Individual', path: '/dashboard/guests/individual' },
+      { name: 'Group', path: '/dashboard/guests/family' },
+    ],
+  },
+  {
+    name: 'Partners',
+    icon: HandShake,
+    path: '/dashboard/partners',
+    children: [
+      { name: 'Relationship Intelligence', path: '/dashboard/partners/relationship' },
+      { name: 'Travel Agencies', path: '/dashboard/partners/agencies' },
+      { name: 'Corporate', path: '/dashboard/partners/corporate' },
+    ],
+  },
   { name: 'Reports', icon: PieChart, path: '/dashboard/reports' },
   { name: 'Settings', icon: Settings, path: '/dashboard/settings' },
   { name: 'User Profile', icon: User, path: '/dashboard/profile' },
@@ -129,4 +112,8 @@ export function getSidebarMenu(portal: string): MenuItem[] {
     return fnbSidebarMenu;
   }
   return sidebarMenu;
+}
+
+export function getGeneralMenu(): MenuItem[] {
+  return generalSidebarMenu;
 }

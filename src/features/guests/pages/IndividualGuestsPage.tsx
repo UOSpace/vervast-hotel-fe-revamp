@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 import { useToast } from '../../../components/ui/toast';
+import { getIndividualGuestProfile } from '../data/individualGuestProfiles';
 
 interface ContactGuest {
   id: string;
@@ -225,7 +226,7 @@ export function IndividualGuestsPage() {
   const toast = useToast();
 
   const handlePreview = (id: string) => {
-    if (id === 'GST-001') {
+    if (getIndividualGuestProfile(id)) {
       navigate(`/dashboard/guests/individual/${id}`);
     } else {
       toast.error(

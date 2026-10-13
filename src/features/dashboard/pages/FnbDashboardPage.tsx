@@ -47,11 +47,11 @@ const topExperiences = [
 ];
 
 const experienceRevenueByProperty = [
-  { name: 'Sosei Beach Resort', value: 78620, pct: 41 },
-  { name: 'Sosei Sky', value: 54310, pct: 28 },
-  { name: 'Sosei Wellness', value: 35460, pct: 18 },
-  { name: 'Sosei Nature', value: 31400, pct: 16 },
-  { name: 'SoSei Urban', value: 14720, pct: 8 }
+  { name: 'SOSEI Beach Resort', value: 78620, pct: 41 },
+  { name: 'SOSEI Ski', value: 54310, pct: 28 },
+  { name: 'SOSEI Wellness', value: 35460, pct: 18 },
+  { name: 'SOSEI Nature', value: 31400, pct: 16 },
+  { name: 'SOSEI Urban', value: 14720, pct: 8 }
 ];
 
 const fnbRevenueOverTime = [

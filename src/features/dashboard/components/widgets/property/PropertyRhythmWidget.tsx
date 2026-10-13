@@ -1,13 +1,15 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '../../../../../constants/categories';
 
 export function PropertyRhythmWidget({
-  propertyId = 'sosei-nocturne',
-  propertyName = 'SOSEI Nocturne',
+  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyName = 'SOSEI Barcelona',
 }: {
   propertyId?: string;
   propertyName?: string;
 }) {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
   const rhythmData = [

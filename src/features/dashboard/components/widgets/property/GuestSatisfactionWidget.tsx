@@ -1,13 +1,15 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '../../../../../constants/categories';
 
 export function GuestSatisfactionWidget({
-  propertyId = 'sosei-nocturne',
-  propertyName = 'SOSEI Nocturne',
+  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyName = 'SOSEI Barcelona',
 }: {
   propertyId?: string;
   propertyName?: string;
 }) {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
   const data = [
     { name: '5 Stars', value: 72, color: '#0f172a' },

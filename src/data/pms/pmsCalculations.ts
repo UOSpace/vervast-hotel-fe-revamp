@@ -473,7 +473,7 @@ export function getDashboardComputedData(): DashboardComputedData {
   const portfolioPerformance = [
     {
       category: 'urban',
-      label: 'SoSei Urban',
+      label: 'SOSEI Urban',
       value: '$3.03M',
       trend: '+12%',
       up: true,
@@ -485,7 +485,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'beach-resort',
-      label: 'Sosei Beach Resort',
+      label: 'SOSEI Beach Resort',
       value: '$2.60M',
       trend: '+14%',
       up: true,
@@ -497,7 +497,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'sky',
-      label: 'Sosei Sky',
+      label: 'SOSEI Ski',
       value: '$4.20M',
       trend: '+18%',
       up: true,
@@ -509,7 +509,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'nature',
-      label: 'Sosei Nature',
+      label: 'SOSEI Nature',
       value: '$2.80M',
       trend: '+11%',
       up: true,
@@ -521,7 +521,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     },
     {
       category: 'wellness',
-      label: 'Sosei Wellness',
+      label: 'SOSEI Wellness',
       value: '$2.60M',
       trend: '+7%',
       up: true,
@@ -575,7 +575,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_01',
       name: 'Sal Zanjabila',
-      property: 'SOSEI Nocturne',
+      property: 'SOSEI Switzerland',
       time: '14:20',
       room: 'Suite 101',
       vip: true,
@@ -585,7 +585,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_02',
       name: 'Martin Fuentes',
-      property: 'SOSEI Nocturne',
+      property: 'SOSEI Canada',
       time: '15:45',
       room: 'Chalet 201',
       vip: true,
@@ -595,7 +595,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_03',
       name: 'Elizabeth Hall',
-      property: 'SOSEI Verper',
+      property: 'SOSEI Barcelona',
       time: '12:30',
       room: 'Skyline Penthouse 2801',
       vip: true,
@@ -605,7 +605,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_04',
       name: 'Thomas Bailey & Family',
-      property: 'SOSEI Maréa',
+      property: 'SOSEI Maldives',
       time: '13:45',
       room: 'Overwater Villa 108',
       vip: true,
@@ -615,7 +615,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_05',
       name: 'Kenzo Tanaka',
-      property: 'SOSEI Sylvan',
+      property: 'SOSEI Japan',
       time: '15:00',
       room: 'Ryokan Villa 12',
       vip: true,
@@ -625,12 +625,12 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_06',
       name: 'Lord Sterling',
-      property: 'SOSEI Hearth',
+      property: 'SOSEI Bali',
       time: '16:00',
-      room: 'Vineyard Suite 204',
+      room: 'Sanctuary Pool Villa 204',
       vip: true,
       tier: 'Platinum VIP',
-      notes: 'Truffle hunting excursion & Private cellar tasting',
+      notes: 'Private temple blessings & organic garden dinner',
     },
   ];
 

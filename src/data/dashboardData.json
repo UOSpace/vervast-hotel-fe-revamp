@@ -297,7 +297,7 @@
     {
       "id": 1,
       "name": "Sal Zanjabila",
-      "property": "SOSEI Nocturne",
+      "property": "SOSEI Switzerland",
       "time": "2:20 PM",
       "suite": "Alpine Suite 101",
       "guestsCount": "1 Guest",
@@ -308,7 +308,7 @@
     {
       "id": 2,
       "name": "Martin Fuentes",
-      "property": "SOSEI Nocturne",
+      "property": "SOSEI Canada",
       "time": "3:45 PM",
       "suite": "Glacier Chalet 201",
       "guestsCount": "2 Guests",
@@ -319,7 +319,7 @@
     {
       "id": 3,
       "name": "Elizabeth Hall",
-      "property": "SOSEI Verper",
+      "property": "SOSEI Barcelona",
       "time": "12:30 PM",
       "suite": "Skyline Penthouse 2801",
       "guestsCount": "1 Guest",
@@ -330,7 +330,7 @@
     {
       "id": 4,
       "name": "Thomas Bailey & Family",
-      "property": "SOSEI Maréa",
+      "property": "SOSEI Maldives",
       "time": "1:45 PM",
       "suite": "Overwater Villa 108",
       "guestsCount": "4 Guests",
@@ -341,7 +341,7 @@
     {
       "id": 5,
       "name": "Kenzo Tanaka",
-      "property": "SOSEI Sylvan",
+      "property": "SOSEI Japan",
       "time": "3:00 PM",
       "suite": "Ryokan Villa 12",
       "guestsCount": "2 Guests",
@@ -352,11 +352,11 @@
     {
       "id": 6,
       "name": "Lord Sterling",
-      "property": "SOSEI Hearth",
+      "property": "SOSEI Bali",
       "time": "4:00 PM",
-      "suite": "Vineyard Suite 204",
+      "suite": "Sanctuary Pool Villa 204",
       "guestsCount": "2 Guests",
-      "specialRequest": "Truffle hunting excursion & Private cellar tasting",
+      "specialRequest": "Private temple blessings & organic garden dinner",
       "status": "Arrived",
       "vip": true
     }
@@ -396,38 +396,38 @@
     {
       "imgKey": "alpine",
       "date": "November 2021",
-      "name": "SOSEI Nocturne",
-      "location": "Switzerland"
+      "name": "SOSEI Switzerland",
+      "location": "Zermatt, Switzerland"
     },
     {
       "imgKey": "ocean",
       "date": "December 2020",
-      "name": "SOSEI Maréa",
-      "location": "Maldives"
+      "name": "SOSEI Maldives",
+      "location": "Baa Atoll, Maldives"
     },
     {
       "imgKey": "country",
       "date": "May 2021",
-      "name": "SOSEI Hearth",
-      "location": "Tuscany, Italy"
+      "name": "SOSEI Bali",
+      "location": "Ubud, Bali"
     },
     {
       "imgKey": "forest",
       "date": "September 2021",
-      "name": "SOSEI Sylvan",
-      "location": "Kyoto, Japan"
+      "name": "SOSEI Japan",
+      "location": "Hakone, Japan"
     },
     {
       "imgKey": "city",
       "date": "April 2022",
-      "name": "SOSEI Verper",
-      "location": "New York, USA"
+      "name": "SOSEI Barcelona",
+      "location": "Barcelona, Spain"
     },
     {
       "imgKey": "desert",
       "date": "November 2023",
-      "name": "SOSEI Mirage",
-      "location": "Egypt"
+      "name": "SOSEI Egypt",
+      "location": "Aswan, Egypt"
     }
   ],
   "spendOverTime": [

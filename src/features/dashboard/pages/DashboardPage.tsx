@@ -63,7 +63,7 @@ export function DashboardPage() {
                     </h3>
                   </InfoTooltip>
                   <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-                    Interactive Portfolio Footprint · 12 Properties
+                    Interactive Portfolio Footprint · 10 Properties
                   </p>
                 </div>
                 <button
@@ -85,8 +85,19 @@ export function DashboardPage() {
             {/* Right Column — 44% (5 Financial Heart KPI Cards) */}
             <div className="w-full lg:w-[44%] flex flex-col">
               <PortfolioKpisWidget
-                onOpenMetricDrawer={(metric, value) =>
-                  openDrawer({ type: 'METRIC', title: metric, data: value })
+                onOpenMetricDrawer={(metric, value, horizon) =>
+                  openDrawer({
+                    type: 'METRIC',
+                    title: `${metric} Performance Details`,
+                    data: { metric, value, horizon },
+                  })
+                }
+                onOpenPortfolioPerformance={(horizon) =>
+                  openDrawer({
+                    type: 'PORTFOLIO_PERFORMANCE',
+                    title: 'Portfolio Performance Details',
+                    data: { horizon },
+                  })
                 }
               />
             </div>

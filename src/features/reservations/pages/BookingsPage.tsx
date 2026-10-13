@@ -25,75 +25,9 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 
-// Mock data for Bookings
-const mockBookings = [
-  {
-    id: 'BK-001',
-    bookingName: 'Sal Zanjabila Stay',
-    bookingStatus: 'Confirmed',
-    crsNo: 'CRS-1112552',
-    revenue: '$5,000.00',
-    companies: 'Sal Industry',
-    arrivalDate: 'Jun 25, 2026',
-    departureDate: 'Jun 29, 2026',
-    contacts: 'Sal Zanjabila'
-  },
-  {
-    id: 'BK-002',
-    bookingName: 'Martin Fuentes Luxury Retreat',
-    bookingStatus: 'In House',
-    crsNo: 'CRS-350971494',
-    revenue: '$6,846.77',
-    companies: 'Skyline Tours',
-    arrivalDate: 'Oct 18, 2025',
-    departureDate: 'Oct 24, 2025',
-    contacts: 'Martin Fuentes'
-  },
-  {
-    id: 'BK-003',
-    bookingName: 'Elizabeth Hall Ocean Suite',
-    bookingStatus: 'In House',
-    crsNo: 'CRS-350971495',
-    revenue: '$4,612.49',
-    companies: 'Skyline Tours',
-    arrivalDate: 'Oct 17, 2025',
-    departureDate: 'Oct 20, 2025',
-    contacts: 'Elizabeth Hall'
-  },
-  {
-    id: 'BK-004',
-    bookingName: 'Martin Fuentes Alpine Stay',
-    bookingStatus: 'Departed',
-    crsNo: 'CRS-350971496',
-    revenue: '$5,444.60',
-    companies: 'Direct',
-    arrivalDate: 'Oct 19, 2025',
-    departureDate: 'Oct 25, 2025',
-    contacts: 'Martin Fuentes'
-  },
-  {
-    id: 'BK-005',
-    bookingName: 'Thomas Bailey Family Vacation',
-    bookingStatus: 'Confirmed',
-    crsNo: 'CRS-351014436',
-    revenue: '$8,700.00',
-    companies: 'Discovery Travel',
-    arrivalDate: 'Oct 20, 2025',
-    departureDate: 'Oct 27, 2025',
-    contacts: 'Thomas Bailey'
-  },
-  {
-    id: 'BK-006',
-    bookingName: 'Rosa Rios Wellness Booking',
-    bookingStatus: 'In House',
-    crsNo: 'CRS-351101834',
-    revenue: '$5,084.32',
-    companies: 'Route Planners',
-    arrivalDate: 'Oct 21, 2025',
-    departureDate: 'Oct 28, 2025',
-    contacts: 'Rosa Rios'
-  },
-];
+import { BOOKINGS } from '../data/bookings';
+
+const mockBookings = BOOKINGS;
 
 export function BookingsPage() {
   const [searchTerm, setSearchTerm] = useState('');

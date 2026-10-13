@@ -17,23 +17,17 @@ export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
     return 'Konbanwa Alfonso!';
   };
 
-  const getFormattedDateTime = () => {
+  const getFormattedDate = () => {
     const now = new Date();
-    const date = now.toLocaleDateString('en-US', {
+    return now.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-    const time = now.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return { date, time, tz };
   };
 
-  const { date, time, tz } = getFormattedDateTime();
+  const date = getFormattedDate();
 
   return (
     <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
@@ -51,7 +45,6 @@ export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
         </div>
         <div className="text-right shrink-0 ml-4 pt-0.5 pb-0.5">
           <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
         </div>
       </div>
     </header>
