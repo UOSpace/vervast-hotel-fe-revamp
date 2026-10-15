@@ -18,6 +18,7 @@ export const sidebarMenu: MenuItem[] = [
     children: [
       { name: 'Global Overview', path: '/dashboard', isDynamicOverview: true },
       { name: 'Property Categories', path: '/dashboard/categories' },
+      { name: 'Regional View', path: '/dashboard/regional' },
     ],
   },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
@@ -26,6 +27,8 @@ export const sidebarMenu: MenuItem[] = [
     icon: Calendar,
     path: '/dashboard/reservations',
     children: [
+      { name: 'Overview', path: '/dashboard/reservations/overview' },
+      // { name: 'Front Office', path: '/dashboard/reservations/front-office' },
       { name: 'Leads', path: '/dashboard/reservations/leads' },
       { name: 'Bookings', path: '/dashboard/reservations/bookings' },
     ],
@@ -47,16 +50,16 @@ export const fnbSidebarMenu: MenuItem[] = [
   {
     name: 'Group View',
     icon: Globus,
-    path: '/dashboard/experience/fnb',
+    path: '/dashboard/fnb',
     children: [
-      { name: 'Global Overview', path: '/dashboard/experience/fnb', isDynamicOverview: true },
+      { name: 'Global Overview', path: '/dashboard/fnb', isDynamicOverview: true },
       { name: 'Property Categories', path: '/dashboard/categories' },
     ],
   },
   {
     name: 'Point of Sale (POS)',
     icon: ChefHat,
-    path: '/dashboard/experience/pos',
+    path: '/dashboard/fnb/pos',
   },
   { name: 'Property View', icon: City, path: '/dashboard/property' },
   {
@@ -64,6 +67,8 @@ export const fnbSidebarMenu: MenuItem[] = [
     icon: Calendar,
     path: '/dashboard/reservations',
     children: [
+      { name: 'Overview', path: '/dashboard/reservations/overview' },
+      { name: 'Front Office', path: '/dashboard/reservations/front-office' },
       { name: 'Leads', path: '/dashboard/reservations/leads' },
       { name: 'Bookings', path: '/dashboard/reservations/bookings' },
     ],
@@ -112,6 +117,30 @@ export function getSidebarMenu(portal: string): MenuItem[] {
     return fnbSidebarMenu;
   }
   return sidebarMenu;
+}
+
+export interface MenuSection {
+  label: string | null;
+  items: MenuItem[];
+}
+
+/**
+ * Menu groups for a portal. Experiences & F&B is a single portal whose
+ * sidebar is split into two header groups (Experiences / F&B).
+ */
+export function getPortalSections(portal: string): MenuSection[] {
+  if (portal === 'fnb-experience') {
+    const [fnbGroup, pos, ...rest] = fnbSidebarMenu;
+    return [
+      { label: 'F&B', items: [fnbGroup, pos] },
+      {
+        label: 'Experiences',
+        items: [{ name: 'Overview', icon: Globus, path: '/dashboard/experience' }],
+      },
+      { label: 'Operations', items: rest },
+    ];
+  }
+  return [{ label: null, items: getSidebarMenu(portal) }];
 }
 
 export function getGeneralMenu(): MenuItem[] {

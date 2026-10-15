@@ -7,7 +7,7 @@ export interface DashboardHeaderWidgetProps {
 
 export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
   greeting,
-  title = 'Dashboard (Corporate Level Group)',
+  title = 'Welcome to SOSEI Hospitality Dashboard (Corporate Level Group)',
 }) => {
   const getGreeting = () => {
     if (greeting) return greeting;

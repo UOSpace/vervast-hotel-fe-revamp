@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSidebarMenu, getGeneralMenu, type MenuItem } from '../../config/menu';
+import { getPortalSections, getGeneralMenu, type MenuItem } from '../../config/menu';
 import { AltArrowDown, Palette } from '@solar-icons/react';
 import { Logo } from '../ui/Logo';
 import { usePortal, PORTAL_LABELS } from '../../context/PortalContext';
@@ -66,10 +66,9 @@ export function Sidebar({
     return location.pathname === child.path || location.pathname.startsWith(child.path + '/');
   };
 
-  const menuItems = getSidebarMenu(activePortal);
   const generalItems = getGeneralMenu();
   const sections: { label: string | null; items: MenuItem[] }[] = [
-    { label: null, items: menuItems },
+    ...getPortalSections(activePortal),
     { label: 'General', items: generalItems },
   ];
 
@@ -80,9 +79,10 @@ export function Sidebar({
       if (
         location.pathname === '/dashboard' ||
         location.pathname === '/dashboard/categories' ||
+        location.pathname === '/dashboard/regional' ||
         location.pathname === '/dashboard/property-categories' ||
         location.pathname === '/dashboard/spa' ||
-        location.pathname === '/dashboard/experience/fnb' ||
+        location.pathname === '/dashboard/fnb' ||
         location.pathname === '/dashboard/development'
       ) {
         return true;
@@ -120,11 +120,13 @@ export function Sidebar({
       {/* Navigation Menu or Design Empty State */}
       <div className="flex-1 overflow-y-auto px-2 py-2 custom-scrollbar">
         {/* Active Portal Label - plain text, left-aligned, no dot, no background */}
+        {activePortal !== 'fnb-experience' && (
         <div className="px-2.5 pt-1 pb-1.5">
           <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 select-none">
             {PORTAL_LABELS[activePortal]}
           </p>
         </div>
+        )}
 
         {activePortal === 'design' ? (
           <div className="flex flex-col items-center justify-center p-4 text-center select-none space-y-2 animate-fade-in pt-8">

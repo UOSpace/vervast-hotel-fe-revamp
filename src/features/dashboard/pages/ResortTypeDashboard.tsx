@@ -58,7 +58,7 @@ const geoConfigs = [
   { region: 'Africa', share: 8, adrFactor: 0.68 },
 ];
 
-const segmentConfigs = [
+export const segmentConfigs = [
   { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#0f172a' },
   { segment: 'Business', share: 25, adrFactor: 1.09, color: '#334155' },
   { segment: 'Social', share: 10, adrFactor: 0.68, color: '#64748b' },
@@ -66,7 +66,7 @@ const segmentConfigs = [
   { segment: 'Others', share: 3, adrFactor: 0.61, color: '#cbd5e1' },
 ];
 
-const channelConfigs = [
+export const channelConfigs = [
   { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#0f172a' },
   { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#334155' },
   { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#64748b' },
@@ -75,7 +75,7 @@ const channelConfigs = [
 ];
 
 // Helper to distribute metrics to categories consistently
-interface DistributionItem {
+export interface DistributionItem {
   name: string;
   share: number;
   nights: number;
@@ -83,7 +83,7 @@ interface DistributionItem {
   revenue: number;
 }
 
-function distributeMetrics(
+export function distributeMetrics(
   categories: { name: string; share: number; adrFactor: number }[],
   totalNights: number,
   totalRevenue: number,
@@ -139,14 +139,14 @@ function distributeMetrics(
   });
 }
 
-const getGreeting = () => {
+export const getGreeting = () => {
   const hour = new Date().getHours();
   if (hour >= 5 && hour < 12) return 'Ohayō Alfonso!';
   if (hour >= 12 && hour < 18) return 'Konnichiwa Alfonso!';
   return 'Konbanwa Alfonso!';
 };
 
-const getFormattedDateTime = () => {
+export const getFormattedDateTime = () => {
   const now = new Date();
   const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -523,7 +523,7 @@ export function ResortTypeDashboard() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            Regional Level Dashboard
+            Resort & Destination Analytics (Hotel Type Level)
           </h2>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 shrink-0">

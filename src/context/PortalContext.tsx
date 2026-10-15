@@ -6,7 +6,7 @@ export type PortalId = 'hospitality' | 'sanctuary' | 'fnb-experience' | 'design'
 export const PORTAL_OVERVIEW_PATHS: Record<PortalId, string> = {
   hospitality: '/dashboard',
   sanctuary: '/dashboard/spa',
-  'fnb-experience': '/dashboard/experience/fnb',
+  'fnb-experience': '/dashboard/fnb',
   design: '/dashboard/development',
 };
 
@@ -40,7 +40,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
     const path = location.pathname;
     if (path.startsWith('/dashboard/spa')) {
       setActivePortal('sanctuary');
-    } else if (path.startsWith('/dashboard/experience')) {
+    } else if (path.startsWith('/dashboard/experience') || path.startsWith('/dashboard/fnb')) {
       setActivePortal('fnb-experience');
     } else if (path.startsWith('/dashboard/development')) {
       setActivePortal('design');

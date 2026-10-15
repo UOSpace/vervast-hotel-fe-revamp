@@ -14,12 +14,12 @@
 ✅14. "Property On-The-Books Status Across All 12 Sanctuaries" ada kategori terus detail propertynya apa aja
 ✅18. Guest Jadi Contact
 ✅19. Ada Status sebagai human being atau corporate atau travel agent
-20. Pada profile harus assosiate dengan bookingnya dia
-21. Booking Profile => bisa assosiate sama siapa gitu lo
+✅20. Pada profile harus assosiate dengan bookingnya dia
+✅21. Booking Profile => bisa assosiate sama siapa gitu lo
 22. Ada tagging di dalam guest, bebas tulis
 23. "Booking Profile" bisa multile dan Family Evolution seperti itinarary
-24. pada booking, harus ada assosiate lihat di vervast yang kurang
-25. Tambahkan pipeline di Leads And Booking
+✅24. pada booking, harus ada assosiate lihat di vervast yang kurang
+✅25. Tambahkan pipeline di Leads And Booking
 26. Perlu ada rooming list, room number, Room Type, Bed Type, Rate Code, seperti PMS biasanya pada menu portal hospitality
 27. https://docs.oracle.com/cd/E98457_01/opera_5_6_core_help/creating_a_business_block.htm
 28. https://docs.oracle.com/cd/E98457_01/opera_5_6_core_help/business_block_options.htm
@@ -31,11 +31,11 @@
 34. di booking harus ada during stay booking, seperti di POS, butler bisa input
 35. "Shared Moments That Matter" take out
 36. Partnet tambahkan Global dan Property
-37. Booking pace perbulan di "Relationship Intelligence"
+✅37. Booking pace perbulan di "Relationship Intelligence"
 38. Tambahkan demand di setiap properties level
 39. Di Wellness tambahkan filter by services
 40. Bisa ada form appointment dengan kerangka tubuh
-41. Pisah Experiance dan FNB
+✅41. Pisah Experiance dan FNB
 42. Milih restorannya dulu, baru masuk ke POS
 43. Harus ada exidance, harus guest satisfaction makanan dan activity dia
 44. Ada status komplain, dan bisa dibuatkan task, dan ada assignee siapa yang ngerjain
@@ -43,3 +43,15 @@
 46. Ada dashboard property by type juga jadinya
 47. Activities, di level property level
 48. 
+
+
+1. [RegionalDashboard] Buat dashboard by regional
+2. [Individual] Bisa multiple assign (travel agent, family)
+3. [Individual] Tambahkan sosial media
+4. [Individual] Harus Assosiasi dengan leads
+5. [Partner] Agents use this one , which are from our CRM : NUBa , Dertour Deluxe , Nyhavn , Sporting Vaccanze , Viajes Abreu, voyages du Monde , Manta Reisen, Cosa Travel , Airtours , Ferrer y Saret (Done - Integrated in TravelAgenciesPage & partners.json)
+6. [FO] Tampilan Performance Per Day
+7. [FO] Guest Flow Board - Khusus VIP
+8. [LEADS] Perlu ada rooming list, room number, Room Type, Bed Type, Rate Code, seperti PMS biasanya pada menu portal hospitality, modelnya dropdown seperti Category to Property
+9. [RelationshipIntelligence] Updated all partner agents to CRM agencies: NUBa, Dertour Deluxe, Nyhavn, Sporting Vaccanze, Viajes Abreu, Voyages du Monde, Manta Reisen, Cosa Travel, Airtours, Ferrer y Saret (Done - Integrated in PartnersPage.tsx)
+10. [RelationshipIntelligence] Harmonized partner destination categories to 5 official collections: Urban, Ski, Beach Resort, Nature, and Wellness (Done - Integrated in PartnersPage.tsx)

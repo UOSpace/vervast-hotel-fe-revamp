@@ -25,129 +25,11 @@ import {
   SelectValue,
 } from '../../../components/ui/select';
 
-// Mock Data
-const mockAgencies = [
-  {
-    id: 'TA-001',
-    name: 'Horizon Voyages',
-    email: 'partnership@horizonvoyages.co',
-    source: 'Referral',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'Europe',
-    createdAt: 'Jan 12, 2025',
-  },
-  {
-    id: 'TA-002',
-    name: 'Aurora Escapes',
-    email: 'hello@auroraescapes.com',
-    source: 'Direct',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'North America',
-    createdAt: 'Feb 3, 2025',
-  },
-  {
-    id: 'TA-003',
-    name: 'Meridian Travel Group',
-    email: 'accounts@meridiantg.net',
-    source: 'Trade Show',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'Feb 20, 2025',
-  },
-  {
-    id: 'TA-004',
-    name: 'Celestial Journeys',
-    email: 'reservations@celestialjourneys.com',
-    source: 'Referral',
-    owner: 'Alpha',
-    status: 'Active',
-    region: 'Middle East',
-    createdAt: 'Mar 8, 2025',
-  },
-  {
-    id: 'TA-005',
-    name: 'Pinnacle Retreats',
-    email: 'info@pinnacleretreats.co',
-    source: 'Direct',
-    owner: 'Alpha',
-    status: 'Inactive',
-    region: 'Europe',
-    createdAt: 'Mar 16, 2025',
-  },
-  {
-    id: 'TA-006',
-    name: 'Solstice Travel Bureau',
-    email: 'ops@solsticetb.com',
-    source: 'Online',
-    owner: 'Alpha',
-    status: 'Active',
-    region: 'Latin America',
-    createdAt: 'Apr 2, 2025',
-  },
-  {
-    id: 'TA-007',
-    name: 'Nomadic Luxe',
-    email: 'partnerships@nomadicluxe.io',
-    source: 'Referral',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'Apr 10, 2025',
-  },
-  {
-    id: 'TA-008',
-    name: 'The Voyage Co.',
-    email: 'contact@thevoyageco.travel',
-    source: 'Trade Show',
-    owner: 'Alpha',
-    status: 'Pending',
-    region: 'Africa',
-    createdAt: 'Apr 18, 2025',
-  },
-  {
-    id: 'TA-009',
-    name: 'Elevate Destinations',
-    email: 'hello@elevatedestinations.com',
-    source: 'Direct',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'North America',
-    createdAt: 'May 5, 2025',
-  },
-  {
-    id: 'TA-010',
-    name: 'Grand Circuit Travels',
-    email: 'info@grandcircuit.travel',
-    source: 'Online',
-    owner: 'Alpha',
-    status: 'Inactive',
-    region: 'Europe',
-    createdAt: 'May 22, 2025',
-  },
-  {
-    id: 'TA-011',
-    name: 'Luminary Expeditions',
-    email: 'luminary@expeditions.co',
-    source: 'Referral',
-    owner: 'vervast',
-    status: 'Active',
-    region: 'Asia Pacific',
-    createdAt: 'Jun 1, 2025',
-  },
-  {
-    id: 'TA-012',
-    name: 'Arcadia Travel Partners',
-    email: 'arcadia@travelpartners.net',
-    source: 'Trade Show',
-    owner: 'Alpha',
-    status: 'Pending',
-    region: 'Middle East',
-    createdAt: 'Jun 7, 2025',
-  },
-];
+import { CRM_PARTNER_AGENTS } from '../data/partnerAgents';
+
+// Use official CRM Partner Travel Agencies: NUBa, Dertour Deluxe, Nyhavn, Sporting Vaccanze, Viajes Abreu, Voyages du Monde, Manta Reisen, Cosa Travel, Airtours, Ferrer y Saret
+const mockAgencies = CRM_PARTNER_AGENTS;
+
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -309,9 +191,16 @@ export function TravelAgenciesPage() {
                       onClick={() => handleDetail()}
                     >
                       <TableCell className="px-5 font-mono text-[10.5px] text-zinc-500 group-hover:text-zinc-900 transition-colors">{agency.id}</TableCell>
-                      <TableCell className="px-5 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">{agency.name}</TableCell>
-                      <TableCell className="px-5 text-zinc-600 text-[10px]">{agency.email}</TableCell>
-                      <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.source}</TableCell>
+                      <TableCell className="px-5 font-medium text-zinc-900 group-hover:text-zinc-900 transition-colors">
+                        <div className="font-semibold text-zinc-900">{agency.name}</div>
+                        <div className="text-[9.5px] text-zinc-400 font-normal">{agency.city}, {agency.country}</div>
+                      </TableCell>
+                      <TableCell className="px-5 text-zinc-600 text-[10.5px]">{agency.email}</TableCell>
+                      <TableCell className="px-5 text-zinc-600 text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-medium text-[9px] border border-zinc-200/80">
+                          {agency.tier || agency.source}
+                        </span>
+                      </TableCell>
                       <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.region}</TableCell>
                       <TableCell className="px-5 text-zinc-500 text-[10px]">{agency.owner}</TableCell>
                       <TableCell className="px-5">

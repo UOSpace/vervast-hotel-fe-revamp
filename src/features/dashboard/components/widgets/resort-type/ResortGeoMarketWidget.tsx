@@ -48,7 +48,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
   });
   return (
     <div
-      className="rounded-[12px] p-4 flex flex-col justify-between gap-3 bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
+      className="rounded-[12px] p-4 flex flex-col justify-start gap-3 bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.4s' }}
       onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData })}
     >
@@ -103,7 +103,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
         </ComposableMap>
       </div>
       {/* Table */}
-      <div className="mt-auto pt-2">
+      <div className="pt-2">
         <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
             <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">

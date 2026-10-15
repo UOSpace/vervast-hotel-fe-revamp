@@ -12,17 +12,19 @@ import { PortfolioComparisonWidget } from '../components/widgets/PortfolioCompar
 import { DashboardHeaderWidget } from '../components/widgets/DashboardHeaderWidget';
 import { RoundAltArrowRight } from '@solar-icons/react';
 import { ResortTypeDashboard } from './ResortTypeDashboard';
+import { RegionalDashboard } from './RegionalDashboard';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 
 export function DashboardPage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const isRegional = location.pathname === '/dashboard/regional';
   const isCategories =
     location.pathname === '/dashboard/categories' ||
     location.pathname === '/dashboard/property-categories' ||
     searchParams.get('view') === 'by_property_type';
-  const view = isCategories ? 'by_property_type' : 'all';
+  const view = isRegional ? 'regional' : isCategories ? 'by_property_type' : 'all';
 
   const { openDrawer } = useDashboardDrawer();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,11 @@ export function DashboardPage() {
       {view === 'all' && <DashboardHeaderWidget />}
 
       {/* Conditional View Rendering */}
-      {view === 'by_property_type' ? (
+      {view === 'regional' ? (
+        <div key="regional" className="flex-1 flex flex-col">
+          <RegionalDashboard />
+        </div>
+      ) : view === 'by_property_type' ? (
         <div key="resort" className="flex-1 flex flex-col">
           <ResortTypeDashboard />
         </div>
@@ -116,17 +122,6 @@ export function DashboardPage() {
               />
             </div>
 
-            {/* 2. Revenue & Demand Mix */}
-            <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
-              style={{ animationDelay: '0.4s' }}
-              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
-            >
-              <RevenueDemandMixWidget
-                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
-              />
-            </div>
-
             {/* 3. Forward Business */}
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
@@ -135,6 +130,17 @@ export function DashboardPage() {
             >
               <ForwardBusinessWidget
                 onOpenDetails={() => openDrawer({ type: 'FORWARD_BUSINESS', title: 'Forward Business (Next 90 Days OTB)' })}
+              />
+            </div>
+
+            {/* 2. Revenue & Demand Mix */}
+            <div
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
+              style={{ animationDelay: '0.4s' }}
+              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
+            >
+              <RevenueDemandMixWidget
+                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
               />
             </div>
           </div>

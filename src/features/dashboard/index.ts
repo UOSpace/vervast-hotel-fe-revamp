@@ -1,5 +1,6 @@
 export * from './pages/DashboardPage';
 export * from './pages/FnbDashboardPage';
+export * from './pages/ExperienceDashboardPage';
 export * from './pages/SpaDashboardPage';
 export * from './pages/PropertyDashboardPage';
 export * from './pages/ResortTypeDashboard';

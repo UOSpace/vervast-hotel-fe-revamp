@@ -1,14 +1,14 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { LoginPage, PortalSelectionPage } from '@/features/auth';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
-import { DashboardPage, FnbDashboardPage, SpaDashboardPage } from '@/features/dashboard';
+import { DashboardPage, FnbDashboardPage, ExperienceDashboardPage, SpaDashboardPage } from '@/features/dashboard';
 import { PropertyDashboardPage } from '@/features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from '@/components/layouts/MasterLayout';
 import { UnderConstructionPage } from '@/features/common/pages/UnderConstructionPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { GuestProfilePage, IndividualGuestsPage, FamilyGuestsPage, IndividualGuestProfilePage } from '@/features/guests';
 import { PartnersPage, TravelAgenciesPage, CorporatePage, CorporateDetailPage } from '@/features/partners';
-import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage } from '@/features/reservations';
+import { LeadsPage, LeadDetailPage, BookingsPage, BookingDetailPage, ReservationOverviewPage, FrontOfficeDashboardPage } from '@/features/reservations';
 import { ActivitiesPage, EmailMarketingPage } from '@/features/sales';
 import { FnbPosPage } from '@/features/fnb/pages/FnbPosPage';
 
@@ -39,6 +39,10 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/dashboard/categories',
+        element: <DashboardPage />,
+      },
+      {
+        path: '/dashboard/regional',
         element: <DashboardPage />,
       },
       {
@@ -90,20 +94,31 @@ export const routes: RouteObject[] = [
         element: <CorporateDetailPage />,
       },
       {
-        path: '/dashboard/experience/fnb',
+        path: '/dashboard/fnb',
         element: <FnbDashboardPage />,
-      },
-      {
-        path: '/dashboard/experience/pos',
-        element: <FnbPosPage />,
       },
       {
         path: '/dashboard/fnb/pos',
         element: <FnbPosPage />,
       },
       {
-        path: '/dashboard/experience/activities',
-        element: <UnderConstructionPage />,
+        path: '/dashboard/experience',
+        element: <ExperienceDashboardPage />,
+      },
+      { path: '/dashboard/experience/fnb', element: <Navigate to="/dashboard/fnb" replace /> },
+      { path: '/dashboard/experience/pos', element: <Navigate to="/dashboard/fnb/pos" replace /> },
+      { path: '/dashboard/experience/activities', element: <Navigate to="/dashboard/experience" replace /> },
+      {
+        path: '/dashboard/reservations',
+        element: <Navigate to="/dashboard/reservations/overview" replace />,
+      },
+      {
+        path: '/dashboard/reservations/overview',
+        element: <ReservationOverviewPage />,
+      },
+      {
+        path: '/dashboard/reservations/front-office',
+        element: <FrontOfficeDashboardPage />,
       },
       {
         path: '/dashboard/reservations/leads',

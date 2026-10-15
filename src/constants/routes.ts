@@ -20,9 +20,9 @@ export const ROUTES = {
       CORPORATE_DETAIL: (id: string) => `/dashboard/partners/corporate/${id}`,
     },
     EXPERIENCE: {
-      FNB: '/dashboard/experience/fnb',
-      POS: '/dashboard/experience/pos',
-      ACTIVITIES: '/dashboard/experience/activities',
+      FNB: '/dashboard/fnb',
+      POS: '/dashboard/fnb/pos',
+      ACTIVITIES: '/dashboard/experience',
     },
     RESERVATIONS: {
       LEADS: '/dashboard/reservations/leads',

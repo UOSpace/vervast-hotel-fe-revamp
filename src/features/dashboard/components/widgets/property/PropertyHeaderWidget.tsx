@@ -3,15 +3,15 @@ import { Calendar, AltArrowDown, Magnifer } from '@solar-icons/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export function PropertyHeaderWidget({ 
+export function PropertyHeaderWidget({
   startDate, endDate, onDateChange,
   compStartDate, compEndDate, onCompDateChange,
   selectedProperty, onPropertyChange, propertiesList
 }: any) {
-  const [isOpen, setIsOpen]       = useState(false);
-  const [search, setSearch]       = useState('');
-  const dropdownRef               = useRef<HTMLDivElement>(null);
-  const searchRef                 = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -66,7 +66,7 @@ export function PropertyHeaderWidget({
             {getGreeting()}
           </p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide flex items-center gap-2">
-            <span>Hotel Level Dashboard</span>
+            <span>Welcome to SOSEI Hospitality Dashboard</span>
           </h2>
         </div>
         <div className="text-right shrink-0 ml-4 pt-0.5 pb-0.5">
@@ -82,8 +82,8 @@ export function PropertyHeaderWidget({
           <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-200 shadow-xs shrink-0">
             <img src={selectedProperty.img} alt={selectedProperty.name} className="w-full h-full object-cover" />
           </div>
-          
-          <button 
+
+          <button
             type="button"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity text-left cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}

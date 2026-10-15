@@ -87,8 +87,8 @@ export function ForwardBusinessDrawerContent() {
         </div>
       </div>
 
-      {/* Top 5 Hero KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {/* Top 6 Hero KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             OTB Revenue
@@ -96,9 +96,11 @@ export function ForwardBusinessDrawerContent() {
           <div className="text-xl font-bold text-zinc-900 mt-1">
             {data.revenueOtb}
           </div>
-          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
-            ↑ {data.revenueTrend}
-          </span>
+          <div className="text-[9px] text-zinc-600 font-medium mt-1 flex items-center gap-1">
+            <span className="text-zinc-900 font-bold">Def: {data.definiteRevenue}</span>
+            <span className="text-zinc-400">·</span>
+            <span className="text-zinc-600">Tent: {data.tentativeRevenue}</span>
+          </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
@@ -139,6 +141,18 @@ export function ForwardBusinessDrawerContent() {
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Leads Pipeline
+          </span>
+          <div className="text-xl font-bold text-zinc-900 mt-1">
+            {data.leadsPipeline}
+          </div>
+          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
+            ↑ {data.leadsPipelineTrend} ({data.leadsCount} leads)
+          </span>
+        </div>
+
+        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Cancellation Exposure
           </span>
           <div className="text-xl font-bold text-rose-600 mt-1">
@@ -172,10 +186,10 @@ export function ForwardBusinessDrawerContent() {
         </div>
       </div>
 
-      {/* Period Buckets Breakdown */}
+      {/* Period Buckets Breakdown: Definite, Tentative & Pipeline Cadence */}
       <div>
         <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-2">
-          Tentative & Definite Revenue Cadence ({data.timeframe})
+          Definite, Tentative & Pipeline Cadence ({data.timeframe})
         </h5>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {data.buckets.map((b) => (
@@ -192,8 +206,24 @@ export function ForwardBusinessDrawerContent() {
                 </span>
               </div>
               <div className="text-2xl font-bold mt-2">{b.revenueFormatted}</div>
-              <div className="text-[10px] mt-1 text-zinc-500">
-                {b.roomNights.toLocaleString()} Room Nights (Definite: ${b.committedRevenueUsd}M · Tentative: ${b.tentativeRevenueUsd}M)
+              <div className="text-[10px] mt-0.5 text-zinc-500">
+                {b.roomNights.toLocaleString()} Room Nights OTB
+              </div>
+
+              {/* Explicit status breakdown badges */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-zinc-100 text-[8.5px]">
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-900 text-white font-medium">
+                  <span className="w-1 h-1 rounded-full bg-white inline-block" />
+                  Definite: ${b.definiteRevenueUsd}M
+                </span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-medium border border-zinc-200">
+                  <span className="w-1 h-1 rounded-full bg-zinc-400 inline-block" />
+                  Tentative: ${b.tentativeRevenueUsd}M
+                </span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-50 text-zinc-500 font-medium border border-zinc-200/80">
+                  <span className="w-1 h-1 rounded-full bg-zinc-300 inline-block" />
+                  Pipeline: ${b.pipelineRevenueUsd}M
+                </span>
               </div>
             </div>
           ))}

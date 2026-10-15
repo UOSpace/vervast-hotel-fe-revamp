@@ -242,7 +242,7 @@ export function FnbPosPage() {
           </button>
 
           <button
-            onClick={() => navigate('/dashboard/experience/fnb')}
+            onClick={() => navigate('/dashboard/fnb')}
             className="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium cursor-pointer transition-colors"
           >
             Back to Dashboard

@@ -741,7 +741,7 @@ export const simulatedRevenueDemandMixData: RevenueDemandMixData = {
       demandTrend: '+8%',
       demandTrendUp: true,
       description: 'Fine dining restaurants, omakase counters, wine cellars & private dining',
-      pillarRoute: '/dashboard/experience/fnb',
+      pillarRoute: '/dashboard/fnb',
     },
     {
       id: 'spa',
@@ -801,7 +801,7 @@ export const simulatedRevenueDemandMixData: RevenueDemandMixData = {
       demandTrend: '+15%',
       demandTrendUp: true,
       description: 'Heli-skiing, desert safaris, private yacht charters & cultural expeditions',
-      pillarRoute: '/dashboard/experience/activities',
+      pillarRoute: '/dashboard/experience',
     },
     {
       id: 'packages',
@@ -834,10 +834,12 @@ export type ForwardBusinessWindow = '30D' | '90D' | '180D' | '365D';
 
 export interface ForwardPeriodBucket {
   label: string; // e.g. "0–30D", "31–60D", "61–90D"
-  revenueFormatted: string; // e.g. "$12.4M"
+  revenueFormatted: string; // e.g. "$12.4M" (Total OTB)
   revenueUsd: number;
-  committedRevenueUsd: number; // dark bar (paid / contracted)
-  tentativeRevenueUsd: number; // light bar (guaranteed / hold)
+  definiteRevenueUsd: number; // Definite (Signed contract, guaranteed OTB)
+  tentativeRevenueUsd: number; // Tentative (Space hold, contract under review)
+  pipelineRevenueUsd: number; // Pipeline (Active inquiries / leads in negotiation)
+  committedRevenueUsd: number; // backwards compatibility (= definiteRevenueUsd)
   roomNights: number;
   occupancyPct: number;
   highlight?: boolean;
@@ -849,6 +851,10 @@ export interface ForwardBusinessData {
   revenueOtb: string;
   revenueOtbNum: number;
   revenueTrend: string;
+  definiteRevenue: string; // e.g. "$28.2M"
+  definiteRevenuePct: number; // 73%
+  tentativeRevenue: string; // e.g. "$10.2M"
+  tentativeRevenuePct: number; // 27%
   roomNightsOtb: string;
   roomNightsOtbNum: number;
   roomNightsTrend: string;
@@ -858,6 +864,9 @@ export interface ForwardBusinessData {
   adrOtb: string;
   adrOtbNum: number;
   adrTrend: string;
+  leadsPipeline: string;
+  leadsPipelineTrend: string;
+  leadsCount: number;
   cancellationExposure: string;
   cancellationExposureNum: number;
   cancellationTrend: string;
@@ -875,6 +884,10 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     revenueOtb: '$12.4M',
     revenueOtbNum: 12.4,
     revenueTrend: '+14% vs LY',
+    definiteRevenue: '$9.2M',
+    definiteRevenuePct: 74,
+    tentativeRevenue: '$3.2M',
+    tentativeRevenuePct: 26,
     roomNightsOtb: '4,820',
     roomNightsOtbNum: 4820,
     roomNightsTrend: '+12% vs LY',
@@ -884,6 +897,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     adrOtb: '$2,180',
     adrOtbNum: 2180,
     adrTrend: '+7% vs LY',
+    leadsPipeline: '$4.2M',
+    leadsPipelineTrend: '+16% vs LY',
+    leadsCount: 18,
     cancellationExposure: '$0.6M',
     cancellationExposureNum: 0.6,
     cancellationTrend: '+4% vs LY',
@@ -892,9 +908,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     weakestDemandPeriod: 'Mid-week Tuesdays',
     forecastRevenue: '$13.2M',
     buckets: [
-      { label: 'Day 1–10', revenueFormatted: '$4.2M', revenueUsd: 4.2, committedRevenueUsd: 2.8, tentativeRevenueUsd: 1.4, roomNights: 1650, occupancyPct: 81 },
-      { label: 'Day 11–20', revenueFormatted: '$4.6M', revenueUsd: 4.6, committedRevenueUsd: 3.1, tentativeRevenueUsd: 1.5, roomNights: 1780, occupancyPct: 84, highlight: true },
-      { label: 'Day 21–30', revenueFormatted: '$3.6M', revenueUsd: 3.6, committedRevenueUsd: 2.4, tentativeRevenueUsd: 1.2, roomNights: 1390, occupancyPct: 70 },
+      { label: 'Day 1–10', revenueFormatted: '$4.2M', revenueUsd: 4.2, definiteRevenueUsd: 3.2, tentativeRevenueUsd: 1.0, pipelineRevenueUsd: 1.2, committedRevenueUsd: 3.2, roomNights: 1650, occupancyPct: 81 },
+      { label: 'Day 11–20', revenueFormatted: '$4.6M', revenueUsd: 4.6, definiteRevenueUsd: 3.5, tentativeRevenueUsd: 1.1, pipelineRevenueUsd: 1.5, committedRevenueUsd: 3.5, roomNights: 1780, occupancyPct: 84, highlight: true },
+      { label: 'Day 21–30', revenueFormatted: '$3.6M', revenueUsd: 3.6, definiteRevenueUsd: 2.5, tentativeRevenueUsd: 1.1, pipelineRevenueUsd: 1.5, committedRevenueUsd: 2.5, roomNights: 1390, occupancyPct: 70 },
     ],
   },
   '90D': {
@@ -903,6 +919,10 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     revenueOtb: '$38.4M',
     revenueOtbNum: 38.4,
     revenueTrend: '+14% vs LY',
+    definiteRevenue: '$28.2M',
+    definiteRevenuePct: 73,
+    tentativeRevenue: '$10.2M',
+    tentativeRevenuePct: 27,
     roomNightsOtb: '14,820',
     roomNightsOtbNum: 14820,
     roomNightsTrend: '+12% vs LY',
@@ -912,6 +932,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     adrOtb: '$2,120',
     adrOtbNum: 2120,
     adrTrend: '+6% vs LY',
+    leadsPipeline: '$14.2M',
+    leadsPipelineTrend: '+18% vs LY',
+    leadsCount: 38,
     cancellationExposure: '$2.1M',
     cancellationExposureNum: 2.1,
     cancellationTrend: '+8% vs LY',
@@ -920,9 +943,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     weakestDemandPeriod: 'Early November Shoulder',
     forecastRevenue: '$42.1M',
     buckets: [
-      { label: '0–30D', revenueFormatted: '$12.4M', revenueUsd: 12.4, committedRevenueUsd: 7.8, tentativeRevenueUsd: 4.6, roomNights: 4820, occupancyPct: 78 },
-      { label: '31–60D', revenueFormatted: '$14.8M', revenueUsd: 14.8, committedRevenueUsd: 9.6, tentativeRevenueUsd: 5.2, roomNights: 5800, occupancyPct: 82, highlight: true },
-      { label: '61–90D', revenueFormatted: '$11.2M', revenueUsd: 11.2, committedRevenueUsd: 6.8, tentativeRevenueUsd: 4.4, roomNights: 4200, occupancyPct: 68 },
+      { label: '0–30D', revenueFormatted: '$12.4M', revenueUsd: 12.4, definiteRevenueUsd: 9.2, tentativeRevenueUsd: 3.2, pipelineRevenueUsd: 4.2, committedRevenueUsd: 9.2, roomNights: 4820, occupancyPct: 78 },
+      { label: '31–60D', revenueFormatted: '$14.8M', revenueUsd: 14.8, definiteRevenueUsd: 10.8, tentativeRevenueUsd: 4.0, pipelineRevenueUsd: 5.2, committedRevenueUsd: 10.8, roomNights: 5800, occupancyPct: 82, highlight: true },
+      { label: '61–90D', revenueFormatted: '$11.2M', revenueUsd: 11.2, definiteRevenueUsd: 8.2, tentativeRevenueUsd: 3.0, pipelineRevenueUsd: 4.8, committedRevenueUsd: 8.2, roomNights: 4200, occupancyPct: 68 },
     ],
   },
   '180D': {
@@ -931,6 +954,10 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     revenueOtb: '$68.2M',
     revenueOtbNum: 68.2,
     revenueTrend: '+10% vs LY',
+    definiteRevenue: '$48.6M',
+    definiteRevenuePct: 71,
+    tentativeRevenue: '$19.6M',
+    tentativeRevenuePct: 29,
     roomNightsOtb: '27,400',
     roomNightsOtbNum: 27400,
     roomNightsTrend: '+9% vs LY',
@@ -940,6 +967,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     adrOtb: '$2,080',
     adrOtbNum: 2080,
     adrTrend: '+5% vs LY',
+    leadsPipeline: '$26.5M',
+    leadsPipelineTrend: '+14% vs LY',
+    leadsCount: 64,
     cancellationExposure: '$4.2M',
     cancellationExposureNum: 4.2,
     cancellationTrend: '+7% vs LY',
@@ -948,9 +978,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     weakestDemandPeriod: 'Late January Transition',
     forecastRevenue: '$76.5M',
     buckets: [
-      { label: '0–60D', revenueFormatted: '$27.2M', revenueUsd: 27.2, committedRevenueUsd: 17.4, tentativeRevenueUsd: 9.8, roomNights: 10620, occupancyPct: 80 },
-      { label: '61–120D', revenueFormatted: '$24.6M', revenueUsd: 24.6, committedRevenueUsd: 14.8, tentativeRevenueUsd: 9.8, roomNights: 9800, occupancyPct: 72, highlight: true },
-      { label: '121–180D', revenueFormatted: '$16.4M', revenueUsd: 16.4, committedRevenueUsd: 9.4, tentativeRevenueUsd: 7.0, roomNights: 6980, occupancyPct: 56 },
+      { label: '0–60D', revenueFormatted: '$27.2M', revenueUsd: 27.2, definiteRevenueUsd: 19.4, tentativeRevenueUsd: 7.8, pipelineRevenueUsd: 9.8, committedRevenueUsd: 19.4, roomNights: 10620, occupancyPct: 80 },
+      { label: '61–120D', revenueFormatted: '$24.6M', revenueUsd: 24.6, definiteRevenueUsd: 17.2, tentativeRevenueUsd: 7.4, pipelineRevenueUsd: 9.2, committedRevenueUsd: 17.2, roomNights: 9800, occupancyPct: 72, highlight: true },
+      { label: '121–180D', revenueFormatted: '$16.4M', revenueUsd: 16.4, definiteRevenueUsd: 12.0, tentativeRevenueUsd: 4.4, pipelineRevenueUsd: 7.5, committedRevenueUsd: 12.0, roomNights: 6980, occupancyPct: 56 },
     ],
   },
   '365D': {
@@ -959,6 +989,10 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     revenueOtb: '$104.5M',
     revenueOtbNum: 104.5,
     revenueTrend: '+8% vs LY',
+    definiteRevenue: '$72.2M',
+    definiteRevenuePct: 69,
+    tentativeRevenue: '$32.3M',
+    tentativeRevenuePct: 31,
     roomNightsOtb: '41,800',
     roomNightsOtbNum: 41800,
     roomNightsTrend: '+8% vs LY',
@@ -968,6 +1002,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     adrOtb: '$2,040',
     adrOtbNum: 2040,
     adrTrend: '+4% vs LY',
+    leadsPipeline: '$38.2M',
+    leadsPipelineTrend: '+12% vs LY',
+    leadsCount: 92,
     cancellationExposure: '$6.8M',
     cancellationExposureNum: 6.8,
     cancellationTrend: '+6% vs LY',
@@ -976,9 +1013,9 @@ export const simulatedForwardBusinessData: Record<ForwardBusinessWindow, Forward
     weakestDemandPeriod: 'Spring Shoulder Season',
     forecastRevenue: '$122.0M',
     buckets: [
-      { label: 'Q1 OTB', revenueFormatted: '$38.4M', revenueUsd: 38.4, committedRevenueUsd: 24.2, tentativeRevenueUsd: 14.2, roomNights: 14820, occupancyPct: 76, highlight: true },
-      { label: 'Q2 OTB', revenueFormatted: '$29.8M', revenueUsd: 29.8, committedRevenueUsd: 17.6, tentativeRevenueUsd: 12.2, roomNights: 12100, occupancyPct: 62 },
-      { label: 'Q3–Q4', revenueFormatted: '$36.3M', revenueUsd: 36.3, committedRevenueUsd: 20.4, tentativeRevenueUsd: 15.9, roomNights: 14880, occupancyPct: 45 },
+      { label: 'Q1 OTB', revenueFormatted: '$38.4M', revenueUsd: 38.4, definiteRevenueUsd: 27.6, tentativeRevenueUsd: 10.8, pipelineRevenueUsd: 14.2, committedRevenueUsd: 27.6, roomNights: 14820, occupancyPct: 76, highlight: true },
+      { label: 'Q2 OTB', revenueFormatted: '$29.8M', revenueUsd: 29.8, definiteRevenueUsd: 20.4, tentativeRevenueUsd: 9.4, pipelineRevenueUsd: 12.4, committedRevenueUsd: 20.4, roomNights: 12100, occupancyPct: 62 },
+      { label: 'Q3–Q4', revenueFormatted: '$36.3M', revenueUsd: 36.3, definiteRevenueUsd: 24.2, tentativeRevenueUsd: 12.1, pipelineRevenueUsd: 11.6, committedRevenueUsd: 24.2, roomNights: 14880, occupancyPct: 45 },
     ],
   },
 };
