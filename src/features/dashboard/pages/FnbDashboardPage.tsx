@@ -553,7 +553,7 @@ export function FnbDashboardPage() {
 
             <div className="pt-2 mt-2 flex items-center justify-between text-[9px] text-zinc-400">
               <span>Click a resort to open its Daily F&amp;B Command Center</span>
-              <span className="text-zinc-700 font-medium">All 10 Resorts →</span>
+              <span className="text-zinc-700 font-medium">All 9 Resorts →</span>
             </div>
           </div>
 

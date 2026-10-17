@@ -424,16 +424,15 @@ export function getFnbSeats(ids: string[] | undefined): number {
 /* ───────────────────────── PROPERTY RECORDS ───────────────────────── */
 
 const FNB_PROPERTY_DESCRIPTORS: Record<string, { signatureOutlets: string; cuisineLead: string }> = {
+  'sosei-andermatt': { signatureOutlets: 'Le Sommet Alpine Gastronomy · Gotthard Glacier Cellar', cuisineLead: 'French & Alpine Haute' },
+  'sosei-el-gouna': { signatureOutlets: 'Marassi Red Sea Grill · Coral Lagoon Sunset Lounge', cuisineLead: 'Eastern Med & Coastal Grill' },
+  'sosei-auh': { signatureOutlets: 'Saadiyat Pearl Omakase · Al-Bahr Beachfront Club', cuisineLead: 'Japanese & Levantine Coastal' },
+  'sosei-melides': { signatureOutlets: 'Comporta Woodfire Hearth · Atlantic Dune Wine Bar', cuisineLead: 'Portuguese Coastal & Woodfire' },
+  'sosei-umbria': { signatureOutlets: 'Tartufo Castello Table · Cantina Storica Cellar', cuisineLead: 'Umbrian Truffle & Estate Wine' },
+  'sosei-tinos': { signatureOutlets: 'Thalassa Aegean Raw Bar · Cycladic Marble Terrace', cuisineLead: 'Greek Island Seafood & Mezze' },
   'sosei-barcelona': { signatureOutlets: 'Asador Catalán · El Mirador Tapas & Wine Bar', cuisineLead: 'Spanish & Med Tapas' },
-  'sosei-tokyo': { signatureOutlets: 'Mizuki Kaiseki · Sora 38th Rooftop Bar', cuisineLead: 'Japanese Omakase & Kaiseki' },
-  'sosei-bali': { signatureOutlets: 'Uluwatu Cliff Grill · Ombak Sunset Deck', cuisineLead: 'Pan-Asian & Coastal Grill' },
-  'sosei-maldives': { signatureOutlets: 'Kuroshio Overwater · Reef Sunset Lounge', cuisineLead: 'Japanese & Ocean Grill' },
-  'sosei-switzerland': { signatureOutlets: 'Le Sommet Alpine Gastronomy · Glacier Cellar', cuisineLead: 'French & Alpine Haute' },
-  'sosei-canada': { signatureOutlets: 'Blackcomb Woodfire Hearth · Cedar Apres Lounge', cuisineLead: 'Prime Steakhouse & Hearth' },
-  'sosei-costa-rica': { signatureOutlets: 'Fuego Canopy Grill · Botanical Raw Bar', cuisineLead: 'Latin Woodfire & Botanical' },
-  'sosei-japan': { signatureOutlets: 'Arashiyama Kyo-Kaiseki · Bamboo Tea Pavilion', cuisineLead: 'Kyo-Kaiseki & Matcha Craft' },
-  'sosei-oman': { signatureOutlets: 'Al Qalaa Canyon Dining · Rosewater Elixir Terrace', cuisineLead: 'Levantine & Longevity Cuisine' },
-  'sosei-egypt': { signatureOutlets: 'Amun Desert Table · Salt Lake Botanical Lounge', cuisineLead: 'Mediterranean & Oasis Botanical' },
+  'sosei-osa': { signatureOutlets: 'Fuego Canopy Grill · Botanical Raw Bar', cuisineLead: 'Latin Woodfire & Botanical' },
+  'sosei-bali': { signatureOutlets: 'Uluwatu Cliff Grill · Tirta Longevity Botanical Kitchen', cuisineLead: 'Holistic Wellness & Coastal Grill' },
 };
 
 /** Static descriptors only - no number lives here. All trading numbers come from getFnbPropertyRecord(). */

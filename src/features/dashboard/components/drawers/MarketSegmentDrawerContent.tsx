@@ -122,7 +122,7 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
         return {
           id: `custom-seg-${idx}`,
           segment: r.segment,
-          location: 'All 10 Properties',
+          location: 'All 9 Properties',
           occupancy: fmtPct(occPct, 1),
           adr: r.adr || defMatch.adrFormatted,
           revpar: fmtUsdFull(revparUsd),
@@ -156,7 +156,7 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
       return {
         id: item.id,
         segment: item.segment,
-        location: 'All 10 Properties',
+        location: 'All 9 Properties',
         occupancy: fmtPct(occPct, 1),
         adr: item.adrFormatted,
         revpar: fmtUsdFull(revparUsd),

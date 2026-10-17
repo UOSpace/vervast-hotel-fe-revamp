@@ -127,54 +127,49 @@ interface PropertyMeta {
 /** Non-financial property metadata (identity, geography, the live VIP guest). */
 const PROPERTY_META: PropertyMeta[] = [
   {
-    id: 'sosei-barcelona', name: 'SOSEI BARCELONA', city: 'Barcelona, Spain', country: 'Spain', grouping: 'Urban',
+    id: 'sosei-andermatt', name: 'SOSEI Andermatt', city: 'Andermatt, Switzerland', country: 'Switzerland', grouping: 'Ski',
+    coordinates: [8.5939, 46.6356],
+    guest: { guestId: 'gst_ind_001', guestName: 'Sal Zanjabila', guestTitle: 'Ms.', vipTier: 'Platinum VIP', nationality: 'British', roomType: 'Gotthard Glacier Penthouse Chalet', roomNumber: 'Chalet 401', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Helipad Ski Concierge & Thermal Spa', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-el-gouna', name: 'SOSEI El Gouna', city: 'El Gouna, Egypt', country: 'Egypt', grouping: 'Beach Resort',
+    coordinates: [33.6782, 27.3942],
+    guest: { guestId: 'gst_ind_022', guestName: 'Sheikh Tariq Al-Mansoor', guestTitle: 'H.E.', vipTier: 'Royal Patron', nationality: 'Emirati', roomType: 'Red Sea Lagoon Royal Villa', roomNumber: 'Villa 01', checkInDate: 'Oct 11', checkOutDate: 'Oct 14', nights: 3, specialRequest: 'Private yacht charter & coral reef diving', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-auh', name: 'SOSEI AUH', city: 'Abu Dhabi, UAE', country: 'United Arab Emirates', grouping: 'Beach Resort',
+    coordinates: [54.3773, 24.4539],
+    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Saadiyat Beachfront Grand Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private Louvre Abu Dhabi after-hours curator tour', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-melides', name: 'SOSEI Melides', city: 'Melides, Portugal', country: 'Portugal', grouping: 'Beach Resort',
+    coordinates: [-8.7297, 38.1469],
+    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Property Elite', nationality: 'Swedish', roomType: 'Alentejo Atlantic Dune Villa', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private horseback riding along Melides lagoon', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-umbria', name: 'SOSEI Umbria', city: 'Umbria, Italy', country: 'Italy', grouping: 'Beach Resort',
+    coordinates: [12.6216, 42.9380],
+    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Castello Vineyard Palazzo Suite', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private white truffle foraging & cellar tasting', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-tinos', name: 'SOSEI Tinos', city: 'Tinos, Greece', country: 'Greece', grouping: 'Beach Resort',
+    coordinates: [25.1634, 37.5376],
+    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Aegean Cliffside Cycladic Villa', roomNumber: 'Villa 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private marble sculpting studio visit & Aegean sail', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-barcelona', name: 'SOSEI Barcelona', city: 'Barcelona, Spain', country: 'Spain', grouping: 'Urban',
     coordinates: [2.1734, 41.3851],
     guest: { guestId: 'gst_ind_003', guestName: 'Dr. Elizabeth Hall', guestTitle: 'Dr.', vipTier: 'Gold VIP', nationality: 'British', roomType: 'Paseo de Gracia Grand Suite', roomNumber: 'Suite 402', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private architectural tour with Gaudi historian', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-tokyo', name: 'SOSEI TOKYO', city: 'Tokyo, Japan', country: 'Japan', grouping: 'Urban',
-    coordinates: [139.6917, 35.6895],
-    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Imperial Garden Residence Loft', roomNumber: 'Loft 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private omakase dinner with Master Chef', bookingStatus: 'in_house' },
+    id: 'sosei-osa', name: 'SOSEI OSA', city: 'Osa, Costa Rica', country: 'Costa Rica', grouping: 'Nature',
+    coordinates: [-83.5042, 8.5380],
+    guest: { guestId: 'gst_ind_008', guestName: 'Lord Sterling', guestTitle: 'Lord', vipTier: 'Founding Circle', nationality: 'British', roomType: 'Corcovado Rainforest Canopy Villa', roomNumber: 'Villa 14', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private naturalist wildlife expedition in Osa Peninsula', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-bali', name: 'SOSEI BALI', city: 'Uluwatu, Bali, Indonesia', country: 'Indonesia', grouping: 'Beach Resort',
+    id: 'sosei-bali', name: 'SOSEI BALI', city: 'Bali, Indonesia', country: 'Indonesia', grouping: 'Wellness',
     coordinates: [115.1889, -8.4095],
-    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Cliffside Ocean Residence Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification ritual', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-maldives', name: 'SOSEI MALDIVES', city: 'North Malé Atoll, Maldives', country: 'Maldives', grouping: 'Beach Resort',
-    coordinates: [73.5089, 4.1755],
-    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Overwater Grand Residence Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private sommelier & reef bioluminescence cruise', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-switzerland', name: 'SOSEI SWITZERLAND', city: 'Zermatt, Switzerland', country: 'Switzerland', grouping: 'Ski',
-    coordinates: [7.7491, 45.9765],
-    guest: { guestId: 'gst_ind_001', guestName: 'Sal Zanjabila', guestTitle: 'Ms.', vipTier: 'Platinum VIP', nationality: 'British', roomType: 'Matterhorn Glacier Penthouse Chalet', roomNumber: 'Chalet 401', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Helipad Ski Concierge & Thermal Spa', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-canada', name: 'SOSEI CANADA', city: 'Whistler, Canada', country: 'Canada', grouping: 'Ski',
-    coordinates: [-122.9574, 50.1163],
-    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Property Elite', nationality: 'Swedish', roomType: 'Olympic Peak Chalet Estate', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private backcountry heli-ski guide', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-costa-rica', name: 'SOSEI COSTA RICA', city: 'Papagayo, Costa Rica', country: 'Costa Rica', grouping: 'Nature',
-    coordinates: [-85.66, 10.63],
-    guest: { guestId: 'gst_ind_008', guestName: 'Lord Sterling', guestTitle: 'Lord', vipTier: 'Founding Circle', nationality: 'British', roomType: 'Rainforest Canopy Ocean Villa', roomNumber: 'Villa 14', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private naturalist wildlife expedition', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-japan', name: 'SOSEI JAPAN', city: 'Kyoto, Japan', country: 'Japan', grouping: 'Nature',
-    coordinates: [135.7681, 35.0116],
-    guest: { guestId: 'gst_ind_002', guestName: 'Kenzo Tanaka', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'Japanese', roomType: 'Historic Bamboo Pavilion Ryokan', roomNumber: 'Pavilion 08', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Private Zen garden meditation with temple abbot', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-oman', name: 'SOSEI OMAN', city: 'Jebel Akhdar, Oman', country: 'Oman', grouping: 'Wellness',
-    coordinates: [57.6599, 23.0673],
-    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Canyon Ridge Stargazing Residence', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private cliffside sound healing therapy', bookingStatus: 'in_house' },
-  },
-  {
-    id: 'sosei-egypt', name: 'SOSEI EGYPT', city: 'Siwa Oasis, Egypt', country: 'Egypt', grouping: 'Wellness',
-    coordinates: [25.5195, 29.2032],
-    guest: { guestId: 'gst_ind_022', guestName: 'Sheikh Tariq Al-Mansoor', guestTitle: 'H.E.', vipTier: 'Royal Patron', nationality: 'Emirati', roomType: 'Desert Mineral Spring Royal Tent', roomNumber: 'Tent 01', checkInDate: 'Oct 11', checkOutDate: 'Oct 14', nights: 3, specialRequest: 'Private thermal salt spring therapy & dunes dinner', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Holistic Sanctuary Cliffside Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification & longevity ritual', bookingStatus: 'in_house' },
   },
 ];
 
@@ -285,6 +280,14 @@ const collectionStatus = (m: PortfolioMetrics) =>
 
 const cityOf = (location: string) => location.split(',')[0].trim();
 
+const formatCollectionLocation = (props: PropertyMetrics[]) => {
+  if (props.length === 0) return '';
+  if (props.length === 1) return props[0].location;
+  const cities = props.map((p) => cityOf(p.location));
+  if (cities.length === 2) return `${cities[0]} & ${cities[1]}`;
+  return `${cities.slice(0, -1).join(', ')} & ${cities[cities.length - 1]}`;
+};
+
 export function getCategoryPerformance(period: PeriodId = 'mtd', propertyIds?: string[]): PropertyPerformanceCategory[] {
   const selected = propertyIds && propertyIds.length > 0 ? propertyIds : null;
   return MASTER_CATEGORIES.map((cat) => {
@@ -294,7 +297,7 @@ export function getCategoryPerformance(period: PeriodId = 'mtd', propertyIds?: s
     const row: PropertyPerformanceCategory = {
       id: cat.id,
       name: cat.name,
-      location: m.properties.map((p) => cityOf(p.location)).join(' & '),
+      location: formatCollectionLocation(m.properties),
       totalRooms: m.rooms,
       occupiedRooms: Math.round(m.roomsSold / m.days),
       occ: `${m.occupancyPct.toFixed(2)}%`,
@@ -898,7 +901,7 @@ export function getPortfolioComparisonData(period: PeriodId = 'mtd', propertyIds
     const row = comparisonRow(
       cat.id,
       cat.name,
-      m.properties.map((p) => cityOf(p.location)).join(' & '),
+      formatCollectionLocation(m.properties),
       m,
       statusFromBudget(m),
       `/dashboard/property?id=${cat.id}`

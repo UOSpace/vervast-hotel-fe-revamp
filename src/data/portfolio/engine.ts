@@ -1,4 +1,4 @@
-import { MASTER_PROPERTIES } from '@/constants/categories';
+import { MASTER_PROPERTIES, resolvePropertyId } from '@/constants/categories';
 import type { HotelCategoryId } from '@/constants/categories';
 import type { RegionId } from '@/constants/regions';
 import { PERIOD_DEFS, FORWARD_DEFAULT_DAYS } from './periods';
@@ -293,7 +293,8 @@ export function averageOtbRatio(windowDays: number): number {
 export const PORTFOLIO_PROPERTY_IDS: string[] = MASTER_PROPERTIES.map((p) => p.id);
 
 export function getPropertyProfile(propertyId: string): PropertyProfile {
-  const profile = PROPERTY_PROFILES[propertyId];
+  const canonicalId = resolvePropertyId(propertyId);
+  const profile = PROPERTY_PROFILES[canonicalId];
   if (!profile) throw new Error(`Unknown portfolio property: ${propertyId}`);
   return profile;
 }
@@ -398,9 +399,10 @@ function buildReference(
 
 const propertyCache = new Map<string, PropertyMetrics>();
 
-function computePropertyMetrics(propertyId: string, period: PeriodId, windowDays: number): PropertyMetrics {
+function computePropertyMetrics(rawPropertyId: string, period: PeriodId, windowDays: number): PropertyMetrics {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const master = MASTER_PROPERTIES.find((p) => p.id === propertyId);
-  if (!master) throw new Error(`Unknown portfolio property: ${propertyId}`);
+  if (!master) throw new Error(`Unknown portfolio property: ${rawPropertyId}`);
   const profile = getPropertyProfile(propertyId);
   const d = resolveDrivers(master, profile, period, windowDays);
 
@@ -521,7 +523,8 @@ function computePropertyMetrics(propertyId: string, period: PeriodId, windowDays
 /**
  * Metrics of ONE property for a period. Forward uses the default 90-day OTB window.
  */
-export function getPropertyMetrics(propertyId: string, period: PeriodId): PropertyMetrics {
+export function getPropertyMetrics(rawPropertyId: string, period: PeriodId): PropertyMetrics {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const key = `${propertyId}|${period}|${FORWARD_DEFAULT_DAYS}`;
   const cached = propertyCache.get(key);
   if (cached) return cached;
@@ -642,12 +645,12 @@ function aggregateMetrics(list: PropertyMetrics[], period: PeriodId): PortfolioM
 }
 
 /**
- * Aggregated metrics for a selection of properties (default = all 10 SOSEI properties).
+ * Aggregated metrics for a selection of properties (default = all 9 SOSEI properties).
  * Revenue / covers / attendances are straight sums of getPropertyMetrics(); occupancy, ADR, RevPAR,
  * average check, participation, utilisation, ... are re-derived from those sums (never averaged).
  */
 export function getPortfolioMetrics(propertyIds: string[] | undefined, period: PeriodId): PortfolioMetrics {
-  const ids = propertyIds && propertyIds.length > 0 ? propertyIds : PORTFOLIO_PROPERTY_IDS;
+  const ids = propertyIds && propertyIds.length > 0 ? propertyIds.map(resolvePropertyId) : PORTFOLIO_PROPERTY_IDS;
   // keep the canonical property order regardless of the order of the selection
   const ordered = PORTFOLIO_PROPERTY_IDS.filter((id) => ids.includes(id));
   return aggregateMetrics(
@@ -663,9 +666,10 @@ export function getPropertyMetricsList(propertyIds: string[] | undefined, period
 
 /* ───────────────────────── FORWARD WINDOWS ───────────────────────── */
 
-function computeForwardProperty(propertyId: string, windowDays: number): ForwardWindowProperty {
+function computeForwardProperty(rawPropertyId: string, windowDays: number): ForwardWindowProperty {
+  const propertyId = resolvePropertyId(rawPropertyId);
   const master = MASTER_PROPERTIES.find((p) => p.id === propertyId);
-  if (!master) throw new Error(`Unknown portfolio property: ${propertyId}`);
+  if (!master) throw new Error(`Unknown portfolio property: ${rawPropertyId}`);
   const profile = getPropertyProfile(propertyId);
   const otb =
     windowDays === FORWARD_DEFAULT_DAYS
@@ -725,7 +729,7 @@ const forwardCache = new Map<string, ForwardWindowProperty>();
  * Experiences outlook all read the same on-the-books numbers.
  */
 export function getForwardWindowMetrics(propertyIds: string[] | undefined, windowDays: number): ForwardWindowMetrics {
-  const ids = propertyIds && propertyIds.length > 0 ? propertyIds : PORTFOLIO_PROPERTY_IDS;
+  const ids = propertyIds && propertyIds.length > 0 ? propertyIds.map(resolvePropertyId) : PORTFOLIO_PROPERTY_IDS;
   const ordered = PORTFOLIO_PROPERTY_IDS.filter((id) => ids.includes(id));
   const props = ordered.map((id) => {
     const key = `${id}|${windowDays}`;

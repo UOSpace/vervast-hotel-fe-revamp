@@ -361,45 +361,41 @@ interface BottleneckDef {
 
 /** Lead capacity-constrained programmes per resort (at most 65% of a resort's unmet demand in total). */
 const BOTTLENECK_PROGRAMS: Record<string, BottleneckDef[]> = {
-  'sosei-maldives': [
-    { activity: 'Manta Ray Snorkeling & Marine Bio', fix: 'Add 10:30 AM Catamaran Slot', sharePct: 40 },
-    { activity: 'Sunset Private Catamaran', fix: 'Second Vessel Departure', sharePct: 25 },
+  'sosei-andermatt': [
+    { activity: 'Gotthard Glacier Heli-Ski & Hike', fix: '2nd Partner Helicopter Contract', sharePct: 40 },
+    { activity: 'Alpine Thermal Breathwork', fix: 'Add Chalet Studio Session', sharePct: 25 },
   ],
-  'sosei-costa-rica': [
-    { activity: 'Canopy Night Wildlife Expedition', fix: 'Certify 2 Additional Naturalists', sharePct: 40 },
-    { activity: 'Pacific Outrigger Voyage', fix: 'Extend Afternoon Window', sharePct: 25 },
+  'sosei-el-gouna': [
+    { activity: 'Red Sea Coral Reef Dive Charter', fix: 'Add Morning Yacht Departure', sharePct: 40 },
+    { activity: 'Desert Lagoon Kitesurf Clinic', fix: 'Certify 2 Additional Instructors', sharePct: 25 },
   ],
-  'sosei-bali': [
-    { activity: 'Uluwatu Cliff Sunrise Pranayama', fix: 'Expand Cliff Deck Capacity', sharePct: 40 },
-    { activity: 'Melukat Water Blessing', fix: 'Add Dawn Priest Rotation', sharePct: 25 },
+  'sosei-auh': [
+    { activity: 'Saadiyat Private Dhow Sunset Cruise', fix: 'Second Dhow Vessel Charter', sharePct: 40 },
+    { activity: 'Hawksbill Turtle Conservation Walk', fix: 'Add Dawn Marine Biologist Slot', sharePct: 25 },
   ],
-  'sosei-switzerland': [
-    { activity: 'Matterhorn Glacier Heli-Hike', fix: '2nd Partner Helicopter Contract', sharePct: 40 },
-    { activity: 'Alpine Breathwork', fix: 'Add Chalet Studio Session', sharePct: 25 },
+  'sosei-melides': [
+    { activity: 'Alentejo Dune Horseback Expedition', fix: 'Expand Equestrian Guide Roster', sharePct: 40 },
+    { activity: 'Atlantic Surf & Lagoon Paddle', fix: 'Add Afternoon Tide Session', sharePct: 25 },
   ],
-  'sosei-canada': [
-    { activity: 'Backcountry Powder Guide', fix: 'Certify Backup Mountain Guides', sharePct: 40 },
-    { activity: 'Cedar Forest Foraging', fix: 'Split Group Departures', sharePct: 25 },
+  'sosei-umbria': [
+    { activity: 'Private White Truffle Foraging', fix: 'Partner with 2nd Truffle Hunter', sharePct: 40 },
+    { activity: 'Medieval Vineyard Cycling Tour', fix: 'Expand E-Bike Fleet & Guide Slot', sharePct: 25 },
   ],
-  'sosei-japan': [
-    { activity: 'Arashiyama Zen Zazen', fix: 'Add Temple Dawn Sitting', sharePct: 40 },
-    { activity: 'Kintsugi & Tea Immersion', fix: 'Add Second Artisan Studio Slot', sharePct: 25 },
-  ],
-  'sosei-oman': [
-    { activity: 'Jebel Akhdar Via Ferrata', fix: 'Certify Additional Via Ferrata Guides', sharePct: 40 },
-    { activity: 'Canyon Stargazing', fix: 'Add Second Astronomy Terrace', sharePct: 25 },
-  ],
-  'sosei-tokyo': [
-    { activity: 'Private Toyosu Tuna Auction', fix: 'Secure Additional Market Passes', sharePct: 40 },
-    { activity: 'Edo Swordsmith Visit', fix: 'Add Workshop Timeslot', sharePct: 25 },
+  'sosei-tinos': [
+    { activity: 'Cycladic Marble Sculpting Workshop', fix: 'Add Second Artisan Studio Slot', sharePct: 40 },
+    { activity: 'Aegean Private Catamaran Hopping', fix: 'Second Vessel Departure', sharePct: 25 },
   ],
   'sosei-barcelona': [
     { activity: 'Private Architect Sail', fix: 'Charter Second Yacht', sharePct: 40 },
     { activity: 'Gothic Quarter Art Walk', fix: 'Add Evening Departure', sharePct: 25 },
   ],
-  'sosei-egypt': [
-    { activity: 'Siwa Salt Lake Float', fix: 'Expand Lake Pontoon Capacity', sharePct: 40 },
-    { activity: 'Desert Astronomy Expedition', fix: 'Add Second Dune Camp Crew', sharePct: 25 },
+  'sosei-osa': [
+    { activity: 'Corcovado Night Wildlife Expedition', fix: 'Certify 2 Additional Naturalists', sharePct: 40 },
+    { activity: 'Golfo Dulce Outrigger Voyage', fix: 'Extend Afternoon Window', sharePct: 25 },
+  ],
+  'sosei-bali': [
+    { activity: 'Uluwatu Cliff Sunrise Pranayama', fix: 'Expand Cliff Deck Capacity', sharePct: 40 },
+    { activity: 'Melukat Water Blessing', fix: 'Add Dawn Priest Rotation', sharePct: 25 },
   ],
 };
 

@@ -158,65 +158,59 @@ export interface RoomTierDef {
 const ROOM_TIER_ADR_INDEX = [1.18, 1.04, 0.92, 0.82];
 
 export const PROPERTY_ROOM_TIERS: Record<string, RoomTierDef[]> = {
+  'sosei-andermatt': [
+    { name: 'Gotthard Chalet Suite', keyShare: 22, occDelta: 6 },
+    { name: 'Alpine Signature Suite', keyShare: 20, occDelta: 1 },
+    { name: 'Panorama Glacial Room', keyShare: 16, occDelta: -2 },
+    { name: 'Thermal Spa Cabin', keyShare: 14, occDelta: -6 },
+  ],
+  'sosei-el-gouna': [
+    { name: 'Red Sea Lagoon Villa', keyShare: 24, occDelta: 6 },
+    { name: 'Coral Reef Pool Suite', keyShare: 22, occDelta: 2 },
+    { name: 'Desert Coast Pavilion', keyShare: 18, occDelta: -2 },
+    { name: 'Marina Sanctuary Suite', keyShare: 16, occDelta: -8 },
+  ],
+  'sosei-auh': [
+    { name: 'Saadiyat Beachfront Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Arabian Gulf Pool Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Oceanfront Dune Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Private Island Residence', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-melides': [
+    { name: 'Alentejo Atlantic Dune Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Lagoon Terrace Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Cork Forest Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Coastal Sanctuary Studio', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-umbria': [
+    { name: 'Castello Vineyard Palazzo Suite', keyShare: 25, occDelta: 6 },
+    { name: 'Umbrian Hillside Villa', keyShare: 25, occDelta: 2 },
+    { name: 'Olive Grove Terrace Suite', keyShare: 20, occDelta: -2 },
+    { name: 'Heritage Stone Residence', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-tinos': [
+    { name: 'Aegean Cliffside Cycladic Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Marble Terrace Pool Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Aegean Sea View Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Island Sanctuary Residence', keyShare: 15, occDelta: -7 },
+  ],
   'sosei-barcelona': [
     { name: 'Catalan Penthouse Suite', keyShare: 25, occDelta: 6 },
     { name: 'Passeig Deluxe Room', keyShare: 35, occDelta: 1 },
     { name: 'Mediterranean Terrace Suite', keyShare: 30, occDelta: -2 },
     { name: 'Gothic Quarter Studio', keyShare: 20, occDelta: -6 },
   ],
-  'sosei-tokyo': [
-    { name: 'Imperial Skyline Suite', keyShare: 25, occDelta: 7 },
-    { name: 'Ginza Panorama Room', keyShare: 30, occDelta: 1 },
-    { name: 'Zen Garden Executive Suite', keyShare: 25, occDelta: -3 },
-    { name: 'Metropolitan Studio', keyShare: 15, occDelta: -7 },
+  'sosei-osa': [
+    { name: 'Corcovado Canopy Suite', keyShare: 26, occDelta: 6 },
+    { name: 'Golfo Dulce Ocean Villa', keyShare: 24, occDelta: 2 },
+    { name: 'Rainforest Treehouse Haven', keyShare: 20, occDelta: -2 },
+    { name: 'Pacific Wilderness Pavilion', keyShare: 15, occDelta: -8 },
   ],
   'sosei-bali': [
-    { name: 'Cliffside Ocean Villa', keyShare: 28, occDelta: 5 },
-    { name: 'Coral Reef Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Tropical Garden Pavilion', keyShare: 18, occDelta: -2 },
-    { name: 'Signature Pool Residence', keyShare: 12, occDelta: -7 },
-  ],
-  'sosei-maldives': [
-    { name: 'Overwater Sunset Villa', keyShare: 24, occDelta: 6 },
-    { name: 'Lagoon Signature Pool Suite', keyShare: 20, occDelta: 0 },
-    { name: 'Oceanfront Beach Pavilion', keyShare: 14, occDelta: -2 },
-    { name: 'Private Atoll Residence', keyShare: 10, occDelta: -7 },
-  ],
-  'sosei-switzerland': [
-    { name: 'Matterhorn Chalet Suite', keyShare: 22, occDelta: 6 },
-    { name: 'Alpine Signature Suite', keyShare: 20, occDelta: 1 },
-    { name: 'Panorama Glacial Room', keyShare: 16, occDelta: -2 },
-    { name: 'Thermal Spa Cabin', keyShare: 14, occDelta: -6 },
-  ],
-  'sosei-canada': [
-    { name: 'Whistler Alpine Lodge', keyShare: 26, occDelta: 6 },
-    { name: 'Glacier Panorama Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Cedar Mountain Room', keyShare: 20, occDelta: -2 },
-    { name: 'Nordic Spa Cabin', keyShare: 14, occDelta: -7 },
-  ],
-  'sosei-costa-rica': [
-    { name: 'Canopy Rainforest Suite', keyShare: 18, occDelta: 6 },
-    { name: 'Misty Peak Mountain Villa', keyShare: 14, occDelta: 2 },
-    { name: 'Verdant Treehouse Haven', keyShare: 12, occDelta: -2 },
-    { name: 'Pacific Vista Pavilion', keyShare: 10, occDelta: -8 },
-  ],
-  'sosei-japan': [
-    { name: 'Hakone Forest Tatami Suite', keyShare: 18, occDelta: 6 },
-    { name: 'Onsen Heritage Villa', keyShare: 16, occDelta: 2 },
-    { name: 'Bamboo Heritage Room', keyShare: 14, occDelta: -2 },
-    { name: 'Zen Mountain Pavilion', keyShare: 10, occDelta: -7 },
-  ],
-  'sosei-oman': [
-    { name: 'Wahiba Sands Royal Suite', keyShare: 26, occDelta: 5 },
-    { name: 'Bedouin Luxury Pavilion', keyShare: 24, occDelta: 1 },
-    { name: 'Desert Canyon Retreat', keyShare: 20, occDelta: -3 },
-    { name: 'Oasis Wellness Chalet', keyShare: 15, occDelta: -7 },
-  ],
-  'sosei-egypt': [
-    { name: 'Nile Starlight Pavilion', keyShare: 22, occDelta: 6 },
-    { name: 'Pharaonic Heritage Suite', keyShare: 20, occDelta: 2 },
-    { name: 'Dunes Oasis Tent Suite', keyShare: 16, occDelta: -2 },
-    { name: 'Mineral Spring Residence', keyShare: 14, occDelta: -8 },
+    { name: 'Holistic Cliffside Ocean Villa', keyShare: 28, occDelta: 5 },
+    { name: 'Ayung River Wellness Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Sacred Jungle Pavilion', keyShare: 18, occDelta: -2 },
+    { name: 'Longevity Pool Residence', keyShare: 12, occDelta: -7 },
   ],
 };
 
@@ -452,10 +446,10 @@ const PROPERTY_EVENT_DEFS: Record<string, EventDef[]> = {
     { title: 'Gothic Quarter Private Rooftop Buyout', date: 'Oct 23 – Oct 26, 2026', category: 'Private Buyout', revenueSharePct: 2.4, attendeeSharePct: 1.7 },
     { title: 'Mediterranean Sommelier Grand Tasting', date: 'Nov 03, 2026', category: 'Culinary Gala', revenueSharePct: 0.4, attendeeSharePct: 1.9 },
   ],
-  'sosei-switzerland': [
+  'sosei-andermatt': [
     { title: 'Alpine Peak Wellness Retreat', date: 'Oct 19 – Oct 22, 2026', category: 'Wellness Retreat', revenueSharePct: 1.1, attendeeSharePct: 0.9 },
-    { title: 'Zermatt Private Chalet Buyout', date: 'Oct 24 – Oct 27, 2026', category: 'Corporate Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.4 },
-    { title: 'Matterhorn Sommeliers Evening', date: 'Nov 02, 2026', category: 'Culinary Gala', revenueSharePct: 0.3, attendeeSharePct: 1.7 },
+    { title: 'Andermatt Private Chalet Buyout', date: 'Oct 24 – Oct 27, 2026', category: 'Corporate Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.4 },
+    { title: 'Gotthard Sommeliers Evening', date: 'Nov 02, 2026', category: 'Culinary Gala', revenueSharePct: 0.3, attendeeSharePct: 1.7 },
   ],
 };
 

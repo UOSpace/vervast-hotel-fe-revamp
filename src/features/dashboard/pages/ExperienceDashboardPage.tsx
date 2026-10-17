@@ -492,7 +492,7 @@ export function ExperienceDashboardPage() {
                     sub:
                       staffing.watchlist.length > 0
                         ? `${staffing.watchlist.map((w) => `${w.name} (${fmtPct(w.readinessPct)})`).join(' · ')} & ${fmtInt(staffing.sessionsAtRisk)} sessions monitored`
-                        : 'All 10 resorts above 95% readiness target',
+                        : 'All 9 resorts above 95% readiness target',
                     badge: `${staffing.watchlist.length} Watchlist`,
                     meta: `${fmtInt(staffing.sessionsAtRisk)} At-Risk`,
                     tone: staffing.watchlist.length > 0 ? 'warn' : 'pos',
@@ -606,19 +606,19 @@ export function ExperienceDashboardPage() {
           </div>
         </div>
 
-        {/* ───────────────── ROW 3: 10-PROPERTY BENCHMARK TABLE ───────────────── */}
+        {/* ───────────────── ROW 3: 9-PROPERTY BENCHMARK TABLE ───────────────── */}
         <div className="-mx-4 rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 animate-card-enter">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-200/80 mb-3">
             <div>
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                PORTFOLIO RESORT ACTIVITIES &amp; EXPERIENCES BENCHMARK (ALL 10 SOSEI RESORTS)
+                PORTFOLIO RESORT ACTIVITIES &amp; EXPERIENCES BENCHMARK (ALL 9 SOSEI RESORTS)
               </h3>
               <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
                 Participation, capacity utilization, demand fulfillment, quality &amp; paid revenue by resort ({horizonMeta.periodLabel})
               </p>
             </div>
             <span className="text-[8.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              10 Resorts · {fmtInt(m.experiences.programs)} Programs · {fmtInt(m.experiences.sessions)} Sessions · {fmtUsd(m.experienceRevenue)} Paid Rev
+              9 Resorts · {fmtInt(m.experiences.programs)} Programs · {fmtInt(m.experiences.sessions)} Sessions · {fmtUsd(m.experienceRevenue)} Paid Rev
             </span>
           </div>
 

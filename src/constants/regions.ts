@@ -40,8 +40,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Asia Pacific Region',
     shortName: 'ASIA PACIFIC',
     img: asiaPacificImg,
-    description: 'Premier archipelagos, cultural capitals, and dramatic coastlines across East Asia and the Pacific.',
-    countries: ['Japan', 'Indonesia', 'Maldives', 'Australia', 'Singapore'],
+    description: 'Premier archipelagos, holistic wellness retreats, and dramatic coastlines across Bali and the Pacific.',
+    countries: ['Indonesia', 'Singapore', 'Australia', 'Thailand'],
   },
   {
     id: 'europe',
@@ -49,8 +49,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Europe & Mediterranean',
     shortName: 'EUROPE',
     img: europeImg,
-    description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean coastal properties.',
-    countries: ['Spain', 'Switzerland', 'France', 'Italy', 'United Kingdom'],
+    description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean & Atlantic coastal properties.',
+    countries: ['Switzerland', 'Portugal', 'Italy', 'Greece', 'Spain'],
   },
   {
     id: 'america',
@@ -58,8 +58,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'The Americas',
     shortName: 'AMERICA',
     img: americaImg,
-    description: 'High-altitude mountain chalets, Pacific rainforests, and vibrant metropolitan hubs.',
-    countries: ['Canada', 'Costa Rica', 'United States', 'Mexico', 'Brazil'],
+    description: 'Biodiverse Pacific rainforests, eco-wilderness sanctuaries, and vibrant continental hubs.',
+    countries: ['Costa Rica', 'United States', 'Mexico', 'Brazil'],
   },
   {
     id: 'middle-east',
@@ -67,8 +67,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Middle East & Arabian Gulf',
     shortName: 'MIDDLE EAST',
     img: middleEastImg,
-    description: 'Oasis healing properties, dramatic canyon valleys, and desert wellness architecture.',
-    countries: ['Oman', 'Saudi Arabia', 'United Arab Emirates', 'Qatar'],
+    description: 'Private Arabian Gulf island resorts, coastal sanctuaries, and luxury waterfront architecture.',
+    countries: ['United Arab Emirates', 'Saudi Arabia', 'Oman', 'Qatar'],
   },
   {
     id: 'africa',
@@ -76,7 +76,7 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'African Continent',
     shortName: 'AFRICA',
     img: africaImg,
-    description: 'Ancient desert springs, Nile river sanctums, and pristine conservation wilderness.',
+    description: 'Red Sea coral lagoons, coastal desert retreats, and pristine conservation wilderness.',
     countries: ['Egypt', 'Morocco', 'South Africa', 'Kenya', 'Tanzania'],
   },
 ];

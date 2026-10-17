@@ -119,16 +119,15 @@ export const getAllReservationEvents = (): ReservationEvent[] => [
 ];
 
 export const SANCTUARY_HOTELS = [
+  'SOSEI Andermatt',
+  'SOSEI El Gouna',
+  'SOSEI AUH',
+  'SOSEI Melides',
+  'SOSEI Umbria',
+  'SOSEI Tinos',
   'SOSEI Barcelona',
-  'SOSEI Tokyo',
-  'SOSEI Bali',
-  'SOSEI Maldives',
-  'SOSEI Switzerland',
-  'SOSEI Canada',
-  'SOSEI Costa Rica',
-  'SOSEI Japan',
-  'SOSEI Oman',
-  'SOSEI Egypt',
+  'SOSEI OSA',
+  'SOSEI BALI',
 ] as const;
 
 export const normalizeHotel = (raw?: string): string =>

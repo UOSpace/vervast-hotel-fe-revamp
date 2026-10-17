@@ -414,7 +414,7 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">10 Properties · 5 Categories</td>
+                <td className="py-3 px-3 text-zinc-500">9 Properties · 5 Categories</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.definiteRevenue}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.verbalDefiniteRevenue}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.tentativeRevenue}</td>

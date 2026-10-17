@@ -6,11 +6,11 @@ interface GuestMovementDrawerContentProps {
 
 export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContentProps) {
   const movementData = [
-    { name: 'Urban', arr: 160, in: 640, dep: 120, vip: 22, collection: 'SOSEI Urban (Barcelona & Tokyo)' },
-    { name: 'Beach Resort', arr: 110, in: 520, dep: 80, vip: 14, collection: 'SOSEI Beach Resort (Bali & Maldives)' },
-    { name: 'Ski', arr: 145, in: 580, dep: 95, vip: 18, collection: 'SOSEI Ski (Switzerland & Canada)' },
-    { name: 'Nature', arr: 120, in: 597, dep: 85, vip: 16, collection: 'SOSEI Nature (Costa Rica & Japan)' },
-    { name: 'Wellness', arr: 100, in: 510, dep: 75, vip: 16, collection: 'SOSEI Wellness (Oman & Egypt)' },
+    { name: 'Ski', arr: 85, in: 320, dep: 60, vip: 12, collection: 'SOSEI Ski (Andermatt)' },
+    { name: 'Beach Resort', arr: 240, in: 1380, dep: 195, vip: 38, collection: 'SOSEI Beach Resort (El Gouna, AUH, Melides, Umbria, Tinos)' },
+    { name: 'Urban', arr: 95, in: 440, dep: 80, vip: 14, collection: 'SOSEI Urban (Barcelona)' },
+    { name: 'Nature', arr: 55, in: 310, dep: 60, vip: 8, collection: 'SOSEI Nature (Osa)' },
+    { name: 'Wellness', arr: 60, in: 397, dep: 60, vip: 12, collection: 'SOSEI Wellness (Bali)' },
   ];
 
   return (
@@ -69,7 +69,7 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (10 Properties)</td>
+              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (9 Properties)</td>
               <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">2,847</td>
               <td className="py-3 px-3 text-right text-emerald-700">+535</td>
               <td className="py-3 px-3 text-right text-zinc-500">-455</td>

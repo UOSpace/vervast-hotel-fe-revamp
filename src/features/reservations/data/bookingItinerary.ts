@@ -26,8 +26,8 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   const dep = booking.departureDate;
   const tktCode = booking.crsNo.replace('CRS-', 'TKT-');
 
-  // 1. SKI RESORT ITINERARY (Switzerland, Canada)
-  if (booking.hotel === 'SOSEI Switzerland' || booking.hotel === 'SOSEI Canada') {
+  // 1. SKI RESORT ITINERARY (Andermatt)
+  if (booking.hotel === 'SOSEI Andermatt') {
     return [
       {
         day: 'Day 1',
@@ -49,14 +49,14 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Day 2',
         date: 'Morning Session',
         time: '08:45',
-        title: 'Matterhorn Glacier Paradise 3S Cable Car & First Tracks',
-        location: 'Zermatt International Ski Area • 3,883m Peak',
-        description: 'Exclusive 30-minute early access to Klein Matterhorn before the general public. Guided off-piste powder descent across pristine Theodul glacier with Olympic mountain guide.',
+        title: 'Gemsstock Glacier Cable Car & First Tracks',
+        location: 'Andermatt SkiArena • 2,961m Peak',
+        description: 'Exclusive 30-minute early access to Gemsstock before the general public. Guided off-piste powder descent across pristine Ursern valley glacier with Olympic mountain guide.',
         category: 'ski',
         image: alpineImg,
         ticket: {
           code: `${tktCode}-CABLE`,
-          label: 'VIP Glacier 3S Cable Car & Unlimited Ski Pass',
+          label: 'VIP Glacier Cable Car & Unlimited Ski Pass',
           downloadUrl: '#',
           fileSize: '2.1 MB',
         },
@@ -66,7 +66,7 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         date: 'Full Day Adventure',
         time: '10:00',
         title: 'High Altitude Heli-Skiing & Champagne Glacier Picnic',
-        location: 'Monte Rosa Massif • Backcountry Bowl',
+        location: 'Gotthard Massif • Backcountry Bowl',
         description: 'Air drop into untouched alpine powder fields. Includes avalanche beacon briefing, video recording by drone operator, and fondue banquet in a heated expedition dome.',
         category: 'ski',
         image: privateDinnerImg,
@@ -106,22 +106,22 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
     ];
   }
 
-  // 2. BEACH / LAGOON RESORT (Maldives, Bali)
-  if (booking.hotel === 'SOSEI Maldives' || booking.hotel === 'SOSEI Bali') {
-    const mainImg = booking.hotel === 'SOSEI Maldives' ? maldivesImg : baliImg;
+  // 2. BEACH / LAGOON / WELLNESS RESORT (AUH, Bali, Melides)
+  if (booking.hotel === 'SOSEI AUH' || booking.hotel === 'SOSEI BALI' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Melides') {
+    const mainImg = booking.hotel === 'SOSEI AUH' ? maldivesImg : baliImg;
     return [
       {
         day: 'Day 1',
         date: arr,
         time: '13:00',
-        title: 'Twin-Otter Seaplane Water Landing & Lagoon Welcome',
+        title: 'Private Yacht Arrival & Lagoon Welcome',
         location: `${hotel} • Turquoise Lagoon Jetty`,
-        description: 'Scenic aerial arrival over coral atolls. Boduberu drum greeting, chilled young coconut water, and golf-buggy transfer to the private overwater pool residence.',
+        description: 'Scenic coastal arrival over turquoise waters. Welcome ritual, chilled young coconut water, and buggy transfer to the private ocean pool residence.',
         category: 'arrival',
         image: mainImg,
         ticket: {
           code: `${tktCode}-SEAPLANE`,
-          label: 'VIP Seaplane Flight Ticket & Lagoon Escort Pass',
+          label: 'VIP Yacht Transfer & Lagoon Escort Pass',
           downloadUrl: '#',
           fileSize: '1.6 MB',
         },
@@ -130,9 +130,9 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Day 2',
         date: 'Morning Expedition',
         time: '09:00',
-        title: 'Private Yacht Cruise with Marine Biologist to Coral Atoll',
-        location: 'Baa Atoll UNESCO Biosphere Reserve',
-        description: 'Snorkeling alongside manta rays and gentle whale sharks. Coral planting session with marine conservation team, followed by sashimi lunch on a deserted sandbank.',
+        title: 'Private Yacht Cruise with Marine Biologist to Coral Reef',
+        location: 'Marine Biosphere Reserve',
+        description: 'Snorkeling alongside marine life. Coral planting session with marine conservation team, followed by seafood lunch on a secluded sandbank.',
         category: 'nature',
         image: oceanImg,
         ticket: {
@@ -148,7 +148,7 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         time: '17:30',
         title: 'Overwater Glass-Floor Spa Treatment & Sunset Yoga',
         location: `${hotel} • Floating Wellness Pavilion`,
-        description: 'Soothing body scrub with indigenous sea minerals, aromatherapy wrap, sound healing with Tibetan singing bowls as the sun dips into the Indian Ocean.',
+        description: 'Soothing body scrub with indigenous sea minerals, aromatherapy wrap, sound healing with singing bowls as the sun dips into the horizon.',
         category: 'wellness',
         image: wellnessRetreatImg,
       },
@@ -156,9 +156,9 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Day 4',
         date: 'Dinner Experience',
         time: '19:45',
-        title: 'Sub-aquatic 5-Meter Underwater Wine Cellar Degustation',
-        location: 'SEA Deep Ocean Dining Chamber',
-        description: 'Surrounded by coral reefs illuminated by ambient moonlight. 7-course seafood journey curated by chef and head sommelier.',
+        title: 'Oceanfront Cellar Degustation',
+        location: 'Deep Ocean Dining Chamber',
+        description: 'Surrounded by coastal views illuminated by ambient moonlight. 7-course seafood journey curated by chef and head sommelier.',
         category: 'dining',
         image: sunsetCruiseImg,
       },
@@ -167,8 +167,8 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         date: dep,
         time: '12:00',
         title: 'Speedboat Transfer & VIP Airport Lounge Assistance',
-        location: 'Malé International Seaplane Terminal',
-        description: 'Express bag transfer, customized pearl souvenir presentation, and private lounge access prior to international departure.',
+        location: 'Private Marina Terminal',
+        description: 'Express bag transfer, customized souvenir presentation, and private lounge access prior to international departure.',
         category: 'departure',
         image: mainImg,
         ticket: {
@@ -181,25 +181,25 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
     ];
   }
 
-  // 3. NATURE / RAINFOREST / DESERT (Costa Rica, Oman)
-  if (booking.hotel === 'SOSEI Costa Rica' || booking.hotel === 'SOSEI Oman') {
-    const isDesert = booking.hotel === 'SOSEI Oman';
+  // 3. NATURE / RAINFOREST / AEGEAN (OSA, Tinos)
+  if (booking.hotel === 'SOSEI OSA' || booking.hotel === 'SOSEI Tinos') {
+    const isDesert = booking.hotel === 'SOSEI Tinos';
     const mainImg = isDesert ? omanImg : costaRicaImg;
     return [
       {
         day: 'Day 1',
         date: arr,
         time: '15:00',
-        title: isDesert ? 'Private 4x4 Dune Convoy & Omani Coffee Welcome' : 'Rainforest Cloud Canopy Arrival & Thermal Welcome',
+        title: isDesert ? 'Private Helicopter Arrival & Aegean Welcome' : 'Rainforest Cloud Canopy Arrival & Thermal Welcome',
         location: `${hotel} • Sanctuary Gates`,
         description: isDesert
-          ? 'Traversing towering red sand dunes with experienced desert drivers. Fresh dates, frankincense aroma, and private pavilion check-in.'
+          ? 'Scenic arrival overlooking the Cyclades. Fresh figs, botanical aroma, and private cliffside pavilion check-in.'
           : 'Suspension bridge walk into primary rainforest canopy. Organic lemongrass infusion and private hot springs plunge in-suite.',
         category: 'arrival',
         image: mainImg,
         ticket: {
           code: `${tktCode}-CONVOY`,
-          label: isDesert ? 'Desert 4x4 Convoy & Camel Voucher' : 'Canopy Rainforest Escort Pass',
+          label: isDesert ? 'VIP Aegean Escort Voucher' : 'Canopy Rainforest Escort Pass',
           downloadUrl: '#',
           fileSize: '1.4 MB',
         },
@@ -208,16 +208,16 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Day 2',
         date: 'Morning Safari',
         time: '08:30',
-        title: isDesert ? 'Bedouin Falconry & Arabian Horse Riding over Sunset Dunes' : 'Hanging Bridges Wildlife Trek & Volcanic Thermal Bath',
-        location: isDesert ? 'Wahiba Sands Reserve' : 'Arenal Volcano National Reserve',
+        title: isDesert ? 'Cycladic Marble Village & Coastal Horse Riding' : 'Hanging Bridges Wildlife Trek & Botanical Thermal Bath',
+        location: isDesert ? 'Pyrgos & Aegean Reserve' : 'Corcovado National Reserve',
         description: isDesert
-          ? 'Hands-on falconry demonstration with master falconer followed by gallop across open sands and traditional nomad lunch under tent.'
+          ? 'Private marble sculpting studio visit followed by coastal ride across open headlands and traditional Aegean lunch.'
           : 'Encounter toucans, sloths, and iridescent hummingbirds with senior naturalist. Soak in natural mineral hot spring cascade.',
         category: 'nature',
         image: isDesert ? desertImg : forestImg,
         ticket: {
           code: `${tktCode}-EXP`,
-          label: 'National Park Private Entry & Specialist Ranger Permit',
+          label: 'Reserve Private Entry & Specialist Guide Permit',
           downloadUrl: '#',
           fileSize: '1.1 MB',
         },
@@ -226,10 +226,10 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Day 3',
         date: 'Evening',
         time: '20:00',
-        title: isDesert ? 'Astronomy Stargazing & Bedouin Firepit Feast' : 'Night Canopy Bioluminescent Walk & Farm-to-Table Dinner',
-        location: isDesert ? 'Desert Observatory Dome' : 'Rainforest Organic Greenhouse',
+        title: isDesert ? 'Astronomy Stargazing & Aegean Firepit Feast' : 'Night Canopy Bioluminescent Walk & Farm-to-Table Dinner',
+        location: isDesert ? 'Cliffside Observatory Dome' : 'Rainforest Organic Greenhouse',
         description: isDesert
-          ? 'Deep-sky telescope viewing of the Milky Way without light pollution. Roasted lamb, spiced flatbread, and live oud poetry.'
+          ? 'Deep-sky telescope viewing of the Milky Way without light pollution. Grilled seafood, artisanal flatbread, and live acoustic music.'
           : 'Discover glowing mushrooms, tree frogs, and nocturnal fauna, followed by chef tasting menu using ingredients picked that afternoon.',
         category: 'cultural',
         image: isDesert ? privateDinnerImg : sunsetCruiseImg,
@@ -238,14 +238,14 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
         day: 'Final Day',
         date: dep,
         time: '10:30',
-        title: 'Departure Transfer to Capital & Farewell Gift',
+        title: 'Departure Transfer & Farewell Gift',
         location: `${hotel} • Main Outpost`,
-        description: 'Chauffeured luxury SUV escort to international airport with artisanal craft gifts and custom photography book.',
+        description: 'Chauffeured luxury escort to international airport with artisanal craft gifts and custom photography book.',
         category: 'departure',
         image: mainImg,
         ticket: {
           code: `${tktCode}-SUV`,
-          label: 'Executive SUV Transfer Confirmation',
+          label: 'Executive Transfer Confirmation',
           downloadUrl: '#',
           fileSize: '720 KB',
         },
@@ -253,8 +253,8 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
     ];
   }
 
-  // 4. URBAN / CULTURAL / WELLNESS (Barcelona, Tokyo, Japan, Egypt)
-  const urbanMain = booking.hotel === 'SOSEI Japan' ? japanImg : (booking.hotel === 'SOSEI Egypt' ? egyptImg : urbanImg);
+  // 4. URBAN / CULTURAL / BEACH ESTATE (Barcelona, Umbria, El Gouna)
+  const urbanMain = booking.hotel === 'SOSEI Umbria' ? japanImg : (booking.hotel === 'SOSEI El Gouna' ? egyptImg : urbanImg);
   return [
     {
       day: 'Day 1',

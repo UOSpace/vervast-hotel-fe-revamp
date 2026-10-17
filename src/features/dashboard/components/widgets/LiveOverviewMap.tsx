@@ -9,13 +9,14 @@ const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 /**
  * Slight visual coordinate offsets at low zoom levels so closely-clustered pins
- * (Tokyo vs Kyoto/Japan, Barcelona vs Switzerland) never overlap or steal hover events.
+ * across Europe & Mediterranean never overlap or steal hover events.
  */
 const CLOSE_PIN_OFFSETS: Record<string, [number, number]> = {
-  'sosei-tokyo': [2.8, 0.9],
-  'sosei-japan': [-2.8, -0.9],
-  'sosei-switzerland': [1.0, 1.0],
-  'sosei-barcelona': [-0.8, -0.8],
+  'sosei-andermatt': [0.8, 1.4],
+  'sosei-umbria': [1.6, -0.6],
+  'sosei-barcelona': [-0.8, 0.5],
+  'sosei-melides': [-1.4, -0.8],
+  'sosei-tinos': [1.2, -0.8],
 };
 
 function getDisplayCoordinates(id: string, coords: [number, number], zoom: number): [number, number] {

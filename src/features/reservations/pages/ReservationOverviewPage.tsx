@@ -338,7 +338,7 @@ export function ReservationOverviewPage() {
                     Click any property to focus on its leads, pipeline and booking performance
                   </p>
                 </div>
-                <span className="text-[9.5px] font-medium text-zinc-400">10 Luxury Properties</span>
+                <span className="text-[9.5px] font-medium text-zinc-400">9 Luxury Properties</span>
               </div>
 
               <div className="overflow-x-auto">

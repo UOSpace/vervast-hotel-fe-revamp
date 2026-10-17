@@ -250,7 +250,7 @@ export function RevenueDemandMixDrawerContent({
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">Global Portfolio (10 Properties)</td>
+                <td className="py-3 px-3 text-zinc-500">Global Portfolio (9 Properties)</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.roomRevenue)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.fnbRevenue)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.spaRevenue)}</td>

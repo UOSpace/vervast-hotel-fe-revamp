@@ -17,7 +17,7 @@ export function GuestProfilePage() {
       {/* Header & Back button */}
       <div className="flex justify-between items-end mb-6 animate-card-enter">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">The Anderson Family</h2>
+          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">The Anderson Family (Client Proposal Dashboard)</h2>
           <div className="flex items-center gap-2 mt-1.5 text-zinc-500 text-[10px]">
             <span className="font-semibold text-zinc-900">Loyalty tier: Gold</span>
             <span className="mx-0.5">•</span>
