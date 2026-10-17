@@ -23,12 +23,12 @@ export const JourneyTimelineWidget: React.FC<JourneyTimelineWidgetProps> = ({
       onClick={onOpenDetails}
     >
       <div className="flex justify-between mb-1">
-        <InfoTooltip text="Historical milestone timeline tracking the launch of each SOSEI sanctuary.">
+        <InfoTooltip text="Historical milestone timeline tracking the launch of each SOSEI property.">
           <div>
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">
               Journey Timeline
             </h3>
-            <p className="text-[10px] text-zinc-500 font-medium">SANCTUARY MILESTONES</p>
+            <p className="text-[10px] text-zinc-500 font-medium">PROPERTY MILESTONES</p>
           </div>
         </InfoTooltip>
       </div>

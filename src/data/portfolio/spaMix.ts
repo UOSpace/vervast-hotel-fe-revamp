@@ -2,7 +2,7 @@ import { getForwardWindowMetrics, getPortfolioMetrics, getPropertyMetrics } from
 import type { PortfolioMetrics } from './engine';
 import { PERIOD_DEFS, SYSTEM_DATE_ISO } from './periods';
 import type { PeriodId } from './periods';
-import { getHospitalityRevenuePillars, splitByShares } from './mix';
+import { WELLNESS_SHARE_OF_SPA, splitByShares } from './mix';
 import type { ShareDef } from './mix';
 import { PROPERTY_PROFILES } from './propertyProfiles';
 
@@ -409,9 +409,8 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
   const days = m.days;
 
   /* headline */
-  const pillars = getHospitalityRevenuePillars(m);
-  const spaPillarRevenue = pillars.find((p) => p.id === 'spa')?.value ?? 0;
-  const wellnessRevenue = pillars.find((p) => p.id === 'wellness')?.value ?? 0;
+  const wellnessRevenue = Math.round(m.spaRevenue * WELLNESS_SHARE_OF_SPA);
+  const spaPillarRevenue = m.spaRevenue - wellnessRevenue;
 
   const treatments = m.spa.treatments;
   const spaGuests = Math.round(treatments / SPA_TREATMENTS_PER_SPA_GUEST);

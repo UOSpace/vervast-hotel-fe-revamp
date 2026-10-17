@@ -395,7 +395,7 @@ export function FnbPropertyDashboardPage() {
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
             <span>
-              Period: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
+              As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
             <span>

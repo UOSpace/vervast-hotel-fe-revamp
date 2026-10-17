@@ -29,6 +29,7 @@ import { getCategoryPerformance } from '../services/propertySimulation';
 import { MASTER_CATEGORIES } from '@/constants/categories';
 import {
   getPortfolioMetrics,
+  PERIOD_DEFS,
   fmtUsd,
   fmtPct,
   type PeriodId,
@@ -284,23 +285,18 @@ export function DashboardDrawer() {
         const worldCategories = getCategoryPerformance(activePeriod);
         const pm = getPortfolioMetrics(undefined, activePeriod);
         return (
-          <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-            <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">Geographic distribution and operational property status.</p>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                {pm.propertyCount} Sanctuaries Worldwide
-              </span>
-            </div>
+          <div className="space-y-4 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
               <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
                 <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 shadow-2xs">
                   <tr className="text-left text-zinc-400">
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Collection</th>
+                    <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Categories</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Region / Location</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Occupancy</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
-                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Revenue (USD)</th>
                     <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">RevPAR (USD)</th>
+                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Room Revenue (USD)</th>
+                    <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Total Revenue (USD)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -323,8 +319,9 @@ export function DashboardDrawer() {
                           <td className="py-3 px-3 text-zinc-500 whitespace-nowrap">{prop.location}</td>
                           <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.occ}</td>
                           <td className="py-3 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.adr}</td>
-                          <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
                           <td className="py-3 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revpar}</td>
+                          <td className="py-3 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{fmtUsd(prop.metrics.roomRevenue)}</td>
+                          <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{prop.revenue}</td>
                         </tr>
                         {isExpanded && prop.children.map((child, cIdx) => (
                           <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20 text-zinc-600 dark:text-zinc-400">
@@ -332,8 +329,9 @@ export function DashboardDrawer() {
                             <td className="py-2.5 px-3 text-[10px] text-zinc-400 whitespace-nowrap">{child.location}</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.occ}</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.adr}</td>
-                            <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
                             <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">{child.revpar}</td>
+                            <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{fmtUsd(child.metrics.roomRevenue)}</td>
+                            <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{child.revenue}</td>
                           </tr>
                         ))}
                       </React.Fragment>
@@ -341,11 +339,12 @@ export function DashboardDrawer() {
                   })}
                   <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
-                    <td className="py-3 px-3 text-zinc-500">{pm.propertyCount} Sanctuaries Worldwide</td>
+                    <td className="py-3 px-3 text-zinc-500">{pm.propertyCount} Properties Worldwide</td>
                     <td className="py-3 px-3 text-right text-emerald-700 font-bold">{fmtPct(pm.occupancyPct, 1)}</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.adr)}</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.totalRevenue)}</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.revpar)}</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.roomRevenue)}</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.totalRevenue)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -490,7 +489,7 @@ export function DashboardDrawer() {
           return (
             <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
               <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Sentiment score breakdown by property collection and service touchpoints.</p>
+                <p className="text-xs text-zinc-500">Sentiment score breakdown by property categories and service touchpoints.</p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                   Portfolio Avg: 4.7 / 5.0
                 </span>
@@ -499,7 +498,7 @@ export function DashboardDrawer() {
                 <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
                   <thead className="bg-zinc-50/90 dark:bg-zinc-800/90 shadow-2xs">
                     <tr className="text-left text-zinc-400">
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Collection</th>
+                      <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Categories</th>
                       <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Overall Score</th>
                     </tr>
                   </thead>
@@ -574,7 +573,7 @@ export function DashboardDrawer() {
           return (
             <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
               <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500 font-normal">Recent verified guest feedback & operational reviews across all sanctuaries.</p>
+                <p className="text-xs text-zinc-500 font-normal">Recent verified guest feedback & operational reviews across all properties.</p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
                   Last 8 Reviews
                 </span>
@@ -610,7 +609,7 @@ export function DashboardDrawer() {
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-              <p className="text-xs text-zinc-500">VVIP arrivals schedule and personalized sanctuary arrangements today.</p>
+              <p className="text-xs text-zinc-500">VVIP arrivals schedule and personalized property arrangements today.</p>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                 {dashboardData.guestArrivals.length} Confirmed Guests
               </span>
@@ -621,7 +620,7 @@ export function DashboardDrawer() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">{guest.name}</span>
-                      <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">{guest.property} · <span className="text-zinc-500 font-normal">{guest.suite || 'Grand Sanctuary Villa'}</span></p>
+                      <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">{guest.property} · <span className="text-zinc-500 font-normal">{guest.suite || 'Grand Signature Villa'}</span></p>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[9px] border border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 bg-zinc-900/5 dark:bg-zinc-100/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">VVIP Tier 1</span>
@@ -759,7 +758,7 @@ export function DashboardDrawer() {
       case 'JOURNEY_TIMELINE':
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-            <p className="text-xs text-zinc-500">Historical expansion and milestone sanctuaries of the SOSEI hospitality brand.</p>
+            <p className="text-xs text-zinc-500">Historical expansion and milestone properties of the SOSEI hospitality brand.</p>
             <div className="relative border-l-2 border-zinc-200 dark:border-zinc-800 ml-3 pl-6 space-y-6">
               {dashboardData.journeyTimeline.map((item: any, idx: number) => (
                 <div key={idx} className="relative">
@@ -1012,12 +1011,12 @@ export function DashboardDrawer() {
       case 'DEPARTMENT_REVENUE':
       case 'FNB_DETAIL':
       case 'EXPERIENCE_DETAIL':
-        return 'w-[96vw] sm:w-[940px] lg:w-[1080px] xl:w-[1180px]';
-      case 'TOP_NATIONALITIES':
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
       case 'SPA_DETAIL':
+        return 'w-[96vw] sm:w-[940px] lg:w-[1080px] xl:w-[1180px]';
+      case 'TOP_NATIONALITIES':
       case 'UPCOMING_EVENTS':
         return 'w-[95vw] sm:w-[820px] lg:w-[920px]';
       case 'LIVE_OVERVIEW':
@@ -1046,9 +1045,13 @@ export function DashboardDrawer() {
         className={`fixed top-1/2 left-1/2 z-[70] max-h-[88vh] ${getDrawerWidth()} bg-white dark:bg-zinc-900 shadow-2xl rounded-2xl border border-zinc-200/80 dark:border-zinc-800 flex flex-col overflow-hidden transition-all duration-300 ease-out transform -translate-x-1/2 ${active ? 'opacity-100 scale-100 -translate-y-1/2' : 'opacity-0 scale-95 -translate-y-[45%] pointer-events-none'}`}
       >
         <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 backdrop-blur-sm">
-          <div>
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{config?.title || 'Details'}</h2>
-            <p className="text-[10px] text-zinc-500 font-normal mt-0.5">SOSEI Executive Management & Operational Intelligence</p>
+            {config?.type === 'WORLD_MAP' && (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-zinc-700">
+                <span>As of: {PERIOD_DEFS[activePeriod].periodLabel}</span>
+              </span>
+            )}
           </div>
           <button
             onClick={closeDrawer}

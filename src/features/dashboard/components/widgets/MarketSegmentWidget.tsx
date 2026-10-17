@@ -1,4 +1,10 @@
-import type { PeriodId } from '@/data/portfolio';
+import { RoundAltArrowRight } from '@solar-icons/react';
+import {
+  getPortfolioMetrics,
+  fmtPct,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
 import {
   getMarketSegmentData,
   type MarketSegmentItem,
@@ -10,12 +16,21 @@ interface MarketSegmentWidgetProps {
   onSelectSegment?: (segment: MarketSegmentItem) => void;
 }
 
+const SEGMENT_OCC_OFFSET: Record<string, number> = {
+  leisure: 2.4,
+  business: -1.8,
+  social: -4.2,
+  mice: -3.5,
+  others: -6.8,
+};
+
 export function MarketSegmentWidget({
   period = 'mtd',
   onOpenDetails,
   onSelectSegment,
 }: MarketSegmentWidgetProps) {
   const data = getMarketSegmentData(period);
+  const pm = getPortfolioMetrics(undefined, period);
 
   return (
     <div
@@ -23,7 +38,7 @@ export function MarketSegmentWidget({
       onClick={() => onOpenDetails && onOpenDetails()}
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-start justify-between gap-2 mb-2">
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
             {data.title}
@@ -39,9 +54,9 @@ export function MarketSegmentWidget({
             e.stopPropagation();
             onOpenDetails && onOpenDetails();
           }}
-          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer"
+          className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
         >
-          See details <span>→</span>
+          See details <RoundAltArrowRight size={10} />
         </button>
       </div>
 
@@ -52,45 +67,57 @@ export function MarketSegmentWidget({
             <thead>
               <tr className="border-b border-zinc-100 pb-1">
                 <th className="py-1 text-left text-[9.5px] font-medium text-zinc-400">Segment</th>
-                <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">Room Nights</th>
+                <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">Occupancy</th>
                 <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">ADR</th>
+                <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">RevPAR</th>
                 <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">Revenue</th>
                 <th className="py-1 text-right text-[9.5px] font-medium text-zinc-400">vs LY</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100/80">
-              {data.items.map((item) => (
-                <tr
-                  key={item.id}
-                  onClick={(e) => {
-                    if (onSelectSegment) {
-                      e.stopPropagation();
-                      onSelectSegment(item);
-                    }
-                  }}
-                  className="hover:bg-zinc-100/60 transition-colors cursor-pointer group"
-                >
-                  <td className="py-1.5 text-left text-[10px] font-medium text-zinc-900 group-hover:text-zinc-700">
-                    {item.segment}
-                  </td>
-                  <td className="py-1.5 text-right text-[10px] font-medium text-zinc-600">
-                    {item.roomNightsFormatted}
-                  </td>
-                  <td className="py-1.5 text-right text-[10px] font-medium text-zinc-600">
-                    {item.adrFormatted}
-                  </td>
-                  <td className="py-1.5 text-right text-[10px] font-semibold text-zinc-900">
-                    {item.revenueFormatted}
-                  </td>
-                  <td
-                    className={`py-1.5 text-right text-[9.5px] font-medium ${
-                      item.isPositive ? 'text-[#14532d]' : 'text-[#800020]'
-                    }`}
+              {data.items.map((item) => {
+                const occPct = Math.min(
+                  98,
+                  Math.max(40, pm.occupancyPct + (SEGMENT_OCC_OFFSET[item.id] ?? 0))
+                );
+                const revparUsd = Math.round(item.adrUsd * (occPct / 100));
+
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={(e) => {
+                      if (onSelectSegment) {
+                        e.stopPropagation();
+                        onSelectSegment(item);
+                      }
+                    }}
+                    className="hover:bg-zinc-100/60 transition-colors cursor-pointer group"
                   >
-                    {item.vsLyFormatted}
-                  </td>
-                </tr>
-              ))}
+                    <td className="py-1.5 text-left text-[10px] font-medium text-zinc-900 group-hover:text-zinc-700 whitespace-nowrap">
+                      {item.segment}
+                    </td>
+                    <td className="py-1.5 text-right text-[10px] font-medium text-zinc-600 whitespace-nowrap">
+                      {fmtPct(occPct, 1)}
+                    </td>
+                    <td className="py-1.5 text-right text-[10px] font-medium text-zinc-600 whitespace-nowrap">
+                      {item.adrFormatted}
+                    </td>
+                    <td className="py-1.5 text-right text-[10px] font-medium text-zinc-600 whitespace-nowrap">
+                      {fmtUsdFull(revparUsd)}
+                    </td>
+                    <td className="py-1.5 text-right text-[10px] font-semibold text-zinc-900 whitespace-nowrap">
+                      {item.revenueFormatted}
+                    </td>
+                    <td
+                      className={`py-1.5 text-right text-[9.5px] font-medium whitespace-nowrap ${
+                        item.isPositive ? 'text-[#14532d]' : 'text-[#800020]'
+                      }`}
+                    >
+                      {item.vsLyFormatted}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

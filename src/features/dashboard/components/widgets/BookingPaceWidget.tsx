@@ -1,20 +1,29 @@
+import { useState } from 'react';
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
 import { AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
-import { simulatedBookingPaceData } from '../../services/propertySimulation';
+import { getBookingPaceData, type BookingPaceWindow } from '../../services/propertySimulation';
 import { RoundAltArrowRight } from '@solar-icons/react';
+
+const PACE_WINDOWS: { id: BookingPaceWindow; label: string }[] = [
+  { id: 7, label: '7D' },
+  { id: 14, label: '14D' },
+  { id: 30, label: '30D' },
+  { id: 90, label: '90D' },
+];
 
 interface BookingPaceWidgetProps {
   onOpenDetails?: () => void;
 }
 
 export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
-  const { timeframe, series, summary } = simulatedBookingPaceData;
+  const [windowDays, setWindowDays] = useState<BookingPaceWindow>(90);
+  const { timeframe, series, summary } = getBookingPaceData(undefined, windowDays);
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
       {/* Header */}
       <div className="flex justify-between items-start mb-1">
-        <InfoTooltip text="Measures booking velocity and demand acceleration. Room nights & revenue on-the-books (OTB) for the next 90 days vs same time last year.">
+        <InfoTooltip text="Measures booking velocity and demand acceleration. Room nights & revenue on-the-books (OTB) for the selected forward window vs same time last year.">
           <div>
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">
               BOOKING PACE
@@ -25,16 +34,42 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
           </div>
         </InfoTooltip>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpenDetails?.();
-          }}
-          className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline flex items-center gap-1 transition-colors cursor-pointer"
-        >
-          See details <RoundAltArrowRight size={10} />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Horizon Selector Pill */}
+          <div
+            className="flex items-center bg-zinc-100/90 p-0.5 rounded-md border border-zinc-200/70"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {PACE_WINDOWS.map((h) => (
+              <button
+                key={h.id}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setWindowDays(h.id);
+                }}
+                className={`px-1.5 py-0.5 text-[8.5px] font-bold rounded transition-all cursor-pointer ${
+                  windowDays === h.id
+                    ? 'bg-zinc-900 text-white shadow-2xs'
+                    : 'text-zinc-500 hover:text-zinc-900'
+                }`}
+              >
+                {h.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetails?.();
+            }}
+            className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            See details <RoundAltArrowRight size={10} />
+          </button>
+        </div>
       </div>
 
       {/* Legend */}
@@ -51,7 +86,7 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
 
       {/* Main Body: Chart (Left) + Summary KPIs (Right) */}
       <div className="flex-1 flex flex-col sm:flex-row items-stretch gap-2.5 min-h-[140px]">
-        {/* Left: Next 90 Days Line Chart */}
+        {/* Left: Forward Window Line Chart */}
         <div className="flex-1 h-[140px] sm:h-auto min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={series} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
@@ -73,9 +108,7 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 8.5, fill: '#a1a1aa' }}
-                ticks={[0, 5000, 10000, 15000, 20000]}
-                tickFormatter={(v) => (v === 0 ? '0' : `${v / 1000}K`)}
-                domain={[0, 22000]}
+                tickFormatter={(v) => (v === 0 ? '0' : v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}K` : String(v))}
                 width={30}
               />
               <Tooltip
@@ -118,7 +151,7 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
         </div>
 
         {/* Right: Summary Metric Panel */}
-        <div className="w-full sm:w-[130px] shrink-0 rounded-lg p-2.5 bg-zinc-50/70 border border-zinc-200/60 flex flex-col justify-between text-left">
+        <div className="w-full sm:w-[152px] shrink-0 rounded-lg p-2.5 bg-zinc-50/70 border border-zinc-200/60 flex flex-col justify-between text-left">
           {/* Top Primary Metric */}
           <div>
             <div className="text-[17px] font-bold text-[#14532d] leading-none">
@@ -132,24 +165,28 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
           <div className="border-t border-zinc-200/60 my-1 pt-1 space-y-1">
             {/* Room Nights OTB */}
             <div>
-              <div className="flex items-center justify-between text-[10.5px]">
+              <div className="flex items-center justify-between gap-1 text-[10.5px]">
                 <span className="font-bold text-zinc-900 leading-none">{summary.roomNightsOtb}</span>
-                <span className="text-[8.5px] font-semibold text-[#14532d] leading-none">↑ {summary.roomNightsTrend}</span>
+                <span className="text-[8.5px] font-semibold text-[#14532d] leading-none whitespace-nowrap">
+                  ↑ {summary.roomNightsTrend} vs LY
+                </span>
               </div>
               <div className="text-[8.5px] text-zinc-500 font-normal">Room Nights OTB</div>
             </div>
 
             {/* Revenue OTB */}
             <div>
-              <div className="flex items-center justify-between text-[10.5px]">
+              <div className="flex items-center justify-between gap-1 text-[10.5px]">
                 <span className="font-bold text-zinc-900 leading-none">{summary.revenueOtb}</span>
-                <span className="text-[8.5px] font-semibold text-[#14532d] leading-none">↑ {summary.revenueTrend}</span>
+                <span className="text-[8.5px] font-semibold text-[#14532d] leading-none whitespace-nowrap">
+                  ↑ {summary.revenueTrend} vs LY
+                </span>
               </div>
               <div className="text-[8.5px] text-zinc-500 font-normal">Revenue OTB</div>
             </div>
 
             {/* Pickups */}
-            <div className="pt-0.5 border-t border-zinc-200/40 flex justify-between text-[8.5px] text-zinc-500">
+            <div className="pt-0.5 border-t border-zinc-200/40 flex justify-between text-[8.5px] text-zinc-500 whitespace-nowrap">
               <span>Pickup 7d: <strong className="text-zinc-800 font-semibold">{summary.pickup7d}</strong></span>
               <span>30d: <strong className="text-zinc-800 font-semibold">{summary.pickup30d}</strong></span>
             </div>

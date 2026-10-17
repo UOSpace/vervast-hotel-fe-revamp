@@ -187,7 +187,7 @@ export function PropertyHeaderWidget({
           )}
           {/* Main Date Range */}
           <div className="flex flex-col gap-1">
-            <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Period:</span>
+            <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">As of:</span>
             <div className="relative flex items-center">
               <DatePicker
                 portalId="datepicker-portal"

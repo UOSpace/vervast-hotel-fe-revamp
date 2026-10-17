@@ -49,7 +49,7 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Europe & Mediterranean',
     shortName: 'EUROPE',
     img: europeImg,
-    description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean coastal sanctuaries.',
+    description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean coastal properties.',
     countries: ['Spain', 'Switzerland', 'France', 'Italy', 'United Kingdom'],
   },
   {
@@ -67,7 +67,7 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Middle East & Arabian Gulf',
     shortName: 'MIDDLE EAST',
     img: middleEastImg,
-    description: 'Oasis healing sanctuaries, dramatic canyon valleys, and desert wellness architecture.',
+    description: 'Oasis healing properties, dramatic canyon valleys, and desert wellness architecture.',
     countries: ['Oman', 'Saudi Arabia', 'United Arab Emirates', 'Qatar'],
   },
   {

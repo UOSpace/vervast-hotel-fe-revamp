@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import { useNavigate } from 'react-router-dom';
 import {
   getPortfolioComparisonData,
-  getSimulatedPropertiesData,
 } from '../../services/propertySimulation';
 import {
   getPortfolioMetrics,
@@ -32,6 +32,7 @@ export function PortfolioComparisonDrawerContent(
     (config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon)) ||
     'mtd';
   const [period, setPeriod] = useState<PeriodId>(initialPeriod);
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const nextPeriod =
@@ -43,7 +44,6 @@ export function PortfolioComparisonDrawerContent(
 
   const periodDef = PERIOD_DEFS[period];
   const comparisonData = getPortfolioComparisonData(period);
-  const propertiesData = getSimulatedPropertiesData(period);
   const portfolioMetrics = getPortfolioMetrics(undefined, period);
   const customData = Array.isArray(config?.data) ? config.data : null;
 
@@ -99,7 +99,7 @@ export function PortfolioComparisonDrawerContent(
     items[items.length - 1];
 
   const heroTopRev = {
-    title: customData ? 'Top Revenue Sanctuary' : 'Top Revenue Driver',
+    title: customData ? 'Top Revenue Property' : 'Top Revenue Driver',
     val: topRevItem?.property || 'SOSEI Ski',
     tag: `↑ ${topRevItem?.growthVsLy || '+14%'} vs LY`,
     sub: `${topRevItem?.totalRevenueFormatted || '$34.5M'} Total`,
@@ -140,8 +140,8 @@ export function PortfolioComparisonDrawerContent(
             {config?.title || 'Portfolio Comparison & Collection Benchmarks'} ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Direct comparison of Occupancy, ADR, RevPAR, and revenue pacing across collections and sanctuaries ·{' '}
-            <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
+            Direct comparison of Occupancy, ADR, RevPAR, and revenue pacing across collections and properties ·{' '}
+            As of: <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export function PortfolioComparisonDrawerContent(
                       : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
                   }`}
                 >
-                  {h === 'today' ? 'Today' : h.toUpperCase()}
+                  {h === 'today' ? 'Yesterday' : h.toUpperCase()}
                 </button>
               );
             })}
@@ -229,14 +229,19 @@ export function PortfolioComparisonDrawerContent(
 
       {/* Primary Collection Comparison Table */}
       <div>
-        <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-2">
-          Collection Performance League ({periodDef.label})
-        </h5>
+        <div className="flex justify-between items-center mb-2 px-0.5">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
+            Property Categories Performance League ({periodDef.label})
+          </h5>
+          <span className="text-[9.5px] text-zinc-400">
+            Click category row to expand individual properties
+          </span>
+        </div>
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-2xs">
           <table className="w-full min-w-[760px] text-xs text-zinc-800 border-separate border-spacing-0">
             <thead>
               <tr className="text-zinc-500 bg-zinc-50/80">
-                <th className="py-2.5 px-3 text-left font-semibold text-[10px] border-b border-zinc-200">Property</th>
+                <th className="py-2.5 px-3 text-left font-semibold text-[10px] border-b border-zinc-200">Property Categories</th>
                 <th className="py-2.5 px-3 text-left font-semibold text-[10px] border-b border-zinc-200">Destination</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Occupancy</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">ADR (USD)</th>
@@ -245,81 +250,156 @@ export function PortfolioComparisonDrawerContent(
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Total Revenue</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">vs LY</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">vs Budget</th>
-                <th className="py-2.5 px-3 text-center font-semibold text-[10px] border-b border-zinc-200">Status</th>
               </tr>
             </thead>
             <tbody>
-              {items.map((item: any, idx: number) => (
-                <tr
-                  key={item.id}
-                  onClick={() => item.propertyRoute && navigate(item.propertyRoute)}
-                  className={`hover:bg-zinc-50 transition-colors cursor-pointer group ${
-                    idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/30'
-                  }`}
-                >
-                  <td className="py-3 px-3 font-bold text-zinc-900 group-hover:text-zinc-700 border-b border-zinc-100">
-                    {item.property}
-                  </td>
-                  <td className="py-3 px-3 text-zinc-500 border-b border-zinc-100">
-                    {item.location}
-                  </td>
-                  <td className="py-3 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">
-                    {item.occupancy}
-                  </td>
-                  <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
-                    {item.adrFormatted}
-                  </td>
-                  <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
-                    {item.revparFormatted}
-                  </td>
-                  <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
-                    {item.roomRevenueFormatted}
-                  </td>
-                  <td className="py-3 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
-                    {item.totalRevenueFormatted}
-                  </td>
-                  <td className="py-3 px-3 text-right border-b border-zinc-100">
-                    <span
-                      className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded font-semibold text-[10px] ${
-                        item.growthVsLyNum > 0
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                          : item.growthVsLyNum < 0
-                          ? 'bg-rose-50 text-rose-700 border border-rose-100'
-                          : 'bg-zinc-100 text-zinc-600 border border-zinc-200'
+              {items.map((item: any, idx: number) => {
+                const isExpanded = !!expandedRows[item.id];
+                const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+                return (
+                  <React.Fragment key={item.id}>
+                    <tr
+                      onClick={() => {
+                        if (hasChildren) {
+                          setExpandedRows((prev) => ({
+                            ...prev,
+                            [item.id]: !prev[item.id],
+                          }));
+                        } else if (item.propertyRoute) {
+                          navigate(item.propertyRoute);
+                        }
+                      }}
+                      className={`hover:bg-zinc-50 transition-colors cursor-pointer group ${
+                        isExpanded
+                          ? 'bg-zinc-50/80'
+                          : idx % 2 === 0
+                          ? 'bg-white'
+                          : 'bg-zinc-50/30'
                       }`}
                     >
-                      {item.growthVsLyNum > 0 ? '↑' : item.growthVsLyNum < 0 ? '↓' : '—'} {item.growthVsLy}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-right border-b border-zinc-100">
-                    <span
-                      className={`inline-flex items-center gap-0.5 font-medium text-[10px] ${
-                        item.vsBudgetNum > 0
-                          ? 'text-emerald-700'
-                          : item.vsBudgetNum < 0
-                          ? 'text-rose-600'
-                          : 'text-zinc-500'
-                      }`}
-                    >
-                      {item.vsBudgetNum > 0 ? '↑' : item.vsBudgetNum < 0 ? '↓' : '—'} {item.vsBudget}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-center border-b border-zinc-100">
-                    <span
-                      className={`inline-block w-2.5 h-2.5 rounded-full ${
-                        item.status === 'above_plan'
-                          ? 'bg-[#14532d]'
-                          : item.status === 'on_plan'
-                          ? 'bg-zinc-400'
-                          : 'bg-[#800020]'
-                      }`}
-                    />
-                  </td>
-                </tr>
-              ))}
+                      <td className="py-3 px-3 font-bold text-zinc-900 group-hover:text-zinc-700 border-b border-zinc-100 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          {hasChildren && (
+                            <span className="text-zinc-400">
+                              {isExpanded ? (
+                                <RoundAltArrowDown size={14} />
+                              ) : (
+                                <RoundAltArrowRight size={14} />
+                              )}
+                            </span>
+                          )}
+                          <span>{item.property}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-zinc-500 border-b border-zinc-100">
+                        {item.location}
+                      </td>
+                      <td className="py-3 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">
+                        {item.occupancy}
+                      </td>
+                      <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
+                        {item.adrFormatted}
+                      </td>
+                      <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
+                        {item.revparFormatted}
+                      </td>
+                      <td className="py-3 px-3 text-right font-medium text-zinc-800 border-b border-zinc-100">
+                        {item.roomRevenueFormatted}
+                      </td>
+                      <td className="py-3 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
+                        {item.totalRevenueFormatted}
+                      </td>
+                      <td className="py-3 px-3 text-right border-b border-zinc-100">
+                        <span
+                          className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded font-semibold text-[10px] ${
+                            item.growthVsLyNum > 0
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                              : item.growthVsLyNum < 0
+                              ? 'bg-rose-50 text-rose-700 border border-rose-100'
+                              : 'bg-zinc-100 text-zinc-600 border border-zinc-200'
+                          }`}
+                        >
+                          {item.growthVsLyNum > 0 ? '↑' : item.growthVsLyNum < 0 ? '↓' : '—'} {item.growthVsLy}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right border-b border-zinc-100">
+                        <span
+                          className={`inline-flex items-center gap-0.5 font-medium text-[10px] ${
+                            item.vsBudgetNum > 0
+                              ? 'text-emerald-700'
+                              : item.vsBudgetNum < 0
+                              ? 'text-rose-600'
+                              : 'text-zinc-500'
+                          }`}
+                        >
+                          {item.vsBudgetNum > 0 ? '↑' : item.vsBudgetNum < 0 ? '↓' : '—'} {item.vsBudget}
+                        </span>
+                      </td>
+                    </tr>
+
+                    {isExpanded &&
+                      item.children?.map((child: any) => (
+                        <tr
+                          key={`${item.id}-${child.id}`}
+                          onClick={() => child.propertyRoute && navigate(child.propertyRoute)}
+                          className="bg-zinc-50/40 hover:bg-zinc-100/50 transition-colors cursor-pointer text-[11px]"
+                        >
+                          <td className="py-2 pl-9 pr-3 font-medium text-zinc-700 border-b border-zinc-100/80 whitespace-nowrap">
+                            <span className="text-zinc-300 mr-1.5">└</span>
+                            {child.property}
+                          </td>
+                          <td className="py-2 px-3 text-zinc-400 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.location}
+                          </td>
+                          <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.occupancy}
+                          </td>
+                          <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.adrFormatted}
+                          </td>
+                          <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.revparFormatted}
+                          </td>
+                          <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.roomRevenueFormatted}
+                          </td>
+                          <td className="py-2 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100/80 whitespace-nowrap">
+                            {child.totalRevenueFormatted}
+                          </td>
+                          <td className="py-2 px-3 text-right border-b border-zinc-100/80 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center gap-0.5 text-[9.5px] font-medium ${
+                                child.growthVsLyNum > 0
+                                  ? 'text-emerald-700'
+                                  : child.growthVsLyNum < 0
+                                  ? 'text-rose-600'
+                                  : 'text-zinc-500'
+                              }`}
+                            >
+                              {child.growthVsLyNum > 0 ? '↑' : child.growthVsLyNum < 0 ? '↓' : '—'} {child.growthVsLy}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-right border-b border-zinc-100/80 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center gap-0.5 text-[9.5px] font-medium ${
+                                child.vsBudgetNum > 0
+                                  ? 'text-emerald-700'
+                                  : child.vsBudgetNum < 0
+                                  ? 'text-rose-600'
+                                  : 'text-zinc-500'
+                              }`}
+                            >
+                              {child.vsBudgetNum > 0 ? '↑' : child.vsBudgetNum < 0 ? '↓' : '—'} {child.vsBudget}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                  </React.Fragment>
+                );
+              })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Portfolio Total / Average</td>
-                <td className="py-3 px-3 text-zinc-500">10 Sanctuaries · 5 Collections</td>
+                <td className="py-3 px-3 text-zinc-500">10 Properties · 5 Collections</td>
                 <td className="py-3 px-3 text-right text-emerald-700">{fmtPct(portfolioMetrics.occupancyPct, 1)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.adr)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.revpar)}</td>
@@ -331,89 +411,7 @@ export function PortfolioComparisonDrawerContent(
                 <td className="py-3 px-3 text-right text-emerald-700">
                   ↑ {fmtSignedPct(portfolioMetrics.vsBudget.totalRevenuePct)}
                 </td>
-                <td className="py-3 px-3 text-center">
-                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#14532d]" />
-                </td>
               </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Sanctuary Level Roster (All 10 Sanctuaries - 100% SSOT Data) */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Sanctuary Roster (10 Properties Live Audit — {periodDef.label})
-          </h5>
-          <span className="text-[10px] text-zinc-400">
-            Click any sanctuary to inspect inventory
-          </span>
-        </div>
-
-        <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-2xs">
-          <table className="w-full min-w-[700px] text-xs text-zinc-800 border-separate border-spacing-0">
-            <thead>
-              <tr className="text-zinc-500 bg-zinc-50/80">
-                <th className="py-2.5 px-3 text-left font-semibold text-[10px] border-b border-zinc-200">Sanctuary</th>
-                <th className="py-2.5 px-3 text-left font-semibold text-[10px] border-b border-zinc-200">Grouping</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Keys</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Occ %</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">ADR</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">RevPAR</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">{periodDef.label} Revenue</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {propertiesData.map((prop, idx) => (
-                <tr
-                  key={prop.id}
-                  onClick={() => navigate('/dashboard/property')}
-                  className={`hover:bg-zinc-50 transition-colors cursor-pointer ${
-                    idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/30'
-                  }`}
-                >
-                  <td className="py-2.5 px-3 font-bold text-zinc-900 border-b border-zinc-100">
-                    {prop.name}
-                  </td>
-                  <td className="py-2.5 px-3 text-zinc-500 text-[10px] border-b border-zinc-100">
-                    {prop.grouping} · {prop.city}
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-zinc-700 border-b border-zinc-100">
-                    {prop.totalRooms} Keys
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">
-                    {prop.occupancyFormatted}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
-                    {prop.adrFormatted}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
-                    {prop.revparFormatted}
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
-                    {prop.revenueFormatted}
-                  </td>
-                  <td className="py-2.5 px-3 text-right border-b border-zinc-100">
-                    <span
-                      className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${
-                        prop.status === 'above_plan'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                          : prop.status === 'on_plan'
-                          ? 'bg-zinc-100 text-zinc-700 border border-zinc-200'
-                          : 'bg-rose-50 text-rose-600 border border-rose-100'
-                      }`}
-                    >
-                      {prop.status === 'above_plan'
-                        ? 'Above Plan'
-                        : prop.status === 'on_plan'
-                        ? 'On Plan'
-                        : 'Attention'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>

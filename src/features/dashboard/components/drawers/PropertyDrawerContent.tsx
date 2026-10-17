@@ -30,7 +30,7 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
 
   const arrivalList = [
     { name: 'Lord & Lady Harrington', suite: 'Signature Penthouse 12', time: '14:30', vip: 'Ultra VIP', butler: 'Jean-Paul', notes: 'Private luxury transfer, vintage Krug in suite' },
-    { name: 'Ambassador Philippe Chen', suite: 'Sanctuary Suite 402', time: '15:15', vip: 'Diplomatic', butler: 'Marc', notes: 'High-security discreet entrance, diplomatic escort' },
+    { name: 'Ambassador Philippe Chen', suite: 'Signature Suite 402', time: '15:15', vip: 'Diplomatic', butler: 'Marc', notes: 'High-security discreet entrance, diplomatic escort' },
     { name: 'Dr. & Mrs. Kenji Sato', suite: 'Reserve Villa 204', time: '16:00', vip: 'Privilege Member', butler: 'Sophie', notes: 'Anniversary celebration, custom thermal bath' },
     { name: 'Countess Beatrix Von Berg', suite: 'Panorama Suite 308', time: '17:30', vip: 'VVIP Returning', butler: 'Jean-Paul', notes: 'Gluten-free bespoke menu, private view terrace' },
     { name: 'Mr. David Sterling', suite: 'Estate Pavilion 08', time: '18:15', vip: 'Executive Member', butler: 'Marc', notes: 'Private sommelier tasting scheduled at 19:00' },

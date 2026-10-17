@@ -8,7 +8,6 @@ import { ForwardBusinessWidget } from '../components/widgets/ForwardBusinessWidg
 import { SOSEISignalsWidget } from '../components/widgets/SoseiSignalsWidget';
 import { GeoMarketWidget } from '../components/widgets/GeoMarketWidget';
 import { MarketSegmentWidget } from '../components/widgets/MarketSegmentWidget';
-import { PortfolioComparisonWidget } from '../components/widgets/PortfolioComparisonWidget';
 import { DashboardHeaderWidget } from '../components/widgets/DashboardHeaderWidget';
 import { RoundAltArrowRight } from '@solar-icons/react';
 import { ResortTypeDashboard } from './ResortTypeDashboard';
@@ -29,7 +28,8 @@ export function DashboardPage() {
 
   const { openDrawer } = useDashboardDrawer();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
+  const [mapHorizon, setMapHorizon] = useState<TimeHorizon>('mtd');
+  const [kpiHorizon, setKpiHorizon] = useState<TimeHorizon>('mtd');
 
   // Ensure scroll container is always reset to the top when navigating or switching views
   useEffect(() => {
@@ -63,38 +63,62 @@ export function DashboardPage() {
           <div className="col-span-12 flex flex-col lg:flex-row gap-4 items-stretch">
             {/* Map — Large 56% */}
             <div className="w-full lg:w-[56%] shrink-0 flex flex-col justify-between">
-              <div className="px-1 flex items-center justify-between shrink-0 mb-2 min-h-[32px]">
+              <div className="px-1 flex items-center justify-between gap-2 shrink-0 mb-2 min-h-[32px]">
                 <div>
-                  <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR.">
+                  <InfoTooltip text="Interactive world map showing property, occupancy, ADR, RevPAR, and room revenue for the selected period.">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help leading-tight">
                       WORLD MAP
                     </h3>
                   </InfoTooltip>
                   <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-                    Interactive Portfolio Footprint · 10 Properties · {PERIOD_DEFS[horizon].periodLabel}
+                    Date: <span className="font-semibold text-zinc-800">{PERIOD_DEFS[mapHorizon].periodLabel}</span>
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details', data: { horizon } })}
-                  className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  See details <RoundAltArrowRight size={10} />
-                </button>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="inline-flex items-center p-0.5 bg-zinc-200/60 rounded-md shrink-0">
+                    {(['today', 'mtd', 'ytd'] as const).map((h) => {
+                      const isActive = mapHorizon === h;
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => setMapHorizon(h)}
+                          title={PERIOD_DEFS[h].periodLabel}
+                          className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-zinc-900 text-white shadow-xs'
+                              : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                          }`}
+                        >
+                          {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details', data: { horizon: mapHorizon } })}
+                    className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    See details <RoundAltArrowRight size={10} />
+                  </button>
+                </div>
               </div>
               <div
                 className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter backdrop-blur-sm transition-all z-20 hover:z-40 min-h-[260px]"
                 style={{ animationDelay: '0.1s' }}
               >
-                <LiveOverviewMap period={horizon} />
+                <LiveOverviewMap period={mapHorizon} />
               </div>
             </div>
 
             {/* Right Column — 44% (5 Financial Heart KPI Cards) */}
             <div className="w-full lg:w-[44%] flex flex-col">
               <PortfolioKpisWidget
-                horizon={horizon}
-                onChangeHorizon={setHorizon}
+                horizon={kpiHorizon}
+                onChangeHorizon={setKpiHorizon}
                 onOpenMetricDrawer={(metric, value, h) =>
                   openDrawer({
                     type: 'METRIC',
@@ -141,11 +165,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
               style={{ animationDelay: '0.4s' }}
-              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon } })}
+              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon: kpiHorizon } })}
             >
               <RevenueDemandMixWidget
-                period={horizon}
-                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon } })}
+                period={kpiHorizon}
+                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon: kpiHorizon } })}
               />
             </div>
           </div>
@@ -156,11 +180,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.5s' }}
-              onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon } })}
+              onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon: kpiHorizon } })}
             >
               <GeoMarketWidget
-                period={horizon}
-                onOpenDetails={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon } })}
+                period={kpiHorizon}
+                onOpenDetails={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon: kpiHorizon } })}
               />
             </div>
 
@@ -168,11 +192,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.55s' }}
-              onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon } })}
+              onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon: kpiHorizon } })}
             >
               <MarketSegmentWidget
-                period={horizon}
-                onOpenDetails={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon } })}
+                period={kpiHorizon}
+                onOpenDetails={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon: kpiHorizon } })}
               />
             </div>
 
@@ -180,25 +204,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.6s' }}
-              onClick={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon } })}
+              onClick={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon: kpiHorizon } })}
             >
               <SOSEISignalsWidget
-                period={horizon}
-                onOpenDetails={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon } })}
-              />
-            </div>
-          </div>
-
-          {/* ROW 4 — 100% Full-Width Portfolio Comparison */}
-          <div className="col-span-12">
-            <div
-              className="relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm"
-              style={{ animationDelay: '0.65s' }}
-              onClick={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: `Portfolio Comparison (${PERIOD_DEFS[horizon].periodLabel})`, data: { horizon } })}
-            >
-              <PortfolioComparisonWidget
-                period={horizon}
-                onOpenDetails={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: `Portfolio Comparison (${PERIOD_DEFS[horizon].periodLabel})`, data: { horizon } })}
+                period={kpiHorizon}
+                onOpenDetails={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon: kpiHorizon } })}
               />
             </div>
           </div>

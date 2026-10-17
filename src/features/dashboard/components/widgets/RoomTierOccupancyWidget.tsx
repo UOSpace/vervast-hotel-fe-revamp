@@ -39,7 +39,7 @@ export const roomTierOccupancyData: RoomTierItem[] = [
   },
   {
     tier: 'Garden & Forest Pavilions',
-    category: 'Sanctuary Pavilion Tier',
+    category: 'Property Pavilion Tier',
     occupancy: '74.00%',
     percentage: 74.0,
     adr: '$1,180',

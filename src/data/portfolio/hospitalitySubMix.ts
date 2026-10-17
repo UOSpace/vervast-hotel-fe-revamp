@@ -174,11 +174,11 @@ export const PROPERTY_ROOM_TIERS: Record<string, RoomTierDef[]> = {
     { name: 'Cliffside Ocean Villa', keyShare: 28, occDelta: 5 },
     { name: 'Coral Reef Suite', keyShare: 24, occDelta: 1 },
     { name: 'Tropical Garden Pavilion', keyShare: 18, occDelta: -2 },
-    { name: 'Sanctuary Pool Residence', keyShare: 12, occDelta: -7 },
+    { name: 'Signature Pool Residence', keyShare: 12, occDelta: -7 },
   ],
   'sosei-maldives': [
     { name: 'Overwater Sunset Villa', keyShare: 24, occDelta: 6 },
-    { name: 'Lagoon Sanctuary Pool Suite', keyShare: 20, occDelta: 0 },
+    { name: 'Lagoon Signature Pool Suite', keyShare: 20, occDelta: 0 },
     { name: 'Oceanfront Beach Pavilion', keyShare: 14, occDelta: -2 },
     { name: 'Private Atoll Residence', keyShare: 10, occDelta: -7 },
   ],
@@ -203,7 +203,7 @@ export const PROPERTY_ROOM_TIERS: Record<string, RoomTierDef[]> = {
   'sosei-japan': [
     { name: 'Hakone Forest Tatami Suite', keyShare: 18, occDelta: 6 },
     { name: 'Onsen Heritage Villa', keyShare: 16, occDelta: 2 },
-    { name: 'Bamboo Sanctuary Room', keyShare: 14, occDelta: -2 },
+    { name: 'Bamboo Heritage Room', keyShare: 14, occDelta: -2 },
     { name: 'Zen Mountain Pavilion', keyShare: 10, occDelta: -7 },
   ],
   'sosei-oman': [
@@ -216,7 +216,7 @@ export const PROPERTY_ROOM_TIERS: Record<string, RoomTierDef[]> = {
     { name: 'Nile Starlight Pavilion', keyShare: 22, occDelta: 6 },
     { name: 'Pharaonic Heritage Suite', keyShare: 20, occDelta: 2 },
     { name: 'Dunes Oasis Tent Suite', keyShare: 16, occDelta: -2 },
-    { name: 'Mineral Spring Sanctuary', keyShare: 14, occDelta: -8 },
+    { name: 'Mineral Spring Residence', keyShare: 14, occDelta: -8 },
   ],
 };
 
@@ -358,7 +358,7 @@ interface RhythmDef {
 const RHYTHM_DEFS: RhythmDef[] = [
   { department: 'Arrivals & Check-in', peak: '2:00 PM – 4:00 PM', baseLoad: 85, staffPerRoom: 0.07, staffLabel: 'Butlers / Front Desk' },
   { department: 'F&B & Fine Dining', peak: '7:00 PM – 9:30 PM', baseLoad: 92, staffPerRoom: 0.13, staffLabel: 'Culinary & Sommeliers' },
-  { department: 'Spa & Wellness Sanctuary', peak: '3:00 PM – 6:00 PM', baseLoad: 75, staffPerRoom: 0.055, staffLabel: 'Therapists & Practitioners' },
+  { department: 'Spa & Wellness Center', peak: '3:00 PM – 6:00 PM', baseLoad: 75, staffPerRoom: 0.055, staffLabel: 'Therapists & Practitioners' },
   { department: 'Housekeeping & Turn-down', peak: '10:00 AM – 1:00 PM', baseLoad: 90, staffPerRoom: 0.11, staffLabel: 'Attendants & Supervisors' },
 ];
 
@@ -366,7 +366,7 @@ const HOURLY_DEFS: Array<RhythmDef & { time: string }> = [
   { time: '07:00 – 09:30', department: 'In-Room Breakfast & Dining', peak: '', baseLoad: 78, staffPerRoom: 0.09, staffLabel: 'Culinary / Waitstaff' },
   { time: '10:00 – 13:00', department: 'Housekeeping & Midday Turn-down', peak: '', baseLoad: 90, staffPerRoom: 0.11, staffLabel: 'Attendants & Supervisors' },
   { time: '14:00 – 16:00', department: 'Front Desk & Guest Arrivals', peak: '', baseLoad: 85, staffPerRoom: 0.07, staffLabel: 'Butlers / Valet Reception' },
-  { time: '15:00 – 18:00', department: 'Thermal Spa & Recovery Sanctuary', peak: '', baseLoad: 75, staffPerRoom: 0.055, staffLabel: 'Therapists & Attendants' },
+  { time: '15:00 – 18:00', department: 'Thermal Spa & Recovery Center', peak: '', baseLoad: 75, staffPerRoom: 0.055, staffLabel: 'Therapists & Attendants' },
   { time: '19:00 – 21:30', department: 'F&B Fine Dining & Sommelier Bar', peak: '', baseLoad: 92, staffPerRoom: 0.13, staffLabel: 'Culinary & Sommeliers' },
   { time: '21:30 – 23:00', department: 'Evening Turn-down & Concierge Bar', peak: '', baseLoad: 60, staffPerRoom: 0.055, staffLabel: 'Night Concierge & Porters' },
 ];
@@ -441,7 +441,7 @@ interface EventDef {
 }
 
 const DEFAULT_EVENT_DEFS: EventDef[] = [
-  { title: 'Bespoke Curated Sanctuary Retreat', date: 'Oct 19 – Oct 22, 2026', category: 'Wellness Retreat', revenueSharePct: 1.1, attendeeSharePct: 0.9 },
+  { title: 'Bespoke Curated Property Retreat', date: 'Oct 19 – Oct 22, 2026', category: 'Wellness Retreat', revenueSharePct: 1.1, attendeeSharePct: 0.9 },
   { title: 'Exclusive Estate Buyout', date: 'Oct 25 – Oct 28, 2026', category: 'Private Event', revenueSharePct: 1.8, attendeeSharePct: 1.4 },
   { title: 'Signature Culinary Masterclass', date: 'Nov 04, 2026', category: 'Culinary', revenueSharePct: 0.3, attendeeSharePct: 1.1 },
 ];
@@ -453,7 +453,7 @@ const PROPERTY_EVENT_DEFS: Record<string, EventDef[]> = {
     { title: 'Mediterranean Sommelier Grand Tasting', date: 'Nov 03, 2026', category: 'Culinary Gala', revenueSharePct: 0.4, attendeeSharePct: 1.9 },
   ],
   'sosei-switzerland': [
-    { title: 'Alpine Peak Wellness Retreat', date: 'Oct 19 – Oct 22, 2026', category: 'Wellness Sanctuary', revenueSharePct: 1.1, attendeeSharePct: 0.9 },
+    { title: 'Alpine Peak Wellness Retreat', date: 'Oct 19 – Oct 22, 2026', category: 'Wellness Retreat', revenueSharePct: 1.1, attendeeSharePct: 0.9 },
     { title: 'Zermatt Private Chalet Buyout', date: 'Oct 24 – Oct 27, 2026', category: 'Corporate Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.4 },
     { title: 'Matterhorn Sommeliers Evening', date: 'Nov 02, 2026', category: 'Culinary Gala', revenueSharePct: 0.3, attendeeSharePct: 1.7 },
   ],

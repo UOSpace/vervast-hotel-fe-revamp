@@ -1,3 +1,4 @@
+import { RoundAltArrowRight } from '@solar-icons/react';
 import type { PeriodId } from '@/data/portfolio';
 import {
   getSOSEISignalsData,
@@ -63,9 +64,9 @@ export function SOSEISignalsWidget({
             e.stopPropagation();
             onOpenDetails && onOpenDetails();
           }}
-          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer"
+          className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
         >
-          See all signals <span>→</span>
+          See details <RoundAltArrowRight size={10} />
         </button>
       </div>
 

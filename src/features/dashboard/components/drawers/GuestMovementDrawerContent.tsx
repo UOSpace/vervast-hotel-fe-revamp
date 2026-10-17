@@ -49,7 +49,7 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
         <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
           <thead className="bg-zinc-50/90 dark:bg-zinc-800/90">
             <tr className="text-left text-zinc-400">
-              <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Collection</th>
+              <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Categories</th>
               <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">In-House Guests</th>
               <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Arrivals Today</th>
               <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Departures Today</th>
@@ -69,7 +69,7 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (10 Sanctuaries)</td>
+              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (10 Properties)</td>
               <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">2,847</td>
               <td className="py-3 px-3 text-right text-emerald-700">+535</td>
               <td className="py-3 px-3 text-right text-zinc-500">-455</td>

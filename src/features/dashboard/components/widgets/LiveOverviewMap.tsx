@@ -1,35 +1,11 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
-import type { PeriodId } from '@/data/portfolio';
+import { fmtUsd, type PeriodId } from '@/data/portfolio';
 import { getSimulatedPropertiesData, type SimulatedPropertyMapItem } from '../../services/propertySimulation';
+import { getUserLocationAndTimezone } from './DashboardHeaderWidget';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
-
-// Subtle status indicators as requested:
-// - performing above plan (emerald)
-// - on plan (neutral zinc)
-// - attention (rose/amber)
-const statusConfig: Record<string, { dotColor: string; badgeBg: string; badgeText: string; label: string }> = {
-  above_plan: {
-    dotColor: '#14532d', // deep dark green / hijau tua
-    badgeBg: '#ecfdf5',
-    badgeText: '#14532d',
-    label: 'Performing above plan',
-  },
-  on_plan: {
-    dotColor: '#71717a', // clean neutral zinc
-    badgeBg: '#f4f4f5',
-    badgeText: '#52525b',
-    label: 'On plan',
-  },
-  attention: {
-    dotColor: '#800020', // deep maroon
-    badgeBg: '#fff1f2',
-    badgeText: '#800020',
-    label: 'Attention',
-  },
-};
 
 /**
  * Slight visual coordinate offsets at low zoom levels so closely-clustered pins
@@ -73,10 +49,6 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
       ]
     : propertiesData;
 
-  const handleSelectProperty = (propertyId: string) => {
-    navigate(`/dashboard/property?id=${propertyId}`);
-  };
-
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
     setPosition(newPosition);
     setHoveredInfo(null);
@@ -98,7 +70,8 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
   };
 
   const updateHoveredFromEvent = (item: SimulatedPropertyMapItem, target: SVGGElement) => {
-    const rect = target.getBoundingClientRect();
+    const anchor = target.querySelector('[data-pin-anchor]') ?? target;
+    const rect = anchor.getBoundingClientRect();
     const containerRect = containerRef.current?.getBoundingClientRect();
     if (containerRect) {
       setHoveredInfo({
@@ -110,22 +83,22 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
   };
 
   // Popover positioning calculations
-  const CARD_WIDTH = 250;
-  const CARD_HEIGHT = 115;
+  const CARD_WIDTH = 284;
+  const PIN_OFFSET = 15;
   let top = 0;
   let left = 0;
   let isFlipDown = false;
-  let arrowLeft = 125;
+  let arrowLeft = 142;
 
   if (hoveredInfo && hoveredItem && containerRef.current) {
     const containerWidth = containerRef.current.clientWidth;
-    // Flip downward if marker is in the upper part of the widget
-    isFlipDown = hoveredInfo.y < 130;
+    // Flip downward if marker is in the upper half of the widget
+    isFlipDown = hoveredInfo.y < 155;
 
     if (isFlipDown) {
-      top = hoveredInfo.y + 14;
+      top = hoveredInfo.y + PIN_OFFSET;
     } else {
-      top = hoveredInfo.y - CARD_HEIGHT - 14;
+      top = hoveredInfo.y - PIN_OFFSET;
     }
 
     // Centered horizontally over the pin
@@ -142,7 +115,9 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
     arrowLeft = Math.max(16, Math.min(CARD_WIDTH - 16, hoveredInfo.x - left));
   }
 
-  const periodShortLabel = period === 'today' ? 'Today' : period.toUpperCase();
+  const { lastUpdatedLabel } = getUserLocationAndTimezone();
+
+  const mapDateBadgeLabel = 'As of Oct 16, 2026';
 
   return (
     <div
@@ -170,15 +145,16 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
               <filter id="countryShadow" x="-10%" y="-10%" width="120%" height="130%">
                 <feDropShadow dx="0.5" dy="1" stdDeviation="1" floodColor="#000000" floodOpacity="0.06" />
               </filter>
-
-              {/* Radial gradient dots per status */}
-              {Object.entries(statusConfig).map(([statusKey, cfg]) => (
-                <radialGradient key={statusKey} id={`dotGradient-${statusKey}`} cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-                  <stop offset="0%" stopColor={cfg.dotColor} stopOpacity={0.9} />
-                  <stop offset="40%" stopColor={cfg.dotColor} stopOpacity={0.4} />
-                  <stop offset="100%" stopColor={cfg.dotColor} stopOpacity={0} />
-                </radialGradient>
-              ))}
+              {/* Building pin drop shadow */}
+              <filter id="pinShadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="#000000" floodOpacity="0.22" />
+              </filter>
+              {/* Hover glow */}
+              <radialGradient id="pinHoverGlow" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+                <stop offset="0%" stopColor="#18181b" stopOpacity={0.35} />
+                <stop offset="50%" stopColor="#18181b" stopOpacity={0.12} />
+                <stop offset="100%" stopColor="#18181b" stopOpacity={0} />
+              </radialGradient>
             </defs>
 
             {/* Clean monochrome country polygons */}
@@ -201,10 +177,9 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
               }
             </Geographies>
 
-            {/* Markers — every pin has a generous dedicated hit target and non-blocking decorative halo */}
+            {/* Luxury Building Icon Markers */}
             {orderedProperties.map((item) => {
-              const { id, coordinates, status } = item;
-              const cfg = statusConfig[status] || statusConfig.on_plan;
+              const { id, coordinates } = item;
               const isHovered = hoveredInfo?.id === id;
               const displayCoords = getDisplayCoordinates(id, coordinates as [number, number], position.zoom);
 
@@ -214,7 +189,7 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
                     className="cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectProperty(id);
+                      navigate(`/dashboard/property?id=${id}`);
                     }}
                     onMouseEnter={(e) => updateHoveredFromEvent(item, e.currentTarget)}
                     onMouseMove={(e) => {
@@ -228,32 +203,45 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
                     style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}
                   >
                     {/* Dedicated invisible hit-target circle so every pin is effortless to hover */}
-                    <circle r={9} fill="transparent" />
-                    {/* Subtle outer glow — pointerEvents="none" so halo never blocks adjacent pins */}
-                    <circle
-                      r={isHovered ? 18 : 10}
-                      fill={`url(#dotGradient-${status})`}
+                    <circle data-pin-anchor r={11} fill="transparent" />
+                    {/* Subtle hover halo — pointerEvents="none" so it never blocks adjacent pins */}
+                    {isHovered && (
+                      <circle
+                        r={18}
+                        fill="url(#pinHoverGlow)"
+                        pointerEvents="none"
+                      />
+                    )}
+                    {/* Luxury architectural building badge */}
+                    <g
+                      filter="url(#pinShadow)"
                       pointerEvents="none"
-                      className="transition-all duration-200"
-                    />
-                    {/* Outer ring */}
-                    <circle
-                      r={isHovered ? 6.5 : 4.5}
-                      fill="none"
-                      stroke={cfg.dotColor}
-                      strokeWidth={1.1}
-                      opacity={isHovered ? 0.9 : 0.65}
-                      pointerEvents="none"
-                    />
-                    {/* Inner solid dot */}
-                    <circle
-                      r={isHovered ? 4.5 : 2.8}
-                      fill={cfg.dotColor}
-                      stroke="#ffffff"
-                      strokeWidth={1}
-                      pointerEvents="none"
-                      className="transition-all duration-200"
-                    />
+                      style={{
+                        transform: isHovered ? 'scale(1.22)' : 'scale(1)',
+                        transition: 'transform 180ms ease-out',
+                      }}
+                    >
+                      <circle
+                        r={7.5}
+                        fill={isHovered ? '#09090b' : '#27272a'}
+                        stroke="#ffffff"
+                        strokeWidth={1.3}
+                      />
+                      {/* Minimalist Hotel / Building Vector Icon centered at (0,0) */}
+                      <g transform="translate(-4.5, -4.5)" fill="none" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                        {/* Main tower */}
+                        <rect x="2" y="1" width="5" height="7" rx="0.6" fill="#ffffff" stroke="none" />
+                        {/* Windows cut-out in dark zinc */}
+                        <rect x="3" y="2.1" width="1" height="1" rx="0.2" fill="#18181b" stroke="none" />
+                        <rect x="5" y="2.1" width="1" height="1" rx="0.2" fill="#18181b" stroke="none" />
+                        <rect x="3" y="3.8" width="1" height="1" rx="0.2" fill="#18181b" stroke="none" />
+                        <rect x="5" y="3.8" width="1" height="1" rx="0.2" fill="#18181b" stroke="none" />
+                        {/* Entrance door */}
+                        <rect x="3.8" y="5.6" width="1.4" height="2.4" rx="0.2" fill="#18181b" stroke="none" />
+                        {/* Ground baseline */}
+                        <line x1="1" y1="8" x2="8" y2="8" stroke="#ffffff" strokeWidth="0.9" />
+                      </g>
+                    </g>
                   </g>
                 </Marker>
               );
@@ -261,9 +249,9 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
           </ZoomableGroup>
         </ComposableMap>
 
-        {/* Subtle Map Status Legend at top-left */}
+        {/* Active Date / Period Badge at top-right */}
         <div
-          className={`absolute top-2 left-2 px-2.5 py-1.5 rounded-md flex items-center gap-3 backdrop-blur-xs transition-opacity duration-200 z-10 pointer-events-none ${
+          className={`absolute top-2 right-2 px-2.5 py-1.5 rounded-md flex items-center gap-1.5 backdrop-blur-xs transition-opacity duration-200 z-10 pointer-events-none ${
             hoveredItem ? 'opacity-30' : 'opacity-90'
           }`}
           style={{
@@ -271,18 +259,10 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
             border: '1px solid #e4e4e7',
           }}
         >
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#14532d]" />
-            <span className="text-[8px] text-zinc-600 font-medium">Above Plan</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
-            <span className="text-[8px] text-zinc-600 font-medium">On Plan</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#800020]" />
-            <span className="text-[8px] text-zinc-600 font-medium">Attention</span>
-          </div>
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+          <span className="text-[8px] text-zinc-700 font-semibold tracking-wide">
+            {mapDateBadgeLabel}
+          </span>
         </div>
 
         {/* Zoom Controls */}
@@ -334,84 +314,59 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
       {/* Floating Luxury Popover Overlay - pointer-events-none so it never blocks adjacent pins while hovering */}
       {hoveredItem && (
         <div
-          className="absolute pointer-events-none z-50 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute pointer-events-none z-50"
           style={{
             top: `${top}px`,
             left: `${left}px`,
             width: `${CARD_WIDTH}px`,
+            transform: isFlipDown ? 'none' : 'translateY(-100%)',
           }}
         >
-          <div className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10 transition-all">
-            {/* Header: Property Name + Grouping & Status */}
+          <div className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10 transition-all animate-in fade-in zoom-in-95 duration-150">
+            {/* Header: Property Name + Grouping */}
             <div className="flex items-start justify-between gap-1.5 pb-1.5 border-b border-zinc-100">
               <div>
                 <div className="text-[13px] font-bold text-zinc-900 leading-tight tracking-wide uppercase flex items-center gap-1">
                   <span>{hoveredItem.name}</span>
-                  <span className="text-[10px] text-zinc-400">→</span>
                 </div>
                 <div className="text-[9.5px] font-medium text-zinc-500 mt-0.5">
                   {hoveredItem.grouping} · {hoveredItem.city} · <span className="font-semibold text-zinc-700">{hoveredItem.totalRooms} Keys</span>
                 </div>
               </div>
-              {/* Subtle status dot */}
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '9999px',
-                  backgroundColor: (statusConfig[hoveredItem.status] || statusConfig.on_plan).dotColor,
-                  flexShrink: 0,
-                  marginTop: '3px',
-                }}
-                title={(statusConfig[hoveredItem.status] || statusConfig.on_plan).label}
-              />
             </div>
 
-            {/* Calculated PMS Metrics */}
+            {/* Calculated PMS Metrics: Occupancy (%), ADR, RevPAR, Room Revenue */}
             <div className="mt-1.5 space-y-1 text-[10.5px]">
               <div className="flex justify-between items-center text-zinc-500">
-                <span>Occupancy ({periodShortLabel})</span>
+                <span>Occupancy (%)</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredItem.occupancyFormatted}{' '}
-                  <span className="text-[9px] font-medium text-zinc-400">
-                    ({hoveredItem.occupiedRooms}/{hoveredItem.totalRooms} keys)
-                  </span>
+                  {hoveredItem.occupancyFormatted}
                 </span>
               </div>
               <div className="flex justify-between items-center text-zinc-500">
-                <span>ADR / RevPAR</span>
+                <span>ADR</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredItem.adrFormatted}{' '}
-                  <span className="text-[9px] font-medium text-zinc-400">
-                    / {hoveredItem.revparFormatted}
-                  </span>
+                  {hoveredItem.adrFormatted}
                 </span>
               </div>
               <div className="flex justify-between items-center text-zinc-500">
-                <span>Total Revenue ({periodShortLabel})</span>
+                <span>RevPAR</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredItem.revenueFormatted}
+                  {hoveredItem.revparFormatted}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-zinc-500">
+                <span>Room Revenue</span>
+                <span className="font-bold text-zinc-900">
+                  {fmtUsd(hoveredItem.roomRevenueUsd)}
                 </span>
               </div>
             </div>
 
-            {/* Subtle status text indicator & period at bottom */}
-            <div className="mt-2 pt-1.5 border-t border-zinc-100 flex items-center justify-between">
-              <span
-                style={{
-                  fontSize: '8.5px',
-                  fontWeight: 600,
-                  backgroundColor: (statusConfig[hoveredItem.status] || statusConfig.on_plan).badgeBg,
-                  color: (statusConfig[hoveredItem.status] || statusConfig.on_plan).badgeText,
-                  padding: '1.5px 6px',
-                  borderRadius: '9999px',
-                }}
-              >
-                {(statusConfig[hoveredItem.status] || statusConfig.on_plan).label}
-              </span>
-
-              <span className="text-[9px] font-medium text-zinc-500 flex items-center gap-0.5">
-                Click pin to view property <span className="text-zinc-400">→</span>
+            {/* Last updated at bottom */}
+            <div className="mt-2 pt-1.5 border-t border-zinc-100 flex items-center justify-end">
+              <span className="text-[8.5px] font-medium text-zinc-400 whitespace-nowrap">
+                Last updated: {lastUpdatedLabel}
               </span>
             </div>
 

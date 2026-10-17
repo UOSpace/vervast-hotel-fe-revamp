@@ -24,7 +24,7 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
   const initialWindow: ForwardBusinessWindow =
     (config?.data?.window as ForwardBusinessWindow) || '90D';
   const [selectedWindow, setSelectedWindow] = useState<ForwardBusinessWindow>(initialWindow);
-  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const w = config?.data?.window as ForwardBusinessWindow;
@@ -37,13 +37,6 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
   const windowDays = FORWARD_WINDOW_DAYS[selectedWindow];
   const propertiesMap = getSimulatedPropertiesData('mtd');
 
-  const statusMeta = (status: 'above_plan' | 'on_plan' | 'attention') =>
-    status === 'above_plan'
-      ? { label: 'Above Plan', cls: 'bg-emerald-50 text-emerald-700 border border-emerald-100' }
-      : status === 'on_plan'
-      ? { label: 'On Plan', cls: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
-      : { label: 'Attention', cls: 'bg-rose-50 text-rose-600 border border-rose-100' };
-
   const categoryGroups = useMemo(() => {
     return MASTER_CATEGORIES.map((cat) => {
       const catPropIds = cat.propertyIds;
@@ -53,31 +46,28 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
         const pFb = getForwardBusiness([p.id], windowDays);
         return {
           prop: p,
-          revUsd: pFb.otbRevenue,
-          rn: pFb.window.otbRoomsSold,
-          occPct: pFb.window.otbOccupancyPct,
-          adrUsd: pFb.window.adr,
-          riskUsd: pFb.cancellationExposure,
+          definiteUsd: pFb.definiteRevenue,
+          verbalDefiniteUsd: pFb.verbalDefiniteRevenue,
+          tentativeUsd: pFb.tentativeRevenue,
+          prospectUsd: pFb.prospectRevenue,
+          postponedUsd: pFb.postponedRevenue,
+          cancelledUsd: pFb.cancelledRevenue,
+          turnedDownUsd: pFb.turnedDownRevenue,
         };
       });
-      const status: 'above_plan' | 'on_plan' | 'attention' = props.some(
-        (p) => p.status === 'attention'
-      )
-        ? 'attention'
-        : props.every((p) => p.status === 'above_plan')
-        ? 'above_plan'
-        : 'on_plan';
 
       return {
         id: cat.id,
         name: cat.name,
+        location: props.map((p) => p.city).join(' · '),
         rows,
-        revUsd: catFb.otbRevenue,
-        rn: catFb.window.otbRoomsSold,
-        occPct: catFb.window.otbOccupancyPct,
-        adrUsd: catFb.window.adr,
-        riskUsd: catFb.cancellationExposure,
-        status,
+        definiteUsd: catFb.definiteRevenue,
+        verbalDefiniteUsd: catFb.verbalDefiniteRevenue,
+        tentativeUsd: catFb.tentativeRevenue,
+        prospectUsd: catFb.prospectRevenue,
+        postponedUsd: catFb.postponedRevenue,
+        cancelledUsd: catFb.cancelledRevenue,
+        turnedDownUsd: catFb.turnedDownRevenue,
       };
     });
   }, [windowDays, propertiesMap]);
@@ -87,19 +77,8 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
       {/* Header & Window Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-zinc-200">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-              Committed Horizon
-            </span>
-            <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Live PMS Books
-            </span>
-          </div>
-          <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Forward Business — {data.timeframe}
-          </h4>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Committed reservations and contracted revenue already on the books (not vague forecast or pipeline).
+          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
+            Horizon: <span className="font-semibold text-zinc-800">{data.timeframe}</span>
           </p>
         </div>
 
@@ -122,130 +101,181 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
         </div>
       </div>
 
-      {/* Top 6 Hero KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            OTB Revenue
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{data.revenueOtb}</div>
-          <div className="text-[9px] text-zinc-600 font-medium mt-1 flex items-center gap-1">
-            <span className="text-zinc-900 font-bold">Def: {data.definiteRevenue}</span>
-            <span className="text-zinc-400">·</span>
-            <span className="text-zinc-600">Tent: {data.tentativeRevenue}</span>
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            OTB Room Nights
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{data.roomNightsOtb}</div>
-          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
-            ↑ {data.roomNightsTrend}
-          </span>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            OTB Occupancy
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{data.occupancyOtb}</div>
-          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
-            {data.occupancyTrend}
-          </span>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            OTB ADR
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{data.adrOtb}</div>
-          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
-            ↑ {data.adrTrend}
-          </span>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Leads Pipeline
-          </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">{data.leadsPipeline}</div>
-          <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
-            ↑ {data.leadsPipelineTrend} ({data.leadsCount} leads)
-          </span>
-        </div>
-
-        <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
-            Cancellation Exposure
-          </span>
-          <div className="text-xl font-bold text-rose-600 mt-1">{data.cancellationExposure}</div>
-          <span className="text-[10px] text-rose-600 font-medium mt-0.5 block">
-            ↑ {data.cancellationTrend}
-          </span>
-        </div>
-      </div>
-
-      {/* Strategic CEO Takeaways Panel */}
-      <div className="p-4 bg-zinc-50/80 rounded-xl border border-zinc-200/90 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="space-y-1">
-          <div className="text-[11px] font-bold text-zinc-900 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600" />
-            Demand Rhythm &amp; Strategic Pacing
-          </div>
-          <div className="text-xs text-zinc-600">
-            <strong>Strongest demand period:</strong> {data.strongestDemandPeriod} ·{' '}
-            <strong>Weakest demand shoulder:</strong> {data.weakestDemandPeriod}
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-[9.5px] uppercase tracking-wider text-zinc-400 font-medium">
-              Forecast Total
-            </div>
-            <div className="text-base font-bold text-zinc-900">{data.forecastRevenue}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Period Buckets Breakdown: Definite, Tentative & Pipeline Cadence */}
+      {/* Primary Row: 4 Active Book & Pipeline Statuses */}
       <div>
-        <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-2">
-          Definite, Tentative &amp; Pipeline Cadence ({data.timeframe})
+        <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+          Active Book &amp; Pipeline Status ({selectedWindow})
+        </h5>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-zinc-900 inline-block" />
+                Definite
+              </span>
+              <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                ↑ {data.definiteTrend}
+              </span>
+            </div>
+            <div className="text-xl font-bold text-zinc-900 mt-1.5">{data.definiteRevenue}</div>
+            <div className="text-[10px] text-zinc-500 font-medium mt-0.5">
+              {data.definiteRoomNights} · Signed &amp; Guaranteed
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" />
+                Verbal Definite
+              </span>
+              <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                ↑ {data.verbalDefiniteTrend}
+              </span>
+            </div>
+            <div className="text-xl font-bold text-zinc-900 mt-1.5">{data.verbalDefiniteRevenue}</div>
+            <div className="text-[10px] text-zinc-500 font-medium mt-0.5">
+              {data.verbalDefiniteRoomNights} · Awaiting Signature
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-zinc-400 inline-block" />
+                Tentative
+              </span>
+              <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                ↑ {data.tentativeTrend}
+              </span>
+            </div>
+            <div className="text-xl font-bold text-zinc-900 mt-1.5">{data.tentativeRevenue}</div>
+            <div className="text-[10px] text-zinc-500 font-medium mt-0.5">
+              {data.tentativeRoomNights} · Space Hold Option
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-zinc-200 border border-zinc-400 inline-block" />
+                Prospect
+              </span>
+              <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                ↑ {data.prospectTrend}
+              </span>
+            </div>
+            <div className="text-xl font-bold text-zinc-900 mt-1.5">{data.prospectRevenue}</div>
+            <div className="text-[10px] text-zinc-500 font-medium mt-0.5">
+              {data.prospectRoomNights} · {data.leadsCount} Active Inquiries
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary Row: 3 Attrition / Deferred Statuses (Postponed, Cancelled, Turned Down) */}
+      <div>
+        <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+          Deferred &amp; Fallout Status ({selectedWindow})
         </h5>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+                Postponed
+              </span>
+              <div className="text-lg font-bold text-zinc-900 mt-0.5">{data.postponedRevenue}</div>
+              <div className="text-[10px] text-zinc-500 mt-0.5">
+                {data.postponedRoomNights} · Rescheduled to future dates
+              </div>
+            </div>
+            <span className="text-[9.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
+              Deferred
+            </span>
+          </div>
+
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+                Cancelled
+              </span>
+              <div className="text-lg font-bold text-[#800020] mt-0.5">{data.cancelledRevenue}</div>
+              <div className="text-[10px] text-zinc-500 mt-0.5">
+                {data.cancelledRoomNights} · Released inventory
+              </div>
+            </div>
+            <span className="text-[9.5px] font-medium px-2 py-0.5 rounded bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80">
+              Cancelled
+            </span>
+          </div>
+
+          <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+                Turned Down
+              </span>
+              <div className="text-lg font-bold text-zinc-800 mt-0.5">{data.turnedDownRevenue}</div>
+              <div className="text-[10px] text-zinc-500 mt-0.5">
+                {data.turnedDownRoomNights} · Declined (space / rate protection)
+              </div>
+            </div>
+            <span className="text-[9.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
+              Declined
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Period Buckets Breakdown: W1-W4 / M1-M3 / M1-2..M5-6 / Q1-Q4 */}
+      <div>
+        <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+          Horizon Cadence Breakdown ({selectedWindow})
+        </h5>
+        <div
+          className={`grid grid-cols-1 gap-3 ${
+            data.buckets.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'
+          }`}
+        >
           {data.buckets.map((b) => (
             <div
               key={b.label}
               className="p-3.5 rounded-xl border transition-all bg-white text-zinc-900 border-zinc-200"
             >
-              <div className="flex justify-between items-start">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-                  {b.label}
-                </span>
-                <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                  {fmtPct(b.occupancyPct, 1)} Occ OTB
+              <div className="flex justify-between items-start gap-1">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-900">
+                    {b.label}
+                  </span>
+                  <span className="text-[9.5px] text-zinc-400 block mt-0.5">
+                    {b.dateRange}
+                  </span>
+                </div>
+                <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 shrink-0">
+                  {fmtPct(b.occupancyPct, 1)} Occ
                 </span>
               </div>
-              <div className="text-2xl font-bold mt-2">{b.revenueFormatted}</div>
+              <div className="text-xl font-bold mt-2">{b.revenueFormatted}</div>
               <div className="text-[10px] mt-0.5 text-zinc-500">
                 {b.roomNights.toLocaleString()} Room Nights OTB
               </div>
 
               {/* Explicit status breakdown badges */}
-              <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-zinc-100 text-[8.5px]">
+              <div className="grid grid-cols-2 gap-1.5 mt-2.5 pt-2 border-t border-zinc-100 text-[8.5px]">
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-900 text-white font-medium">
-                  <span className="w-1 h-1 rounded-full bg-white inline-block" />
-                  Definite: {fmtUsd(b.definiteRevenueUsd)}
+                  <span className="w-1 h-1 rounded-full bg-white inline-block shrink-0" />
+                  Def: {fmtUsd(b.definiteRevenueUsd)}
+                </span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-700 text-white font-medium">
+                  <span className="w-1 h-1 rounded-full bg-zinc-200 inline-block shrink-0" />
+                  Verbal: {fmtUsd(b.verbalDefiniteRevenueUsd)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-medium border border-zinc-200">
-                  <span className="w-1 h-1 rounded-full bg-zinc-400 inline-block" />
-                  Tentative: {fmtUsd(b.tentativeRevenueUsd)}
+                  <span className="w-1 h-1 rounded-full bg-zinc-400 inline-block shrink-0" />
+                  Tent: {fmtUsd(b.tentativeRevenueUsd)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-50 text-zinc-500 font-medium border border-zinc-200/80">
-                  <span className="w-1 h-1 rounded-full bg-zinc-300 inline-block" />
-                  Pipeline: {fmtUsd(b.pipelineRevenueUsd)}
+                  <span className="w-1 h-1 rounded-full bg-zinc-300 inline-block shrink-0" />
+                  Prosp: {fmtUsd(b.prospectRevenueUsd)}
                 </span>
               </div>
             </div>
@@ -253,146 +283,145 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
         </div>
       </div>
 
-      {/* Property-Level OTB Breakdown (All 10 Sanctuaries - 100% SSOT Data) */}
+      {/* Property Categories Status Breakdown (5 Categories expandable to 10 Properties) */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Property On-The-Books Status Across All 10 Sanctuaries ({selectedWindow})
+          <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
+            Property Categories Forward Status Breakdown ({selectedWindow})
           </h5>
-          <span className="text-[10px] text-zinc-400">
-            100% Single Source of Truth
+          <span className="text-[9.5px] text-zinc-400">
+            Click category row to expand individual properties
           </span>
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-2xs">
-          <table className="w-full min-w-[700px] text-xs text-zinc-800 border-separate border-spacing-0">
+          <table className="w-full min-w-[780px] text-xs text-zinc-800 border-separate border-spacing-0">
             <thead>
-              <tr className="text-left text-zinc-500 bg-zinc-50/80">
-                <th className="py-2.5 px-3 font-semibold text-[10px] border-b border-zinc-200">
-                  Sanctuary Property
+              <tr className="text-left text-zinc-400 bg-zinc-50/90">
+                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
+                  Property Categories
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] border-b border-zinc-200">
-                  Collection &amp; City
+                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
+                  Location
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  OTB Revenue
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Definite
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  Room Nights
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Verbal Definite
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  OTB Occ %
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Tentative
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  OTB ADR
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Prospect
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  At-Risk
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Postponed
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
-                  Status
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Cancelled
+                </th>
+                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                  Turned Down
                 </th>
               </tr>
             </thead>
             <tbody>
               {categoryGroups.map((g) => {
-                const collapsed = !!collapsedCategories[g.id];
-                const gs = statusMeta(g.status);
+                const isExpanded = !!expandedRows[g.id];
                 return (
                   <Fragment key={g.id}>
                     <tr
-                      className="bg-zinc-50/70 hover:bg-zinc-100/60 cursor-pointer transition-colors"
+                      className="border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
                       onClick={() =>
-                        setCollapsedCategories((prev) => ({
+                        setExpandedRows((prev) => ({
                           ...prev,
                           [g.id]: !prev[g.id],
                         }))
                       }
                     >
-                      <td className="py-2.5 px-3 font-bold text-zinc-900 border-b border-zinc-100">
+                      <td className="py-3 px-3 font-semibold text-zinc-900 border-b border-zinc-100 whitespace-nowrap">
                         <span className="flex items-center gap-1.5">
-                          {collapsed ? (
-                            <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                          ) : (
+                          {isExpanded ? (
                             <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
+                          ) : (
+                            <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
                           )}
                           {g.name}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-zinc-500 text-[10px] border-b border-zinc-100">
-                        {g.rows.length} {g.rows.length === 1 ? 'property' : 'properties'}
+                      <td className="py-3 px-3 text-zinc-500 border-b border-zinc-100 whitespace-nowrap">
+                        {g.location}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
-                        {fmtUsd(g.revUsd)}
+                      <td className="py-3 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.definiteUsd)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
-                        {g.rn.toLocaleString()} RN
+                      <td className="py-3 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.verbalDefiniteUsd)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">
-                        {fmtPct(g.occPct, 1)}
+                      <td className="py-3 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.tentativeUsd)}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
-                        {fmtUsd(g.adrUsd)}
+                      <td className="py-3 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.prospectUsd)}
                       </td>
-                      <td className="py-2.5 px-3 text-right text-rose-600 font-medium border-b border-zinc-100">
-                        {fmtUsd(g.riskUsd)}
+                      <td className="py-3 px-3 text-right text-zinc-600 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.postponedUsd)}
                       </td>
-                      <td className="py-2.5 px-3 text-right border-b border-zinc-100">
-                        <span
-                          className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${gs.cls}`}
-                        >
-                          {gs.label}
-                        </span>
+                      <td className="py-3 px-3 text-right text-[#800020] font-medium border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.cancelledUsd)}
+                      </td>
+                      <td className="py-3 px-3 text-right text-zinc-600 border-b border-zinc-100 whitespace-nowrap">
+                        {fmtUsd(g.turnedDownUsd)}
                       </td>
                     </tr>
-                    {!collapsed &&
-                      g.rows.map(({ prop, revUsd, rn, occPct, adrUsd, riskUsd }) => {
-                        const ps = statusMeta(prop.status);
-                        return (
-                          <tr key={prop.id} className="bg-white hover:bg-zinc-50 transition-colors">
-                            <td className="py-2 px-3 pl-9 font-medium text-zinc-800 border-b border-zinc-100">
-                              {prop.name}
-                            </td>
-                            <td className="py-2 px-3 text-zinc-400 text-[10px] border-b border-zinc-100">
-                              {prop.city}
-                            </td>
-                            <td className="py-2 px-3 text-right font-medium text-zinc-900 border-b border-zinc-100">
-                              {fmtUsd(revUsd)}
-                            </td>
-                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">
-                              {rn.toLocaleString()} RN
-                            </td>
-                            <td className="py-2 px-3 text-right text-zinc-700 border-b border-zinc-100">
-                              {fmtPct(occPct, 1)}
-                            </td>
-                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">
-                              {fmtUsd(adrUsd)}
-                            </td>
-                            <td className="py-2 px-3 text-right text-rose-600 border-b border-zinc-100">
-                              {fmtUsd(riskUsd)}
-                            </td>
-                            <td className="py-2 px-3 text-right border-b border-zinc-100">
-                              <span
-                                className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${ps.cls}`}
-                              >
-                                {ps.label}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                    {isExpanded &&
+                      g.rows.map((r) => (
+                        <tr key={r.prop.id} className="border-b border-zinc-100/60 bg-zinc-50/40 text-zinc-600">
+                          <td className="py-2.5 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 border-b border-zinc-100/60 whitespace-nowrap">
+                            <span className="text-zinc-300 mr-1.5">└</span>
+                            {r.prop.name}
+                          </td>
+                          <td className="py-2.5 px-3 text-[10px] text-zinc-400 border-b border-zinc-100/60 whitespace-nowrap">
+                            {r.prop.city}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] font-semibold text-zinc-800 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.definiteUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-zinc-700 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.verbalDefiniteUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-zinc-600 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.tentativeUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-zinc-600 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.prospectUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-zinc-500 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.postponedUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-[#800020] border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.cancelledUsd)}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-[10.5px] text-zinc-500 border-b border-zinc-100/60 whitespace-nowrap">
+                            {fmtUsd(r.turnedDownUsd)}
+                          </td>
+                        </tr>
+                      ))}
                   </Fragment>
                 );
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
-                <td className="py-2.5 px-3 text-zinc-900">Total Portfolio ({selectedWindow})</td>
-                <td className="py-2.5 px-3 text-zinc-500">10 Sanctuaries · 5 Collections</td>
-                <td className="py-2.5 px-3 text-right text-zinc-900">{data.revenueOtb}</td>
-                <td className="py-2.5 px-3 text-right text-zinc-900">{data.roomNightsOtb} RN</td>
-                <td className="py-2.5 px-3 text-right text-emerald-700">{data.occupancyOtb}</td>
-                <td className="py-2.5 px-3 text-right text-zinc-900">{data.adrOtb}</td>
-                <td className="py-2.5 px-3 text-right text-rose-600">{data.cancellationExposure}</td>
-                <td className="py-2.5 px-3 text-right text-emerald-700">Above Plan</td>
+                <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
+                <td className="py-3 px-3 text-zinc-500">10 Properties · 5 Categories</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.definiteRevenue}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.verbalDefiniteRevenue}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.tentativeRevenue}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.prospectRevenue}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.postponedRevenue}</td>
+                <td className="py-3 px-3 text-right text-[#800020]">{data.cancelledRevenue}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{data.turnedDownRevenue}</td>
               </tr>
             </tbody>
           </table>

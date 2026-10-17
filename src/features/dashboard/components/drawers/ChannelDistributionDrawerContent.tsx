@@ -140,7 +140,7 @@ export function ChannelDistributionDrawerContent(
             Channel Distribution Stats &amp; Revenue Yield ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Booking channel volume, net ADR yield, and commission economics across channels ·{' '}
+            Booking channel volume, net ADR yield, and commission economics across channels · As of:{' '}
             <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
@@ -161,7 +161,7 @@ export function ChannelDistributionDrawerContent(
                         : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
                     }`}
                   >
-                    {h === 'today' ? 'Today' : h.toUpperCase()}
+                    {h === 'today' ? 'Yesterday' : h.toUpperCase()}
                   </button>
                 );
               })}

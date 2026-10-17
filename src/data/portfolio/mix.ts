@@ -110,26 +110,22 @@ export const PACKAGE_SHARE_OF_ROOM_REVENUE = 0.045;
 export const WELLNESS_SHARE_OF_SPA = 0.42;
 
 export interface RevenuePillar {
-  id: 'rooms' | 'fnb' | 'spa' | 'wellness' | 'activities' | 'packages';
+  id: 'rooms' | 'fnb' | 'spa' | 'activities';
   name: string;
   value: number;
   sharePct: number;
 }
 
 /**
- * The 6 pillars of the Hospitality "Revenue & Demand Mix". They add up EXACTLY to metrics.totalRevenue:
- * rooms (room-only) + packages = room revenue, spa + wellness = spa revenue.
+ * The 4 pillars of the Hospitality "Revenue & Demand Mix". They add up EXACTLY to metrics.totalRevenue:
+ * Rooms + F&B + Spa + Activities = Total Revenue.
  */
 export function getHospitalityRevenuePillars(m: Pick<MetricsCore, 'roomRevenue' | 'fnbRevenue' | 'spaRevenue' | 'experienceRevenue' | 'totalRevenue'>): RevenuePillar[] {
-  const packages = Math.round(m.roomRevenue * PACKAGE_SHARE_OF_ROOM_REVENUE);
-  const wellness = Math.round(m.spaRevenue * WELLNESS_SHARE_OF_SPA);
   const rows: Array<Omit<RevenuePillar, 'sharePct'>> = [
-    { id: 'rooms', name: 'Rooms', value: m.roomRevenue - packages },
-    { id: 'fnb', name: 'F&B (Culinary)', value: m.fnbRevenue },
-    { id: 'spa', name: 'Spa (Thermal & Healing)', value: m.spaRevenue - wellness },
-    { id: 'wellness', name: 'Wellness / Medical', value: wellness },
-    { id: 'activities', name: 'Activities (Expeditions)', value: m.experienceRevenue },
-    { id: 'packages', name: 'Packages (Curated Stays)', value: packages },
+    { id: 'rooms', name: 'Rooms', value: m.roomRevenue },
+    { id: 'fnb', name: 'F&B', value: m.fnbRevenue },
+    { id: 'spa', name: 'Spa', value: m.spaRevenue },
+    { id: 'activities', name: 'Activities', value: m.experienceRevenue },
   ];
   return rows.map((r) => ({ ...r, sharePct: m.totalRevenue > 0 ? (r.value / m.totalRevenue) * 100 : 0 }));
 }

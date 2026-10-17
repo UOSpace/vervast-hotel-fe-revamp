@@ -78,14 +78,11 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
       >
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center gap-1.5 min-w-0">
-            <InfoTooltip text="Total Hotel Business revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities) for the active category.">
+            <InfoTooltip text="Total Hospitality revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities) for the active category.">
               <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                TOTAL HOTEL REVENUE
+                TOTAL REVENUE (HOSPITALITY)
               </span>
             </InfoTooltip>
-            <span className="text-[8.5px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-200/70 text-zinc-700 shrink-0">
-              Hospitality
-            </span>
           </div>
           <span
             className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.totalRevenue.upLy
@@ -160,11 +157,11 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
             {data.occupancy.value}
           </div>
           {/* Comparison Badges: vs Budget, vs Forecast */}
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+          <div className="flex items-center gap-1 flex-nowrap">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.occupancy.vsBudget}
             </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.occupancy.vsForecast}
             </span>
           </div>
@@ -201,11 +198,11 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
             {data.adr.value}
           </div>
           {/* Comparison Badges: vs Budget, vs Forecast */}
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+          <div className="flex items-center gap-1 flex-nowrap">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.adr.vsBudget}
             </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.adr.vsForecast}
             </span>
           </div>
@@ -242,11 +239,11 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
             {data.revPar.value}
           </div>
           {/* Comparison Badges: vs Budget, vs Forecast */}
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+          <div className="flex items-center gap-1 flex-nowrap">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.revPar.vsBudget}
             </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.revPar.vsForecast}
             </span>
           </div>
@@ -283,11 +280,11 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
             {data.roomRevenue.value}
           </div>
           {/* Comparison Badges: vs Budget, vs Forecast */}
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+          <div className="flex items-center gap-1 flex-nowrap">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.roomRevenue.vsBudget}
             </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
               {data.roomRevenue.vsForecast}
             </span>
           </div>

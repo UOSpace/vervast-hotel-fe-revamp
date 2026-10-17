@@ -134,17 +134,17 @@ const PROPERTY_META: PropertyMeta[] = [
   {
     id: 'sosei-tokyo', name: 'SOSEI TOKYO', city: 'Tokyo, Japan', country: 'Japan', grouping: 'Urban',
     coordinates: [139.6917, 35.6895],
-    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Imperial Garden Sanctuary Loft', roomNumber: 'Loft 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private omakase dinner with Master Chef', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Imperial Garden Residence Loft', roomNumber: 'Loft 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private omakase dinner with Master Chef', bookingStatus: 'in_house' },
   },
   {
     id: 'sosei-bali', name: 'SOSEI BALI', city: 'Uluwatu, Bali, Indonesia', country: 'Indonesia', grouping: 'Beach Resort',
     coordinates: [115.1889, -8.4095],
-    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Sanctuary Patron', nationality: 'Indonesian', roomType: 'Cliffside Ocean Sanctuary Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification ritual', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Cliffside Ocean Residence Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification ritual', bookingStatus: 'in_house' },
   },
   {
     id: 'sosei-maldives', name: 'SOSEI MALDIVES', city: 'North Malé Atoll, Maldives', country: 'Maldives', grouping: 'Beach Resort',
     coordinates: [73.5089, 4.1755],
-    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Overwater Grand Sanctuary Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private sommelier & reef bioluminescence cruise', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Overwater Grand Residence Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private sommelier & reef bioluminescence cruise', bookingStatus: 'in_house' },
   },
   {
     id: 'sosei-switzerland', name: 'SOSEI SWITZERLAND', city: 'Zermatt, Switzerland', country: 'Switzerland', grouping: 'Ski',
@@ -154,7 +154,7 @@ const PROPERTY_META: PropertyMeta[] = [
   {
     id: 'sosei-canada', name: 'SOSEI CANADA', city: 'Whistler, Canada', country: 'Canada', grouping: 'Ski',
     coordinates: [-122.9574, 50.1163],
-    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Sanctuary Elite', nationality: 'Swedish', roomType: 'Olympic Peak Chalet Estate', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private backcountry heli-ski guide', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Property Elite', nationality: 'Swedish', roomType: 'Olympic Peak Chalet Estate', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private backcountry heli-ski guide', bookingStatus: 'in_house' },
   },
   {
     id: 'sosei-costa-rica', name: 'SOSEI COSTA RICA', city: 'Papagayo, Costa Rica', country: 'Costa Rica', grouping: 'Nature',
@@ -169,7 +169,7 @@ const PROPERTY_META: PropertyMeta[] = [
   {
     id: 'sosei-oman', name: 'SOSEI OMAN', city: 'Jebel Akhdar, Oman', country: 'Oman', grouping: 'Wellness',
     coordinates: [57.6599, 23.0673],
-    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Canyon Ridge Stargazing Sanctuary', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private cliffside sound healing therapy', bookingStatus: 'in_house' },
+    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Canyon Ridge Stargazing Residence', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private cliffside sound healing therapy', bookingStatus: 'in_house' },
   },
   {
     id: 'sosei-egypt', name: 'SOSEI EGYPT', city: 'Siwa Oasis, Egypt', country: 'Egypt', grouping: 'Wellness',
@@ -365,15 +365,19 @@ export interface BookingPaceData {
   };
 }
 
-export function getBookingPaceData(propertyIds?: string[]): BookingPaceData {
+export type BookingPaceWindow = 7 | 14 | 30 | 90;
+
+export function getBookingPaceData(
+  propertyIds?: string[],
+  windowDays: number = FORWARD_DEFAULT_DAYS
+): BookingPaceData {
   const ids = ensureIds(propertyIds);
-  const windowDays = FORWARD_DEFAULT_DAYS;
   const fw = getForwardWindowMetrics(ids, windowDays);
   const fwdPeriod = getPortfolioMetrics(ids, 'forward');
   const budgetPace = fwdPeriod.budget.roomsSold > 0 ? (fwdPeriod.roomsSold / fwdPeriod.budget.roomsSold - 1) * 100 : 0;
 
   return {
-    timeframe: 'NEXT 90 DAYS (ROOM NIGHTS OTB)',
+    timeframe: `NEXT ${windowDays} DAYS (ROOM NIGHTS OTB)`,
     windowDays,
     series: getBookingPaceSeries(ids, windowDays).map((p) => ({
       month: p.month,
@@ -452,14 +456,14 @@ export function getRevenueDemandMixData(period: PeriodId = 'mtd', propertyIds?: 
   const mix = getHospitalityPillarMix(m);
   return {
     period,
-    timeframe: `${PERIOD_DEFS[period].periodLabel} \u00B7 by business`,
+    timeframe: `As of: ${PERIOD_DEFS[period].periodLabel}`,
     totalRevenueFormatted: fmtUsd(mix.totalRevenue),
     totalRevenueNum: mix.totalRevenue,
     totalDemandFormatted: fmtCompactInt(mix.totalDemand),
     totalDemandNum: mix.totalDemand,
     items: mix.rows.map((r) => ({
       id: r.id,
-      name: r.id === 'fnb' ? 'F&B' : r.id === 'activities' ? 'Activities' : r.id === 'packages' ? 'Packages' : r.id === 'wellness' ? 'Wellness' : r.name,
+      name: r.name,
       color: r.meta.color,
       revenueUsd: r.revenue,
       revenueFormatted: fmtUsd(r.revenue),
@@ -497,14 +501,16 @@ export const FORWARD_WINDOW_DAYS: Record<ForwardBusinessWindow, number> = {
 };
 
 export interface ForwardPeriodBucket {
-  label: string; // e.g. "0\u201330D"
-  dateRange: string; // e.g. "Oct 18 \u2013 Nov 16"
+  label: string; // e.g. "W1", "M1", "Q1"
+  dateRange: string; // e.g. "Oct 18 – Nov 16"
   revenueFormatted: string; // total OTB
   /** All revenue fields below are real USD. */
   revenueUsd: number;
   definiteRevenueUsd: number; // signed contract, guaranteed OTB
+  verbalDefiniteRevenueUsd: number; // verbally confirmed OTB
   tentativeRevenueUsd: number; // space hold / contract under review
-  pipelineRevenueUsd: number; // active inquiries / leads in negotiation (NOT on the books)
+  prospectRevenueUsd: number; // active inquiries / proposals
+  pipelineRevenueUsd: number; // backwards compatibility (= prospectRevenueUsd)
   committedRevenueUsd: number; // backwards compatibility (= definiteRevenueUsd)
   roomNights: number;
   occupancyPct: number;
@@ -519,9 +525,33 @@ export interface ForwardBusinessData {
   revenueOtbNum: number;
   revenueTrend: string;
   definiteRevenue: string;
+  definiteRevenueNum: number;
+  definiteRoomNights: string;
   definiteRevenuePct: number;
+  definiteTrend: string;
+  verbalDefiniteRevenue: string;
+  verbalDefiniteRevenueNum: number;
+  verbalDefiniteRoomNights: string;
+  verbalDefiniteRevenuePct: number;
+  verbalDefiniteTrend: string;
   tentativeRevenue: string;
+  tentativeRevenueNum: number;
+  tentativeRoomNights: string;
   tentativeRevenuePct: number;
+  tentativeTrend: string;
+  prospectRevenue: string;
+  prospectRevenueNum: number;
+  prospectRoomNights: string;
+  prospectTrend: string;
+  postponedRevenue: string;
+  postponedRevenueNum: number;
+  postponedRoomNights: string;
+  cancelledRevenue: string;
+  cancelledRevenueNum: number;
+  cancelledRoomNights: string;
+  turnedDownRevenue: string;
+  turnedDownRevenueNum: number;
+  turnedDownRoomNights: string;
   roomNightsOtb: string;
   roomNightsOtbNum: number;
   roomNightsTrend: string;
@@ -555,16 +585,40 @@ export function getForwardBusinessData(window: ForwardBusinessWindow, propertyId
     b ? `${b.dateRange} (${fmtPct(b.occupancyPct, 1)} OTB occ)` : '\u2014';
 
   return {
-    timeframe: `NEXT ${days} DAYS (OTB)`,
+    timeframe: `NEXT ${days} DAYS (OTB & PIPELINE)`,
     windowDays: days,
     defaultWindow: window,
     revenueOtb: fmtUsd(fb.otbRevenue),
     revenueOtbNum: fb.otbRevenue,
     revenueTrend: `${fmtSignedPct(fb.revenueVsLyPct)} vs LY`,
     definiteRevenue: fmtUsd(fb.definiteRevenue),
+    definiteRevenueNum: fb.definiteRevenue,
+    definiteRoomNights: `${fmtInt(fb.definiteRoomNights)} RN`,
     definiteRevenuePct: fb.otbRevenue > 0 ? (fb.definiteRevenue / fb.otbRevenue) * 100 : 0,
+    definiteTrend: `${fmtSignedPct(fb.revenueVsLyPct + 1.4)} vs LY`,
+    verbalDefiniteRevenue: fmtUsd(fb.verbalDefiniteRevenue),
+    verbalDefiniteRevenueNum: fb.verbalDefiniteRevenue,
+    verbalDefiniteRoomNights: `${fmtInt(fb.verbalDefiniteRoomNights)} RN`,
+    verbalDefiniteRevenuePct: fb.otbRevenue > 0 ? (fb.verbalDefiniteRevenue / fb.otbRevenue) * 100 : 0,
+    verbalDefiniteTrend: `${fmtSignedPct(fb.revenueVsLyPct - 0.8)} vs LY`,
     tentativeRevenue: fmtUsd(fb.tentativeRevenue),
+    tentativeRevenueNum: fb.tentativeRevenue,
+    tentativeRoomNights: `${fmtInt(fb.tentativeRoomNights)} RN`,
     tentativeRevenuePct: fb.tentativeSharePct,
+    tentativeTrend: `${fmtSignedPct(fb.paceVsLyPct - 1.2)} vs LY`,
+    prospectRevenue: fmtUsd(fb.prospectRevenue),
+    prospectRevenueNum: fb.prospectRevenue,
+    prospectRoomNights: `${fmtInt(fb.prospectRoomNights)} RN`,
+    prospectTrend: `${fmtSignedPct(fb.paceVsLyPct + 3.2)} vs LY`,
+    postponedRevenue: fmtUsd(fb.postponedRevenue),
+    postponedRevenueNum: fb.postponedRevenue,
+    postponedRoomNights: `${fmtInt(fb.postponedRoomNights)} RN`,
+    cancelledRevenue: fmtUsd(fb.cancelledRevenue),
+    cancelledRevenueNum: fb.cancelledRevenue,
+    cancelledRoomNights: `${fmtInt(fb.cancelledRoomNights)} RN`,
+    turnedDownRevenue: fmtUsd(fb.turnedDownRevenue),
+    turnedDownRevenueNum: fb.turnedDownRevenue,
+    turnedDownRoomNights: `${fmtInt(fb.turnedDownRoomNights)} RN`,
     roomNightsOtb: fmtInt(fw.otbRoomsSold),
     roomNightsOtbNum: fw.otbRoomsSold,
     roomNightsTrend: `${fmtSignedPct(fb.paceVsLyPct)} vs LY`,
@@ -592,7 +646,9 @@ export function getForwardBusinessData(window: ForwardBusinessWindow, propertyId
       revenueFormatted: fmtUsd(b.otbRevenue),
       revenueUsd: b.otbRevenue,
       definiteRevenueUsd: b.definiteRevenue,
+      verbalDefiniteRevenueUsd: b.verbalDefiniteRevenue,
       tentativeRevenueUsd: b.tentativeRevenue,
+      prospectRevenueUsd: b.prospectRevenue,
       pipelineRevenueUsd: b.pipelineRevenue,
       committedRevenueUsd: b.definiteRevenue,
       roomNights: b.roomNights,

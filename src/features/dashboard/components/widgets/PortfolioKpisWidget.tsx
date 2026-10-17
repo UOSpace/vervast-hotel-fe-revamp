@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
 import {
@@ -142,85 +141,78 @@ interface PortfolioKpisWidgetProps {
 }
 
 export function PortfolioKpisWidget({
-  horizon: controlledHorizon,
+  horizon = 'mtd',
   onChangeHorizon,
   onOpenMetricDrawer,
   onOpenPortfolioPerformance,
 }: PortfolioKpisWidgetProps) {
-  const [internalHorizon, setInternalHorizon] = useState<TimeHorizon>('mtd');
-  const horizon = controlledHorizon ?? internalHorizon;
-  const setHorizon = (h: TimeHorizon) => {
-    setInternalHorizon(h);
-    onChangeHorizon?.(h);
-  };
-
   const data = buildKpiData(horizon);
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
-      {/* Header: Title + Details Link + Period Indicator + Timeframe Tabs */}
-      <div className="px-1 flex items-center justify-between shrink-0 mb-2 min-h-[32px]">
+      {/* Header: Title + Period Indicator + Horizon Tabs + Details Link */}
+      <div className="px-1 flex items-center justify-between gap-2 shrink-0 mb-2 min-h-[32px]">
         <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
-              Portfolio Performance
-            </h3>
-            {onOpenPortfolioPerformance && (
-              <button
-                type="button"
-                onClick={() => onOpenPortfolioPerformance(horizon)}
-                className="text-[9px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer"
-              >
-                <span>Details</span> <RoundAltArrowRight size={9} />
-              </button>
-            )}
-          </div>
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
+            Portfolio Performance
+          </h3>
           <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-            Period: <span className="font-semibold text-zinc-800">{data.periodLabel}</span>
+            As of: <span className="font-semibold text-zinc-800">{data.periodLabel}</span>
           </p>
         </div>
 
-        {/* Time Horizon Filter Tabs: Today | MTD | YTD */}
-        <div className="inline-flex items-center p-0.5 bg-zinc-200/60 rounded-md">
-          {(['today', 'mtd', 'ytd'] as const).map((h) => {
-            const isActive = horizon === h;
-            return (
-              <button
-                key={h}
-                type="button"
-                onClick={() => setHorizon(h)}
-                className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-zinc-900 text-white shadow-xs'
-                    : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
-                }`}
-              >
-                {h === 'today' ? 'Today' : h.toUpperCase()}
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2 shrink-0">
+          {onChangeHorizon && (
+            <div className="inline-flex items-center p-0.5 bg-zinc-200/60 rounded-md shrink-0">
+              {(['today', 'mtd', 'ytd'] as const).map((h) => {
+                const isActive = horizon === h;
+                return (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => onChangeHorizon(h)}
+                    title={PERIOD_DEFS[h].periodLabel}
+                    className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-zinc-900 text-white shadow-xs'
+                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                    }`}
+                  >
+                    {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {onOpenPortfolioPerformance && (
+            <button
+              type="button"
+              onClick={() => onOpenPortfolioPerformance(horizon)}
+              className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <span>See details</span> <RoundAltArrowRight size={10} />
+            </button>
+          )}
         </div>
       </div>
 
       {/* 5 KPI Cards Container */}
       <div className="flex-1 flex flex-col justify-between gap-2">
-        {/* CARD 1 (Hero): TOTAL HOTEL REVENUE (Hospitality 5 Pillars) */}
+        {/* CARD 1 (Hero): TOTAL REVENUE (HOSPITALITY) */}
         <div
           className="relative rounded-[12px] p-3 flex flex-col justify-between animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.15s' }}
-          onClick={() => onOpenMetricDrawer?.('Total Hotel Revenue', data.totalRevenue.value, horizon)}
+          onClick={() => onOpenMetricDrawer?.('Total Revenue (Hospitality)', data.totalRevenue.value, horizon)}
         >
           <div className="flex items-start justify-between gap-2">
             <div>
               <div className="flex items-center gap-1.5">
-                <InfoTooltip text="Total Hotel Business revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities).">
+                <InfoTooltip text="Total Hospitality revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities).">
                   <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-900 cursor-help">
-                    TOTAL HOTEL REVENUE
+                    TOTAL REVENUE (HOSPITALITY)
                   </span>
                 </InfoTooltip>
-                <span className="text-[8px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-200/70 text-zinc-700">
-                  Hospitality
-                </span>
               </div>
               <div className="text-[22px] font-normal text-zinc-900 leading-tight mt-0.5">
                 {data.totalRevenue.value}
@@ -284,11 +276,11 @@ export function PortfolioKpisWidget({
               {data.occupancy.value}
             </div>
             {/* Comparison Badges: vs Budget, vs Forecast */}
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <div className="flex items-center gap-1 flex-nowrap">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.occupancy.vsBudget}
               </span>
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.occupancy.vsForecast}
               </span>
             </div>
@@ -320,11 +312,11 @@ export function PortfolioKpisWidget({
               {data.adr.value}
             </div>
             {/* Comparison Badges: vs Budget, vs Forecast */}
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <div className="flex items-center gap-1 flex-nowrap">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.adr.vsBudget}
               </span>
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.adr.vsForecast}
               </span>
             </div>
@@ -356,11 +348,11 @@ export function PortfolioKpisWidget({
               {data.revPar.value}
             </div>
             {/* Comparison Badges: vs Budget, vs Forecast */}
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <div className="flex items-center gap-1 flex-nowrap">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.revPar.vsBudget}
               </span>
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.revPar.vsForecast}
               </span>
             </div>
@@ -392,11 +384,11 @@ export function PortfolioKpisWidget({
               {data.roomRevenue.value}
             </div>
             {/* Comparison Badges: vs Budget, vs Forecast (Standardized: Amount followed by %) */}
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+            <div className="flex items-center gap-1 flex-nowrap">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.roomRevenue.vsBudget}
               </span>
-              <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+              <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
                 {data.roomRevenue.vsForecast}
               </span>
             </div>

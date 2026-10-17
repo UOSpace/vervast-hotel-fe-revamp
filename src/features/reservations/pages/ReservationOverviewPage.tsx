@@ -327,7 +327,7 @@ export function ReservationOverviewPage() {
           </div>
         </section>
 
-        {/* Row 4: Property Level Overview (When viewing all sanctuaries) */}
+        {/* Row 4: Property Level Overview (When viewing all properties) */}
         {hotel === 'all' && (
           <section aria-label="Property Level Overview" className="px-4 lg:px-6 pt-2 pb-6">
             <div className={CARD}>
@@ -338,7 +338,7 @@ export function ReservationOverviewPage() {
                     Click any property to focus on its leads, pipeline and booking performance
                   </p>
                 </div>
-                <span className="text-[9.5px] font-medium text-zinc-400">10 Luxury Sanctuaries</span>
+                <span className="text-[9.5px] font-medium text-zinc-400">10 Luxury Properties</span>
               </div>
 
               <div className="overflow-x-auto">

@@ -153,11 +153,11 @@ export function distributeMetrics(
 }
 
 export function getPeriodDateRange(period: PeriodId): [Date, Date] {
-  const sysToday = new Date(2026, 9, 17);
-  if (period === 'today') return [sysToday, sysToday];
-  if (period === 'mtd') return [new Date(2026, 9, 1), sysToday];
-  if (period === 'ytd') return [new Date(2026, 0, 1), sysToday];
-  return [new Date(2026, 9, 18), new Date(2027, 0, 15)];
+  const sysYesterday = new Date(2026, 9, 16);
+  if (period === 'today') return [sysYesterday, sysYesterday];
+  if (period === 'mtd') return [new Date(2026, 9, 1), sysYesterday];
+  if (period === 'ytd') return [new Date(2026, 0, 1), sysYesterday];
+  return [new Date(2026, 9, 17), new Date(2027, 0, 14)];
 }
 
 export function inferPeriodFromDates(start: Date | null, end: Date | null): PeriodId {

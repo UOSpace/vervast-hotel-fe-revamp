@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { RoundAltArrowRight } from '@solar-icons/react';
 import type { PeriodId } from '@/data/portfolio';
 import {
   getRevenueDemandMixData,
@@ -49,7 +50,7 @@ export function RevenueDemandMixWidget({
       onClick={() => onOpenDetails && onOpenDetails()}
     >
       {/* Top Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between gap-2 mb-3">
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
             REVENUE &amp; DEMAND MIX
@@ -59,32 +60,42 @@ export function RevenueDemandMixWidget({
           </p>
         </div>
 
-        {/* Toggle Mode: Revenue | Demand */}
         <div
-          className="inline-flex items-center p-0.5 rounded-full bg-zinc-100 border border-zinc-200/80 shadow-2xs"
+          className="flex items-center gap-2.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Toggle Mode: Revenue | Demand */}
+          <div className="inline-flex items-center p-0.5 rounded-full bg-zinc-100 border border-zinc-200/80 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setMode('revenue')}
+              className={`px-2.5 py-0.5 text-[9.5px] rounded-full transition-all duration-200 cursor-pointer ${
+                isRevenue
+                  ? 'bg-zinc-900 text-white font-medium shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 font-normal'
+              }`}
+            >
+              Revenue
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('demand')}
+              className={`px-2.5 py-0.5 text-[9.5px] rounded-full transition-all duration-200 cursor-pointer ${
+                !isRevenue
+                  ? 'bg-zinc-900 text-white font-medium shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 font-normal'
+              }`}
+            >
+              Demand
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={() => setMode('revenue')}
-            className={`px-2.5 py-0.5 text-[9.5px] rounded-full transition-all duration-200 cursor-pointer ${
-              isRevenue
-                ? 'bg-zinc-900 text-white font-medium shadow-xs'
-                : 'text-zinc-500 hover:text-zinc-900 font-normal'
-            }`}
+            onClick={() => onOpenDetails && onOpenDetails()}
+            className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap"
           >
-            Revenue
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('demand')}
-            className={`px-2.5 py-0.5 text-[9.5px] rounded-full transition-all duration-200 cursor-pointer ${
-              !isRevenue
-                ? 'bg-zinc-900 text-white font-medium shadow-xs'
-                : 'text-zinc-500 hover:text-zinc-900 font-normal'
-            }`}
-          >
-            Demand
+            See details <RoundAltArrowRight size={10} />
           </button>
         </div>
       </div>
@@ -194,12 +205,12 @@ export function RevenueDemandMixWidget({
                   <span className="text-[9.5px] font-medium text-zinc-400 w-7 text-right">
                     {mixPct}
                   </span>
-                  <span className="text-[9.5px] font-bold text-zinc-900 w-[80px] text-right whitespace-nowrap">
+                  <span className="text-[9.5px] font-bold text-zinc-900 w-[56px] text-right whitespace-nowrap">
                     {valueStr}
                   </span>
-                  <span className="text-[9.5px] font-medium text-[#14532d] w-11 text-right flex items-center justify-end gap-0.5 whitespace-nowrap">
+                  <span className="text-[9.5px] font-medium text-[#14532d] min-w-[64px] text-right flex items-center justify-end gap-0.5 whitespace-nowrap">
                     <span className="text-[8px] font-bold">↑</span>
-                    {trendStr}
+                    {trendStr} vs LY
                   </span>
                 </div>
               </div>

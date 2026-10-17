@@ -8,9 +8,7 @@ import { SYSTEM_DATE_ISO } from './periods';
 import type { PeriodId } from './periods';
 import {
   getHospitalityRevenuePillars,
-  PACKAGE_SHARE_OF_ROOM_REVENUE,
   splitByShares,
-  WELLNESS_SHARE_OF_SPA,
 } from './mix';
 import type { RevenuePillar, ShareDef } from './mix';
 
@@ -53,11 +51,11 @@ export interface PillarMeta {
   demandSuffix: string;
 }
 
-/** Luxury black-to-slate gradient (AGENTS.md) + descriptive metadata for the 6 pillars. */
+/** Luxury black-to-slate gradient (AGENTS.md) + descriptive metadata for the 4 pillars. */
 export const PILLAR_META: Record<PillarId, PillarMeta> = {
   rooms: {
     color: '#0f172a',
-    description: 'Luxury suites, chalets, overwater villas and sanctuary pavilions',
+    description: 'Luxury suites, chalets, overwater villas and property pavilions',
     pillarRoute: '/dashboard/property',
     demandUnit: 'Room Nights Occupied',
     demandSuffix: 'RN',
@@ -70,18 +68,11 @@ export const PILLAR_META: Record<PillarId, PillarMeta> = {
     demandSuffix: 'Covers',
   },
   spa: {
-    color: '#475569',
-    description: 'Alpine thermal baths, onsen therapies, signature massages & holistic rituals',
-    pillarRoute: '/dashboard/experience/spa',
-    demandUnit: 'Signature Spa Treatments',
-    demandSuffix: 'Treats',
-  },
-  wellness: {
     color: '#64748b',
-    description: 'Longevity diagnostics, cryotherapy, sound healing & meditation journeys',
-    pillarRoute: '/dashboard/experience/wellness',
-    demandUnit: 'Wellness & Medical Sessions',
-    demandSuffix: 'Sessions',
+    description: 'Alpine thermal baths, onsen therapies, holistic rituals & medical wellness',
+    pillarRoute: '/dashboard/experience/spa',
+    demandUnit: 'Spa & Wellness Treatments',
+    demandSuffix: 'Treats',
   },
   activities: {
     color: '#94a3b8',
@@ -89,13 +80,6 @@ export const PILLAR_META: Record<PillarId, PillarMeta> = {
     pillarRoute: '/dashboard/experience',
     demandUnit: 'Activity Participants',
     demandSuffix: 'Guests',
-  },
-  packages: {
-    color: '#cbd5e1',
-    description: 'Curated multi-day journeys combining suites, fine dining, spa & excursions',
-    pillarRoute: '/dashboard/sales/events',
-    demandUnit: 'Curated Packages Booked',
-    demandSuffix: 'Bookings',
   },
 };
 
@@ -108,20 +92,16 @@ export const DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH = 0.6;
 type DemandSource = Pick<MetricsCore, 'roomsSold' | 'stays' | 'fnb' | 'spa' | 'experiences'>;
 
 /**
- * Operational volume units behind each pillar, all derived from the engine:
- *   rooms = room nights sold, fnb = dining covers, spa/wellness = treatments split by WELLNESS_SHARE_OF_SPA,
- *   activities = experience attendances, packages = guest stays x PACKAGE_SHARE_OF_ROOM_REVENUE
- *   (the same 4.5% of the stay base that is sold inside curated packages).
+ * Operational volume units behind each of the 4 pillars, all derived from the engine:
+ *   rooms = room nights sold, fnb = dining covers, spa = spa & wellness treatments,
+ *   activities = experience attendances.
  */
 export function getHospitalityDemandUnits(m: DemandSource): Record<PillarId, number> {
-  const wellness = Math.round(m.spa.treatments * WELLNESS_SHARE_OF_SPA);
   return {
     rooms: m.roomsSold,
     fnb: m.fnb.covers,
-    spa: m.spa.treatments - wellness,
-    wellness,
+    spa: m.spa.treatments,
     activities: m.experiences.attendances,
-    packages: Math.round(m.stays * PACKAGE_SHARE_OF_ROOM_REVENUE),
   };
 }
 
@@ -145,7 +125,7 @@ export interface PillarMix {
   totalDemand: number;
 }
 
-/** The 6-pillar Revenue & Demand Mix of a metrics object (portfolio, category or single property). */
+/** The 4-pillar Revenue & Demand Mix of a metrics object (portfolio, category or single property). */
 export function getHospitalityPillarMix(
   m: Pick<MetricsCore, 'roomRevenue' | 'fnbRevenue' | 'spaRevenue' | 'experienceRevenue' | 'totalRevenue'> &
     DemandSource &
@@ -157,18 +137,14 @@ export function getHospitalityPillarMix(
 
   const revenueGrowth: Record<PillarId, number> = {
     rooms: m.vsLy.roomRevenuePct,
-    packages: m.vsLy.roomRevenuePct,
     fnb: m.vsLy.fnbRevenuePct,
     spa: m.vsLy.spaRevenuePct,
-    wellness: m.vsLy.spaRevenuePct,
     activities: m.vsLy.experienceRevenuePct,
   };
   const demandGrowth: Record<PillarId, number> = {
     rooms: pctChange(m.roomsSold, m.ly.roomsSold),
-    packages: revenueGrowth.packages * DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH,
     fnb: revenueGrowth.fnb * DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH,
     spa: revenueGrowth.spa * DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH,
-    wellness: revenueGrowth.wellness * DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH,
     activities: revenueGrowth.activities * DEMAND_GROWTH_FRACTION_OF_REVENUE_GROWTH,
   };
 
@@ -286,33 +262,60 @@ export type ForwardWindowDays = (typeof FORWARD_WINDOWS)[number];
  *  - A lead is on average LEAD_AVG_ROOM_NIGHTS room nights at the window ADR.
  */
 const TENTATIVE_SHARE_BY_WINDOW: Array<[number, number]> = [
-  [30, 0.26],
-  [90, 0.27],
-  [180, 0.29],
-  [365, 0.31],
+  [30, 0.14],
+  [90, 0.16],
+  [180, 0.18],
+  [365, 0.20],
+];
+const VERBAL_DEFINITE_SHARE_BY_WINDOW: Array<[number, number]> = [
+  [30, 0.12],
+  [90, 0.14],
+  [180, 0.15],
+  [365, 0.16],
 ];
 export const PIPELINE_CAPTURE_OF_UNBOOKED = 0.3;
+export const POSTPONED_PCT_OF_OTB = 0.032;
+export const CANCELLED_PCT_OF_OTB = 0.021;
+export const TURNED_DOWN_PCT_OF_OTB = 0.045;
 export const CANCELLATION_EXPOSURE_PCT_OF_OTB = 0.055;
 export const LEAD_AVG_ROOM_NIGHTS = 12;
 
 export const getTentativeShare = (windowDays: number) => interp(TENTATIVE_SHARE_BY_WINDOW, windowDays);
+export const getVerbalDefiniteShare = (windowDays: number) => interp(VERBAL_DEFINITE_SHARE_BY_WINDOW, windowDays);
 export const getCancellationExposure = (otbRevenue: number) =>
   Math.round(otbRevenue * CANCELLATION_EXPOSURE_PCT_OF_OTB);
 
-/** Cumulative day cut-offs of the 3 cadence buckets of a window (30D -> 10/20/30, 90D -> 30/60/90 ...). */
+/** Cumulative day cut-offs and labels of the cadence buckets of a window (30D -> W1..W4, 90D -> M1..M3, 180D -> M1-2..M5-6, 365D -> Q1..Q4). */
 export function getForwardBucketBounds(windowDays: number): number[] {
   switch (windowDays) {
     case 30:
-      return [10, 20, 30];
+      return [7, 14, 21, 30];
     case 90:
       return [30, 60, 90];
     case 180:
       return [60, 120, 180];
     case 365:
-      return [120, 240, 365];
+      return [90, 181, 273, 365];
     default: {
       const third = Math.max(1, Math.round(windowDays / 3));
       return [third, third * 2, windowDays];
+    }
+  }
+}
+
+export function getForwardBucketLabels(windowDays: number): string[] {
+  switch (windowDays) {
+    case 30:
+      return ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+    case 90:
+      return ['Oct\u2013Nov', 'Nov\u2013Dec', 'Dec\u2013Jan'];
+    case 180:
+      return ['Oct\u2013Dec', 'Dec\u2013Feb', 'Feb\u2013Apr'];
+    case 365:
+      return ['Q1', 'Q2', 'Q3', 'Q4'];
+    default: {
+      const bounds = getForwardBucketBounds(windowDays);
+      return bounds.map((b, i) => `${i > 0 ? bounds[i - 1] + 1 : 0}\u2013${b}D`);
     }
   }
 }
@@ -342,7 +345,9 @@ export interface ForwardBucket {
   occupancyPct: number;
   otbRevenue: number;
   definiteRevenue: number;
+  verbalDefiniteRevenue: number;
   tentativeRevenue: number;
+  prospectRevenue: number;
   pipelineRevenue: number;
   highlight: boolean;
 }
@@ -352,10 +357,22 @@ export interface ForwardBusiness {
   window: ForwardWindowMetrics;
   otbRevenue: number;
   definiteRevenue: number;
+  definiteRoomNights: number;
+  verbalDefiniteRevenue: number;
+  verbalDefiniteRoomNights: number;
   tentativeRevenue: number;
+  tentativeRoomNights: number;
   tentativeSharePct: number;
+  prospectRevenue: number;
+  prospectRoomNights: number;
   pipelineRevenue: number;
   leadsCount: number;
+  postponedRevenue: number;
+  postponedRoomNights: number;
+  cancelledRevenue: number;
+  cancelledRoomNights: number;
+  turnedDownRevenue: number;
+  turnedDownRoomNights: number;
   cancellationExposure: number;
   forecastRevenue: number;
   /** OTB occupancy delta vs same time last year, in percentage points. */
@@ -377,8 +394,10 @@ export function getForwardBusiness(propertyIds: string[] | undefined, windowDays
   const ids = propertyIds && propertyIds.length > 0 ? propertyIds : PORTFOLIO_PROPERTY_IDS;
   const fw = getForwardWindowMetrics(ids, windowDays);
   const tentativeShare = getTentativeShare(windowDays);
+  const verbalDefShare = getVerbalDefiniteShare(windowDays);
 
   const bounds = getForwardBucketBounds(windowDays);
+  const labels = getForwardBucketLabels(windowDays);
   const cumulative = bounds.map((b) => (b === windowDays ? fw : getForwardWindowMetrics(ids, b)));
   const buckets: ForwardBucket[] = cumulative.map((cur, i) => {
     const prev = i > 0 ? cumulative[i - 1] : null;
@@ -388,8 +407,10 @@ export function getForwardBusiness(propertyIds: string[] | undefined, windowDays
     const otbRevenue = cur.otbTotalRevenue - (prev?.otbTotalRevenue ?? 0);
     const forecastRevenue = cur.forecastTotalRevenue - (prev?.forecastTotalRevenue ?? 0);
     const tentative = Math.round(otbRevenue * tentativeShare);
+    const verbalDefinite = Math.round(otbRevenue * verbalDefShare);
+    const prospect = Math.round(Math.max(0, forecastRevenue - otbRevenue) * PIPELINE_CAPTURE_OF_UNBOOKED);
     return {
-      label: `${fromDay === 1 ? 0 : fromDay}\u2013${bounds[i]}D`,
+      label: labels[i] ?? `${fromDay === 1 ? 0 : fromDay}\u2013${bounds[i]}D`,
       dateRange: getForwardDateRange(fromDay, bounds[i]),
       fromDay,
       toDay: bounds[i],
@@ -397,9 +418,11 @@ export function getForwardBusiness(propertyIds: string[] | undefined, windowDays
       availableRoomNights: available,
       occupancyPct: available > 0 ? (roomNights / available) * 100 : 0,
       otbRevenue,
-      definiteRevenue: otbRevenue - tentative,
+      definiteRevenue: otbRevenue - verbalDefinite - tentative,
+      verbalDefiniteRevenue: verbalDefinite,
       tentativeRevenue: tentative,
-      pipelineRevenue: Math.round(Math.max(0, forecastRevenue - otbRevenue) * PIPELINE_CAPTURE_OF_UNBOOKED),
+      prospectRevenue: prospect,
+      pipelineRevenue: prospect,
       highlight: false,
     };
   });
@@ -410,8 +433,24 @@ export function getForwardBusiness(propertyIds: string[] | undefined, windowDays
   });
 
   const tentativeRevenue = buckets.reduce((a, b) => a + b.tentativeRevenue, 0);
-  const pipelineRevenue = buckets.reduce((a, b) => a + b.pipelineRevenue, 0);
+  const verbalDefiniteRevenue = buckets.reduce((a, b) => a + b.verbalDefiniteRevenue, 0);
+  const definiteRevenue = fw.otbTotalRevenue - verbalDefiniteRevenue - tentativeRevenue;
+  const prospectRevenue = buckets.reduce((a, b) => a + b.prospectRevenue, 0);
   const otbRevenue = fw.otbTotalRevenue;
+  const adr = Math.max(1, fw.adr);
+
+  const tentativeRoomNights = Math.round(fw.otbRoomsSold * tentativeShare);
+  const verbalDefiniteRoomNights = Math.round(fw.otbRoomsSold * verbalDefShare);
+  const definiteRoomNights = Math.max(0, fw.otbRoomsSold - verbalDefiniteRoomNights - tentativeRoomNights);
+  const prospectRoomNights = Math.round(prospectRevenue / adr);
+
+  const postponedRevenue = Math.round(otbRevenue * POSTPONED_PCT_OF_OTB);
+  const postponedRoomNights = Math.round(postponedRevenue / adr);
+  const cancelledRevenue = Math.round(otbRevenue * CANCELLED_PCT_OF_OTB);
+  const cancelledRoomNights = Math.round(cancelledRevenue / adr);
+  const turnedDownRevenue = Math.round(otbRevenue * TURNED_DOWN_PCT_OF_OTB);
+  const turnedDownRoomNights = Math.round(turnedDownRevenue / adr);
+
   const stlyOccPct = fw.availableRoomNights > 0 ? (fw.stlyOtbRoomsSold / fw.availableRoomNights) * 100 : 0;
   const stlyAdr = fw.stlyOtbRoomsSold > 0 ? fw.stlyOtbRoomRevenue / fw.stlyOtbRoomsSold : 0;
 
@@ -421,11 +460,23 @@ export function getForwardBusiness(propertyIds: string[] | undefined, windowDays
     windowDays,
     window: fw,
     otbRevenue,
-    definiteRevenue: otbRevenue - tentativeRevenue,
+    definiteRevenue,
+    definiteRoomNights,
+    verbalDefiniteRevenue,
+    verbalDefiniteRoomNights,
     tentativeRevenue,
+    tentativeRoomNights,
     tentativeSharePct: otbRevenue > 0 ? (tentativeRevenue / otbRevenue) * 100 : 0,
-    pipelineRevenue,
-    leadsCount: fw.adr > 0 ? Math.max(1, Math.round(pipelineRevenue / (fw.adr * LEAD_AVG_ROOM_NIGHTS))) : 0,
+    prospectRevenue,
+    prospectRoomNights,
+    pipelineRevenue: prospectRevenue,
+    leadsCount: fw.adr > 0 ? Math.max(1, Math.round(prospectRevenue / (fw.adr * LEAD_AVG_ROOM_NIGHTS))) : 0,
+    postponedRevenue,
+    postponedRoomNights,
+    cancelledRevenue,
+    cancelledRoomNights,
+    turnedDownRevenue,
+    turnedDownRoomNights,
     cancellationExposure: getCancellationExposure(otbRevenue),
     forecastRevenue: fw.forecastTotalRevenue,
     occupancyPtsVsLy: fw.otbOccupancyPct - stlyOccPct,
@@ -460,13 +511,48 @@ export interface PaceMonthPoint {
 export function getBookingPaceSeries(propertyIds: string[] | undefined, totalDays = 90): PaceMonthPoint[] {
   const ids = propertyIds && propertyIds.length > 0 ? propertyIds : PORTFOLIO_PROPERTY_IDS;
 
-  // group forward days into calendar months
-  const slices: Array<{ month: number; fromDay: number; toDay: number }> = [];
-  for (let day = 1; day <= totalDays; day++) {
-    const month = forwardDate(day).getUTCMonth();
-    const last = slices[slices.length - 1];
-    if (last && last.month === month) last.toDay = day;
-    else slices.push({ month, fromDay: day, toDay: day });
+  const slices: Array<{ label: string; fromDay: number; toDay: number }> = [];
+  if (totalDays <= 7) {
+    for (let day = 1; day <= totalDays; day++) {
+      const dt = forwardDate(day);
+      slices.push({
+        label: `${MONTHS_SHORT[dt.getUTCMonth()]} ${dt.getUTCDate()}`,
+        fromDay: day,
+        toDay: day,
+      });
+    }
+  } else if (totalDays <= 14) {
+    for (let day = 1; day <= totalDays; day += 2) {
+      const toDay = Math.min(totalDays, day + 1);
+      const dt1 = forwardDate(day);
+      const dt2 = forwardDate(toDay);
+      slices.push({
+        label:
+          dt1.getUTCMonth() === dt2.getUTCMonth()
+            ? `${MONTHS_SHORT[dt1.getUTCMonth()]} ${dt1.getUTCDate()}\u2013${dt2.getUTCDate()}`
+            : `${fmtMonthDay(dt1)}\u2013${fmtMonthDay(dt2)}`,
+        fromDay: day,
+        toDay,
+      });
+    }
+  } else if (totalDays <= 31) {
+    const weekBounds = [
+      { label: 'Week 1 (Oct 18\u201324)', fromDay: 1, toDay: 7 },
+      { label: 'Week 2 (Oct 25\u201331)', fromDay: 8, toDay: 14 },
+      { label: 'Week 3 (Nov 1\u20137)', fromDay: 15, toDay: 21 },
+      { label: 'Week 4 (Nov 8\u201316)', fromDay: 22, toDay: totalDays },
+    ];
+    weekBounds.forEach((w) => slices.push(w));
+  } else {
+    const biWeeklyBounds = [
+      { label: 'Oct 18\u201331', fromDay: 1, toDay: 14 },
+      { label: 'Nov 1\u201315', fromDay: 15, toDay: 29 },
+      { label: 'Nov 16\u201330', fromDay: 30, toDay: 44 },
+      { label: 'Dec 1\u201315', fromDay: 45, toDay: 59 },
+      { label: 'Dec 16\u201331', fromDay: 60, toDay: 75 },
+      { label: 'Jan 1\u201315', fromDay: 76, toDay: totalDays },
+    ];
+    biWeeklyBounds.forEach((b) => slices.push(b));
   }
 
   let prevOtb = 0;
@@ -474,10 +560,11 @@ export function getBookingPaceSeries(propertyIds: string[] | undefined, totalDay
   return slices.map((s) => {
     const cum = getForwardWindowMetrics(ids, s.toDay);
     const point: PaceMonthPoint = {
-      month: MONTHS_SHORT[s.month],
-      range: `${fmtMonthDay(forwardDate(s.fromDay))} \u2013 ${
-        forwardDate(s.toDay).getUTCDate()
-      }`,
+      month: s.label,
+      range:
+        s.fromDay === s.toDay
+          ? fmtMonthDay(forwardDate(s.fromDay))
+          : `${fmtMonthDay(forwardDate(s.fromDay))} \u2013 ${fmtMonthDay(forwardDate(s.toDay))}`,
       days: s.toDay - s.fromDay + 1,
       fromDay: s.fromDay,
       toDay: s.toDay,

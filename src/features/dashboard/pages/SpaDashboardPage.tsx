@@ -119,7 +119,7 @@ export function SpaDashboardPage() {
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Sanctuary Wellness</p>
           <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Sanctuary Dashboard</h1>
           <p className="text-[10px] text-zinc-500 font-normal mt-0.5">
-            Period: <strong className="font-semibold text-zinc-900">{spa.periodLabel}</strong> · Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)} = {fmtUsd(spa.revenue)} Total
+            As of: <strong className="font-semibold text-zinc-900">{spa.periodLabel}</strong> · Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)} = {fmtUsd(spa.revenue)} Total
           </p>
         </div>
 
