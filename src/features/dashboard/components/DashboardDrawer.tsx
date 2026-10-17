@@ -39,6 +39,7 @@ export function DashboardDrawer() {
   const { isOpen, config, closeDrawer, openDrawer } = useDashboardDrawer();
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const [active, setActive] = useState(false);
+  const [worldMapHorizon, setWorldMapHorizon] = useState<'today' | 'mtd' | 'ytd'>('mtd');
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -49,6 +50,14 @@ export function DashboardDrawer() {
       setActive(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const nextH =
+      config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon);
+    if (nextH === 'today' || nextH === 'mtd' || nextH === 'ytd') {
+      setWorldMapHorizon(nextH);
+    }
+  }, [config]);
 
   if (!config) return null;
 
@@ -282,10 +291,40 @@ export function DashboardDrawer() {
         return <PortfolioPerformanceDrawerContent config={config} />;
 
       case 'WORLD_MAP': {
-        const worldCategories = getCategoryPerformance(activePeriod);
-        const pm = getPortfolioMetrics(undefined, activePeriod);
+        const worldCategories = getCategoryPerformance(worldMapHorizon);
+        const pm = getPortfolioMetrics(undefined, worldMapHorizon);
         return (
           <div className="space-y-4 animate-fade-in text-zinc-900 dark:text-zinc-100">
+            {/* Top Header Filter Bar: As of Date + Horizon Filter Tabs (Yesterday | MTD | YTD) */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
+              <div>
+                <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
+                  As of: <span className="font-semibold text-zinc-800 dark:text-zinc-200">{PERIOD_DEFS[worldMapHorizon].periodLabel}</span>
+                </p>
+              </div>
+
+              {/* Tab View Filter: Yesterday | MTD | YTD */}
+              <div className="inline-flex items-center p-0.5 bg-zinc-200/70 dark:bg-zinc-800 rounded-lg shrink-0">
+                {(['today', 'mtd', 'ytd'] as const).map((h) => {
+                  const isActive = worldMapHorizon === h;
+                  return (
+                    <button
+                      key={h}
+                      type="button"
+                      onClick={() => setWorldMapHorizon(h)}
+                      className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-zinc-900 text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900'
+                          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/60'
+                      }`}
+                    >
+                      {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
               <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
                 <thead className="sticky -top-6 z-20 bg-zinc-50/90 dark:bg-zinc-800/90 shadow-2xs">
@@ -1047,11 +1086,6 @@ export function DashboardDrawer() {
         <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 backdrop-blur-sm">
           <div className="flex items-center gap-2.5 flex-wrap">
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{config?.title || 'Details'}</h2>
-            {config?.type === 'WORLD_MAP' && (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-zinc-700">
-                <span>As of: {PERIOD_DEFS[activePeriod].periodLabel}</span>
-              </span>
-            )}
           </div>
           <button
             onClick={closeDrawer}
