@@ -21,8 +21,14 @@ export const ROUTES = {
     },
     EXPERIENCE: {
       FNB: '/dashboard/fnb',
+      FNB_CATEGORIES: '/dashboard/fnb/categories',
+      FNB_REGIONAL: '/dashboard/fnb/regional',
+      FNB_PROPERTY: '/dashboard/fnb/property',
       POS: '/dashboard/fnb/pos',
       ACTIVITIES: '/dashboard/experience',
+      ACTIVITIES_CATEGORIES: '/dashboard/experience/categories',
+      ACTIVITIES_REGIONAL: '/dashboard/experience/regional',
+      ACTIVITIES_PROPERTY: '/dashboard/experience/property',
     },
     RESERVATIONS: {
       LEADS: '/dashboard/reservations/leads',

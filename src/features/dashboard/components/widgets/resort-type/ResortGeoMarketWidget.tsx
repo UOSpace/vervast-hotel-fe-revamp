@@ -15,7 +15,7 @@ const getRegionForCountry = (name: string) => {
   if (['saudi arabia', 'iran', 'turkey', 'iraq', 'yemen', 'syria', 'united arab emirates', 'israel', 'jordan', 'lebanon', 'oman', 'kuwait', 'qatar', 'bahrain', 'palestine'].includes(n)) return 'Middle East';
 
   // Europe
-  if (['russia', 'germany', 'united kingdom', 'france', 'italy', 'spain', 'ukraine', 'poland', 'romania', 'netherlands', 'belgium', 'czechia', 'greece', 'portugal', 'sweden', 'hungary', 'belarus', 'austria', 'serbia', 'switzerland', 'bulgaria', 'denmark', 'finland', 'slovakia', 'norway', 'ireland', 'croatia', 'moldova', 'bosnia and herz.', 'albania', 'lithuania', 'north macedonia', 'slovenia', 'latvia', 'estonia', 'montenegro', 'luxembourg', 'iceland'].includes(n)) return 'Europe';
+  if (['germany', 'united kingdom', 'france', 'italy', 'spain', 'ukraine', 'poland', 'romania', 'netherlands', 'belgium', 'czechia', 'greece', 'portugal', 'sweden', 'hungary', 'belarus', 'austria', 'serbia', 'switzerland', 'bulgaria', 'denmark', 'finland', 'slovakia', 'norway', 'ireland', 'croatia', 'moldova', 'bosnia and herz.', 'albania', 'lithuania', 'north macedonia', 'slovenia', 'latvia', 'estonia', 'montenegro', 'luxembourg', 'iceland'].includes(n)) return 'Europe';
 
   // Africa
   if (['nigeria', 'ethiopia', 'egypt', 'dem. rep. congo', 'tanzania', 'south africa', 'kenya', 'uganda', 'algeria', 'sudan', 'morocco', 'angola', 'mozambique', 'ghana', 'madagascar', 'cameroon', "côte d'ivoire", 'niger', 'burkina faso', 'mali', 'malawi', 'zambia', 'senegal', 'chad', 'somalia', 'zimbabwe', 'guinea', 'rwanda', 'benin', 'burundi', 'tunisia', 'south sudan', 'togo', 'sierra leone', 'libya', 'congo', 'liberia', 'central african rep.', 'mauritania', 'eritrea', 'namibia', 'gambia', 'botswana', 'gabon', 'lesotho', 'guinea-bissau', 'eq. guinea', 'mauritius', 'eswatini', 'djibouti', 'comoros'].includes(n)) return 'Africa';
@@ -38,7 +38,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
   const { openDrawer } = useDashboardDrawer();
   // Dynamically calculate region colors based on the current data rank
   const sortedRegions = [...geoData]
-    .filter(row => !row.isTotal)
+    .filter(row => !row.isTotal && parseFloat(row.rnights) > 0)
     .sort((a, b) => parseFloat(b.rnights) - parseFloat(a.rnights))
     .map(row => row.region);
 
@@ -81,6 +81,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
             {({ geographies }) =>
               geographies.map((geo) => {
                 const region = getRegionForCountry(geo.properties.name);
+                const isActiveRegion = Boolean(regionColors[region]);
                 const fillColor = regionColors[region] || regionColors['Unknown'];
 
                 return (
@@ -92,7 +93,7 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
                     strokeWidth={0.4}
                     style={{
                       default: { outline: 'none' },
-                      hover: { outline: 'none', fill: '#0f172a' },
+                      hover: { outline: 'none', fill: isActiveRegion ? '#0f172a' : fillColor },
                       pressed: { outline: 'none' },
                     }}
                   />

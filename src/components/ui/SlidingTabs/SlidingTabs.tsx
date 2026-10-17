@@ -27,6 +27,7 @@ export function SlidingTabs({ tabs, value, onChange, className, size = 'md' }: S
   const measure = () => {
     const el = refs.current[value];
     if (el) setBar({ left: el.offsetLeft, width: el.offsetWidth });
+    else setBar(null);
   };
 
   useLayoutEffect(measure, [value, tabs, size]);

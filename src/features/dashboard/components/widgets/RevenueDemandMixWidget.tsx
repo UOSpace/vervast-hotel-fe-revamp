@@ -1,22 +1,25 @@
 import { useState } from 'react';
+import type { PeriodId } from '@/data/portfolio';
 import {
-  simulatedRevenueDemandMixData,
+  getRevenueDemandMixData,
   type MixItem,
 } from '../../services/propertySimulation';
 
 interface RevenueDemandMixWidgetProps {
+  period?: PeriodId;
   onOpenDetails?: () => void;
   onSelectPillar?: (item: MixItem) => void;
 }
 
 export function RevenueDemandMixWidget({
+  period = 'mtd',
   onOpenDetails,
   onSelectPillar,
 }: RevenueDemandMixWidgetProps) {
   const [mode, setMode] = useState<'revenue' | 'demand'>('revenue');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const data = simulatedRevenueDemandMixData;
+  const data = getRevenueDemandMixData(period);
   const isRevenue = mode === 'revenue';
 
   // SVG Donut geometry

@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
-import { simulatedPropertiesData, type SimulatedPropertyMapItem } from '../../services/propertySimulation';
+import type { PeriodId } from '@/data/portfolio';
+import { getSimulatedPropertiesData, type SimulatedPropertyMapItem } from '../../services/propertySimulation';
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
@@ -30,15 +31,47 @@ const statusConfig: Record<string, { dotColor: string; badgeBg: string; badgeTex
   },
 };
 
-export function LiveOverviewMap() {
+/**
+ * Slight visual coordinate offsets at low zoom levels so closely-clustered pins
+ * (Tokyo vs Kyoto/Japan, Barcelona vs Switzerland) never overlap or steal hover events.
+ */
+const CLOSE_PIN_OFFSETS: Record<string, [number, number]> = {
+  'sosei-tokyo': [2.8, 0.9],
+  'sosei-japan': [-2.8, -0.9],
+  'sosei-switzerland': [1.0, 1.0],
+  'sosei-barcelona': [-0.8, -0.8],
+};
+
+function getDisplayCoordinates(id: string, coords: [number, number], zoom: number): [number, number] {
+  const offset = CLOSE_PIN_OFFSETS[id];
+  if (!offset) return coords;
+  // Smoothly reduce visual offset as user zooms in
+  const factor = Math.max(0.15, Math.min(1, 1.35 / zoom));
+  return [coords[0] + offset[0] * factor, coords[1] + offset[1] * factor];
+}
+
+export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ coordinates: [18, 25] as [number, number], zoom: 1.35 });
-  const [hoveredData, setHoveredData] = useState<{
-    item: SimulatedPropertyMapItem;
+  const [hoveredInfo, setHoveredInfo] = useState<{
+    id: string;
     x: number;
     y: number;
   } | null>(null);
+
+  const propertiesData = getSimulatedPropertiesData(period);
+  const hoveredItem = hoveredInfo
+    ? propertiesData.find((p) => p.id === hoveredInfo.id) ?? null
+    : null;
+
+  // Render hovered marker last in SVG so it always sits on top of adjacent pins
+  const orderedProperties = hoveredInfo
+    ? [
+        ...propertiesData.filter((p) => p.id !== hoveredInfo.id),
+        ...propertiesData.filter((p) => p.id === hoveredInfo.id),
+      ]
+    : propertiesData;
 
   const handleSelectProperty = (propertyId: string) => {
     navigate(`/dashboard/property?id=${propertyId}`);
@@ -46,22 +79,34 @@ export function LiveOverviewMap() {
 
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
     setPosition(newPosition);
-    setHoveredData(null);
+    setHoveredInfo(null);
   };
 
   const handleZoomIn = () => {
-    setHoveredData(null);
-    setPosition(prev => ({ ...prev, zoom: Math.min(prev.zoom * 1.3, 8) }));
+    setHoveredInfo(null);
+    setPosition((prev) => ({ ...prev, zoom: Math.min(prev.zoom * 1.3, 8) }));
   };
 
   const handleZoomOut = () => {
-    setHoveredData(null);
-    setPosition(prev => ({ ...prev, zoom: Math.max(prev.zoom / 1.3, 0.6) }));
+    setHoveredInfo(null);
+    setPosition((prev) => ({ ...prev, zoom: Math.max(prev.zoom / 1.3, 0.6) }));
   };
 
   const handleReset = () => {
-    setHoveredData(null);
+    setHoveredInfo(null);
     setPosition({ coordinates: [18, 25], zoom: 1.35 });
+  };
+
+  const updateHoveredFromEvent = (item: SimulatedPropertyMapItem, target: SVGGElement) => {
+    const rect = target.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    if (containerRect) {
+      setHoveredInfo({
+        id: item.id,
+        x: rect.left + rect.width / 2 - containerRect.left,
+        y: rect.top + rect.height / 2 - containerRect.top,
+      });
+    }
   };
 
   // Popover positioning calculations
@@ -72,19 +117,19 @@ export function LiveOverviewMap() {
   let isFlipDown = false;
   let arrowLeft = 125;
 
-  if (hoveredData && containerRef.current) {
+  if (hoveredInfo && hoveredItem && containerRef.current) {
     const containerWidth = containerRef.current.clientWidth;
     // Flip downward if marker is in the upper part of the widget
-    isFlipDown = hoveredData.y < 130;
+    isFlipDown = hoveredInfo.y < 130;
 
     if (isFlipDown) {
-      top = hoveredData.y + 12;
+      top = hoveredInfo.y + 14;
     } else {
-      top = hoveredData.y - CARD_HEIGHT - 12;
+      top = hoveredInfo.y - CARD_HEIGHT - 14;
     }
 
     // Centered horizontally over the pin
-    left = hoveredData.x - CARD_WIDTH / 2;
+    left = hoveredInfo.x - CARD_WIDTH / 2;
 
     // Boundary clamping to ensure card stays framed
     if (left < 8) {
@@ -94,11 +139,17 @@ export function LiveOverviewMap() {
     }
 
     // Precise pointer arrow targeting the pin
-    arrowLeft = Math.max(16, Math.min(CARD_WIDTH - 16, hoveredData.x - left));
+    arrowLeft = Math.max(16, Math.min(CARD_WIDTH - 16, hoveredInfo.x - left));
   }
 
+  const periodShortLabel = period === 'today' ? 'Today' : period.toUpperCase();
+
   return (
-    <div ref={containerRef} className="w-full h-full relative flex flex-col select-none">
+    <div
+      ref={containerRef}
+      className="w-full h-full relative flex flex-col select-none"
+      onMouseLeave={() => setHoveredInfo(null)}
+    >
       <div className="flex-1 relative overflow-hidden rounded-md bg-white">
         <ComposableMap
           projection="geoMercator"
@@ -106,7 +157,6 @@ export function LiveOverviewMap() {
           width={850}
           height={360}
           style={{ width: '100%', height: '100%', cursor: 'grab' }}
-          onMouseLeave={() => setHoveredData(null)}
         >
           <ZoomableGroup
             zoom={position.zoom}
@@ -115,83 +165,106 @@ export function LiveOverviewMap() {
             minZoom={0.6}
             maxZoom={8}
           >
-          <defs>
-            {/* Country subtle shadow */}
-            <filter id="countryShadow" x="-10%" y="-10%" width="120%" height="130%">
-              <feDropShadow dx="0.5" dy="1" stdDeviation="1" floodColor="#000000" floodOpacity="0.06" />
-            </filter>
+            <defs>
+              {/* Country subtle shadow */}
+              <filter id="countryShadow" x="-10%" y="-10%" width="120%" height="130%">
+                <feDropShadow dx="0.5" dy="1" stdDeviation="1" floodColor="#000000" floodOpacity="0.06" />
+              </filter>
 
-            {/* Radial gradient dots per status */}
-            {Object.entries(statusConfig).map(([statusKey, cfg]) => (
-              <radialGradient key={statusKey} id={`dotGradient-${statusKey}`} cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-                <stop offset="0%" stopColor={cfg.dotColor} stopOpacity={0.9} />
-                <stop offset="40%" stopColor={cfg.dotColor} stopOpacity={0.4} />
-                <stop offset="100%" stopColor={cfg.dotColor} stopOpacity={0} />
-              </radialGradient>
-            ))}
-          </defs>
+              {/* Radial gradient dots per status */}
+              {Object.entries(statusConfig).map(([statusKey, cfg]) => (
+                <radialGradient key={statusKey} id={`dotGradient-${statusKey}`} cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+                  <stop offset="0%" stopColor={cfg.dotColor} stopOpacity={0.9} />
+                  <stop offset="40%" stopColor={cfg.dotColor} stopOpacity={0.4} />
+                  <stop offset="100%" stopColor={cfg.dotColor} stopOpacity={0} />
+                </radialGradient>
+              ))}
+            </defs>
 
-          {/* Clean monochrome country polygons */}
-          <Geographies geography={geoUrl}>
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#ebecee"
-                  stroke="#d4d4d8"
-                  strokeWidth={0.5}
-                  style={{
-                    default: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
-                    hover: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
-                    pressed: { outline: 'none', pointerEvents: 'none' },
-                  }}
-                />
-              ))
-            }
-          </Geographies>
+            {/* Clean monochrome country polygons */}
+            <Geographies geography={geoUrl}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="#ebecee"
+                    stroke="#d4d4d8"
+                    strokeWidth={0.5}
+                    style={{
+                      default: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
+                      hover: { outline: 'none', filter: 'url(#countryShadow)', pointerEvents: 'none' },
+                      pressed: { outline: 'none', pointerEvents: 'none' },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
 
-          {/* Markers — subtle dots that don't overwhelm the map */}
-          {simulatedPropertiesData.map((item) => {
-            const { id, coordinates, status } = item;
-            const cfg = statusConfig[status] || statusConfig.on_plan;
-            const isHovered = hoveredData?.item.id === id;
+            {/* Markers — every pin has a generous dedicated hit target and non-blocking decorative halo */}
+            {orderedProperties.map((item) => {
+              const { id, coordinates, status } = item;
+              const cfg = statusConfig[status] || statusConfig.on_plan;
+              const isHovered = hoveredInfo?.id === id;
+              const displayCoords = getDisplayCoordinates(id, coordinates as [number, number], position.zoom);
 
-            return (
-              <Marker key={id} coordinates={coordinates as [number, number]}>
-                <g
-                  className="cursor-pointer"
-                  onClick={() => handleSelectProperty(id)}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const containerRect = containerRef.current?.getBoundingClientRect();
-                    if (containerRect) {
-                      setHoveredData({
-                        item,
-                        x: rect.left + rect.width / 2 - containerRect.left,
-                        y: rect.top + rect.height / 2 - containerRect.top,
-                      });
-                    }
-                  }}
-                  style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}
-                >
-                  {/* Subtle outer glow */}
-                  <circle r={isHovered ? 18 : 10} fill={`url(#dotGradient-${status})`} className="transition-all duration-200" />
-                  {/* Outer ring */}
-                  <circle r={isHovered ? 6 : 4} fill="none" stroke={cfg.dotColor} strokeWidth={1} opacity={0.6} />
-                  {/* Inner solid dot */}
-                  <circle r={isHovered ? 4.5 : 2.5} fill={cfg.dotColor} stroke="#ffffff" strokeWidth={1} className="transition-all duration-200" />
-                </g>
-              </Marker>
-            );
-          })}
+              return (
+                <Marker key={id} coordinates={displayCoords}>
+                  <g
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectProperty(id);
+                    }}
+                    onMouseEnter={(e) => updateHoveredFromEvent(item, e.currentTarget)}
+                    onMouseMove={(e) => {
+                      if (hoveredInfo?.id !== id) {
+                        updateHoveredFromEvent(item, e.currentTarget);
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredInfo((prev) => (prev?.id === id ? null : prev));
+                    }}
+                    style={{ transform: `scale(${1 / position.zoom})`, transformOrigin: '0px 0px' }}
+                  >
+                    {/* Dedicated invisible hit-target circle so every pin is effortless to hover */}
+                    <circle r={9} fill="transparent" />
+                    {/* Subtle outer glow — pointerEvents="none" so halo never blocks adjacent pins */}
+                    <circle
+                      r={isHovered ? 18 : 10}
+                      fill={`url(#dotGradient-${status})`}
+                      pointerEvents="none"
+                      className="transition-all duration-200"
+                    />
+                    {/* Outer ring */}
+                    <circle
+                      r={isHovered ? 6.5 : 4.5}
+                      fill="none"
+                      stroke={cfg.dotColor}
+                      strokeWidth={1.1}
+                      opacity={isHovered ? 0.9 : 0.65}
+                      pointerEvents="none"
+                    />
+                    {/* Inner solid dot */}
+                    <circle
+                      r={isHovered ? 4.5 : 2.8}
+                      fill={cfg.dotColor}
+                      stroke="#ffffff"
+                      strokeWidth={1}
+                      pointerEvents="none"
+                      className="transition-all duration-200"
+                    />
+                  </g>
+                </Marker>
+              );
+            })}
           </ZoomableGroup>
         </ComposableMap>
 
         {/* Subtle Map Status Legend at top-left */}
         <div
-          className={`absolute top-2 left-2 px-2.5 py-1.5 rounded-md flex items-center gap-3 backdrop-blur-xs transition-opacity duration-200 z-10 ${
-            hoveredData ? 'opacity-30 pointer-events-none' : 'opacity-90'
+          className={`absolute top-2 left-2 px-2.5 py-1.5 rounded-md flex items-center gap-3 backdrop-blur-xs transition-opacity duration-200 z-10 pointer-events-none ${
+            hoveredItem ? 'opacity-30' : 'opacity-90'
           }`}
           style={{
             background: 'rgba(255, 255, 255, 0.95)',
@@ -213,7 +286,7 @@ export function LiveOverviewMap() {
         </div>
 
         {/* Zoom Controls */}
-        <div className="absolute bottom-2 right-2 flex flex-col gap-0.5">
+        <div className="absolute bottom-2 right-2 flex flex-col gap-0.5 z-10">
           <button
             onClick={handleZoomIn}
             className="w-6 h-6 flex items-center justify-center rounded transition-colors hover:bg-zinc-100 text-zinc-700 cursor-pointer"
@@ -258,30 +331,26 @@ export function LiveOverviewMap() {
         </div>
       </div>
 
-      {/* Floating Luxury Popover Overlay - Placed outside overflow-hidden with high z-index */}
-      {hoveredData && (
+      {/* Floating Luxury Popover Overlay - pointer-events-none so it never blocks adjacent pins while hovering */}
+      {hoveredItem && (
         <div
-          className="absolute pointer-events-auto z-50 animate-in fade-in zoom-in-95 duration-150"
+          className="absolute pointer-events-none z-50 animate-in fade-in zoom-in-95 duration-150"
           style={{
             top: `${top}px`,
             left: `${left}px`,
             width: `${CARD_WIDTH}px`,
           }}
-          onMouseLeave={() => setHoveredData(null)}
         >
-          <div
-            className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10 cursor-pointer hover:border-zinc-400 hover:shadow-2xl transition-all group"
-            onClick={() => handleSelectProperty(hoveredData.item.id)}
-          >
+          <div className="relative rounded-[12px] p-3 text-left bg-white/98 border border-zinc-200 shadow-xl shadow-black/10 transition-all">
             {/* Header: Property Name + Grouping & Status */}
             <div className="flex items-start justify-between gap-1.5 pb-1.5 border-b border-zinc-100">
               <div>
-                <div className="text-[13px] font-bold text-zinc-900 leading-tight tracking-wide uppercase flex items-center gap-1 group-hover:text-zinc-700 transition-colors">
-                  <span>{hoveredData.item.name}</span>
-                  <span className="text-[10px] text-zinc-400 group-hover:text-zinc-900">→</span>
+                <div className="text-[13px] font-bold text-zinc-900 leading-tight tracking-wide uppercase flex items-center gap-1">
+                  <span>{hoveredItem.name}</span>
+                  <span className="text-[10px] text-zinc-400">→</span>
                 </div>
                 <div className="text-[9.5px] font-medium text-zinc-500 mt-0.5">
-                  {hoveredData.item.grouping} · {hoveredData.item.city} · <span className="font-semibold text-zinc-700">{hoveredData.item.totalRooms} Keys</span>
+                  {hoveredItem.grouping} · {hoveredItem.city} · <span className="font-semibold text-zinc-700">{hoveredItem.totalRooms} Keys</span>
                 </div>
               </div>
               {/* Subtle status dot */}
@@ -290,38 +359,38 @@ export function LiveOverviewMap() {
                   width: '8px',
                   height: '8px',
                   borderRadius: '9999px',
-                  backgroundColor: (statusConfig[hoveredData.item.status] || statusConfig.on_plan).dotColor,
+                  backgroundColor: (statusConfig[hoveredItem.status] || statusConfig.on_plan).dotColor,
                   flexShrink: 0,
                   marginTop: '3px',
                 }}
-                title={(statusConfig[hoveredData.item.status] || statusConfig.on_plan).label}
+                title={(statusConfig[hoveredItem.status] || statusConfig.on_plan).label}
               />
             </div>
 
             {/* Calculated PMS Metrics */}
             <div className="mt-1.5 space-y-1 text-[10.5px]">
               <div className="flex justify-between items-center text-zinc-500">
-                <span>Occupancy</span>
+                <span>Occupancy ({periodShortLabel})</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredData.item.occupancyFormatted}{' '}
+                  {hoveredItem.occupancyFormatted}{' '}
                   <span className="text-[9px] font-medium text-zinc-400">
-                    ({hoveredData.item.occupiedRooms}/{hoveredData.item.totalRooms} keys)
+                    ({hoveredItem.occupiedRooms}/{hoveredItem.totalRooms} keys)
                   </span>
                 </span>
               </div>
               <div className="flex justify-between items-center text-zinc-500">
                 <span>ADR / RevPAR</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredData.item.adrFormatted}{' '}
+                  {hoveredItem.adrFormatted}{' '}
                   <span className="text-[9px] font-medium text-zinc-400">
-                    / {hoveredData.item.revparFormatted}
+                    / {hoveredItem.revparFormatted}
                   </span>
                 </span>
               </div>
               <div className="flex justify-between items-center text-zinc-500">
-                <span>Revenue (MTD)</span>
+                <span>Total Revenue ({periodShortLabel})</span>
                 <span className="font-bold text-zinc-900">
-                  {hoveredData.item.revenueFormatted}
+                  {hoveredItem.revenueFormatted}
                 </span>
               </div>
             </div>
@@ -332,17 +401,17 @@ export function LiveOverviewMap() {
                 style={{
                   fontSize: '8.5px',
                   fontWeight: 600,
-                  backgroundColor: (statusConfig[hoveredData.item.status] || statusConfig.on_plan).badgeBg,
-                  color: (statusConfig[hoveredData.item.status] || statusConfig.on_plan).badgeText,
+                  backgroundColor: (statusConfig[hoveredItem.status] || statusConfig.on_plan).badgeBg,
+                  color: (statusConfig[hoveredItem.status] || statusConfig.on_plan).badgeText,
                   padding: '1.5px 6px',
                   borderRadius: '9999px',
                 }}
               >
-                {(statusConfig[hoveredData.item.status] || statusConfig.on_plan).label}
+                {(statusConfig[hoveredItem.status] || statusConfig.on_plan).label}
               </span>
 
-              <span className="text-[9px] font-medium text-zinc-500 group-hover:text-zinc-900 transition-colors flex items-center gap-0.5">
-                View property <span className="text-zinc-400 group-hover:text-zinc-900">→</span>
+              <span className="text-[9px] font-medium text-zinc-500 flex items-center gap-0.5">
+                Click pin to view property <span className="text-zinc-400">→</span>
               </span>
             </div>
 

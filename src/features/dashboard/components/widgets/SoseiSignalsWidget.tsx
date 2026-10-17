@@ -1,18 +1,21 @@
+import type { PeriodId } from '@/data/portfolio';
 import {
-  simulatedSOSEISignalsData,
+  getSOSEISignalsData,
   type PortfolioSignalItem,
 } from '../../services/propertySimulation';
 
 interface SOSEISignalsWidgetProps {
+  period?: PeriodId;
   onOpenDetails?: () => void;
   onSelectSignal?: (signal: PortfolioSignalItem) => void;
 }
 
 export function SOSEISignalsWidget({
+  period = 'mtd',
   onOpenDetails,
   onSelectSignal,
 }: SOSEISignalsWidgetProps) {
-  const data = simulatedSOSEISignalsData;
+  const data = getSOSEISignalsData(period);
 
   const renderSignalIcon = (signal: PortfolioSignalItem) => {
     switch (signal.iconType) {

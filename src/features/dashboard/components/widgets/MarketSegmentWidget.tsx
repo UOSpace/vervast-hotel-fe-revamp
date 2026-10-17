@@ -1,18 +1,21 @@
+import type { PeriodId } from '@/data/portfolio';
 import {
-  simulatedMarketSegmentData,
+  getMarketSegmentData,
   type MarketSegmentItem,
 } from '../../services/propertySimulation';
 
 interface MarketSegmentWidgetProps {
+  period?: PeriodId;
   onOpenDetails?: () => void;
   onSelectSegment?: (segment: MarketSegmentItem) => void;
 }
 
 export function MarketSegmentWidget({
+  period = 'mtd',
   onOpenDetails,
   onSelectSegment,
 }: MarketSegmentWidgetProps) {
-  const data = simulatedMarketSegmentData;
+  const data = getMarketSegmentData(period);
 
   return (
     <div

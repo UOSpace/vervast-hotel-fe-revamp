@@ -1,7 +1,18 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { LoginPage, PortalSelectionPage } from '@/features/auth';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
-import { DashboardPage, FnbDashboardPage, ExperienceDashboardPage, SpaDashboardPage } from '@/features/dashboard';
+import {
+  DashboardPage,
+  FnbDashboardPage,
+  FnbCategoriesView,
+  FnbRegionalView,
+  FnbPropertyDashboardPage,
+  ExperienceDashboardPage,
+  ExperienceCategoriesView,
+  ExperienceRegionalView,
+  ExperiencePropertyDashboardPage,
+  SpaDashboardPage,
+} from '@/features/dashboard';
 import { PropertyDashboardPage } from '@/features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from '@/components/layouts/MasterLayout';
 import { UnderConstructionPage } from '@/features/common/pages/UnderConstructionPage';
@@ -98,12 +109,36 @@ export const routes: RouteObject[] = [
         element: <FnbDashboardPage />,
       },
       {
+        path: '/dashboard/fnb/categories',
+        element: <FnbCategoriesView />,
+      },
+      {
+        path: '/dashboard/fnb/regional',
+        element: <FnbRegionalView />,
+      },
+      {
+        path: '/dashboard/fnb/property',
+        element: <FnbPropertyDashboardPage />,
+      },
+      {
         path: '/dashboard/fnb/pos',
         element: <FnbPosPage />,
       },
       {
         path: '/dashboard/experience',
         element: <ExperienceDashboardPage />,
+      },
+      {
+        path: '/dashboard/experience/categories',
+        element: <ExperienceCategoriesView />,
+      },
+      {
+        path: '/dashboard/experience/regional',
+        element: <ExperienceRegionalView />,
+      },
+      {
+        path: '/dashboard/experience/property',
+        element: <ExperiencePropertyDashboardPage />,
       },
       { path: '/dashboard/experience/fnb', element: <Navigate to="/dashboard/fnb" replace /> },
       { path: '/dashboard/experience/pos', element: <Navigate to="/dashboard/fnb/pos" replace /> },

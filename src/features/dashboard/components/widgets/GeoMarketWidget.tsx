@@ -1,18 +1,21 @@
+import type { PeriodId } from '@/data/portfolio';
 import {
-  simulatedGeoMarketData,
+  getGeoMarketData,
   type GeoMarketItem,
 } from '../../services/propertySimulation';
 
 interface GeoMarketWidgetProps {
+  period?: PeriodId;
   onOpenDetails?: () => void;
   onSelectMarket?: (market: GeoMarketItem) => void;
 }
 
 export function GeoMarketWidget({
+  period = 'mtd',
   onOpenDetails,
   onSelectMarket,
 }: GeoMarketWidgetProps) {
-  const data = simulatedGeoMarketData;
+  const data = getGeoMarketData(period);
 
   return (
     <div

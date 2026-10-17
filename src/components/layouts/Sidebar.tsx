@@ -18,13 +18,22 @@ export function Sidebar({
   const location = useLocation();
   const navigate = useNavigate();
   const { activePortal, getGlobalOverviewPath } = usePortal();
-  const [expandedMenu, setExpandedMenu] = useState<string | null>('Group View');
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
+    '/dashboard': true,
+    '/dashboard/fnb': true,
+    '/dashboard/experience': true,
+  });
 
-  const toggleMenu = (name: string) => {
-    setExpandedMenu(prev => prev === name ? null : name);
+  const toggleMenu = (key: string) => {
+    setExpandedMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const isChildActive = (child: { name: string; path: string; isDynamicOverview?: boolean }) => {
+    // Explicit sub-portal routes for F&B and Experiences
+    if (child.path.startsWith('/dashboard/fnb') || child.path.startsWith('/dashboard/experience')) {
+      return location.pathname === child.path;
+    }
+
     const currentPath = location.pathname + location.search;
     const searchParams = new URLSearchParams(location.search);
     const currentView = searchParams.get('view');
@@ -32,6 +41,7 @@ export function Sidebar({
       location.pathname === '/dashboard/categories' ||
       location.pathname === '/dashboard/property-categories' ||
       currentView === 'by_property_type';
+    const isRegionalActive = location.pathname === '/dashboard/regional';
 
     // Case 1: Property Categories
     if (
@@ -44,7 +54,7 @@ export function Sidebar({
 
     // Case 2: Global Overview (dynamic overview child)
     if (child.isDynamicOverview) {
-      if (isCategoriesActive) {
+      if (isCategoriesActive || isRegionalActive) {
         return false;
       }
       const overviewPath = getGlobalOverviewPath(activePortal);
@@ -74,6 +84,20 @@ export function Sidebar({
 
   const isMenuActive = (item: MenuItem) => {
     if (item.name === 'Group View') {
+      if (item.path === '/dashboard/fnb') {
+        return (
+          location.pathname === '/dashboard/fnb' ||
+          location.pathname === '/dashboard/fnb/categories' ||
+          location.pathname === '/dashboard/fnb/regional'
+        );
+      }
+      if (item.path === '/dashboard/experience') {
+        return (
+          location.pathname === '/dashboard/experience' ||
+          location.pathname === '/dashboard/experience/categories' ||
+          location.pathname === '/dashboard/experience/regional'
+        );
+      }
       const overviewPath = getGlobalOverviewPath(activePortal);
       if (location.pathname === overviewPath) return true;
       if (
@@ -82,16 +106,16 @@ export function Sidebar({
         location.pathname === '/dashboard/regional' ||
         location.pathname === '/dashboard/property-categories' ||
         location.pathname === '/dashboard/spa' ||
-        location.pathname === '/dashboard/fnb' ||
         location.pathname === '/dashboard/development'
       ) {
         return true;
       }
+      return false;
     }
     if (item.path === '/dashboard' && !item.children) return location.pathname === '/dashboard';
-    if (location.pathname === item.path && !location.search) return true;
+    if (location.pathname === item.path && (!item.children || !location.search)) return true;
     if (item.children) {
-      return item.children.some(child => isChildActive(child));
+      return item.children.some((child) => isChildActive(child));
     }
     return item.path !== '/dashboard' && location.pathname.startsWith(item.path + '/');
   };
@@ -153,16 +177,17 @@ export function Sidebar({
           )}
           {section.items.map((item) => {
             const isActive = isMenuActive(item);
-            const isExpanded = expandedMenu === item.name || (expandedMenu === null && isActive);
+            const menuKey = item.path || item.name;
+            const isExpanded = !!expandedMenus[menuKey];
             const Icon = item.icon;
             const hasChildren = !!item.children?.length;
 
             return (
-              <div key={item.name} className="space-y-1">
+              <div key={menuKey} className="space-y-1">
                 <button
                   onClick={() => {
                     if (hasChildren) {
-                      toggleMenu(item.name);
+                      toggleMenu(menuKey);
                     } else {
                       if (onNavigate) {
                         onNavigate(item.path);
@@ -196,11 +221,14 @@ export function Sidebar({
                 {hasChildren && isExpanded && (
                   <div className="ml-3 mt-0.5 mb-1 space-y-0.5 border-l border-zinc-200/60 pl-2">
                     {item.children!.map((child) => {
-                      const targetPath = child.isDynamicOverview ? getGlobalOverviewPath(activePortal) : child.path;
+                      const targetPath =
+                        child.isDynamicOverview && child.path === '/dashboard'
+                          ? getGlobalOverviewPath(activePortal)
+                          : child.path;
                       const childActive = isChildActive(child);
                       return (
                         <button
-                          key={child.name}
+                          key={child.path}
                           onClick={() => {
                             if (onNavigate) {
                               onNavigate(targetPath);

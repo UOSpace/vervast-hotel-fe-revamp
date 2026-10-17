@@ -13,6 +13,7 @@ import { ForwardBusinessDrawerContent } from './drawers/ForwardBusinessDrawerCon
 import { SOSEISignalsDrawerContent } from './drawers/SoseiSignalsDrawerContent';
 import { PortfolioComparisonDrawerContent } from './drawers/PortfolioComparisonDrawerContent';
 import { FnbDrawerContent } from './drawers/FnbDrawerContent';
+import { ExperienceDrawerContent } from './drawers/ExperienceDrawerContent';
 import { SpaDrawerContent } from './drawers/SpaDrawerContent';
 import { GeoMarketDrawerContent } from './drawers/GeoMarketDrawerContent';
 import { MarketSegmentDrawerContent } from './drawers/MarketSegmentDrawerContent';
@@ -961,6 +962,9 @@ export function DashboardDrawer() {
       case 'SPA_DETAIL':
         return <SpaDrawerContent config={config} />;
 
+      case 'EXPERIENCE_DETAIL':
+        return <ExperienceDrawerContent config={config} />;
+
       default:
         return null;
     }
@@ -983,12 +987,13 @@ export function DashboardDrawer() {
       case 'PROPERTY_ACTIVITY':
       case 'PROPERTY_RHYTHM':
       case 'DEPARTMENT_REVENUE':
+      case 'FNB_DETAIL':
+      case 'EXPERIENCE_DETAIL':
         return 'w-[96vw] sm:w-[940px] lg:w-[1080px] xl:w-[1180px]';
       case 'TOP_NATIONALITIES':
       case 'GEO_MARKET':
       case 'MARKET_SEGMENT':
       case 'CHANNEL_DISTRIBUTION':
-      case 'FNB_DETAIL':
       case 'SPA_DETAIL':
       case 'UPCOMING_EVENTS':
         return 'w-[95vw] sm:w-[820px] lg:w-[920px]';

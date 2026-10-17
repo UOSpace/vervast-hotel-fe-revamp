@@ -1,11 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip
 } from 'recharts';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import {
-  Calendar,
   Bag,
   Heart,
   Settings,
@@ -16,84 +13,13 @@ import {
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
+import { PERIOD_DEFS, PERIOD_ORDER, fmtUsd, fmtUsdFull, fmtInt, fmtPct, type PeriodId } from '@/data/portfolio';
+import { getSpaDashboardData } from '@/data/portfolio/spaMix';
 
-// Mock Data
-const utilizationOverTime = [
-  { name: 'May 1', value: 65 },
-  { name: 'May 8', value: 72 },
-  { name: 'May 15', value: 68 },
-  { name: 'May 22', value: 74 },
-  { name: 'May 29', value: 70 },
-  { name: 'May 31', value: 71 }
-];
-
-const utilizationByArea = [
-  { name: 'Treatment Rooms', value: 78, color: '#18181b' },
-  { name: 'Hydro Facilities', value: 65, color: '#3f3f46' },
-  { name: 'Relaxation Lounge', value: 62, color: '#71717a' },
-  { name: 'Movement Studio', value: 48, color: '#a1a1aa' }
-];
-
-const scheduleOverview = [
-  { name: 'Completed', value: 32, total: 68 },
-  { name: 'In Progress', value: 14, total: 68 },
-  { name: 'Scheduled', value: 22, total: 68 },
-  { name: 'Cancelled / No Show', value: 0, total: 68 }
-];
-
-const topTreatments = [
-  { name: 'Deep Tissue Massage', count: 312 },
-  { name: 'Aromatherapy Massage', count: 248 },
-  { name: 'Facial Signature', count: 196 },
-  { name: 'Hot Stone Therapy', count: 154 },
-  { name: 'Detox Body Wrap', count: 98 }
-];
-
-const revenueByCategory = [
-  { name: 'Massages', value: 54 },
-  { name: 'Facials', value: 22 },
-  { name: 'Body Treatments', value: 14 },
-  { name: 'Wellness Rituals', value: 7 },
-  { name: 'Other', value: 3 }
-];
-
-const performanceByProperty = [
-  { property: 'SOSEI Switzerland', treatments: 384, revenue: '$94.5k', share: '33%' },
-  { property: 'SOSEI Maldives', treatments: 312, revenue: '$77.3k', share: '27%' },
-  { property: 'SOSEI Japan', treatments: 236, revenue: '$51.6k', share: '18%' },
-  { property: 'SOSEI Oman', treatments: 182, revenue: '$37.2k', share: '13%' },
-  { property: 'SOSEI Bali', treatments: 134, revenue: '$25.8k', share: '9%' },
-];
-
-const upcomingPeakTimes = [
-  { day: 'May 31 (Fri)', time: '3:00 PM - 6:00 PM', level: 'HIGH' },
-  { day: 'Jun 1 (Sat)', time: '10:00 AM - 1:00 PM', level: 'HIGH' },
-  { day: 'Jun 2 (Sun)', time: '11:00 AM - 2:00 PM', level: 'MEDIUM' },
-  { day: 'Jun 8 (Sat)', time: '2:00 PM - 5:00 PM', level: 'MEDIUM' }
-];
-
-const retailTopSellers = [
-  { name: 'SOSEI Signature Oil', revenue: '$9,420' },
-  { name: 'Calm & Restore Balm', revenue: '$6,210' },
-  { name: 'Mineral Soak', revenue: '$4,860' },
-  { name: 'SOSEI Silk Eye Pillow', revenue: '$3,980' }
-];
-
-const heatmapDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const heatmapTimes = ['6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'];
-const heatmapData = [
-  [1, 2, 3, 2, 4, 3], // Mon
-  [2, 3, 3, 2, 4, 4], // Tue
-  [1, 2, 4, 3, 4, 4], // Wed
-  [2, 3, 4, 3, 5, 5], // Thu
-  [3, 4, 5, 4, 5, 5], // Fri
-  [4, 5, 5, 5, 5, 5], // Sat
-  [3, 4, 4, 4, 4, 3]  // Sun
-];
+const AREA_COLORS = ['#18181b', '#3f3f46', '#71717a', '#a1a1aa'];
 
 export function SpaDashboardPage() {
-  const [startDate, setStartDate] = useState<Date | null>(new Date('2026-05-01'));
-  const [endDate, setEndDate] = useState<Date | null>(new Date('2026-05-31'));
+  const [horizon, setHorizon] = useState<PeriodId>('mtd');
   const { openDrawer } = useDashboardDrawer();
   const [showDevModal, setShowDevModal] = useState(false);
   const [devFeatureName, setDevFeatureName] = useState<string | undefined>(undefined);
@@ -103,7 +29,85 @@ export function SpaDashboardPage() {
     setShowDevModal(true);
   };
 
-  const totalAreaValue = utilizationByArea.reduce((acc, curr) => acc + curr.value, 0);
+  const spa = useMemo(() => getSpaDashboardData(undefined, horizon), [horizon]);
+
+  const utilizationOverTime = spa.trend;
+  const utilizationByArea = useMemo(
+    () =>
+      spa.areas.map((a, idx) => ({
+        name: a.name,
+        value: Math.round(a.utilisationPct),
+        color: AREA_COLORS[idx % AREA_COLORS.length],
+      })),
+    [spa.areas]
+  );
+
+  const scheduleOverview = useMemo(
+    () =>
+      spa.pipeline.rows.map((r) => ({
+        name: r.name,
+        value: r.value,
+        total: Math.max(1, spa.pipeline.total),
+      })),
+    [spa.pipeline]
+  );
+
+  const topTreatments = useMemo(
+    () =>
+      spa.treatmentsRanked.slice(0, 5).map((t) => ({
+        name: t.name,
+        count: fmtInt(t.treatments),
+      })),
+    [spa.treatmentsRanked]
+  );
+
+  const revenueByCategory = useMemo(
+    () =>
+      spa.categories.slice(0, 5).map((c) => ({
+        name: c.name,
+        value: Math.round(c.revenueSharePct),
+      })),
+    [spa.categories]
+  );
+
+  const performanceByProperty = useMemo(
+    () =>
+      [...spa.properties]
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5)
+        .map((p) => ({
+          property: p.name,
+          treatments: fmtInt(p.treatments),
+          revenue: fmtUsd(p.revenue),
+          share: `${Math.round(p.sharePct)}%`,
+        })),
+    [spa.properties]
+  );
+
+  const upcomingPeakTimes = useMemo(
+    () =>
+      spa.peaks.map((pk) => ({
+        day: pk.dateLabel,
+        time: pk.window,
+        level: pk.level,
+      })),
+    [spa.peaks]
+  );
+
+  const retailTopSellers = useMemo(
+    () =>
+      spa.retail.products.slice(0, 4).map((r) => ({
+        name: r.name,
+        revenue: fmtUsd(r.revenue),
+      })),
+    [spa.retail.products]
+  );
+
+  const heatmapDays = spa.heatmap.days;
+  const heatmapTimes = spa.heatmap.blocks.map((b) => b.label);
+  const heatmapData = spa.heatmap.cells.map((row) => row.map((c) => c.level));
+
+  const totalAreaValue = utilizationByArea.reduce((acc, curr) => acc + curr.value, 0) || 1;
   let areaAccumulated = 0;
 
   return (
@@ -114,25 +118,29 @@ export function SpaDashboardPage() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Sanctuary Wellness</p>
           <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Sanctuary Dashboard</h1>
-          <p className="text-[10px] text-zinc-500 font-normal mt-0.5">Delivering balance. Enhancing wellbeing. Elevating every stay.</p>
+          <p className="text-[10px] text-zinc-500 font-normal mt-0.5">
+            Period: <strong className="font-semibold text-zinc-900">{spa.periodLabel}</strong> · Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)} = {fmtUsd(spa.revenue)} Total
+          </p>
         </div>
 
-        {/* DatePicker & Export */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center bg-white border border-zinc-200 rounded-lg px-3 py-1.5 cursor-pointer shadow-xs">
-            <DatePicker
-              selectsRange={true}
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update: [Date | null, Date | null]) => {
-                setStartDate(update[0]);
-                setEndDate(update[1]);
-              }}
-              dateFormat="MMM d, yyyy"
-              placeholderText="Select Date Range"
-              className="bg-transparent border-none text-zinc-900 text-[10px] focus:outline-none font-medium w-[150px] cursor-pointer"
-            />
-            <Calendar size={13} className="text-zinc-400 ml-1.5" />
+        {/* Period Selector & Export */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
+            {PERIOD_ORDER.map((id) => {
+              const active = horizon === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setHorizon(id)}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
+                    active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  {PERIOD_DEFS[id].label}
+                </button>
+              );
+            })}
           </div>
           <button
             onClick={() => openDevModal('Export Report')}
@@ -149,12 +157,12 @@ export function SpaDashboardPage() {
         {/* Left (5 cols): 2 Cards */}
         <div className="col-span-12 lg:col-span-5 grid grid-cols-2 gap-3">
           {[
-            { label: 'TOTAL TREATMENTS', value: '1,248', key: 'TOTAL_TREATMENTS' },
-            { label: 'TREATMENT REVENUE (USD)', value: '$286,450', key: 'TREATMENT_REVENUE' },
+            { label: 'TOTAL TREATMENTS', value: fmtInt(spa.treatments), key: 'TOTAL_TREATMENTS' },
+            { label: 'SPA & WELLNESS REVENUE', value: fmtUsd(spa.revenue), key: 'TREATMENT_REVENUE' },
           ].map((kpi, idx) => (
             <div
               key={kpi.label}
-              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
+              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: { value: kpi.value, period: horizon } })}
               className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[90px]"
               style={{ animationDelay: `${0.05 + idx * 0.03}s` }}
             >
@@ -171,14 +179,14 @@ export function SpaDashboardPage() {
         {/* Right (7 cols): 4 Cards */}
         <div className="col-span-12 lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'AVG REVENUE / TREATMENT', value: '$229', key: 'AVG_REVENUE' },
-            { label: 'SPA UTILIZATION', value: '71%', key: 'SPA_UTILIZATION' },
-            { label: 'TOTAL THERAPIST HOURS', value: '2,840', key: 'THERAPIST_HOURS' },
-            { label: 'RETAIL REVENUE', value: '$42,180', key: 'RETAIL_REVENUE' },
+            { label: 'AVG REVENUE / TREATMENT', value: fmtUsdFull(spa.avgRevenuePerTreatment), key: 'AVG_REVENUE' },
+            { label: 'SPA UTILIZATION', value: fmtPct(spa.utilisationPct, 0), key: 'SPA_UTILIZATION' },
+            { label: 'TOTAL THERAPIST HOURS', value: fmtInt(spa.hours), key: 'THERAPIST_HOURS' },
+            { label: 'RETAIL REVENUE', value: fmtUsd(spa.retail.revenue), key: 'RETAIL_REVENUE' },
           ].map((kpi, idx) => (
             <div
               key={kpi.label}
-              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: kpi.value })}
+              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: { value: kpi.value, period: horizon } })}
               className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[90px]"
               style={{ animationDelay: `${0.1 + idx * 0.03}s` }}
             >
@@ -197,7 +205,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Utilization by Time of Day Heatmap (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Time of Day', data: 'Heatmap' })}
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Time of Day', data: { view: 'Heatmap', period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.2s' }}
         >
@@ -256,13 +264,15 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Utilization Over Time (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization Over Time', data: 'Trend Chart' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization Over Time', data: { view: 'Trend Chart', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.25s' }}
           >
             <div className="flex justify-between items-center mb-3 h-4 shrink-0">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Utilization Over Time</h3>
-              <span className="text-[9px] font-medium text-zinc-400">May 31: 71%</span>
+              <span className="text-[9px] font-medium text-zinc-400">
+                {PERIOD_DEFS[horizon].label}: {fmtPct(spa.utilisationPct, 0)}
+              </span>
             </div>
 
             <div className="flex-1 w-full h-[140px] pt-1">
@@ -281,7 +291,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Utilization by Area (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Area', data: 'Area Breakdown' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Area', data: { view: 'Area Breakdown', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.3s' }}
           >
@@ -317,7 +327,7 @@ export function SpaDashboardPage() {
                   })}
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-                  <span className="text-sm font-bold text-zinc-900 leading-none">71%</span>
+                  <span className="text-sm font-bold text-zinc-900 leading-none">{fmtPct(spa.utilisationPct, 0)}</span>
                   <span className="text-[7.5px] text-zinc-500 font-medium mt-0.5">Overall Util</span>
                 </div>
               </div>
@@ -342,7 +352,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Performance by Property (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Performance by Property', data: 'Property Mix' })}
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Performance by Property', data: { view: 'Property Mix', period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.35s' }}
         >
@@ -375,7 +385,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Top Treatments (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Top Treatments', data: 'Treatments' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Top Treatments', data: { view: 'Treatments', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.4s' }}
           >
@@ -396,7 +406,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Revenue by Category (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Revenue by Category', data: 'Revenue Mix' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Revenue by Category', data: { view: 'Revenue Mix', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.45s' }}
           >
@@ -424,19 +434,19 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Today's Schedule Overview (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Schedule Overview', data: 'Appointments' })}
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Schedule Overview', data: { view: 'Appointments', period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.5s' }}
         >
           <div className="flex justify-between items-center mb-3 h-4 shrink-0">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Schedule Overview</h3>
-            <span className="text-[9px] font-medium text-zinc-400">Future Bookings</span>
+            <span className="text-[9px] font-medium text-zinc-400">{PERIOD_DEFS[horizon].label}</span>
           </div>
 
           <div className="flex-1 flex flex-col justify-between py-0.5">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-100">
               <span className="text-zinc-600 font-medium text-[10px]">Total Appointments</span>
-              <span className="font-bold text-zinc-900 text-sm">68</span>
+              <span className="font-bold text-zinc-900 text-sm">{fmtInt(spa.pipeline.total)}</span>
             </div>
 
             <div className="flex flex-col gap-2.5 my-auto">
@@ -449,7 +459,7 @@ export function SpaDashboardPage() {
                       style={{ width: `${(item.value / item.total) * 100}%` }}
                     />
                   </div>
-                  <span className="font-medium text-zinc-900 w-6 text-right">{item.value}</span>
+                  <span className="font-medium text-zinc-900 w-12 text-right">{fmtInt(item.value)}</span>
                 </div>
               ))}
             </div>
@@ -460,7 +470,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Upcoming Peak Times (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Upcoming Peak Times', data: 'Forecast' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Upcoming Peak Times', data: { view: 'Forecast', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.55s' }}
           >
@@ -487,7 +497,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Membership & Packages (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Membership & Packages', data: 'Packages' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Membership & Packages', data: { view: 'Packages', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.6s' }}
           >
@@ -499,15 +509,15 @@ export function SpaDashboardPage() {
             <div className="flex flex-col justify-between flex-1 py-1 gap-2.5">
               <div className="flex justify-between items-center">
                 <span className="text-zinc-500">Active Members</span>
-                <span className="font-bold text-zinc-900">328</span>
+                <span className="font-bold text-zinc-900">{fmtInt(spa.packages.activeMembers)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-zinc-500">Packages Sold</span>
-                <span className="font-bold text-zinc-900">72</span>
+                <span className="font-bold text-zinc-900">{fmtInt(spa.packages.sold)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-zinc-500">Package Revenue</span>
-                <span className="font-bold text-zinc-900">$86,240</span>
+                <span className="font-bold text-zinc-900">{fmtUsd(spa.packages.revenue)}</span>
               </div>
             </div>
           </div>
@@ -518,7 +528,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Guest Wellness Insights (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Guest Wellness Insights', data: 'Insights' })}
+          onClick={() => openDrawer({ type: 'METRIC', title: 'Guest Wellness Insights', data: { view: 'Insights', period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.65s' }}
         >
@@ -530,7 +540,7 @@ export function SpaDashboardPage() {
           <div className="flex flex-col justify-between flex-1 py-1 gap-2 text-[10px]">
             <div className="border-b border-zinc-100 pb-1.5 last:border-0 last:pb-0">
               <p className="text-zinc-600 leading-snug">
-                Wellness seekers represent <strong className="text-zinc-900 font-semibold">38%</strong> of total resort guests this month.
+                Spa &amp; wellness guests represent <strong className="text-zinc-900 font-semibold">{fmtPct(spa.attachmentPct, 0)}</strong> of resort stays ({fmtInt(spa.spaGuests)} guests).
               </p>
             </div>
             <div className="border-b border-zinc-100 pb-1.5 last:border-0 last:pb-0">
@@ -540,12 +550,12 @@ export function SpaDashboardPage() {
             </div>
             <div className="border-b border-zinc-100 pb-1.5 last:border-0 last:pb-0">
               <p className="text-zinc-600 leading-snug">
-                Sunset hours (<strong className="text-zinc-900 font-semibold">4 – 7 PM</strong>) generate <strong className="text-zinc-900 font-semibold">52%</strong> of daily treatment revenue.
+                Peak hours (<strong className="text-zinc-900 font-semibold">{spa.heatmap.peakBlockWindow}</strong>) generate <strong className="text-zinc-900 font-semibold">{fmtPct(spa.heatmap.peakBlockSharePct, 0)}</strong> of daily treatment volume.
               </p>
             </div>
             <div>
               <p className="text-zinc-600 leading-snug">
-                Pre-arrival bookings via digital concierge achieve an <strong className="text-zinc-900 font-semibold">89%</strong> retention rate.
+                Forward 90-day OTB spa revenue stands at <strong className="text-zinc-900 font-semibold">{fmtUsd(spa.forwardCoverage.otbRevenue)}</strong> ({fmtPct(spa.forwardCoverage.coveragePct, 0)} of forecast).
               </p>
             </div>
           </div>
@@ -555,7 +565,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Retail Top Sellers (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Retail Top Sellers', data: 'Retail' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Retail Top Sellers', data: { view: 'Retail', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.7s' }}
           >
@@ -576,7 +586,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Wellness Experience Index (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Wellness Experience Index', data: 'Satisfaction' })}
+            onClick={() => openDrawer({ type: 'METRIC', title: 'Wellness Experience Index', data: { view: 'Satisfaction', period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.75s' }}
           >
@@ -605,34 +615,24 @@ export function SpaDashboardPage() {
                     stroke="#18181b"
                     strokeWidth={7}
                     strokeLinecap="round"
-                    strokeDasharray={`${(4.8 / 5) * (2 * Math.PI * 28)} ${2 * Math.PI * 28}`}
+                    strokeDasharray={`${(spa.experience.score / 5) * (2 * Math.PI * 28)} ${2 * Math.PI * 28}`}
                     className="transition-all duration-500"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-sm font-bold text-zinc-900 leading-none">4.8</span>
+                  <span className="text-sm font-bold text-zinc-900 leading-none">{spa.experience.score.toFixed(1)}</span>
                   <span className="text-[8px] text-zinc-400 font-medium mt-0.5">/ 5</span>
                 </div>
               </div>
 
               {/* Sub-ratings */}
               <div className="flex flex-col gap-1.5 flex-1 text-[9.5px]">
-                <div className="flex justify-between">
-                  <span className="text-zinc-500 truncate">Treatment Quality</span>
-                  <span className="font-bold text-zinc-900">4.9</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500 truncate">Therapist Experience</span>
-                  <span className="font-bold text-zinc-900">4.8</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500 truncate">Facilities & Ambience</span>
-                  <span className="font-bold text-zinc-900">4.7</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500 truncate">Booking Experience</span>
-                  <span className="font-bold text-zinc-900">4.8</span>
-                </div>
+                {spa.experience.subs.map((sub) => (
+                  <div key={sub.id} className="flex justify-between">
+                    <span className="text-zinc-500 truncate">{sub.label}</span>
+                    <span className="font-bold text-zinc-900">{sub.value.toFixed(1)}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

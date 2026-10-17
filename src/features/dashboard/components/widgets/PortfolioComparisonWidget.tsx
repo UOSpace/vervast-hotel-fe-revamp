@@ -1,20 +1,23 @@
 import { useNavigate } from 'react-router-dom';
+import type { PeriodId } from '@/data/portfolio';
 import {
-  simulatedPortfolioComparisonData,
+  getPortfolioComparisonData,
   type PortfolioComparisonItem,
 } from '../../services/propertySimulation';
 
 interface PortfolioComparisonWidgetProps {
+  period?: PeriodId;
   onOpenDetails?: () => void;
   onSelectProperty?: (item: PortfolioComparisonItem) => void;
 }
 
 export function PortfolioComparisonWidget({
+  period = 'mtd',
   onOpenDetails,
   onSelectProperty,
 }: PortfolioComparisonWidgetProps) {
   const navigate = useNavigate();
-  const data = simulatedPortfolioComparisonData;
+  const data = getPortfolioComparisonData(period);
 
   const handleRowClick = (item: PortfolioComparisonItem) => {
     if (onSelectProperty) {

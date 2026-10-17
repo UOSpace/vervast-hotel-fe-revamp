@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../common/components/InfoTooltip';
+import {
+  PERIOD_DEFS,
+  PORTFOLIO_PROPERTY_IDS,
+  fmtPct,
+  fmtSignedPct,
+  fmtSignedPts,
+  fmtSignedUsd,
+  fmtUsd,
+  fmtUsdFull,
+  getPortfolioMetrics,
+} from '@/data/portfolio';
 
 export type TimeHorizon = 'today' | 'mtd' | 'ytd';
 
@@ -58,206 +69,92 @@ interface KpiData {
   };
 }
 
-const horizonsData: Record<TimeHorizon, KpiData> = {
-  mtd: {
-    periodLabel: 'October 1–31, 2026',
-    totalRevenue: {
-      value: '$152M',
-      vsLy: '+11.0% vs LY',
-      vsBudget: '+4.0% vs Budget',
-      vsForecast: '+1.9% vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      breakdown: [
-        { label: 'Rooms', val: '$118M', pct: '77.6%' },
-        { label: 'F&B', val: '$22M', pct: '14.5%' },
-        { label: 'Spa', val: '$8M', pct: '5.3%' },
-        { label: 'Activities', val: '$4M', pct: '2.6%' },
-      ],
-    },
-    occupancy: {
-      value: '74.2%',
-      vsLy: '+4.8 pts vs LY',
-      vsBudget: '+2.1 pts vs Budget',
-      vsForecast: '+1.2 pts vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Occupancy rate MTD compared with LY, budget, and forecast targets (percentage-point variance).',
-    },
-    adr: {
-      value: '$1,420',
-      vsLy: '+$85 vs LY (+6.0%)',
-      vsBudget: '+$42 vs Budget (+3.2%)',
-      vsForecast: '+$18 vs Forecast (+1.3%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Average Daily Rate MTD across luxury properties (Room Revenue / Rooms Sold).',
-    },
-    revPar: {
-      value: '$1,054',
-      vsLy: '+$92 vs LY (+8.5%)',
-      vsBudget: '+$48 vs Budget (+4.1%)',
-      vsForecast: '+$22 vs Forecast (+2.1%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Revenue Per Available Room MTD calculated as Occupancy × ADR.',
-    },
-    roomRevenue: {
-      value: '$118M',
-      vsLy: '+$14.5M vs LY (+14.0%)',
-      vsBudget: '+$5.8M vs Budget (+5.2%)',
-      vsForecast: '+$2.4M vs Forecast (+2.1%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Total room revenue recognized MTD.',
-    },
-  },
-  today: {
-    periodLabel: 'Today, October 8, 2026',
-    totalRevenue: {
-      value: '$5.1M',
-      vsLy: '+9.4% vs LY',
-      vsBudget: '+3.2% vs Budget',
-      vsForecast: '+1.5% vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      breakdown: [
-        { label: 'Rooms', val: '$3.9M', pct: '76.5%' },
-        { label: 'F&B', val: '$750K', pct: '14.7%' },
-        { label: 'Spa', val: '$290K', pct: '5.7%' },
-        { label: 'Activities', val: '$160K', pct: '3.1%' },
-      ],
-    },
-    occupancy: {
-      value: '76.8%',
-      vsLy: '+5.2 pts vs LY',
-      vsBudget: '+3.0 pts vs Budget',
-      vsForecast: '+1.4 pts vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Current checked-in guest occupancy across all properties today.',
-    },
-    adr: {
-      value: '$1,465',
-      vsLy: '+$97 vs LY (+7.1%)',
-      vsBudget: '+$59 vs Budget (+4.2%)',
-      vsForecast: '+$24 vs Forecast (+1.7%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Average Daily Rate for active stays today.',
-    },
-    revPar: {
-      value: '$1,125',
-      vsLy: '+$104 vs LY (+10.2%)',
-      vsBudget: '+$58 vs Budget (+5.5%)',
-      vsForecast: '+$28 vs Forecast (+2.6%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'RevPAR calculated based on today’s active room inventory.',
-    },
-    roomRevenue: {
-      value: '$3.9M',
-      vsLy: '+$442K vs LY (+12.8%)',
-      vsBudget: '+$179K vs Budget (+4.8%)',
-      vsForecast: '+$86K vs Forecast (+2.3%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Daily room revenue generated across portfolio today.',
-    },
-  },
-  ytd: {
-    periodLabel: 'Jan 1 – Oct 8, 2026',
-    totalRevenue: {
-      value: '$1.28B',
-      vsLy: '+12.4% vs LY',
-      vsBudget: '+4.6% vs Budget',
-      vsForecast: '+2.2% vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      breakdown: [
-        { label: 'Rooms', val: '$992M', pct: '77.5%' },
-        { label: 'F&B', val: '$186M', pct: '14.5%' },
-        { label: 'Spa', val: '$68M', pct: '5.3%' },
-        { label: 'Activities', val: '$34M', pct: '2.7%' },
-      ],
-    },
-    occupancy: {
-      value: '75.4%',
-      vsLy: '+5.6 pts vs LY',
-      vsBudget: '+2.8 pts vs Budget',
-      vsForecast: '+1.5 pts vs Forecast',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Cumulative Year-To-Date Occupancy across full portfolio.',
-    },
-    adr: {
-      value: '$1,440',
-      vsLy: '+$106 vs LY (+8.0%)',
-      vsBudget: '+$54 vs Budget (+3.9%)',
-      vsForecast: '+$26 vs Forecast (+1.8%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Cumulative Year-To-Date ADR.',
-    },
-    revPar: {
-      value: '$1,085',
-      vsLy: '+$112 vs LY (+11.5%)',
-      vsBudget: '+$52 vs Budget (+5.0%)',
-      vsForecast: '+$29 vs Forecast (+2.7%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Cumulative Year-To-Date RevPAR.',
-    },
-    roomRevenue: {
-      value: '$992M',
-      vsLy: '+$131M vs LY (+15.2%)',
-      vsBudget: '+$56M vs Budget (+6.0%)',
-      vsForecast: '+$24M vs Forecast (+2.5%)',
-      upLy: true,
-      upBudget: true,
-      upForecast: true,
-      tooltip: 'Cumulative Year-To-Date Room Revenue.',
-    },
-  },
-};
+function buildKpiData(horizon: TimeHorizon): KpiData {
+  const m = getPortfolioMetrics(PORTFOLIO_PROPERTY_IDS, horizon);
+  const tot = m.totalRevenue || 1;
+  const pct = (v: number) => fmtPct((v / tot) * 100, 1);
 
-function getDynamicPeriodLabel(h: TimeHorizon): string {
-  const now = new Date();
-  const monthLong = now.toLocaleString('en-US', { month: 'long' });
-  const monthShort = now.toLocaleString('en-US', { month: 'short' });
-  const day = now.getDate();
-  const year = now.getFullYear();
-
-  if (h === 'today') return `Today, ${monthLong} ${day}, ${year}`;
-  if (h === 'mtd') return `${monthLong} 1–${day}, ${year}`;
-  if (h === 'ytd') return `Jan 1 – ${monthShort} ${day}, ${year}`;
-  return '';
+  return {
+    periodLabel: PERIOD_DEFS[horizon].periodLabel,
+    totalRevenue: {
+      value: fmtUsd(m.totalRevenue),
+      vsLy: `${fmtSignedPct(m.vsLy.totalRevenuePct)} vs LY`,
+      vsBudget: `${fmtSignedPct(m.vsBudget.totalRevenuePct)} vs Budget`,
+      vsForecast: `${fmtSignedPct(m.vsForecast.totalRevenuePct)} vs Forecast`,
+      upLy: m.vsLy.totalRevenuePct >= 0,
+      upBudget: m.vsBudget.totalRevenuePct >= 0,
+      upForecast: m.vsForecast.totalRevenuePct >= 0,
+      breakdown: [
+        { label: 'Rooms', val: fmtUsd(m.roomRevenue), pct: pct(m.roomRevenue) },
+        { label: 'F&B', val: fmtUsd(m.fnbRevenue), pct: pct(m.fnbRevenue) },
+        { label: 'Spa', val: fmtUsd(m.spaRevenue), pct: pct(m.spaRevenue) },
+        { label: 'Activities', val: fmtUsd(m.experienceRevenue), pct: pct(m.experienceRevenue) },
+      ],
+    },
+    occupancy: {
+      value: fmtPct(m.occupancyPct, 1),
+      vsLy: `${fmtSignedPts(m.vsLy.occupancyPts)} vs LY`,
+      vsBudget: `${fmtSignedPts(m.vsBudget.occupancyPts)} vs Budget`,
+      vsForecast: `${fmtSignedPts(m.vsForecast.occupancyPts)} vs Forecast`,
+      upLy: m.vsLy.occupancyPts >= 0,
+      upBudget: m.vsBudget.occupancyPts >= 0,
+      upForecast: m.vsForecast.occupancyPts >= 0,
+      tooltip: 'Occupancy rate compared with LY, budget, and forecast targets (percentage-point variance).',
+    },
+    adr: {
+      value: fmtUsdFull(m.adr),
+      vsLy: `${fmtSignedUsd(m.vsLy.adrAbs)} vs LY (${fmtSignedPct(m.vsLy.adrPct)})`,
+      vsBudget: `${fmtSignedUsd(m.vsBudget.adrAbs)} vs Budget (${fmtSignedPct(m.vsBudget.adrPct)})`,
+      vsForecast: `${fmtSignedUsd(m.vsForecast.adrAbs)} vs Forecast (${fmtSignedPct(m.vsForecast.adrPct)})`,
+      upLy: m.vsLy.adrPct >= 0,
+      upBudget: m.vsBudget.adrPct >= 0,
+      upForecast: m.vsForecast.adrPct >= 0,
+      tooltip: 'Average Daily Rate across luxury properties (Room Revenue / Rooms Sold).',
+    },
+    revPar: {
+      value: fmtUsdFull(m.revpar),
+      vsLy: `${fmtSignedUsd(m.vsLy.revparAbs)} vs LY (${fmtSignedPct(m.vsLy.revparPct)})`,
+      vsBudget: `${fmtSignedUsd(m.vsBudget.revparAbs)} vs Budget (${fmtSignedPct(m.vsBudget.revparPct)})`,
+      vsForecast: `${fmtSignedUsd(m.vsForecast.revparAbs)} vs Forecast (${fmtSignedPct(m.vsForecast.revparPct)})`,
+      upLy: m.vsLy.revparPct >= 0,
+      upBudget: m.vsBudget.revparPct >= 0,
+      upForecast: m.vsForecast.revparPct >= 0,
+      tooltip: 'Revenue Per Available Room calculated as Occupancy × ADR.',
+    },
+    roomRevenue: {
+      value: fmtUsd(m.roomRevenue),
+      vsLy: `${fmtSignedUsd(m.vsLy.roomRevenueAbs)} vs LY (${fmtSignedPct(m.vsLy.roomRevenuePct)})`,
+      vsBudget: `${fmtSignedUsd(m.vsBudget.roomRevenueAbs)} vs Budget (${fmtSignedPct(m.vsBudget.roomRevenuePct)})`,
+      vsForecast: `${fmtSignedUsd(m.vsForecast.roomRevenueAbs)} vs Forecast (${fmtSignedPct(m.vsForecast.roomRevenuePct)})`,
+      upLy: m.vsLy.roomRevenuePct >= 0,
+      upBudget: m.vsBudget.roomRevenuePct >= 0,
+      upForecast: m.vsForecast.roomRevenuePct >= 0,
+      tooltip: 'Total room revenue recognized across the portfolio.',
+    },
+  };
 }
 
 interface PortfolioKpisWidgetProps {
+  horizon?: TimeHorizon;
+  onChangeHorizon?: (h: TimeHorizon) => void;
   onOpenMetricDrawer?: (metric: string, value: string, horizon: TimeHorizon) => void;
   onOpenPortfolioPerformance?: (horizon: TimeHorizon) => void;
 }
 
-export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerformance }: PortfolioKpisWidgetProps) {
-  // Primary default timeframe is MTD as specified in rules
-  const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
-  const data = horizonsData[horizon];
-  const activePeriodLabel = getDynamicPeriodLabel(horizon);
+export function PortfolioKpisWidget({
+  horizon: controlledHorizon,
+  onChangeHorizon,
+  onOpenMetricDrawer,
+  onOpenPortfolioPerformance,
+}: PortfolioKpisWidgetProps) {
+  const [internalHorizon, setInternalHorizon] = useState<TimeHorizon>('mtd');
+  const horizon = controlledHorizon ?? internalHorizon;
+  const setHorizon = (h: TimeHorizon) => {
+    setInternalHorizon(h);
+    onChangeHorizon?.(h);
+  };
+
+  const data = buildKpiData(horizon);
 
   return (
     <div className="w-full h-full flex flex-col justify-between">
@@ -279,7 +176,7 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
             )}
           </div>
           <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-            Period: <span className="font-semibold text-zinc-800">{activePeriodLabel}</span>
+            Period: <span className="font-semibold text-zinc-800">{data.periodLabel}</span>
           </p>
         </div>
 
@@ -292,10 +189,11 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
                 key={h}
                 type="button"
                 onClick={() => setHorizon(h)}
-                className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded transition-all cursor-pointer ${isActive
-                  ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
-                  }`}
+                className={`px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-zinc-900 text-white shadow-xs'
+                    : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                }`}
               >
                 {h === 'today' ? 'Today' : h.toUpperCase()}
               </button>
@@ -373,10 +271,11 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
                 </span>
               </InfoTooltip>
               <span
-                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.occupancy.upLy
-                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-                  }`}
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                  data.occupancy.upLy
+                    ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                    : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                }`}
               >
                 {data.occupancy.vsLy}
               </span>
@@ -408,10 +307,11 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
                 </span>
               </InfoTooltip>
               <span
-                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.adr.upLy
-                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-                  }`}
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                  data.adr.upLy
+                    ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                    : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                }`}
               >
                 {data.adr.vsLy}
               </span>
@@ -443,10 +343,11 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
                 </span>
               </InfoTooltip>
               <span
-                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.revPar.upLy
-                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-                  }`}
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                  data.revPar.upLy
+                    ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                    : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                }`}
               >
                 {data.revPar.vsLy}
               </span>
@@ -478,10 +379,11 @@ export function PortfolioKpisWidget({ onOpenMetricDrawer, onOpenPortfolioPerform
                 </span>
               </InfoTooltip>
               <span
-                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.roomRevenue.upLy
-                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-                  }`}
+                className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                  data.roomRevenue.upLy
+                    ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                    : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                }`}
               >
                 {data.roomRevenue.vsLy}
               </span>

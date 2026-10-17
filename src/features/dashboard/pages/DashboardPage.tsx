@@ -1,7 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import { LiveOverviewMap } from '../components/widgets/LiveOverviewMap';
-import { PortfolioKpisWidget } from '../components/widgets/PortfolioKpisWidget';
+import { PortfolioKpisWidget, type TimeHorizon } from '../components/widgets/PortfolioKpisWidget';
 import { BookingPaceWidget } from '../components/widgets/BookingPaceWidget';
 import { RevenueDemandMixWidget } from '../components/widgets/RevenueDemandMixWidget';
 import { ForwardBusinessWidget } from '../components/widgets/ForwardBusinessWidget';
@@ -15,6 +15,7 @@ import { ResortTypeDashboard } from './ResortTypeDashboard';
 import { RegionalDashboard } from './RegionalDashboard';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
+import { PERIOD_DEFS } from '@/data/portfolio';
 
 export function DashboardPage() {
   const [searchParams] = useSearchParams();
@@ -28,6 +29,7 @@ export function DashboardPage() {
 
   const { openDrawer } = useDashboardDrawer();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
 
   // Ensure scroll container is always reset to the top when navigating or switching views
   useEffect(() => {
@@ -63,18 +65,18 @@ export function DashboardPage() {
             <div className="w-full lg:w-[56%] shrink-0 flex flex-col justify-between">
               <div className="px-1 flex items-center justify-between shrink-0 mb-2 min-h-[32px]">
                 <div>
-                  <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR (MTD).">
+                  <InfoTooltip text="Interactive world map showing property, occupancy, ADR, and RevPAR.">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help leading-tight">
                       WORLD MAP
                     </h3>
                   </InfoTooltip>
                   <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-                    Interactive Portfolio Footprint · 10 Properties
+                    Interactive Portfolio Footprint · 10 Properties · {PERIOD_DEFS[horizon].periodLabel}
                   </p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details' })}
+                  onClick={() => openDrawer({ type: 'WORLD_MAP', title: 'World Map Details', data: { horizon } })}
                   className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   See details <RoundAltArrowRight size={10} />
@@ -84,25 +86,27 @@ export function DashboardPage() {
                 className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter backdrop-blur-sm transition-all z-20 hover:z-40 min-h-[260px]"
                 style={{ animationDelay: '0.1s' }}
               >
-                <LiveOverviewMap />
+                <LiveOverviewMap period={horizon} />
               </div>
             </div>
 
             {/* Right Column — 44% (5 Financial Heart KPI Cards) */}
             <div className="w-full lg:w-[44%] flex flex-col">
               <PortfolioKpisWidget
-                onOpenMetricDrawer={(metric, value, horizon) =>
+                horizon={horizon}
+                onChangeHorizon={setHorizon}
+                onOpenMetricDrawer={(metric, value, h) =>
                   openDrawer({
                     type: 'METRIC',
                     title: `${metric} Performance Details`,
-                    data: { metric, value, horizon },
+                    data: { metric, value, horizon: h },
                   })
                 }
-                onOpenPortfolioPerformance={(horizon) =>
+                onOpenPortfolioPerformance={(h) =>
                   openDrawer({
                     type: 'PORTFOLIO_PERFORMANCE',
                     title: 'Portfolio Performance Details',
-                    data: { horizon },
+                    data: { horizon: h },
                   })
                 }
               />
@@ -137,10 +141,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
               style={{ animationDelay: '0.4s' }}
-              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
+              onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon } })}
             >
               <RevenueDemandMixWidget
-                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix' })}
+                period={horizon}
+                onOpenDetails={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon } })}
               />
             </div>
           </div>
@@ -151,10 +156,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.5s' }}
-              onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance' })}
+              onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon } })}
             >
               <GeoMarketWidget
-                onOpenDetails={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance' })}
+                period={horizon}
+                onOpenDetails={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon } })}
               />
             </div>
 
@@ -162,10 +168,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.55s' }}
-              onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance' })}
+              onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon } })}
             >
               <MarketSegmentWidget
-                onOpenDetails={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance' })}
+                period={horizon}
+                onOpenDetails={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon } })}
               />
             </div>
 
@@ -173,10 +180,11 @@ export function DashboardPage() {
             <div
               className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
               style={{ animationDelay: '0.6s' }}
-              onClick={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals' })}
+              onClick={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon } })}
             >
               <SOSEISignalsWidget
-                onOpenDetails={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals' })}
+                period={horizon}
+                onOpenDetails={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon } })}
               />
             </div>
           </div>
@@ -186,10 +194,11 @@ export function DashboardPage() {
             <div
               className="relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm"
               style={{ animationDelay: '0.65s' }}
-              onClick={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: 'Portfolio Comparison (Performance by Property MTD)' })}
+              onClick={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: `Portfolio Comparison (${PERIOD_DEFS[horizon].periodLabel})`, data: { horizon } })}
             >
               <PortfolioComparisonWidget
-                onOpenDetails={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: 'Portfolio Comparison (Performance by Property MTD)' })}
+                period={horizon}
+                onOpenDetails={() => openDrawer({ type: 'PORTFOLIO_COMPARISON', title: `Portfolio Comparison (${PERIOD_DEFS[horizon].periodLabel})`, data: { horizon } })}
               />
             </div>
           </div>

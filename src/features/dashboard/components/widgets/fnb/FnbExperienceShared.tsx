@@ -179,6 +179,7 @@ export function DashboardHeader({ eyebrow, title, subtitle, showPos }: HeaderPro
           )}
           <div className="relative flex items-center bg-white border border-zinc-200 rounded-lg px-3 py-1.5 cursor-pointer shadow-xs">
             <DatePicker
+              portalId="datepicker-portal"
               selectsRange={true}
               startDate={startDate}
               endDate={endDate}
@@ -190,7 +191,7 @@ export function DashboardHeader({ eyebrow, title, subtitle, showPos }: HeaderPro
               placeholderText="Select Date Range"
               className="bg-transparent border-none text-zinc-900 text-[10px] focus:outline-none font-medium w-[150px] cursor-pointer"
             />
-            <Calendar size={13} className="text-zinc-400 ml-1.5" />
+            <Calendar size={13} className="text-zinc-400 ml-1.5 pointer-events-none" />
           </div>
           <button
             onClick={() => setShowDevModal(true)}

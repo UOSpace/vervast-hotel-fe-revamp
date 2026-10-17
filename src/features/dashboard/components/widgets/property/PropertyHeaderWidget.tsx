@@ -163,6 +163,7 @@ export function PropertyHeaderWidget({
             <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Period:</span>
             <div className="relative flex items-center">
               <DatePicker
+                portalId="datepicker-portal"
                 selectsRange
                 startDate={startDate}
                 endDate={endDate}
@@ -180,6 +181,7 @@ export function PropertyHeaderWidget({
             <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Compare vs:</span>
             <div className="relative flex items-center">
               <DatePicker
+                portalId="datepicker-portal"
                 selectsRange
                 startDate={compStartDate}
                 endDate={compEndDate}

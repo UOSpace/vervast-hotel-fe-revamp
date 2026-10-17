@@ -52,6 +52,7 @@ export function FnbPosPage() {
   const [selectedGuest, setSelectedGuest] = useState<FnbGuest | null>(null);
   const [guestScope, setGuestScope] = useState<'property' | 'all'>('property');
   const [guestSearchQuery, setGuestSearchQuery] = useState('');
+  const [showInHouseGuests, setShowInHouseGuests] = useState<boolean>(true);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [menuSearchQuery, setMenuSearchQuery] = useState('');
@@ -505,8 +506,29 @@ export function FnbPosPage() {
           </div>
         </div>
 
-        {/* Right Controls: Table Selector */}
+        {/* Right Controls: In-House Guests Toggle & Table Selector */}
         <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowInHouseGuests((prev) => !prev)}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10.5px] font-medium cursor-pointer transition-all ${
+              showInHouseGuests
+                ? 'bg-zinc-900 text-white border-zinc-900'
+                : 'bg-zinc-50 text-zinc-700 border-zinc-200/80 hover:bg-zinc-100 hover:text-zinc-900'
+            }`}
+            title={showInHouseGuests ? 'Hide In-House Guests Panel' : 'Show In-House Guests Panel'}
+          >
+            <UsersGroupTwoRounded size={13} />
+            <span>{showInHouseGuests ? 'Hide In-House Guests' : 'Show In-House Guests'}</span>
+            <span
+              className={`px-1.5 py-0.2 rounded text-[9px] font-semibold ${
+                showInHouseGuests ? 'bg-white/20 text-white' : 'bg-zinc-200/80 text-zinc-700'
+              }`}
+            >
+              {filteredGuests.length}
+            </span>
+          </button>
+
           <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/70 rounded-lg px-2.5 py-1">
             <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Table</span>
             <select
@@ -527,19 +549,31 @@ export function FnbPosPage() {
       {/* 3-Column POS Body */}
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* ──────────────────────────────────────────────────────────────────────
-            COLUMN 1 (THIRD SIDEBAR): IN-HOUSE GUESTS LIST TAB (NOT MODAL)
+            COLUMN 1 (THIRD SIDEBAR): IN-HOUSE GUESTS LIST TAB (COLLAPSIBLE HIDE/SHOW)
            ────────────────────────────────────────────────────────────────────── */}
-        <aside className="w-[230px] lg:w-[260px] shrink-0 border-r border-zinc-100 bg-zinc-50/40 flex flex-col h-full">
-          {/* Sidebar Header */}
-          <div className="p-3.5 border-b border-zinc-100 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                In-House Guests
-              </span>
-              <span className="text-[9.5px] text-zinc-400 font-medium">
-                {filteredGuests.length} rooms
-              </span>
-            </div>
+        {showInHouseGuests ? (
+          <aside className="w-[230px] lg:w-[260px] shrink-0 border-r border-zinc-100 bg-zinc-50/40 flex flex-col h-full transition-all duration-300">
+            {/* Sidebar Header */}
+            <div className="p-3.5 border-b border-zinc-100 space-y-2.5">
+              <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 truncate">
+                    In-House Guests
+                  </span>
+                  <span className="text-[9px] text-zinc-400 font-medium shrink-0">
+                    ({filteredGuests.length})
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowInHouseGuests(false)}
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/60 cursor-pointer transition-colors shrink-0"
+                  title="Hide In-House Guests"
+                >
+                  <AltArrowLeft size={11} />
+                  <span>Hide</span>
+                </button>
+              </div>
 
             {/* Scope Toggle: Current Property vs All SOSEI */}
             <div className="grid grid-cols-2 gap-1 p-0.5 bg-zinc-100/80 rounded-lg text-[9.5px]">
@@ -632,7 +666,26 @@ export function FnbPosPage() {
               );
             })}
           </div>
-        </aside>
+          </aside>
+        ) : (
+          <aside className="w-10 shrink-0 border-r border-zinc-100 bg-zinc-50/50 flex flex-col items-center py-3 justify-between h-full">
+            <button
+              type="button"
+              onClick={() => setShowInHouseGuests(true)}
+              className="flex flex-col items-center gap-2 py-2 px-1 rounded-lg hover:bg-zinc-200/60 text-zinc-600 hover:text-zinc-900 cursor-pointer transition-colors"
+              title="Show In-House Guests"
+            >
+              <AltArrowRight size={13} />
+              <UsersGroupTwoRounded size={14} />
+              <span
+                className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 py-1"
+                style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+              >
+                In-House Guests ({filteredGuests.length})
+              </span>
+            </button>
+          </aside>
+        )}
 
         {/* ──────────────────────────────────────────────────────────────────────
             COLUMN 2 (CENTER): REGIONAL MENU CATALOG (MA & WABI-SABI)
@@ -672,7 +725,11 @@ export function FnbPosPage() {
 
           {/* Menu Items Grid */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 ${
+                showInHouseGuests ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'
+              } gap-4`}
+            >
               {filteredMenuItems.map((item) => {
                 const { hasConflict, conflictingAllergens } = checkAllergyConflict(
                   selectedGuest,

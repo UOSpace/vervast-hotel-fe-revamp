@@ -708,8 +708,14 @@
   display: none !important;
 }
 
+#datepicker-portal {
+  position: relative;
+  z-index: 99999 !important;
+}
+
 .react-datepicker-popper {
-  z-index: 100 !important;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
 }
 
 @keyframes map-pulse {

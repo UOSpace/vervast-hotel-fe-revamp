@@ -53,15 +53,16 @@ export const fnbSidebarMenu: MenuItem[] = [
     path: '/dashboard/fnb',
     children: [
       { name: 'Global Overview', path: '/dashboard/fnb', isDynamicOverview: true },
-      { name: 'Property Categories', path: '/dashboard/categories' },
+      { name: 'Property Categories', path: '/dashboard/fnb/categories' },
+      { name: 'Regional View', path: '/dashboard/fnb/regional' },
     ],
   },
+  { name: 'Property View', icon: City, path: '/dashboard/fnb/property' },
   {
     name: 'Point of Sale (POS)',
     icon: ChefHat,
     path: '/dashboard/fnb/pos',
   },
-  { name: 'Property View', icon: City, path: '/dashboard/property' },
   {
     name: 'Reservations',
     icon: Calendar,
@@ -130,12 +131,24 @@ export interface MenuSection {
  */
 export function getPortalSections(portal: string): MenuSection[] {
   if (portal === 'fnb-experience') {
-    const [fnbGroup, pos, ...rest] = fnbSidebarMenu;
+    const [fnbGroup, fnbProperty, pos, ...rest] = fnbSidebarMenu;
     return [
-      { label: 'F&B', items: [fnbGroup, pos] },
+      { label: 'F&B', items: [fnbGroup, fnbProperty, pos] },
       {
         label: 'Experiences',
-        items: [{ name: 'Overview', icon: Globus, path: '/dashboard/experience' }],
+        items: [
+          {
+            name: 'Group View',
+            icon: Globus,
+            path: '/dashboard/experience',
+            children: [
+              { name: 'Global Overview', path: '/dashboard/experience', isDynamicOverview: true },
+              { name: 'Property Categories', path: '/dashboard/experience/categories' },
+              { name: 'Regional View', path: '/dashboard/experience/regional' },
+            ],
+          },
+          { name: 'Property View', icon: City, path: '/dashboard/experience/property' },
+        ],
       },
       { label: 'Operations', items: rest },
     ];
