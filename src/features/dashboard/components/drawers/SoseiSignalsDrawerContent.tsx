@@ -1,12 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  simulatedSOSEISignalsData,
-  simulatedPropertiesData,
+  getSOSEISignalsData,
+  getSimulatedPropertiesData,
 } from '../../services/propertySimulation';
+import { PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
 
-export function SOSEISignalsDrawerContent() {
+interface SOSEISignalsDrawerContentProps {
+  config?: {
+    title?: string;
+    data?: any;
+  };
+}
+
+export function SOSEISignalsDrawerContent({ config }: SOSEISignalsDrawerContentProps) {
+  const initialPeriod: PeriodId =
+    config?.data?.period || config?.data?.horizon || 'mtd';
+  const [period, setPeriod] = useState<PeriodId>(initialPeriod);
   const [filter, setFilter] = useState<'all' | 'opportunity' | 'risk'>('all');
-  const allSignals = simulatedSOSEISignalsData.items;
+
+  useEffect(() => {
+    const nextPeriod = config?.data?.period || config?.data?.horizon;
+    if (nextPeriod === 'today' || nextPeriod === 'mtd' || nextPeriod === 'ytd') {
+      setPeriod(nextPeriod);
+    }
+  }, [config?.data?.period, config?.data?.horizon]);
+
+  const periodDef = PERIOD_DEFS[period];
+  const signalsData = getSOSEISignalsData(period);
+  const propertiesData = getSimulatedPropertiesData(period);
+  const allSignals = signalsData.items;
+
+  const oppCount = allSignals.filter((s) => s.signalType === 'opportunity').length;
+  const riskCount = allSignals.filter(
+    (s) => s.signalType === 'risk' || s.signalType === 'neutral'
+  ).length;
 
   const filteredSignals = allSignals.filter((sig) => {
     if (filter === 'opportunity') return sig.signalType === 'opportunity';
@@ -28,45 +55,71 @@ export function SOSEISignalsDrawerContent() {
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Portfolio Signals &amp; Strategic Advisory
+            Portfolio Signals &amp; Strategic Advisory ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Answering the executive question &ldquo;So what?&rdquo; with data-derived signals and transparent AI recommendations.
+            Answering the executive question &ldquo;So what?&rdquo; with data-derived signals and transparent AI recommendations ·{' '}
+            <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
 
         {/* Filters */}
-        <div className="inline-flex items-center p-1 rounded-lg bg-zinc-100 border border-zinc-200 shadow-2xs self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => setFilter('all')}
-            className={`px-3 py-1 text-xs rounded-md font-medium transition-all ${filter === 'all'
-                ? 'bg-white text-zinc-900 shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-900'
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
+            {(['today', 'mtd', 'ytd'] as const).map((h) => {
+              const isActive = period === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setPeriod(h)}
+                  className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                  }`}
+                >
+                  {h === 'today' ? 'Today' : h.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="inline-flex items-center p-1 rounded-lg bg-zinc-100 border border-zinc-200 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setFilter('all')}
+              className={`px-3 py-1 text-xs rounded-md font-medium transition-all cursor-pointer ${
+                filter === 'all'
+                  ? 'bg-white text-zinc-900 shadow-xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
               }`}
-          >
-            All Signals ({allSignals.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilter('opportunity')}
-            className={`px-3 py-1 text-xs rounded-md font-medium transition-all ${filter === 'opportunity'
-                ? 'bg-white text-emerald-800 shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-900'
+            >
+              All ({allSignals.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilter('opportunity')}
+              className={`px-3 py-1 text-xs rounded-md font-medium transition-all cursor-pointer ${
+                filter === 'opportunity'
+                  ? 'bg-white text-emerald-800 shadow-xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
               }`}
-          >
-            Opportunities (2)
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilter('risk')}
-            className={`px-3 py-1 text-xs rounded-md font-medium transition-all ${filter === 'risk'
-                ? 'bg-white text-rose-800 shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-900'
+            >
+              Opportunities ({oppCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilter('risk')}
+              className={`px-3 py-1 text-xs rounded-md font-medium transition-all cursor-pointer ${
+                filter === 'risk'
+                  ? 'bg-white text-rose-800 shadow-xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900'
               }`}
-          >
-            Risks &amp; Exposure (2)
-          </button>
+            >
+              Risks &amp; Exposure ({riskCount})
+            </button>
+          </div>
         </div>
       </div>
 
@@ -102,21 +155,20 @@ export function SOSEISignalsDrawerContent() {
               </div>
 
               <span
-                className={`text-[9.5px] font-semibold px-2 py-0.5 rounded-full border ${sig.signalType === 'opportunity'
+                className={`text-[9.5px] font-semibold px-2 py-0.5 rounded-full border ${
+                  sig.signalType === 'opportunity'
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                     : sig.signalType === 'risk'
-                      ? 'bg-rose-50 text-rose-700 border-rose-200'
-                      : 'bg-zinc-100 text-zinc-700 border-zinc-200'
-                  }`}
+                    ? 'bg-rose-50 text-rose-700 border-rose-200'
+                    : 'bg-zinc-100 text-zinc-700 border-zinc-200'
+                }`}
               >
                 {sig.impactSummary}
               </span>
             </div>
 
             {/* Description */}
-            <p className="text-xs text-zinc-600 mt-2.5 leading-relaxed">
-              {sig.description}
-            </p>
+            <p className="text-xs text-zinc-600 mt-2.5 leading-relaxed">{sig.description}</p>
 
             {/* Affected Sanctuaries */}
             <div className="flex items-center gap-1.5 flex-wrap mt-3">
@@ -131,13 +183,15 @@ export function SOSEISignalsDrawerContent() {
               ))}
             </div>
 
-            {/* AI Recommendation (Separated for trust and clarity) */}
+            {/* AI Recommendation */}
             {sig.aiRecommendation && (
               <div className="mt-3.5 p-3 rounded-lg bg-zinc-50 border border-zinc-200/90 text-zinc-800">
                 <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-900 mb-1">
                   <span>✦</span>
                   <span>AI Tactical Recommendation</span>
-                  <span className="text-[8.5px] font-normal text-zinc-400 lowercase">(non-binding advisory)</span>
+                  <span className="text-[8.5px] font-normal text-zinc-400 lowercase">
+                    (non-binding advisory)
+                  </span>
                 </div>
                 <div className="text-[11px] text-zinc-700 font-normal leading-normal">
                   {sig.aiRecommendation}
@@ -152,11 +206,9 @@ export function SOSEISignalsDrawerContent() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Portfolio Health Cross-Reference (100% SSOT Data)
+            Portfolio Health Cross-Reference (100% SSOT Data — {periodDef.label})
           </h5>
-          <span className="text-[10px] text-zinc-400">
-            Live Sanctuary Audit
-          </span>
+          <span className="text-[10px] text-zinc-400">Live Sanctuary Audit</span>
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
@@ -179,20 +231,34 @@ export function SOSEISignalsDrawerContent() {
                   RevPAR
                 </th>
                 <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
+                  {periodDef.label} Revenue
+                </th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200">
                   Active Signal
                 </th>
               </tr>
             </thead>
             <tbody>
-              {simulatedPropertiesData.map((prop, idx) => {
-                const hasOpportunity = ['SOSEI MALDIVES', 'SOSEI BALI', 'SOSEI JAPAN', 'SOSEI SWITZERLAND', 'SOSEI CANADA'].includes(prop.name);
-                const hasRisk = ['SOSEI EGYPT', 'SOSEI OMAN', 'SOSEI BARCELONA'].includes(prop.name);
+              {propertiesData.map((prop, idx) => {
+                const hasOpportunity = [
+                  'SOSEI MALDIVES',
+                  'SOSEI BALI',
+                  'SOSEI JAPAN',
+                  'SOSEI SWITZERLAND',
+                  'SOSEI CANADA',
+                ].includes(prop.name);
+                const hasRisk = [
+                  'SOSEI EGYPT',
+                  'SOSEI OMAN',
+                  'SOSEI BARCELONA',
+                ].includes(prop.name);
 
                 return (
                   <tr
                     key={prop.id}
-                    className={`hover:bg-zinc-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/30'
-                      }`}
+                    className={`hover:bg-zinc-50 transition-colors ${
+                      idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/30'
+                    }`}
                   >
                     <td className="py-2.5 px-3 font-bold text-zinc-900 border-b border-zinc-100">
                       {prop.name}
@@ -208,6 +274,9 @@ export function SOSEISignalsDrawerContent() {
                     </td>
                     <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
                       {prop.revparFormatted}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
+                      {prop.revenueFormatted}
                     </td>
                     <td className="py-2.5 px-3 text-right border-b border-zinc-100">
                       {hasOpportunity ? (

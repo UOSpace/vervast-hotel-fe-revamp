@@ -392,6 +392,8 @@ function useFnbFilteredAnalytics(
     ];
 
     return {
+      horizon,
+      propertyIds: ids,
       activeProps,
       totalRooms,
       totalOutlets,
@@ -411,7 +413,7 @@ function useFnbFilteredAnalytics(
       geoTable,
       horizonMeta,
     };
-  }, [filteredProps, factor, mode, horizonMeta]);
+  }, [filteredProps, factor, mode, horizonMeta, horizon]);
 }
 
 /**
@@ -460,7 +462,12 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Total F&B Revenue — ${selectionTitle}`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'revenue' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'revenue',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -519,7 +526,11 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `In-House Guest Capture Rate — ${selectionTitle}`,
-              data: { key: 'FNB_DEMAND_CAPTURE' },
+              data: {
+                key: 'FNB_DEMAND_CAPTURE',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -558,7 +569,12 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Average Check & Spend per Guest — ${selectionTitle}`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'spend' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'spend',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -597,7 +613,12 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Outlet Productivity & RevPASH — ${selectionTitle}`,
-              data: { key: 'FNB_REVENUE_CENTRE_SCORECARD', centre: 'Fine & Specialty Dining' },
+              data: {
+                key: 'FNB_REVENUE_CENTRE_SCORECARD',
+                centre: 'Fine & Specialty Dining',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -636,7 +657,12 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Beverage, Mixology & Sommelier Performance — ${selectionTitle}`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'beverage' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'beverage',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -678,7 +704,11 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `F&B Geographic Origin & Regional Market Stats — ${selectionTitle}`,
-              data: { key: 'FNB_DEMAND_CAPTURE' },
+              data: {
+                key: 'FNB_DEMAND_CAPTURE',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -764,7 +794,12 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Revenue Centre Breakdown — ${selectionTitle}`,
-              data: { key: 'FNB_REVENUE_CENTRE_SCORECARD', centre: 'Fine & Specialty Dining' },
+              data: {
+                key: 'FNB_REVENUE_CENTRE_SCORECARD',
+                centre: 'Fine & Specialty Dining',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -835,7 +870,11 @@ function FnbAnalyticsBody({
             openDrawer({
               type: 'FNB_DETAIL',
               title: `Dining Channel & Meal-Plan Split — ${selectionTitle}`,
-              data: { key: 'FNB_DEMAND_CAPTURE' },
+              data: {
+                key: 'FNB_DEMAND_CAPTURE',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -907,7 +946,12 @@ function FnbAnalyticsBody({
           openDrawer({
             type: 'FNB_DETAIL',
             title: `Resort F&B Performance Benchmark — ${selectionTitle}`,
-            data: { key: 'FNB_HEADLINE_KPI', kpiId: 'revenue' },
+            data: {
+              key: 'FNB_HEADLINE_KPI',
+              kpiId: 'revenue',
+              horizon: analytics.horizon,
+              propertyIds: analytics.propertyIds,
+            },
           })
         }
       >

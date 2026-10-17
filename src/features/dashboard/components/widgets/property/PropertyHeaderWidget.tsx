@@ -2,12 +2,28 @@ import { useState, useRef, useEffect } from 'react';
 import { Calendar, AltArrowDown, Magnifer } from '@solar-icons/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { PeriodTabsWidget } from '../resort-type/PeriodTabsWidget';
+import { PERIOD_IDS, type PeriodId } from '@/data/portfolio';
 
 export function PropertyHeaderWidget({
   startDate, endDate, onDateChange,
   compStartDate, compEndDate, onCompDateChange,
-  selectedProperty, onPropertyChange, propertiesList
-}: any) {
+  selectedProperty, onPropertyChange, propertiesList,
+  period = 'mtd',
+  onPeriodChange,
+}: {
+  startDate: Date | null;
+  endDate: Date | null;
+  onDateChange: (dates: [Date | null, Date | null]) => void;
+  compStartDate: Date | null;
+  compEndDate: Date | null;
+  onCompDateChange: (dates: [Date | null, Date | null]) => void;
+  selectedProperty: any;
+  onPropertyChange: (prop: any) => void;
+  propertiesList: any[];
+  period?: PeriodId;
+  onPeriodChange?: (period: PeriodId) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -75,7 +91,7 @@ export function PropertyHeaderWidget({
         </div>
       </div>
 
-      {/* Secondary Controls Bar: Property Dropdown (Left) & Date Pickers (Right) */}
+      {/* Secondary Controls Bar: Property Dropdown (Left) & Period / Date Pickers (Right) */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-0.5">
         {/* Left Side: Property Dropdown */}
         <div className="flex items-center gap-3 relative" ref={dropdownRef}>
@@ -156,8 +172,19 @@ export function PropertyHeaderWidget({
           )}
         </div>
 
-        {/* Right Side: Date Filters (Side-by-side with labels on top) */}
-        <div className="flex flex-wrap items-center gap-4 text-[10px] text-zinc-600">
+        {/* Right Side: Period Tabs & Date Filters (Side-by-side with labels on top) */}
+        <div className="flex flex-wrap items-end gap-4 text-[10px] text-zinc-600">
+          {onPeriodChange && (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Horizon:</span>
+              <PeriodTabsWidget
+                period={period}
+                setPeriod={onPeriodChange}
+                periods={PERIOD_IDS}
+                showLabel={false}
+              />
+            </div>
+          )}
           {/* Main Date Range */}
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Period:</span>

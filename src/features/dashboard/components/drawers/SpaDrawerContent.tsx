@@ -1,3 +1,16 @@
+import { MASTER_CATEGORIES } from '@/constants/categories';
+import {
+  PERIOD_DEFS,
+  fmtInt,
+  fmtPct,
+  fmtSignedPct,
+  fmtUsd,
+  fmtUsdFull,
+  getPropertyIdsByCategory,
+  type PeriodId,
+} from '@/data/portfolio';
+import { getSpaDashboardData } from '@/data/portfolio/spaMix';
+
 interface SpaDrawerContentProps {
   config: {
     title?: string;
@@ -6,15 +19,49 @@ interface SpaDrawerContentProps {
 }
 
 export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
-  const detailKey = config.data?.key || '';
+  const detailKey = typeof config.data === 'string' ? config.data : config.data?.key || '';
+  const horizon: PeriodId = config.data?.horizon || config.data?.period || 'mtd';
+  const propertyIds: string[] | undefined = config.data?.propertyIds;
+  const spa = getSpaDashboardData(propertyIds, horizon);
+  const periodShort = PERIOD_DEFS[horizon].label;
+
+  const collections = MASTER_CATEGORIES.map((cat) => {
+    const ids = getPropertyIdsByCategory([cat.id]);
+    const props = spa.properties.filter((p) => ids.includes(p.propertyId));
+    const treatments = props.reduce((a, p) => a + p.treatments, 0);
+    const revenue = props.reduce((a, p) => a + p.revenue, 0);
+    const hours = props.reduce((a, p) => a + p.hours, 0);
+    const capacityHours = props.reduce((a, p) => a + p.capacityHours, 0);
+    const therapists = props.reduce((a, p) => a + p.therapists, 0);
+    const avgTreatment = treatments > 0 ? revenue / treatments : 0;
+    const sharePct = spa.revenue > 0 ? (revenue / spa.revenue) * 100 : 0;
+    const utilisationPct = capacityHours > 0 ? (hours / capacityHours) * 100 : 0;
+    const cities = props.map((p) => p.location.split(',')[0].trim()).join(' & ');
+    return {
+      id: cat.id,
+      name: `${cat.name} Collection`,
+      cities,
+      treatments,
+      revenue,
+      hours,
+      capacityHours,
+      therapists,
+      avgTreatment,
+      sharePct,
+      utilisationPct,
+    };
+  }).filter((c) => c.treatments > 0 || c.revenue > 0);
 
   if (detailKey === 'TOTAL_TREATMENTS') {
+    const serviceRevenue = spa.treatmentsRanked.reduce((a, t) => a + t.revenue, 0);
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Distribution of completed holistic spa treatments and guest satisfaction MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Distribution of completed holistic spa &amp; wellness treatments ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            1,178 Treatments Conducted
+            {fmtInt(spa.treatments)} Treatments Conducted ({periodShort})
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -22,27 +69,52 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Treatment Name</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Category</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments Conducted</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Ticket</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Rating</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatment Revenue</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: 'Deep Tissue Recovery Massage', count: 312, rating: '4.85 / 5.0', rev: '$71,448' },
-                { name: 'Aromatherapy Sanctuary Massage', count: 248, rating: '4.78 / 5.0', rev: '$56,792' },
-                { name: 'Signature Cellular Facial', count: 196, rating: '4.92 / 5.0', rev: '$44,884' },
-                { name: 'Thermal Hot Stone Therapy', count: 154, rating: '4.82 / 5.0', rev: '$35,266' },
-                { name: 'Alpine Detox Herbal Wrap', count: 98, rating: '4.70 / 5.0', rev: '$22,442' },
-                { name: 'Balinese Healing Sound Ritual', count: 70, rating: '4.95 / 5.0', rev: '$16,030' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
+              {spa.treatmentsRanked.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.count}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.rating}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+                  <td className="py-2.5 px-3 text-zinc-500">{row.categoryName}</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {fmtInt(row.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtUsdFull(row.avgTicket)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {row.rating.toFixed(2)} / 5.0
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100" colSpan={2}>
+                  Total Treatments ({periodShort})
+                </td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtInt(spa.treatments)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtUsdFull(spa.treatments > 0 ? serviceRevenue / spa.treatments : 0)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {spa.experience.score.toFixed(2)} / 5.0
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtUsd(serviceRevenue)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -50,15 +122,20 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
     );
   }
 
-  if (detailKey === 'TREATMENT_REVENUE') {
+  if (detailKey === 'TREATMENT_REVENUE' || detailKey === 'PERFORMANCE_BY_PROPERTY') {
+    const sortedProps = [...spa.properties].sort((a, b) => b.revenue - a.revenue);
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Treatment revenue contribution breakdown across all sanctuary collections MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Spa &amp; wellness revenue contribution across all collections and sanctuaries ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Total Revenue: $286,450
+            Total Revenue: {fmtUsd(spa.revenue)} (Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)})
           </span>
         </div>
+
+        {/* Collection Summary */}
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
           <table className="w-full text-xs">
             <thead>
@@ -66,38 +143,120 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Sanctuary Collection</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments Conducted</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Average Session Rate</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: 'SOSEI Urban Collection (Barcelona & Tokyo)', count: 120, rate: '$225', rev: '$27,000' },
-                { name: 'SOSEI Beach Resort Collection (Bali & Maldives)', count: 480, rate: '$240', rev: '$115,200' },
-                { name: 'SOSEI Ski Collection (Switzerland & Canada)', count: 390, rate: '$235', rev: '$91,650' },
-                { name: 'SOSEI Nature Collection (Costa Rica & Japan)', count: 180, rate: '$210', rev: '$37,800' },
-                { name: 'SOSEI Wellness Collection (Oman & Egypt)', count: 280, rate: '$250', rev: '$70,000' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.count}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.rate}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+              {collections.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">
+                    {row.name} ({row.cities})
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {fmtInt(row.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtUsdFull(row.avgTreatment)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct(row.sharePct, 1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {/* 10-Property Breakdown */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100 mb-2">
+            Performance by Property ({spa.propertyCount} Sanctuaries)
+          </h4>
+          <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Property</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Location</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Rate</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">YoY</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedProps.map((p) => (
+                  <tr
+                    key={p.propertyId}
+                    className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{p.name}</td>
+                    <td className="py-2.5 px-3 text-zinc-500">{p.location}</td>
+                    <td className="py-2.5 px-3 text-right text-zinc-700 dark:text-zinc-300 font-medium">
+                      {fmtInt(p.treatments)}
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                      {fmtUsdFull(p.avgTreatment)}
+                    </td>
+                    <td
+                      className={`py-2.5 px-3 text-right font-medium ${
+                        p.vsLyPct >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600'
+                      }`}
+                    >
+                      {fmtSignedPct(p.vsLyPct)}
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                      {fmtPct(p.sharePct, 1)}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                      {fmtUsd(p.revenue)}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                  <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100" colSpan={2}>
+                    Total Portfolio ({periodShort})
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                    {fmtInt(spa.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                    {fmtUsdFull(spa.avgRevenuePerTreatment)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                    {fmtSignedPct(spa.vsLyPct)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">100.0%</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(spa.revenue)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (detailKey === 'AVERAGE_REVENUE') {
+  if (detailKey === 'AVERAGE_REVENUE' || detailKey === 'AVG_REVENUE') {
+    const sortedCollections = [...collections].sort((a, b) => b.avgTreatment - a.avgTreatment);
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Average realized rate per spa treatment session by collection.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Average realized revenue per spa treatment session by collection ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            Average Realized: $232
+            Average Realized: {fmtUsdFull(spa.avgRevenuePerTreatment)}
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -105,26 +264,42 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Collection</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Standard Off-Peak</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Weekend Peak</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Average Realized Rate</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: 'SOSEI Wellness Collection', standard: '$230', peak: '$275', realized: '$250' },
-                { name: 'SOSEI Beach Resort Collection', standard: '$220', peak: '$260', realized: '$240' },
-                { name: 'SOSEI Ski Collection', standard: '$215', peak: '$255', realized: '$235' },
-                { name: 'SOSEI Urban Collection', standard: '$210', peak: '$245', realized: '$225' },
-                { name: 'SOSEI Nature Collection', standard: '$195', peak: '$230', realized: '$210' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
+              {sortedCollections.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.standard}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.peak}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-emerald-700 dark:text-emerald-400">{row.realized}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{fmtInt(row.treatments)}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{fmtUsdFull(row.avgTreatment * 0.92)}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtUsdFull(row.avgTreatment * 1.1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-emerald-700 dark:text-emerald-400">
+                    {fmtUsdFull(row.avgTreatment)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Portfolio Average ({periodShort})</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(spa.treatments)}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                  {fmtUsdFull(spa.avgRevenuePerTreatment * 0.92)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                  {fmtUsdFull(spa.avgRevenuePerTreatment * 1.1)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtUsdFull(spa.avgRevenuePerTreatment)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -132,82 +307,169 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
     );
   }
 
-  if (detailKey === 'SPA_UTILIZATION') {
+  if (
+    detailKey === 'SPA_UTILIZATION' ||
+    detailKey === 'UTILIZATION_BY_TIME' ||
+    detailKey === 'UTILIZATION_OVER_TIME'
+  ) {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Utilization capacity rates across specialized sanctuary spa zones MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Utilization capacity rates across specialized sanctuary spa zones and operating blocks ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            Portfolio Avg: 68.2%
+            Portfolio Avg: {fmtPct(spa.utilisationPct, 1)} ({fmtInt(spa.hours)} / {fmtInt(spa.capacityHours)} hrs)
           </span>
         </div>
+
+        {/* Spa Zone Table */}
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Spa Zone</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Capacity (Hours/Day)</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Utilized Hours MTD</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">
+                  Total Capacity ({periodShort})
+                </th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">
+                  Utilized Hours ({periodShort})
+                </th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Utilization Rate</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { zone: 'Private Treatment Suites', capacity: 96, hours: 2246, rate: '78%' },
-                { zone: 'Thermal Hydro & Onsen Pools', capacity: 48, hours: 936, rate: '65%' },
-                { zone: 'Zen Relaxation Lounges', capacity: 64, hours: 1190, rate: '62%' },
-                { zone: 'Mindfulness & Movement Studio', capacity: 32, hours: 460, rate: '48%' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.zone}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.capacity} hrs/day</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.hours.toLocaleString()} hrs</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rate}</td>
+              {spa.areas.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{fmtInt(row.capacityPerDay)} hrs/day</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{fmtInt(row.capacityHours)} hrs</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtInt(row.utilisedHours)} hrs
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtPct(row.utilisationPct, 0)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Spa Capacity</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtInt(spa.areas.reduce((a, r) => a + r.capacityPerDay, 0))} hrs/day
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtInt(spa.capacityHours)} hrs
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(spa.hours)} hrs</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtPct(spa.utilisationPct, 1)}
+                </td>
+              </tr>
             </tbody>
           </table>
+        </div>
+
+        {/* Operating Block Distribution */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100 mb-2">
+            Operating Time-of-Day Demand Distribution
+          </h4>
+          <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Operating Block</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments ({periodShort})</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Volume Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                {spa.heatmap.blocks.map((b) => (
+                  <tr
+                    key={b.label}
+                    className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{b.window}</td>
+                    <td className="py-2.5 px-3 text-right text-zinc-700 dark:text-zinc-300">
+                      {fmtInt(Math.round((spa.treatments * b.sharePct) / 100))}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                      {fmtPct(b.sharePct, 0)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     );
   }
 
   if (detailKey === 'THERAPIST_HOURS') {
+    const sortedByHours = [...spa.properties].sort((a, b) => b.hours - a.hours);
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Therapist master roster efficiency and revenue generation MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Therapist master roster efficiency, billable hours, and revenue generation ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Top Performing Masters
+            {spa.therapists} Roster Therapists · {fmtInt(spa.hours)} Billable Hours ({fmtPct(spa.utilisationPct, 1)})
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Therapist Master</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Sanctuary Property</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Therapist Roster</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Hours Clocked</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Hours Clocked / Cap</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Utilization</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue Generated</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: 'Ananda (Master Ayurveda)', count: 152, hours: 180, util: '82%', rev: '$36,480' },
-                { name: 'Maya (Master Aesthetician)', count: 148, hours: 190, util: '78%', rev: '$34,120' },
-                { name: 'Suri (Holistic Therapist)', count: 137, hours: 182, util: '75%', rev: '$31,750' },
-                { name: 'Lina (Bodywork Specialist)', count: 130, hours: 180, util: '72%', rev: '$28,910' },
-                { name: 'Pema (Sound Healing Master)', count: 124, hours: 182, util: '68%', rev: '$27,560' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
+              {sortedByHours.map((row) => (
+                <tr
+                  key={row.propertyId}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.count}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.hours}h</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.util}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.therapists} Masters</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {fmtInt(row.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">
+                    {fmtInt(row.hours)}h / {fmtInt(row.capacityHours)}h
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct(row.utilisationPct, 1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio ({periodShort})</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{spa.therapists} Masters</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtInt(spa.treatments)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtInt(spa.hours)}h / {fmtInt(spa.capacityHours)}h
+                </td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtPct(spa.utilisationPct, 1)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtUsd(spa.revenue)}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -218,10 +480,12 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
   if (detailKey === 'RETAIL_REVENUE') {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Wellness retail boutique performance and signature product turnover MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Wellness retail boutique performance and signature product turnover ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Total Retail Rev: $24,470
+            Total Retail Rev: {fmtUsd(spa.retail.revenue)} ({fmtPct(spa.retail.sharePct, 1)} of Spa &amp; Wellness)
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -231,23 +495,40 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Signature Product</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Units Sold</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Unit Price</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: 'SOSEI Botanical Signature Elixir', units: 120, price: '$78.50', rev: '$9,420' },
-                { name: 'Calm & Restore Night Balm', units: 148, price: '$41.95', rev: '$6,210' },
-                { name: 'Himalayan Pink Mineral Soak', units: 162, price: '$30.00', rev: '$4,860' },
-                { name: 'SOSEI Mulberry Silk Eye Pillow', units: 88, price: '$45.20', rev: '$3,980' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
+              {spa.retail.products.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.units}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.price}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {fmtInt(row.units)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">${row.unitPrice.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct(row.sharePct, 1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Retail Boutique ({periodShort})</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtInt(spa.retail.units)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-500">—</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">100.0%</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtUsd(spa.retail.revenue)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -258,35 +539,63 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
   if (detailKey === 'MEMBERSHIP_REPORT') {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Wellness membership and sanctuary retreat packages sales analysis MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Wellness membership and sanctuary retreat packages sales analysis ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            $86,240 Total Package Sales
+            {fmtUsd(spa.packages.revenue)} Total Package Sales · {fmtInt(spa.packages.activeMembers)} Active Members
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Membership Tier & Package</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Membership Tier &amp; Package</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Bundled Sessions</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Active Patrons</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">MTD New Subscriptions</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">
+                  {periodShort} Packages Sold
+                </th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Package Price</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { cat: 'Wellness Elite Sanctuary Club', members: 48, sales: 8, rev: '$32,000' },
-                { cat: 'Signature Immersion (10 Sessions)', members: 120, sales: 34, rev: '$34,000' },
-                { cat: 'Half-Day Escape Wellness Package', members: 160, sales: 30, rev: '$20,240' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.cat}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.members}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">+{row.sales}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+              {spa.packages.tiers.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.sessions} Sessions</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtInt(row.activeMembers)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    +{fmtInt(row.sold)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{fmtUsdFull(row.price)}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100" colSpan={2}>
+                  Total Membership &amp; Packages ({periodShort})
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtInt(spa.packages.activeMembers)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  +{fmtInt(spa.packages.sold)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-500">—</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtUsd(spa.packages.revenue)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -294,13 +603,16 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
     );
   }
 
-  if (detailKey === 'TOP_TREATMENTS_DETAIL') {
+  if (detailKey === 'TOP_TREATMENTS_DETAIL' || detailKey === 'TOP_TREATMENTS') {
+    const top10 = spa.treatmentsRanked.slice(0, 10);
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Top 10 performing spa treatments ranked by volume and total yield, MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Top performing spa &amp; wellness treatments ranked by volume and total yield ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            Top 10 Rankings
+            Top {top10.length} Rankings ({fmtInt(spa.treatments)} Total Sessions)
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -309,6 +621,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Rank</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Treatment Name</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Category</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Sessions</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Rating</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Ticket</th>
@@ -316,25 +629,24 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
               </tr>
             </thead>
             <tbody>
-              {[
-                { rank: 1, name: 'Deep Tissue Recovery Massage', count: 312, rating: '4.85', ticket: '$229', rev: '$71,448' },
-                { rank: 2, name: 'Aromatherapy Sanctuary Massage', count: 248, rating: '4.78', ticket: '$229', rev: '$56,792' },
-                { rank: 3, name: 'Signature Cellular Facial', count: 196, rating: '4.92', ticket: '$199', rev: '$39,004' },
-                { rank: 4, name: 'Thermal Hot Stone Therapy', count: 154, rating: '4.80', ticket: '$259', rev: '$39,886' },
-                { rank: 5, name: 'Alpine Detox Herbal Wrap', count: 98, rating: '4.68', ticket: '$249', rev: '$24,402' },
-                { rank: 6, name: 'Couples Sanctuary Retreat', count: 72, rating: '4.94', ticket: '$399', rev: '$28,728' },
-                { rank: 7, name: 'Himalayan Salt Glow Scrub', count: 68, rating: '4.75', ticket: '$219', rev: '$14,892' },
-                { rank: 8, name: 'Prenatal Restorative Therapy', count: 44, rating: '4.90', ticket: '$219', rev: '$9,636' },
-                { rank: 9, name: 'Tibetan Sound Healing Session', count: 36, rating: '4.88', ticket: '$179', rev: '$6,444' },
-                { rank: 10, name: 'Acupressure Reflexology', count: 20, rating: '4.65', ticket: '$149', rev: '$2,980' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-bold text-zinc-400">#{row.rank}</td>
+              {top10.map((row, idx) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-bold text-zinc-400">#{idx + 1}</td>
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.count}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.rating} / 5</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.ticket}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+                  <td className="py-2.5 px-3 text-zinc-500">{row.categoryName}</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {fmtInt(row.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {row.rating.toFixed(2)} / 5
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{fmtUsdFull(row.avgTicket)}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -347,10 +659,12 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
   if (detailKey === 'REVENUE_BY_CATEGORY') {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Treatment revenue breakdown by wellness category, MTD.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Spa &amp; wellness revenue breakdown by category ({spa.periodLabel}).
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Total Revenue: $273,338
+            Total Revenue: {fmtUsd(spa.revenue)}
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -358,28 +672,98 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Wellness Category</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Sessions</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Sessions / Units</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Therapist Hours</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue Share</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Ticket</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { cat: 'Holistic Massages', sessions: 692, share: '56.6%', ticket: '$224', rev: '$154,808' },
-                { cat: 'Advanced Facials', sessions: 270, share: '19.0%', ticket: '$192', rev: '$51,840' },
-                { cat: 'Body Wraps & Scrubs', sessions: 180, share: '15.7%', ticket: '$238', rev: '$42,840' },
-                { cat: 'Wellness & Sound Rituals', sessions: 82, share: '7.5%', ticket: '$249', rev: '$20,418' },
-                { cat: 'Specialized Express Treatments', sessions: 24, share: '1.2%', ticket: '$143', rev: '$3,432' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.cat}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.sessions}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.share}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.ticket}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
+              {spa.categories.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.name}</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">
+                    {row.kind === 'retail' ? `${fmtInt(spa.retail.units)} units` : fmtInt(row.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">
+                    {row.kind === 'retail' ? '—' : `${fmtInt(row.hours)}h`}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct(row.revenueSharePct, 1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">
+                    {row.kind === 'retail' ? '—' : fmtUsdFull(row.avgTicket)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(row.revenue)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Spa &amp; Wellness ({periodShort})</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400">
+                  {fmtInt(spa.treatments)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(spa.hours)}h</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">100.0%</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtUsdFull(spa.avgRevenuePerTreatment)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtUsd(spa.revenue)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  if (detailKey === 'SCHEDULE_OVERVIEW') {
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Appointment pipeline and fulfillment status across all sanctuaries ({spa.periodLabel}).
+          </p>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+            {fmtInt(spa.pipeline.total)} Total Appointments ({periodShort})
+          </span>
+        </div>
+        <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Pipeline Stage</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Appointments</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% of Booked</th>
+              </tr>
+            </thead>
+            <tbody>
+              {spa.pipeline.rows.map((r) => (
+                <tr
+                  key={r.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{r.name}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtInt(r.value)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct((r.value / Math.max(1, spa.pipeline.total)) * 100, 1)}
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Booked Appointments</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">
+                  {fmtInt(spa.pipeline.total)}
+                </td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">100.0%</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -390,10 +774,12 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
   if (detailKey === 'UPCOMING_PEAK_TIMES') {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Forecasted high-demand wellness periods with therapist master availability.</p>
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Forecasted high-demand wellness periods with therapist master availability.
+          </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            Booking Forecast
+            Booking Forecast · {spa.therapists} Roster Therapists
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -403,31 +789,39 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Date</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Peak Window</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Demand Level</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Therapists On Duty</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Projected Util</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Therapists Required</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Pre-Booked</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { date: 'May 31 (Fri)', window: '3:00 PM – 6:00 PM', level: 'Peak', avail: '6 / 8', booked: '78%' },
-                { date: 'Jun 1 (Sat)', window: '10:00 AM – 1:00 PM', level: 'Peak', avail: '8 / 8', booked: '91%' },
-                { date: 'Jun 2 (Sun)', window: '11:00 AM – 2:00 PM', level: 'Medium', avail: '7 / 8', booked: '62%' },
-                { date: 'Jun 7 (Fri)', window: '4:00 PM – 7:00 PM', level: 'High', avail: '6 / 8', booked: '74%' },
-                { date: 'Jun 8 (Sat)', window: '2:00 PM – 5:00 PM', level: 'Medium', avail: '8 / 8', booked: '55%' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.date}</td>
+              {spa.peaks.map((row) => (
+                <tr
+                  key={row.dateLabel}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.dateLabel}</td>
                   <td className="py-2.5 px-3 text-zinc-600 dark:text-zinc-300">{row.window}</td>
                   <td className="py-2.5 px-3 text-right">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${row.level === 'Peak'
-                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
-                        : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                      }`}>
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                        row.level === 'HIGH'
+                          ? 'bg-zinc-900 text-white'
+                          : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
+                      }`}
+                    >
                       {row.level}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right text-zinc-500">{row.avail}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-emerald-700 dark:text-emerald-400">{row.booked}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-700 dark:text-zinc-300 font-medium">
+                    {fmtPct(row.projectedUtilisationPct, 0)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">
+                    {row.therapistsRequired} / {row.roster}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-emerald-700 dark:text-emerald-400">
+                    {fmtPct(row.preBookedPct, 0)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -437,15 +831,68 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
     );
   }
 
-  if (detailKey === 'GUEST_WELLNESS_INSIGHTS') {
+  if (detailKey === 'GUEST_WELLNESS_INSIGHTS' || detailKey === 'WELLNESS_EXPERIENCE_INDEX') {
     return (
-      <div className="space-y-4 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <p className="text-xs text-zinc-500">Wellness seekers represent 38% of total portfolio guests this month.</p>
-        <div className="p-4 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
-          <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">Length of Stay & Ancillary Yield Correlation</h4>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Patrons participating in structured wellness retreats stay an average of 4.5 nights compared to 2.8 nights for standard leisure stays, producing a 62% higher total guest basket across dining and curated excursions.
+      <div className="space-y-5 animate-fade-in text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Spa &amp; wellness guest attachment, satisfaction index, and 90-day forward coverage ({spa.periodLabel}).
           </p>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            Experience Score: {spa.experience.score.toFixed(2)} / 5.0
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold">Resort Stay Attachment</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{fmtPct(spa.attachmentPct, 1)}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">
+              {fmtInt(spa.spaGuests)} spa guests / {fmtInt(spa.stays)} stays
+            </div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold">Treatments / 100 RN</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{spa.treatmentsPer100RoomNights.toFixed(1)}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">
+              {fmtUsdFull(spa.revenuePerRoomNight)} Spa Rev / RN
+            </div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold">Peak Operating Window</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{spa.heatmap.peakBlockLabel}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">
+              {spa.heatmap.peakBlockWindow} ({fmtPct(spa.heatmap.peakBlockSharePct, 0)} volume)
+            </div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] uppercase tracking-wider text-zinc-500 font-semibold">90D Forward OTB</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{fmtUsd(spa.forwardCoverage.otbRevenue)}</div>
+            <div className="text-[10px] text-emerald-700 font-medium mt-0.5">
+              {fmtPct(spa.forwardCoverage.coveragePct, 1)} of {fmtUsd(spa.forwardCoverage.forecastRevenue)} forecast
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Experience Dimension</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Guest Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {spa.experience.subs.map((sub) => (
+                <tr key={sub.id} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0">
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{sub.label}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {sub.value.toFixed(2)} / 5.0
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );

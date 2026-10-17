@@ -1,22 +1,25 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import { type PeriodId } from '@/data/portfolio';
+import {
+  GUEST_SATISFACTION_SCORE,
+  GUEST_SATISFACTION_DELTA,
+  GUEST_SATISFACTION_DISTRIBUTION,
+} from '@/data/portfolio/hospitalitySubMix';
 
 export function GuestSatisfactionWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
-  const data = [
-    { name: '5 Stars', value: 72, color: '#0f172a' },
-    { name: '4 Stars', value: 20, color: '#334155' },
-    { name: '3 Stars', value: 6, color: '#64748b' },
-    { name: '< 3 Stars', value: 2, color: '#94a3b8' },
-  ];
+  const data = GUEST_SATISFACTION_DISTRIBUTION;
 
   const size = 110;
   const strokeWidth = 14;
@@ -32,7 +35,7 @@ export function GuestSatisfactionWidget({
       onClick={() => openDrawer({ 
         type: 'SENTIMENT_SCORE', 
         title: `Guest Satisfaction & Sentiment — ${propertyName}`,
-        data: { propertyName, propertyId, score: '4.8 / 5.0' }
+        data: { propertyName, propertyId, period, score: `${GUEST_SATISFACTION_SCORE} / 5.0` }
       })}
     >
       <div className="flex justify-between items-center mb-3 h-4">
@@ -45,7 +48,7 @@ export function GuestSatisfactionWidget({
               openDrawer({
                 type: 'SENTIMENT_SCORE',
                 title: `Guest Satisfaction & Sentiment — ${propertyName}`,
-                data: { propertyName, propertyId, score: '4.8 / 5.0' },
+                data: { propertyName, propertyId, period, score: `${GUEST_SATISFACTION_SCORE} / 5.0` },
               });
             }}
             className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
@@ -82,7 +85,7 @@ export function GuestSatisfactionWidget({
             })}
           </svg>
           <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-            <span className="text-xl font-bold text-zinc-900 leading-none">4.8</span>
+            <span className="text-xl font-bold text-zinc-900 leading-none">{GUEST_SATISFACTION_SCORE}</span>
             <span className="text-[8.5px] text-zinc-500 font-medium mt-0.5">out of 5.0</span>
           </div>
         </div>
@@ -99,7 +102,7 @@ export function GuestSatisfactionWidget({
             </div>
           ))}
           <div className="text-[9px] text-emerald-700 font-medium text-right mt-0.5">
-            ↑ +0.3 vs last mo
+            ↑ +{GUEST_SATISFACTION_DELTA} vs last mo
           </div>
         </div>
       </div>

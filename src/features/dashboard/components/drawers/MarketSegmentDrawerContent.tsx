@@ -1,20 +1,75 @@
+import { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import {
-  simulatedMarketSegmentData,
-  simulatedPropertiesData,
+  getMarketSegmentData,
+  getSimulatedPropertiesData,
 } from '../../services/propertySimulation';
+import {
+  getPortfolioMetrics,
+  PERIOD_DEFS,
+  fmtUsd,
+  fmtSignedPct,
+  type PeriodId,
+} from '@/data/portfolio';
 
-export function MarketSegmentDrawerContent() {
-  const { config } = useDashboardDrawer();
-  const defaultData = simulatedMarketSegmentData;
+interface MarketSegmentDrawerContentProps {
+  config?: {
+    title?: string;
+    data?: any;
+  };
+}
+
+export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProps) {
+  const drawerCtx = useDashboardDrawer();
+  const config = props.config ?? drawerCtx.config;
+
+  const initialPeriod: PeriodId =
+    (config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon)) ||
+    'mtd';
+  const [period, setPeriod] = useState<PeriodId>(initialPeriod);
+
+  useEffect(() => {
+    const nextPeriod =
+      config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon);
+    if (nextPeriod === 'today' || nextPeriod === 'mtd' || nextPeriod === 'ytd') {
+      setPeriod(nextPeriod);
+    }
+  }, [config?.data]);
+
+  const periodDef = PERIOD_DEFS[period];
+  const defaultData = getMarketSegmentData(period);
+  const propertiesData = getSimulatedPropertiesData(period);
+  const pm = getPortfolioMetrics(undefined, period);
   const customData = Array.isArray(config?.data) ? config.data : null;
 
   let totalRevenue = defaultData.totalRevenue;
   let items: any[] = defaultData.items;
-  let heroLeisure = { value: '55%', name: 'Leisure', sub: '$65M · ↑ +14% vs LY' };
-  let heroBusiness = { value: '25%', name: 'Business', sub: '$30M · ↑ +8% vs LY' };
-  let heroSocial = { value: '10%', name: 'Social', sub: '$11M · ↑ +10% vs LY' };
-  let heroTopYield = { value: '$1,720', name: 'MICE', sub: '$9M · ↑ +12% vs LY Pace' };
+
+  const defLeisure = defaultData.items.find((i) => i.segment.toLowerCase().includes('leisure')) || defaultData.items[0];
+  const defBusiness = defaultData.items.find((i) => i.segment.toLowerCase().includes('business')) || defaultData.items[1];
+  const defSocial = defaultData.items.find((i) => i.segment.toLowerCase().includes('social')) || defaultData.items[2];
+  const defTopYield = [...defaultData.items].sort((a, b) => b.adrUsd - a.adrUsd)[0] || defaultData.items[0];
+
+  let heroLeisure = {
+    value: defLeisure.roomNightsFormatted,
+    name: defLeisure.segment,
+    sub: `${defLeisure.revenueFormatted} · ${defLeisure.vsLyFormatted}`,
+  };
+  let heroBusiness = {
+    value: defBusiness.roomNightsFormatted,
+    name: defBusiness.segment,
+    sub: `${defBusiness.revenueFormatted} · ${defBusiness.vsLyFormatted}`,
+  };
+  let heroSocial = {
+    value: defSocial.roomNightsFormatted,
+    name: defSocial.segment,
+    sub: `${defSocial.revenueFormatted} · ${defSocial.vsLyFormatted}`,
+  };
+  let heroTopYield = {
+    value: defTopYield.adrFormatted,
+    name: defTopYield.segment,
+    sub: `${defTopYield.revenueFormatted} · ${defTopYield.vsLyFormatted}`,
+  };
 
   if (customData) {
     const totalRow = customData.find(
@@ -60,7 +115,6 @@ export function MarketSegmentDrawerContent() {
       };
     }
 
-    // Find highest ADR segment
     let topAdrItem = activeRows[0];
     let maxAdrVal = 0;
     activeRows.forEach((r: any) => {
@@ -130,18 +184,43 @@ export function MarketSegmentDrawerContent() {
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Market Segment Mix (What kind of demand are we attracting?)
+            Market Segment Mix ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Cross-segment volume, pricing yield, and booking behavior across all 12 luxury sanctuaries.
+            Cross-segment volume, pricing yield, and booking behavior across all 10 luxury sanctuaries ·{' '}
+            <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
 
-        <div className="text-right">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-            Total Demand Bookings
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          {!customData && (
+            <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
+              {(['today', 'mtd', 'ytd'] as const).map((h) => {
+                const isActive = period === h;
+                return (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => setPeriod(h)}
+                    className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-zinc-900 text-white shadow-xs'
+                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                    }`}
+                  >
+                    {h === 'today' ? 'Today' : h.toUpperCase()}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="text-right">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+              Total Room Revenue ({periodDef.label})
+            </div>
+            <div className="text-lg font-bold text-zinc-900">{totalRevenue}</div>
           </div>
-          <div className="text-lg font-bold text-zinc-900">{totalRevenue}</div>
         </div>
       </div>
 
@@ -153,8 +232,13 @@ export function MarketSegmentDrawerContent() {
           { title: 'Social & Gatherings', hero: heroSocial },
           { title: 'Top Yield Segment', hero: heroTopYield },
         ].map(({ title, hero }) => (
-          <div key={title} className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{title}</span>
+          <div
+            key={title}
+            className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3"
+          >
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+              {title}
+            </span>
             <div>
               <div className="text-xl font-bold text-zinc-900 leading-tight">{hero.value}</div>
               <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{hero.name}</div>
@@ -169,7 +253,7 @@ export function MarketSegmentDrawerContent() {
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70 flex justify-between items-center">
           <div>
             <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-              Segment Performance & Risk Profiles
+              Segment Performance &amp; Risk Profiles ({periodDef.label})
             </h5>
             <p className="text-[11px] text-zinc-500 mt-0.5">
               Volume allocation, ADR yield, lead times, and cancellation sensitivity by guest profile
@@ -230,24 +314,28 @@ export function MarketSegmentDrawerContent() {
                   </td>
                 </tr>
               ))}
-              {customData && (
-                <tr className="bg-zinc-50/80 font-bold border-t border-zinc-200">
-                  <td className="py-3 px-4 font-bold text-zinc-900">Total</td>
-                  <td className="py-3 px-4 text-right font-bold text-zinc-900">100%</td>
-                  <td className="py-3 px-4 text-right font-bold text-zinc-900">
-                    {customData.find((r: any) => r.segment?.toLowerCase() === 'total' || r.isTotal)?.adr || '$2,500'}
-                  </td>
-                  <td className="py-3 px-4 text-right font-bold text-zinc-900">{totalRevenue}</td>
-                  <td className="py-3 px-4 text-right font-bold text-emerald-700">+11% YoY</td>
-                  <td className="py-3 px-4 text-zinc-700">Category Aggregate Demand</td>
-                  <td className="py-3 px-4 text-right text-zinc-700">38d Avg</td>
-                  <td className="py-3 px-4 text-center">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
-                      Balanced
-                    </span>
-                  </td>
-                </tr>
-              )}
+              <tr className="bg-zinc-50/80 font-bold border-t border-zinc-200">
+                <td className="py-3 px-4 font-bold text-zinc-900">Total Portfolio</td>
+                <td className="py-3 px-4 text-right font-bold text-zinc-900">100%</td>
+                <td className="py-3 px-4 text-right font-bold text-zinc-900">
+                  {customData
+                    ? customData.find(
+                        (r: any) => r.segment?.toLowerCase() === 'total' || r.isTotal
+                      )?.adr || fmtUsd(pm.adr)
+                    : fmtUsd(pm.adr)}
+                </td>
+                <td className="py-3 px-4 text-right font-bold text-zinc-900">{totalRevenue}</td>
+                <td className="py-3 px-4 text-right font-bold text-emerald-700">
+                  ↑ {fmtSignedPct(pm.vsLy.roomRevenuePct)}
+                </td>
+                <td className="py-3 px-4 text-zinc-700">Portfolio Aggregate Demand</td>
+                <td className="py-3 px-4 text-right text-zinc-700">38d Avg</td>
+                <td className="py-3 px-4 text-center">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
+                    Balanced
+                  </span>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -257,10 +345,10 @@ export function MarketSegmentDrawerContent() {
       <div className="border border-zinc-200 rounded-xl overflow-hidden bg-white">
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70">
           <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-            Property-Level Segment Mix (10 Sanctuaries)
+            Property-Level Segment Mix (10 Sanctuaries — {periodDef.label})
           </h5>
           <p className="text-[11px] text-zinc-500 mt-0.5">
-            Single Source of Truth cross-referenced with simulated PMS live property records
+            Single Source of Truth cross-referenced with live PMS property records
           </p>
         </div>
 
@@ -278,7 +366,7 @@ export function MarketSegmentDrawerContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {simulatedPropertiesData.map((prop) => {
+              {propertiesData.map((prop) => {
                 const segmentMix =
                   prop.grouping === 'City'
                     ? { top: 'Business', topShare: '42%', secondary: 'MICE (28%)' }

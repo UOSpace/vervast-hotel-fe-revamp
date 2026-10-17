@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { RegionalPickerWidget } from '../components/widgets/regional/RegionalPickerWidget';
 import { DateRangeWidget } from '../components/widgets/resort-type/DateRangeWidget';
+import { PeriodTabsWidget } from '../components/widgets/resort-type/PeriodTabsWidget';
 import { ResortKPIWidget, type CategoryKpiData } from '../components/widgets/resort-type/ResortKPIWidget';
 import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
@@ -11,48 +12,59 @@ import {
   channelConfigs,
   getGreeting,
   getFormattedDateTime,
+  getPeriodDateRange,
+  inferPeriodFromDates,
+  buildScopeKpiData,
 } from './ResortTypeDashboard';
 import {
   MASTER_REGIONS,
-  REGIONAL_TOTALS,
   resolveRegionId,
   formatRegionSelectionTitle,
 } from '@/constants/regions';
-
-const fmtM = (n: number) => `$${(n / 1_000_000).toFixed(2)}M`;
-
-const pctChange = (cur: number, prev: number) => {
-  if (prev === 0) return '+0.0%';
-  const d = ((cur - prev) / prev) * 100;
-  return `${d >= 0 ? '+' : ''}${d.toFixed(1)}%`;
-};
-
-const diffMoney = (cur: number, prev: number) => {
-  const d = cur - prev;
-  const sign = d >= 0 ? '+' : '-';
-  const abs = Math.abs(d);
-  const str = abs >= 1_000_000 ? `$${(abs / 1_000_000).toFixed(2)}M` : `$${Math.round(abs / 1000)}K`;
-  const pct = prev > 0 ? ((d / prev) * 100).toFixed(1) : '0.0';
-  return `${sign}${str} vs LY (${sign}${pct}%)`;
-};
-
-const diffUnit = (cur: number, prev: number) => {
-  const d = cur - prev;
-  const pct = prev > 0 ? ((d / prev) * 100).toFixed(1) : '0.0';
-  return `${d >= 0 ? '+' : '-'}$${Math.abs(d).toLocaleString()} vs LY (${d >= 0 ? '+' : ''}${pct}%)`;
-};
+import {
+  PERIOD_IDS,
+  fmtInt,
+  fmtPct,
+  fmtUsd,
+  fmtUsdFull,
+  getPortfolioMetrics,
+  getPropertyIdsByRegion,
+  type PeriodId,
+} from '@/data/portfolio';
 
 export function RegionalDashboard() {
   const [activeRegions, setActiveRegions] = useState<string[]>(MASTER_REGIONS.map((r) => r.id));
+  const [period, setPeriod] = useState<PeriodId>('mtd');
   const { date, time, tz } = getFormattedDateTime();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const today = new Date();
-  const [startDate, setStartDate] = useState<Date | null>(new Date(today.getFullYear(), today.getMonth(), 1));
-  const [endDate, setEndDate] = useState<Date | null>(today);
+  const [initialStart, initialEnd] = getPeriodDateRange('mtd');
+  const [startDate, setStartDateState] = useState<Date | null>(initialStart);
+  const [endDate, setEndDateState] = useState<Date | null>(initialEnd);
+
+  const handleSelectPeriod = (nextPeriod: PeriodId) => {
+    setPeriod(nextPeriod);
+    const [s, e] = getPeriodDateRange(nextPeriod);
+    setStartDateState(s);
+    setEndDateState(e);
+  };
+
+  const handleSetStartDate = (nextStart: Date | null) => {
+    setStartDateState(nextStart);
+    if (nextStart && endDate) {
+      setPeriod(inferPeriodFromDates(nextStart, endDate));
+    }
+  };
+
+  const handleSetEndDate = (nextEnd: Date | null) => {
+    setEndDateState(nextEnd);
+    if (startDate && nextEnd) {
+      setPeriod(inferPeriodFromDates(startDate, nextEnd));
+    }
+  };
 
   const selected = useMemo(() => {
     const ids = activeRegions.map(resolveRegionId);
@@ -60,141 +72,81 @@ export function RegionalDashboard() {
     return list.length > 0 ? list : MASTER_REGIONS;
   }, [activeRegions]);
 
-  const isAll = selected.length === MASTER_REGIONS.length;
   const regionTitle = useMemo(() => formatRegionSelectionTitle(selected.map((r) => r.id)), [selected]);
 
-  const { totalNights, totalRevenue, avgOcc, avgAdr, avgRevpar } = useMemo(() => {
-    const nights = selected.reduce((s, r) => s + r.roomNights, 0);
-    const revenue = selected.reduce((s, r) => s + r.revenue, 0);
-    const avail = selected.reduce((s, r) => s + r.roomNights / (r.baseOcc / 100), 0);
-    return {
-      totalNights: nights,
-      totalRevenue: revenue,
-      avgOcc: isAll ? REGIONAL_TOTALS.avgOcc : Number(((nights / avail) * 100).toFixed(1)),
-      avgAdr: isAll
-        ? REGIONAL_TOTALS.avgAdr
-        : Math.round(selected.reduce((s, r) => s + r.roomNights * r.adr, 0) / nights),
-      avgRevpar: isAll ? REGIONAL_TOTALS.avgRevpar : Math.round(revenue / avail),
-    };
-  }, [selected, isAll]);
+  const propIds = useMemo(() => getPropertyIdsByRegion(selected.map((r) => r.id)), [selected]);
+  const m = useMemo(() => getPortfolioMetrics(propIds, period), [propIds, period]);
+
+  const totalNights = m.roomsSold;
+  const totalRevenue = m.roomRevenue;
+  const avgAdr = Math.round(m.adr);
 
   const kpiData: CategoryKpiData = useMemo(() => {
-    const rooms = totalRevenue;
-    const fnb = rooms * (22 / 118);
-    const spa = rooms * (8 / 118);
-    const act = rooms * (4 / 118);
-    const totalHotel = rooms + fnb + spa + act;
+    return buildScopeKpiData(m, regionTitle);
+  }, [m, regionTitle]);
 
-    // Prior-year benchmark (same realised factors as the category dashboard)
-    const compOcc = Number((avgOcc * 0.95).toFixed(1));
-    const compAdr = Math.round(avgAdr * 0.97);
-    const compRevpar = Math.round(avgRevpar * 0.95 * 0.97);
-    const compRooms = rooms * 0.95 * 0.97;
-    const compTotalHotel = compRooms * (152 / 118);
-
-    const occDiff = avgOcc - compOcc;
-
-    return {
-      categoryName: regionTitle,
-      totalRevenue: {
-        value: fmtM(totalHotel),
-        vsLy: `${pctChange(totalHotel, compTotalHotel)} vs LY`,
-        vsBudget: '+4.0% vs Budget',
-        vsForecast: '+1.9% vs Forecast',
-        upLy: totalHotel >= compTotalHotel,
-        upBudget: true,
-        upForecast: true,
-        breakdown: [
-          { label: 'Rooms', val: fmtM(rooms), pct: '77.6%' },
-          { label: 'F&B', val: fmtM(fnb), pct: '14.5%' },
-          { label: 'Spa', val: fmtM(spa), pct: '5.3%' },
-          { label: 'Activities', val: fmtM(act), pct: '2.6%' },
-        ],
-      },
-      occupancy: {
-        value: `${avgOcc.toFixed(1)}%`,
-        vsLy: `${occDiff >= 0 ? '+' : ''}${occDiff.toFixed(1)} pts vs LY`,
-        vsBudget: '+2.1 pts vs Budget',
-        vsForecast: '+1.2 pts vs Forecast',
-        upLy: occDiff >= 0,
-        upBudget: true,
-        upForecast: true,
-        tooltip: 'Occupancy rate for the selected regions compared with LY, budget, and forecast targets (percentage-point variance).',
-      },
-      adr: {
-        value: `$${avgAdr.toLocaleString()}`,
-        vsLy: diffUnit(avgAdr, compAdr),
-        vsBudget: '+$42 vs Budget (+1.7%)',
-        vsForecast: '+$18 vs Forecast (+0.7%)',
-        upLy: avgAdr >= compAdr,
-        upBudget: true,
-        upForecast: true,
-        tooltip: 'Average Daily Rate across the selected regions (Room Revenue / Rooms Sold).',
-      },
-      revPar: {
-        value: `$${avgRevpar.toLocaleString()}`,
-        vsLy: diffUnit(avgRevpar, compRevpar),
-        vsBudget: '+$48 vs Budget (+2.9%)',
-        vsForecast: '+$22 vs Forecast (+1.3%)',
-        upLy: avgRevpar >= compRevpar,
-        upBudget: true,
-        upForecast: true,
-        tooltip: 'Revenue Per Available Room, calculated as Occupancy multiplied by ADR.',
-      },
-      roomRevenue: {
-        value: fmtM(rooms),
-        vsLy: diffMoney(rooms, compRooms),
-        vsBudget: '+$142K vs Budget (+4.9%)',
-        vsForecast: '+$62K vs Forecast (+2.1%)',
-        upLy: rooms >= compRooms,
-        upBudget: true,
-        upForecast: true,
-        tooltip: 'Room Revenue generated by the selected regions during the selected period.',
-      },
-    };
-  }, [totalRevenue, avgOcc, avgAdr, avgRevpar, regionTitle]);
-
-  // Regional table: shares re-normalised across the selected regions
+  // Regional table: each selected region computed directly from the engine for the active period
   const geoData = useMemo(() => {
-    const rows: any[] = selected.map((r) => ({
-      region: r.name,
-      rnights: `${((r.roomNights / totalNights) * 100).toFixed(1)}%`,
-      adr: `$${r.adr.toLocaleString()}`,
-      revenue: fmtM(r.revenue),
-    }));
+    const rows: any[] = selected.map((r) => {
+      const rm = getPortfolioMetrics(getPropertyIdsByRegion([r.id]), period);
+      return {
+        region: r.name,
+        rnights: fmtPct(totalNights > 0 ? (rm.roomsSold / totalNights) * 100 : 0),
+        adr: fmtUsdFull(rm.adr),
+        revenue: fmtUsd(rm.roomRevenue),
+      };
+    });
     rows.push({
       region: 'Total',
       rnights: '100%',
-      adr: `$${avgAdr.toLocaleString()}`,
-      revenue: fmtM(totalRevenue),
+      adr: fmtUsdFull(m.adr),
+      revenue: fmtUsd(m.roomRevenue),
       isTotal: true,
     });
     return rows;
-  }, [selected, totalNights, totalRevenue, avgAdr]);
+  }, [selected, period, totalNights, m.adr, m.roomRevenue]);
 
   const segmentDistribution = useMemo(
-    () => distributeMetrics(segmentConfigs.map((c) => ({ name: c.segment, share: c.share, adrFactor: c.adrFactor })), totalNights, totalRevenue, avgAdr),
+    () =>
+      distributeMetrics(
+        segmentConfigs.map((c) => ({ name: c.segment, share: c.share, adrFactor: c.adrFactor })),
+        totalNights,
+        totalRevenue,
+        avgAdr
+      ),
     [totalNights, totalRevenue, avgAdr]
   );
   const channelDistribution = useMemo(
-    () => distributeMetrics(channelConfigs.map((c) => ({ name: c.channel, share: c.share, adrFactor: c.adrFactor })), totalNights, totalRevenue, avgAdr),
+    () =>
+      distributeMetrics(
+        channelConfigs.map((c) => ({ name: c.channel, share: c.share, adrFactor: c.adrFactor })),
+        totalNights,
+        totalRevenue,
+        avgAdr
+      ),
     [totalNights, totalRevenue, avgAdr]
   );
 
   const buildTable = (dist: typeof segmentDistribution, key: 'segment' | 'channel') => {
     const rows: any[] = dist.map((item) => ({
       [key]: item.name,
-      rnights: `${((item.nights / totalNights) * 100).toFixed(1)}%`,
-      adr: `$${item.adr.toLocaleString()}`,
-      revenue: fmtM(item.revenue),
+      rnights: totalNights > 0 ? fmtPct((item.nights / totalNights) * 100) : '0.0%',
+      adr: fmtUsdFull(item.adr),
+      revenue: fmtUsd(item.revenue),
     }));
-    rows.push({ [key]: 'Total', rnights: '100%', adr: `$${avgAdr.toLocaleString()}`, revenue: fmtM(totalRevenue), isTotal: true });
+    rows.push({
+      [key]: 'Total',
+      rnights: '100%',
+      adr: fmtUsdFull(m.adr),
+      revenue: fmtUsd(m.roomRevenue),
+      isTotal: true,
+    });
     return rows;
   };
 
   const segmentData = segmentConfigs.map((c) => ({ name: c.segment, value: c.share, color: c.color }));
   const channelData = channelConfigs.map((c) => ({ name: c.channel, value: c.share, color: c.color }));
-  const dynamicTotal = totalNights.toLocaleString();
+  const dynamicTotal = fmtInt(totalNights);
 
   return (
     <div className="w-full px-4 lg:px-6 pb-6 text-[10px] flex flex-col gap-4">
@@ -205,8 +157,18 @@ export function RegionalDashboard() {
             Regional Market Analytics (Region Level)
           </h2>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3 shrink-0">
-          <DateRangeWidget startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} />
+        <div className="flex flex-wrap items-center sm:items-end gap-3 shrink-0">
+          <PeriodTabsWidget
+            period={period}
+            setPeriod={handleSelectPeriod}
+            periods={PERIOD_IDS}
+          />
+          <DateRangeWidget
+            startDate={startDate}
+            setStartDate={handleSetStartDate}
+            endDate={endDate}
+            setEndDate={handleSetEndDate}
+          />
           <div className="text-right shrink-0 pb-0.5">
             <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
             <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
@@ -228,3 +190,4 @@ export function RegionalDashboard() {
     </div>
   );
 }
+

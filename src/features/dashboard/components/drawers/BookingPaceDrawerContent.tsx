@@ -1,19 +1,30 @@
 import { AreaChart, Area, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { simulatedBookingPaceData } from '../../services/propertySimulation';
+import {
+  getBookingPaceData,
+  getSimulatedPropertiesData,
+} from '../../services/propertySimulation';
+import { getForwardBusiness } from '@/data/portfolio/hospitalityMix';
+import { fmtUsd, fmtPct } from '@/data/portfolio';
 
 interface BookingPaceDrawerContentProps {
   theme?: string;
+  config?: {
+    title?: string;
+    data?: any;
+  };
 }
 
-export function BookingPaceDrawerContent({ theme }: BookingPaceDrawerContentProps) {
-  const { timeframe, series, summary } = simulatedBookingPaceData;
+export function BookingPaceDrawerContent({ theme, config }: BookingPaceDrawerContentProps) {
+  const propertyIds: string[] | undefined = config?.data?.propertyIds;
+  const { timeframe, series, summary } = getBookingPaceData(propertyIds);
+  const properties = getSimulatedPropertiesData('mtd', propertyIds);
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
       {/* Subtitle */}
       <div>
         <p className="text-xs text-zinc-500 font-normal">
-          {timeframe} — On-the-books room nights and revenue pace compared with the same point last year across all 12 luxury sanctuaries.
+          {timeframe} — On-the-books room nights and revenue pace compared with the same point last year across all 10 luxury sanctuaries.
         </p>
       </div>
 
@@ -120,6 +131,65 @@ export function BookingPaceDrawerContent({ theme }: BookingPaceDrawerContentProp
               />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* 10-Property 90D Booking Pace Breakdown */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100">
+            Sanctuary 90-Day Booking Pace Breakdown (10 Properties)
+          </h5>
+          <span className="text-[10px] text-zinc-400">
+            Live PMS OTB Sync
+          </span>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+            <thead>
+              <tr className="text-left text-zinc-500 bg-zinc-50/80 dark:bg-zinc-800/80">
+                <th className="py-2.5 px-3 font-semibold text-[10px] border-b border-zinc-200 dark:border-zinc-800">Property</th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] border-b border-zinc-200 dark:border-zinc-800">Collection</th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200 dark:border-zinc-800">90D RN OTB</th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200 dark:border-zinc-800">90D Rev OTB</th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200 dark:border-zinc-800">90D Occ OTB</th>
+                <th className="py-2.5 px-3 font-semibold text-[10px] text-right border-b border-zinc-200 dark:border-zinc-800">OTB ADR</th>
+              </tr>
+            </thead>
+            <tbody>
+              {properties.map((p, idx) => {
+                const pFb = getForwardBusiness([p.id], 90);
+                return (
+                  <tr
+                    key={p.id}
+                    className={`hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
+                      idx % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50/30 dark:bg-zinc-800/20'
+                    }`}
+                  >
+                    <td className="py-2 px-3 font-bold text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800">
+                      {p.name}
+                    </td>
+                    <td className="py-2 px-3 text-zinc-500 text-[10px] border-b border-zinc-100 dark:border-zinc-800">
+                      {p.grouping} · {p.city}
+                    </td>
+                    <td className="py-2 px-3 text-right font-medium text-zinc-800 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800">
+                      {pFb.window.otbRoomsSold.toLocaleString()} RN
+                    </td>
+                    <td className="py-2 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 border-b border-zinc-100 dark:border-zinc-800">
+                      {fmtUsd(pFb.otbRevenue)}
+                    </td>
+                    <td className="py-2 px-3 text-right text-emerald-700 font-semibold border-b border-zinc-100 dark:border-zinc-800">
+                      {fmtPct(pFb.window.otbOccupancyPct, 1)}
+                    </td>
+                    <td className="py-2 px-3 text-right text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800">
+                      {fmtUsd(pFb.window.adr)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

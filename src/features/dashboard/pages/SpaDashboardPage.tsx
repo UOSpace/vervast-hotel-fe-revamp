@@ -162,7 +162,7 @@ export function SpaDashboardPage() {
           ].map((kpi, idx) => (
             <div
               key={kpi.label}
-              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: { value: kpi.value, period: horizon } })}
+              onClick={() => openDrawer({ type: 'SPA_DETAIL', title: kpi.label, data: { key: kpi.key, value: kpi.value, horizon, period: horizon } })}
               className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[90px]"
               style={{ animationDelay: `${0.05 + idx * 0.03}s` }}
             >
@@ -179,14 +179,14 @@ export function SpaDashboardPage() {
         {/* Right (7 cols): 4 Cards */}
         <div className="col-span-12 lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'AVG REVENUE / TREATMENT', value: fmtUsdFull(spa.avgRevenuePerTreatment), key: 'AVG_REVENUE' },
+            { label: 'AVG REVENUE / TREATMENT', value: fmtUsdFull(spa.avgRevenuePerTreatment), key: 'AVERAGE_REVENUE' },
             { label: 'SPA UTILIZATION', value: fmtPct(spa.utilisationPct, 0), key: 'SPA_UTILIZATION' },
             { label: 'TOTAL THERAPIST HOURS', value: fmtInt(spa.hours), key: 'THERAPIST_HOURS' },
             { label: 'RETAIL REVENUE', value: fmtUsd(spa.retail.revenue), key: 'RETAIL_REVENUE' },
           ].map((kpi, idx) => (
             <div
               key={kpi.label}
-              onClick={() => openDrawer({ type: 'METRIC', title: kpi.label, data: { value: kpi.value, period: horizon } })}
+              onClick={() => openDrawer({ type: 'SPA_DETAIL', title: kpi.label, data: { key: kpi.key, value: kpi.value, horizon, period: horizon } })}
               className="relative rounded-[12px] p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[90px]"
               style={{ animationDelay: `${0.1 + idx * 0.03}s` }}
             >
@@ -205,7 +205,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Utilization by Time of Day Heatmap (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Time of Day', data: { view: 'Heatmap', period: horizon } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization by Time of Day', data: { key: 'UTILIZATION_BY_TIME', view: 'Heatmap', horizon, period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.2s' }}
         >
@@ -264,7 +264,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Utilization Over Time (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization Over Time', data: { view: 'Trend Chart', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization Over Time', data: { key: 'UTILIZATION_OVER_TIME', view: 'Trend Chart', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.25s' }}
           >
@@ -291,7 +291,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Utilization by Area (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Utilization by Area', data: { view: 'Area Breakdown', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Utilization by Area', data: { key: 'SPA_UTILIZATION', view: 'Area Breakdown', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.3s' }}
           >
@@ -352,7 +352,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Performance by Property (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Performance by Property', data: { view: 'Property Mix', period: horizon } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Performance by Property', data: { key: 'PERFORMANCE_BY_PROPERTY', view: 'Property Mix', horizon, period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.35s' }}
         >
@@ -385,7 +385,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Top Treatments (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Top Treatments', data: { view: 'Treatments', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Top Treatments', data: { key: 'TOP_TREATMENTS_DETAIL', view: 'Treatments', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.4s' }}
           >
@@ -406,7 +406,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Revenue by Category (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Revenue by Category', data: { view: 'Revenue Mix', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Revenue by Category', data: { key: 'REVENUE_BY_CATEGORY', view: 'Revenue Mix', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.45s' }}
           >
@@ -434,7 +434,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Today's Schedule Overview (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Schedule Overview', data: { view: 'Appointments', period: horizon } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Schedule Overview', data: { key: 'SCHEDULE_OVERVIEW', view: 'Appointments', horizon, period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.5s' }}
         >
@@ -470,7 +470,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Upcoming Peak Times (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Upcoming Peak Times', data: { view: 'Forecast', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Upcoming Peak Times', data: { key: 'UPCOMING_PEAK_TIMES', view: 'Forecast', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.55s' }}
           >
@@ -497,7 +497,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Membership & Packages (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Membership & Packages', data: { view: 'Packages', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Membership & Packages', data: { key: 'MEMBERSHIP_REPORT', view: 'Packages', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.6s' }}
           >
@@ -528,7 +528,7 @@ export function SpaDashboardPage() {
       <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
         {/* Left: Guest Wellness Insights (5 cols) */}
         <div
-          onClick={() => openDrawer({ type: 'METRIC', title: 'Guest Wellness Insights', data: { view: 'Insights', period: horizon } })}
+          onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Guest Wellness Insights', data: { key: 'GUEST_WELLNESS_INSIGHTS', view: 'Insights', horizon, period: horizon } })}
           className="col-span-12 lg:col-span-5 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
           style={{ animationDelay: '0.65s' }}
         >
@@ -565,7 +565,7 @@ export function SpaDashboardPage() {
         <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Sub-card 1: Retail Top Sellers (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Retail Top Sellers', data: { view: 'Retail', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Retail Top Sellers', data: { key: 'RETAIL_REVENUE', view: 'Retail', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.7s' }}
           >
@@ -586,7 +586,7 @@ export function SpaDashboardPage() {
 
           {/* Sub-card 2: Wellness Experience Index (3.5 cols) */}
           <div
-            onClick={() => openDrawer({ type: 'METRIC', title: 'Wellness Experience Index', data: { view: 'Satisfaction', period: horizon } })}
+            onClick={() => openDrawer({ type: 'SPA_DETAIL', title: 'Wellness Experience Index', data: { key: 'WELLNESS_EXPERIENCE_INDEX', view: 'Satisfaction', horizon, period: horizon } })}
             className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-[210px] justify-between"
             style={{ animationDelay: '0.75s' }}
           >

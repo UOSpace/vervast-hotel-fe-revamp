@@ -3,6 +3,12 @@ import europeImg from '@/assets/regions/europe.jpg';
 import americaImg from '@/assets/regions/america.jpg';
 import middleEastImg from '@/assets/regions/middle_east.jpg';
 import africaImg from '@/assets/regions/africa.jpg';
+import {
+  getPortfolioMetrics,
+  getPropertyIdsByRegion,
+  fmtUsd,
+  fmtPct,
+} from '@/data/portfolio';
 
 export type RegionId = 'asia-pacific' | 'europe' | 'america' | 'middle-east' | 'africa';
 
@@ -22,19 +28,18 @@ export interface RegionalMasterItem {
   countries: string[];
 }
 
-export const MASTER_REGIONS: RegionalMasterItem[] = [
+type RegionalSeedItem = Omit<
+  RegionalMasterItem,
+  'share' | 'adr' | 'revenue' | 'revenueDisplay' | 'roomNights' | 'baseOcc'
+>;
+
+const REGION_SEEDS: RegionalSeedItem[] = [
   {
     id: 'asia-pacific',
     name: 'Asia Pacific',
     displayName: 'Asia Pacific Region',
     shortName: 'ASIA PACIFIC',
     img: asiaPacificImg,
-    share: 35.0,
-    adr: 2569,
-    revenue: 1880000,
-    revenueDisplay: '$1.88M',
-    roomNights: 732,
-    baseOcc: 73.5,
     description: 'Premier archipelagos, cultural capitals, and dramatic coastlines across East Asia and the Pacific.',
     countries: ['Japan', 'Indonesia', 'Maldives', 'Australia', 'Singapore'],
   },
@@ -44,12 +49,6 @@ export const MASTER_REGIONS: RegionalMasterItem[] = [
     displayName: 'Europe & Mediterranean',
     shortName: 'EUROPE',
     img: europeImg,
-    share: 25.0,
-    adr: 2947,
-    revenue: 1540000,
-    revenueDisplay: '$1.54M',
-    roomNights: 523,
-    baseOcc: 71.0,
     description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean coastal sanctuaries.',
     countries: ['Spain', 'Switzerland', 'France', 'Italy', 'United Kingdom'],
   },
@@ -59,12 +58,6 @@ export const MASTER_REGIONS: RegionalMasterItem[] = [
     displayName: 'The Americas',
     shortName: 'AMERICA',
     img: americaImg,
-    share: 20.0,
-    adr: 2325,
-    revenue: 970000,
-    revenueDisplay: '$0.97M',
-    roomNights: 418,
-    baseOcc: 67.8,
     description: 'High-altitude mountain chalets, Pacific rainforests, and vibrant metropolitan hubs.',
     countries: ['Canada', 'Costa Rica', 'United States', 'Mexico', 'Brazil'],
   },
@@ -74,12 +67,6 @@ export const MASTER_REGIONS: RegionalMasterItem[] = [
     displayName: 'Middle East & Arabian Gulf',
     shortName: 'MIDDLE EAST',
     img: middleEastImg,
-    share: 12.0,
-    adr: 2082,
-    revenue: 520000,
-    revenueDisplay: '$0.52M',
-    roomNights: 251,
-    baseOcc: 64.5,
     description: 'Oasis healing sanctuaries, dramatic canyon valleys, and desert wellness architecture.',
     countries: ['Oman', 'Saudi Arabia', 'United Arab Emirates', 'Qatar'],
   },
@@ -89,31 +76,57 @@ export const MASTER_REGIONS: RegionalMasterItem[] = [
     displayName: 'African Continent',
     shortName: 'AFRICA',
     img: africaImg,
-    share: 7.9,
-    adr: 1839,
-    revenue: 310000,
-    revenueDisplay: '$0.31M',
-    roomNights: 166,
-    baseOcc: 62.0,
     description: 'Ancient desert springs, Nile river sanctums, and pristine conservation wilderness.',
     countries: ['Egypt', 'Morocco', 'South Africa', 'Kenya', 'Tanzania'],
   },
 ];
 
+const _mtdPortfolio = getPortfolioMetrics(undefined, 'mtd');
+
+export const MASTER_REGIONS: RegionalMasterItem[] = REGION_SEEDS.map((seed) => {
+  const m = getPortfolioMetrics(getPropertyIdsByRegion([seed.id]), 'mtd');
+  const share = _mtdPortfolio.roomsSold > 0
+    ? Number(((m.roomsSold / _mtdPortfolio.roomsSold) * 100).toFixed(1))
+    : 0;
+  return {
+    ...seed,
+    share,
+    adr: Math.round(m.adr),
+    revenue: m.roomRevenue,
+    revenueDisplay: fmtUsd(m.roomRevenue),
+    roomNights: m.roomsSold,
+    baseOcc: Number(m.occupancyPct.toFixed(1)),
+  };
+});
+
+const _totHotelRev = _mtdPortfolio.totalRevenue || 1;
+
 export const REGIONAL_TOTALS = {
-  totalRevenue: 5220000,
-  totalRevenueDisplay: '$5.22M',
-  totalRoomNights: 2090,
-  avgAdr: 2498,
-  avgOcc: 69.7,
-  avgRevpar: 1741,
-  totalHotelRevenue: 6730000,
-  totalHotelRevenueDisplay: '$6.73M',
+  totalRevenue: _mtdPortfolio.roomRevenue,
+  totalRevenueDisplay: fmtUsd(_mtdPortfolio.roomRevenue),
+  totalRoomNights: _mtdPortfolio.roomsSold,
+  avgAdr: Math.round(_mtdPortfolio.adr),
+  avgOcc: Number(_mtdPortfolio.occupancyPct.toFixed(1)),
+  avgRevpar: Math.round(_mtdPortfolio.revpar),
+  totalHotelRevenue: _mtdPortfolio.totalRevenue,
+  totalHotelRevenueDisplay: fmtUsd(_mtdPortfolio.totalRevenue),
   pillars: {
-    rooms: { val: '$5.22M', pct: '77.6%' },
-    fnb: { val: '$0.97M', pct: '14.5%' },
-    spa: { val: '$0.35M', pct: '5.3%' },
-    activities: { val: '$0.18M', pct: '2.6%' },
+    rooms: {
+      val: fmtUsd(_mtdPortfolio.roomRevenue),
+      pct: fmtPct((_mtdPortfolio.roomRevenue / _totHotelRev) * 100),
+    },
+    fnb: {
+      val: fmtUsd(_mtdPortfolio.fnbRevenue),
+      pct: fmtPct((_mtdPortfolio.fnbRevenue / _totHotelRev) * 100),
+    },
+    spa: {
+      val: fmtUsd(_mtdPortfolio.spaRevenue),
+      pct: fmtPct((_mtdPortfolio.spaRevenue / _totHotelRev) * 100),
+    },
+    activities: {
+      val: fmtUsd(_mtdPortfolio.experienceRevenue),
+      pct: fmtPct((_mtdPortfolio.experienceRevenue / _totHotelRev) * 100),
+    },
   },
 };
 

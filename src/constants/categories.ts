@@ -4,6 +4,7 @@ import cityImg from '@/assets/property_types/city-thumb.jpg';
 import forestImg from '@/assets/property_types/forest_rindang.jpg';
 import desertImg from '@/assets/property_types/desert.png';
 import wellnessImg from '@/assets/contents/wellness_retreat.png';
+import { MTD_DAYS } from '@/data/portfolio/periods';
 
 export type HotelCategoryId = 'urban' | 'beach-resort' | 'ski' | 'nature' | 'wellness';
 
@@ -108,7 +109,7 @@ export const MASTER_CATEGORIES: HotelCategory[] = [
  * MASTER HOTEL PROPERTIES
  * 100% Synchronized with PMS and Global Portfolio Overview (Total 780 Rooms across 10 Properties)
  */
-export const MASTER_PROPERTIES: MasterHotelProperty[] = [
+const RAW_MASTER_PROPERTIES: MasterHotelProperty[] = [
   // ── SOSEI Urban (200 Rooms) ──────────────────────────────────────────────
   {
     id: 'sosei-barcelona',
@@ -279,6 +280,19 @@ export const MASTER_PROPERTIES: MasterHotelProperty[] = [
     img: desertImg,
   },
 ];
+
+export const MASTER_PROPERTIES: MasterHotelProperty[] = RAW_MASTER_PROPERTIES.map((p) => {
+  const available = p.rooms * MTD_DAYS;
+  const roomsSold = Math.round((available * p.baseOcc) / 100);
+  const adr = Math.round(p.baseAdr);
+  const roomRevenue = roomsSold * adr;
+  return {
+    ...p,
+    baseOcc: Number(((roomsSold / available) * 100).toFixed(1)),
+    baseAdr: adr,
+    baseRevpar: Math.round(roomRevenue / available),
+  };
+});
 
 /**
  * Backward compatibility alias map for legacy category IDs

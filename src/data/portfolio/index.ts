@@ -7,3 +7,4 @@ export * from './propertyProfiles';
 export * from './engine';
 export * from './format';
 export * from './mix';
+export * from './hospitalityMix'

@@ -12,6 +12,8 @@ import { PropertyRhythmWidget } from '../components/widgets/property/PropertyRhy
 import { UpcomingEventsWidget } from '../components/widgets/property/UpcomingEventsWidget';
 import { AlertsTasksWidget } from '../components/widgets/property/AlertsTasksWidget';
 import { MASTER_PROPERTIES, resolvePropertyId } from '@/constants/categories';
+import { type PeriodId } from '@/data/portfolio';
+import { getPeriodDateRange, inferPeriodFromDates } from './ResortTypeDashboard';
 
 export const PROPERTIES = MASTER_PROPERTIES;
 
@@ -28,15 +30,15 @@ export function PropertyDashboardPage() {
     return PROPERTIES[0];
   };
 
-  const today = new Date();
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const prevMonthToday = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-  const firstDayOfPrevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const [period, setPeriod] = useState<PeriodId>('mtd');
+  const [initialStart, initialEnd] = getPeriodDateRange('mtd');
+  const prevMonthStart = new Date(initialStart.getFullYear(), initialStart.getMonth() - 1, 1);
+  const prevMonthEnd = new Date(initialEnd.getFullYear(), initialEnd.getMonth() - 1, initialEnd.getDate());
 
-  const [startDate, setStartDate] = useState<Date | null>(firstDayOfMonth);
-  const [endDate, setEndDate] = useState<Date | null>(today);
-  const [compStartDate, setCompStartDate] = useState<Date | null>(firstDayOfPrevMonth);
-  const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthToday);
+  const [startDate, setStartDate] = useState<Date | null>(initialStart);
+  const [endDate, setEndDate] = useState<Date | null>(initialEnd);
+  const [compStartDate, setCompStartDate] = useState<Date | null>(prevMonthStart);
+  const [compEndDate, setCompEndDate] = useState<Date | null>(prevMonthEnd);
   const [selectedProperty, setSelectedProperty] = useState(getInitialProperty);
 
   useEffect(() => {
@@ -54,10 +56,22 @@ export function PropertyDashboardPage() {
     setSearchParams({ id: property.id }, { replace: true });
   };
 
+  const handleSelectPeriod = (nextPeriod: PeriodId) => {
+    setPeriod(nextPeriod);
+    const [s, e] = getPeriodDateRange(nextPeriod);
+    setStartDate(s);
+    setEndDate(e);
+    setCompStartDate(new Date(s.getFullYear() - 1, s.getMonth(), s.getDate()));
+    setCompEndDate(new Date(e.getFullYear() - 1, e.getMonth(), e.getDate()));
+  };
+
   const handleDateChange = (type: 'main' | 'comp', dates: [Date | null, Date | null]) => {
     if (type === 'main') {
       setStartDate(dates[0]);
       setEndDate(dates[1]);
+      if (dates[0] && dates[1]) {
+        setPeriod(inferPeriodFromDates(dates[0], dates[1]));
+      }
     } else {
       setCompStartDate(dates[0]);
       setCompEndDate(dates[1]);
@@ -75,27 +89,29 @@ export function PropertyDashboardPage() {
           selectedProperty={selectedProperty}
           onPropertyChange={handlePropertyChange}
           propertiesList={PROPERTIES}
+          period={period}
+          onPeriodChange={handleSelectPeriod}
         />
       </header>
 
       {/* Content wrapper matching DashboardPage */}
-      <div key={selectedProperty.id} className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
+      <div key={`${selectedProperty.id}-${period}`} className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
         {/* Row 1: KPI Metrics (Full Width) */}
         <div className="-mx-3">
-          <PropertyKPIWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+          <PropertyKPIWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
         </div>
 
         {/* Row 2: Property Rhythm (5 cols, aligns with Occupancy) + Market Segment Mix & Guest Satisfaction (7 cols) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <PropertyRhythmWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+            <PropertyRhythmWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <MarketSegmentMixWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <MarketSegmentMixWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
             <div className="flex flex-col">
-              <GuestSatisfactionWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <GuestSatisfactionWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
           </div>
         </div>
@@ -103,14 +119,14 @@ export function PropertyDashboardPage() {
         {/* Row 3: Room Occupancy (5 cols) + Upcoming Events & Alerts (7 cols, matching Row 2 vertical grid) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <OccupancyByRoomTypeWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+            <OccupancyByRoomTypeWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <UpcomingEventsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <UpcomingEventsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
             <div className="flex flex-col">
-              <AlertsTasksWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <AlertsTasksWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
           </div>
         </div>
@@ -118,14 +134,14 @@ export function PropertyDashboardPage() {
         {/* Row 4: Financials & Distributions (5 cols Revenue + 7 cols Channels & Nationality, matching vertical grid) */}
         <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
           <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <RevenueByDepartmentWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+            <RevenueByDepartmentWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
           <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <TopBookingChannelsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <TopBookingChannelsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
             <div className="flex flex-col">
-              <GuestNationalityWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} />
+              <GuestNationalityWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
             </div>
           </div>
         </div>

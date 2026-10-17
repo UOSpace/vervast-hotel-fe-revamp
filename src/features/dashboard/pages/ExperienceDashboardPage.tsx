@@ -134,7 +134,7 @@ export function ExperienceDashboardPage() {
     const uncapturedRev = getUncapturedRevenue(m);
     const modelRows = getExperienceModelRows(m);
     const staffing = getExperienceStaffing(m);
-    const kidsToday = getKidsClubControl(PORTFOLIO_PROPERTY_IDS);
+    const kidsToday = getKidsClubControl(PORTFOLIO_PROPERTY_IDS, horizon);
     const forwardWindows = getExperienceForwardOutlook(PORTFOLIO_PROPERTY_IDS);
     const stayContribution = getExperienceStayContribution(m);
     const propertyRecords = PORTFOLIO_PROPERTY_IDS.map((id) => getExperiencePropertyRecord(id, horizon));
@@ -154,7 +154,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Global Activity Portfolio Mix & 14-Category Taxonomy',
-                  data: { key: 'EXP_PORTFOLIO_TAXONOMY', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_CATEGORY_MIX', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >
@@ -244,7 +244,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Guest Participation, Segment Capture & Regional Origin Mix',
-                  data: { key: 'EXP_HEADLINE_KPI', kpiId: 'participation', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_PARTICIPATION_CAPTURE', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >
@@ -321,7 +321,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Capacity Utilization vs Demand Fulfillment & Waitlist Bottlenecks',
-                  data: { key: 'EXP_HEADLINE_KPI', kpiId: 'fulfillment', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_UNMET_DEMAND', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >
@@ -382,7 +382,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Experience Commercial Mix — Paid Revenue vs Complimentary Stay Enrichment',
-                  data: { key: 'EXP_COMMERCIAL_STAY_IMPACT', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_COMMERCIAL_MIX', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >
@@ -439,7 +439,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Staffing Qualifications, Safety Compliance & Weather Intelligence',
-                  data: { key: 'EXP_HEADLINE_KPI', kpiId: 'readiness', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_READINESS_SAFETY', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >
@@ -537,7 +537,7 @@ export function ExperienceDashboardPage() {
                 openDrawer({
                   type: 'EXPERIENCE_DETAIL',
                   title: 'Forward Experience Outlook (7–90 Days) & Stay Contribution Analysis',
-                  data: { key: 'EXP_COMMERCIAL_STAY_IMPACT', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
+                  data: { key: 'EXP_FORWARD_STAY', horizon, propertyIds: PORTFOLIO_PROPERTY_IDS },
                 })
               }
             >

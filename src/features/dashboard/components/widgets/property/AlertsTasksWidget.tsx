@@ -1,35 +1,22 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import { type PeriodId } from '@/data/portfolio';
+import { getPropertyAlerts } from '@/data/portfolio/hospitalitySubMix';
 
 export function AlertsTasksWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  const propertyAlertsMap: Record<string, Array<{ id: string; priority: string; title: string; text: string; detail: string; tag: string }>> = {
-    'sosei-barcelona': [
-      { id: 'alt-1', priority: 'High', title: '3 VIP Arrivals Scheduled Today', text: 'Ensure personalized welcome and penthouse terrace amenity setup', detail: 'VIP Delegation arriving 14:30. Butler team has prepared bespoke Catalan culinary assortment and vintage cava.', tag: 'VIP Care' },
-      { id: 'alt-2', priority: 'Medium', title: 'Low Inventory: Rooftop Cellar Reserves', text: 'Only 6 bottles remaining of vintage Priorat private reserve', detail: 'Order pending signature with local vineyard partner. Delivery scheduled for tomorrow morning.', tag: 'Inventory' },
-      { id: 'alt-3', priority: 'Low', title: 'Scheduled Maintenance: Hydrotherapy Spa', text: 'Routine thermal inspection scheduled at 2:00 PM today with Engineering', detail: 'Maintenance window: 14:00 – 15:30. Guest notice already published on private digital concierge app.', tag: 'Facilities' },
-    ],
-    'sosei-switzerland': [
-      { id: 'alt-1', priority: 'High', title: '3 VIP Arrivals Scheduled Today', text: 'Ensure personalized welcome and Matterhorn amenity setup in Villa 12 & 14', detail: 'Lord & Lady Harrington (Villa 12) arriving 14:30. Butler Jean-Paul has prepared bespoke Swiss chocolate assortment and vintage champagne.', tag: 'VIP Care' },
-      { id: 'alt-2', priority: 'Medium', title: 'Low Inventory: Thermal Spa Elixirs', text: 'Only 8 custom botanical tinctures remaining in dispensary stock', detail: 'Order pending signature with Valais Alpine Apothecary. Delivery scheduled for tomorrow morning.', tag: 'Inventory' },
-      { id: 'alt-3', priority: 'Low', title: 'Scheduled Maintenance: Panoramic Sauna', text: 'Routine thermal inspection scheduled at 2:00 PM today with Engineering', detail: 'Maintenance window: 14:00 – 15:30. Guest notice already published on private digital butler app.', tag: 'Facilities' },
-    ],
-  };
-
-  const alerts = propertyAlertsMap[propertyId] ?? [
-    { id: 'alt-1', priority: 'High', title: '2 VIP Arrivals Expected This Afternoon', text: 'Butler suite preparation and personalized private check-in ready', detail: 'Ensure champagne and private concierge briefing are complete before 15:00 arrival.', tag: 'VIP Care' },
-    { id: 'alt-2', priority: 'Medium', title: 'Spa Booking Pace +18% Above Average', text: 'Peak treatment slots for 16:00 – 19:00 fully booked; extra practitioner standby requested', detail: 'Review therapist schedule for afternoon rotation to accommodate in-house walk-ins.', tag: 'Operations' },
-    { id: 'alt-3', priority: 'Low', title: 'Wine Cellar Delivery Inspection', text: 'Sommelier team conducting inventory reception for Grand Cru vintage allocation', detail: 'Delivery arrives at 11:30. Temperature controlled receiving dock prepped.', tag: 'Culinary' },
-  ];
+  const alerts = getPropertyAlerts(propertyId, propertyName);
 
   return (
     <div 
@@ -38,7 +25,7 @@ export function AlertsTasksWidget({
       onClick={() => openDrawer({ 
         type: 'ALERTS', 
         title: `Operational Alerts & Tasks — ${propertyName}`, 
-        data: { propertyName, propertyId, alerts } 
+        data: { propertyName, propertyId, period, alerts } 
       })}
     >
       <div className="flex justify-between items-center mb-3 h-4 shrink-0">
@@ -51,7 +38,7 @@ export function AlertsTasksWidget({
               openDrawer({
                 type: 'ALERTS',
                 title: `Operational Alerts & Tasks — ${propertyName}`,
-                data: { propertyName, propertyId, alerts },
+                data: { propertyName, propertyId, period, alerts },
               });
             }}
             className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"

@@ -1,23 +1,22 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import { type PeriodId } from '@/data/portfolio';
+import { getPropertyRhythm } from '@/data/portfolio/hospitalitySubMix';
 
 export function PropertyRhythmWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  const rhythmData = [
-    { department: 'Arrivals & Check-in', peak: '2:00 PM – 4:00 PM', load: 85, status: 'High Volume', staff: '8 Butlers / Front Desk' },
-    { department: 'F&B & Fine Dining', peak: '7:00 PM – 9:30 PM', load: 92, status: 'Peak Load', staff: '14 Culinary & Sommeliers' },
-    { department: 'Spa & Wellness Sanctuary', peak: '3:00 PM – 6:00 PM', load: 75, status: 'Active', staff: '6 Therapists & Practitioners' },
-    { department: 'Housekeeping & Turn-down', peak: '10:00 AM – 1:00 PM', load: 90, status: 'High Volume', staff: '12 Attendants & Supervisors' },
-  ];
+  const rhythmData = getPropertyRhythm(propertyId);
 
   return (
     <div 
@@ -29,6 +28,7 @@ export function PropertyRhythmWidget({
         data: {
           propertyId,
           propertyName,
+          period,
           rhythmData,
         }
       })}
@@ -45,7 +45,7 @@ export function PropertyRhythmWidget({
               openDrawer({
                 type: 'PROPERTY_RHYTHM',
                 title: `Property Rhythm & Hourly Department Load — ${propertyName}`,
-                data: { propertyId, propertyName, rhythmData }
+                data: { propertyId, propertyName, period, rhythmData }
               });
             }}
             className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"

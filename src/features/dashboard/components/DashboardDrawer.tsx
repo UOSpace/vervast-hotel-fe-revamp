@@ -5,7 +5,7 @@ import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Toolti
 import dashboardData from '../../../data/dashboardData.json';
 import { getDashboardComputedData } from '../../../data/pms';
 import { useTheme } from '../../../config/theme-provider';
-import { MetricDrawerContent, accuratePropertiesData } from './drawers/MetricDrawerContent';
+import { MetricDrawerContent } from './drawers/MetricDrawerContent';
 import { PortfolioPerformanceDrawerContent } from './drawers/PortfolioPerformanceDrawerContent';
 import { BookingPaceDrawerContent } from './drawers/BookingPaceDrawerContent';
 import { RevenueDemandMixDrawerContent } from './drawers/RevenueDemandMixDrawerContent';
@@ -25,9 +25,14 @@ import {
   PropertyDepartmentRevenueDrawerContent,
   PropertyUpcomingEventsDrawerContent,
 } from './drawers/PropertyDrawerContent';
-
-const propertiesPerformanceData = accuratePropertiesData;
-
+import { getCategoryPerformance } from '../services/propertySimulation';
+import { MASTER_CATEGORIES } from '@/constants/categories';
+import {
+  getPortfolioMetrics,
+  fmtUsd,
+  fmtPct,
+  type PeriodId,
+} from '@/data/portfolio';
 
 export function DashboardDrawer() {
   const { isOpen, config, closeDrawer, openDrawer } = useDashboardDrawer();
@@ -46,27 +51,41 @@ export function DashboardDrawer() {
 
   if (!config) return null;
 
+  const activePeriod: PeriodId =
+    (config.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon)) ||
+    'mtd';
+
   const renderContent = () => {
     if (!config) return null;
 
     switch (config.type) {
-      case 'LIVE_OVERVIEW':
+      case 'LIVE_OVERVIEW': {
+        const pm = getPortfolioMetrics(undefined, activePeriod);
+        const collections = MASTER_CATEGORIES.map((cat) => {
+          const cm = getPortfolioMetrics(cat.propertyIds, activePeriod);
+          return {
+            name: `${cat.name} Collection`,
+            location: cm.properties.map((p) => p.location).join(' · ') || cat.description,
+            occ: fmtPct(cm.occupancyPct, 1),
+            status:
+              cm.occupancyPct >= 75
+                ? 'Peak Season'
+                : cm.occupancyPct >= 70
+                ? 'High Demand'
+                : 'Steady Flow',
+            count: `${cm.rooms} Rms · ${fmtUsd(cm.totalRevenue)}`,
+          };
+        });
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-xs text-zinc-500">Global real-time property status across all 5 collections.</p>
               <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                Avg 74.2% Occupancy
+                Avg {fmtPct(pm.occupancyPct, 1)} Occupancy
               </span>
             </div>
             <div className="flex flex-col gap-3">
-              {[
-                { name: 'SOSEI Urban Collection', location: 'Barcelona & Tokyo', occ: '69.5%', status: 'Normal Pace', count: '200 Rms' },
-                { name: 'SOSEI Beach Resort Collection', location: 'Bali & Maldives', occ: '73.6%', status: 'High Demand', count: '140 Rms' },
-                { name: 'SOSEI Ski Collection', location: 'Switzerland & Canada', occ: '76.2%', status: 'Peak Season', count: '130 Rms' },
-                { name: 'SOSEI Nature Collection', location: 'Costa Rica & Japan', occ: '71.0%', status: 'Normal Pace', count: '145 Rms' },
-                { name: 'SOSEI Wellness Collection', location: 'Oman & Egypt', occ: '62.4%', status: 'Steady Flow', count: '165 Rms' },
-              ].map((resort) => (
+              {collections.map((resort) => (
                 <div key={resort.name} className="p-3.5 border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/40 flex justify-between items-center hover:bg-zinc-100/60 dark:hover:bg-zinc-800/70 transition-all">
                   <div>
                     <div className="font-bold text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm">{resort.name}</div>
@@ -85,6 +104,7 @@ export function DashboardDrawer() {
             </div>
           </div>
         );
+      }
 
       case 'METRIC':
         return <MetricDrawerContent config={config} theme={theme} />;
@@ -228,19 +248,19 @@ export function DashboardDrawer() {
         );
 
       case 'BOOKING_PACE':
-        return <BookingPaceDrawerContent theme={theme} />;
+        return <BookingPaceDrawerContent theme={theme} config={config} />;
 
       case 'GUEST_MOVEMENT':
-        return <BookingPaceDrawerContent theme={theme} />;
+        return <BookingPaceDrawerContent theme={theme} config={config} />;
 
       case 'REVENUE_DEMAND_MIX':
-        return <RevenueDemandMixDrawerContent theme={theme} />;
+        return <RevenueDemandMixDrawerContent theme={theme} config={config} />;
 
       case 'ROOM_TIER_OCCUPANCY':
         if (config.data?.types) {
           return <PropertyRoomTierDrawerContent data={config.data} />;
         }
-        return <RevenueDemandMixDrawerContent theme={theme} />;
+        return <RevenueDemandMixDrawerContent theme={theme} config={config} />;
 
       case 'PROPERTY_ACTIVITY':
         return <PropertyActivityDrawerContent data={config.data} />;
@@ -255,18 +275,20 @@ export function DashboardDrawer() {
         return <PropertyUpcomingEventsDrawerContent data={config.data} />;
 
       case 'PORTFOLIO_COMPARISON':
-        return <PortfolioComparisonDrawerContent />;
+        return <PortfolioComparisonDrawerContent config={config} />;
 
       case 'PORTFOLIO_PERFORMANCE':
         return <PortfolioPerformanceDrawerContent config={config} />;
 
-      case 'WORLD_MAP':
+      case 'WORLD_MAP': {
+        const worldCategories = getCategoryPerformance(activePeriod);
+        const pm = getPortfolioMetrics(undefined, activePeriod);
         return (
           <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
             <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-xs text-zinc-500">Geographic distribution and operational property status.</p>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                10 Sanctuaries Worldwide
+                {pm.propertyCount} Sanctuaries Worldwide
               </span>
             </div>
             <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -282,7 +304,7 @@ export function DashboardDrawer() {
                   </tr>
                 </thead>
                 <tbody>
-                  {propertiesPerformanceData.map((prop) => {
+                  {worldCategories.map((prop) => {
                     const isExpanded = !!expandedRows[prop.id];
                     return (
                       <React.Fragment key={prop.id}>
@@ -319,17 +341,18 @@ export function DashboardDrawer() {
                   })}
                   <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Average</td>
-                    <td className="py-3 px-3 text-zinc-500">10 Sanctuaries Worldwide</td>
-                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">74.20%</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,420.00</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$118.00M</td>
-                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">$1,054.00</td>
+                    <td className="py-3 px-3 text-zinc-500">{pm.propertyCount} Sanctuaries Worldwide</td>
+                    <td className="py-3 px-3 text-right text-emerald-700 font-bold">{fmtPct(pm.occupancyPct, 1)}</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.adr)}</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.totalRevenue)}</td>
+                    <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(pm.revpar)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
         );
+      }
 
       case 'TOP_NATIONALITIES':
         {
@@ -581,7 +604,7 @@ export function DashboardDrawer() {
         }
 
       case 'FORWARD_BUSINESS':
-        return <ForwardBusinessDrawerContent />;
+        return <ForwardBusinessDrawerContent config={config} />;
 
       case 'GUEST_ARRIVALS':
         return (
@@ -598,7 +621,7 @@ export function DashboardDrawer() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">{guest.name}</span>
-                      <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">{guest.property} Â· <span className="text-zinc-500 font-normal">{guest.suite || 'Grand Sanctuary Villa'}</span></p>
+                      <p className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">{guest.property} · <span className="text-zinc-500 font-normal">{guest.suite || 'Grand Sanctuary Villa'}</span></p>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[9px] border border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 bg-zinc-900/5 dark:bg-zinc-100/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">VVIP Tier 1</span>
@@ -731,7 +754,7 @@ export function DashboardDrawer() {
 
       case 'SOSEI_SIGNALS':
       case 'NOTES_YESTERDAY':
-        return <SOSEISignalsDrawerContent />;
+        return <SOSEISignalsDrawerContent config={config} />;
 
       case 'JOURNEY_TIMELINE':
         return (
@@ -820,7 +843,7 @@ export function DashboardDrawer() {
               <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
                 <p className="text-xs text-zinc-500">Total guest spend & revenue realization across all 5 collections, 2023–2026.</p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                  $118.0M YTD Total
+                  $152.4M YTD Total
                 </span>
               </div>
 
@@ -871,11 +894,11 @@ export function DashboardDrawer() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              openDrawer({ type: 'SPEND_COMPARISON', title: `${prop.name} â€” Year Comparison`, data: prop });
+                              openDrawer({ type: 'SPEND_COMPARISON', title: `${prop.name} — Year Comparison`, data: prop });
                             }}
                             className="text-[10px] font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 underline cursor-pointer whitespace-nowrap"
                           >
-                            Year View â†’
+                            Year View →
                           </button>
                         </td>
                       </tr>
@@ -900,7 +923,7 @@ export function DashboardDrawer() {
                   onClick={() => openDrawer({ type: 'SPEND_OVERTIME', title: 'Guest Spend Over Time' })}
                   className="text-[10px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline cursor-pointer"
                 >
-                  â† Back to all spend
+                  ← Back to all spend
                 </button>
               </div>
 
@@ -948,13 +971,13 @@ export function DashboardDrawer() {
         }
 
       case 'GEO_MARKET':
-        return <GeoMarketDrawerContent />;
+        return <GeoMarketDrawerContent config={config} />;
 
       case 'MARKET_SEGMENT':
-        return <MarketSegmentDrawerContent />;
+        return <MarketSegmentDrawerContent config={config} />;
 
       case 'CHANNEL_DISTRIBUTION':
-        return <ChannelDistributionDrawerContent />;
+        return <ChannelDistributionDrawerContent config={config} />;
 
       case 'FNB_DETAIL':
         return <FnbDrawerContent config={config} />;

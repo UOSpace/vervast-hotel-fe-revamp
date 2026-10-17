@@ -16,7 +16,12 @@ import { MASTER_FNB_PROPERTIES } from './FnbCategoryRegionalViews';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
-import { getPropertyMetrics, PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
+import { getPropertyMetrics, splitByShares, PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
+import {
+  getFnbOutletGroups,
+  getFnbDayparts,
+  FNB_PERIOD_SUFFIX,
+} from '@/data/portfolio/fnbMix';
 
 type TimeHorizon = PeriodId;
 
@@ -168,33 +173,37 @@ export function FnbPropertyDashboardPage() {
     [searchQuery]
   );
 
-  // Synchronized Property F&B Record for active horizon
+  // Synchronized Property Metrics & F&B Record for active horizon
+  const propMetrics = useMemo(
+    () => getPropertyMetrics(selectedProperty.id, horizon),
+    [selectedProperty.id, horizon]
+  );
+
   const fnbRecord = useMemo(() => {
     const base =
       MASTER_FNB_PROPERTIES.find((p) => p.id === selectedProperty.id) || MASTER_FNB_PROPERTIES[0];
-    const m = getPropertyMetrics(base.id, horizon);
     return {
       ...base,
-      rooms: m.rooms,
-      outletsCount: m.fnb.outlets,
-      mtdFnbRev: m.fnbRevenue,
-      mtdCovers: m.fnb.covers,
-      captureRate: Number(m.fnb.captureRatePct.toFixed(1)),
-      avgCheck: Math.round(m.fnb.avgCheck),
-      spendPerGuest: Math.round(m.fnb.spendPerGuestNight),
-      revpash: Number(m.fnb.revpash.toFixed(2)),
-      seatTurn: Number(m.fnb.seatTurn.toFixed(2)),
-      bevShare: Number(m.fnb.bevSharePct.toFixed(1)),
-      lflGrowth: Number(m.vsLy.fnbRevenuePct.toFixed(1)),
+      rooms: propMetrics.rooms,
+      outletsCount: propMetrics.fnb.outlets,
+      mtdFnbRev: propMetrics.fnbRevenue,
+      mtdCovers: propMetrics.fnb.covers,
+      captureRate: Number(propMetrics.fnb.captureRatePct.toFixed(1)),
+      avgCheck: Math.round(propMetrics.fnb.avgCheck),
+      spendPerGuest: Math.round(propMetrics.fnb.spendPerGuestNight),
+      revpash: Number(propMetrics.fnb.revpash.toFixed(2)),
+      seatTurn: Number(propMetrics.fnb.seatTurn.toFixed(2)),
+      bevShare: Number(propMetrics.fnb.bevSharePct.toFixed(1)),
+      lflGrowth: Number(propMetrics.vsLy.fnbRevenuePct.toFixed(1)),
     };
-  }, [selectedProperty.id, horizon]);
+  }, [selectedProperty.id, propMetrics]);
 
   const horizonMeta = HORIZON_TABS.find((t) => t.id === horizon) || HORIZON_TABS[1];
   const factor = horizonMeta.factor;
 
   const totalFnbRev = fnbRecord.mtdFnbRev * factor;
   const totalCovers = Math.round(fnbRecord.mtdCovers * factor);
-  const bevRev = totalFnbRev * (fnbRecord.bevShare / 100);
+  const bevRev = propMetrics.fnb.bevRevenue;
 
   // Property Restaurants from SOSEI_RESTAURANTS + Private Dining & In-Villa Dining
   const propertyRestaurants = useMemo(
@@ -205,8 +214,9 @@ export function FnbPropertyDashboardPage() {
   const outletTradingRows = useMemo(() => {
     const rest1 = propertyRestaurants[0];
     const rest2 = propertyRestaurants[1];
+    const groups = getFnbOutletGroups(propMetrics);
 
-    const rows = [
+    return [
       {
         id: rest1?.id || `${selectedProperty.id}-out-1`,
         name: rest1?.name || fnbRecord.signatureOutlets.split('·')[0].trim(),
@@ -215,12 +225,12 @@ export function FnbPropertyDashboardPage() {
         hours: rest1?.hours || '17:30 – 23:00',
         seating: rest1?.seating || '44 Covers · Signature Room',
         image: rest1?.image || selectedProperty.img,
-        covers: Math.round(totalCovers * 0.42),
-        avgCheck: Math.round(fnbRecord.avgCheck * 1.18),
-        revpash: Number((fnbRecord.revpash * 1.16).toFixed(2)),
-        revenue: totalFnbRev * 0.44,
-        sharePct: 44,
-        status: 'Peak Demand',
+        covers: groups[0].covers,
+        avgCheck: Math.round(groups[0].avgCheck),
+        revpash: groups[0].revpash,
+        revenue: groups[0].revenue,
+        sharePct: Math.round(groups[0].sharePct),
+        status: groups[0].status,
       },
       {
         id: rest2?.id || `${selectedProperty.id}-out-2`,
@@ -230,12 +240,12 @@ export function FnbPropertyDashboardPage() {
         hours: rest2?.hours || '07:00 – 23:00',
         seating: rest2?.seating || '52 Covers · Terrace & Bar',
         image: rest2?.image || selectedProperty.img,
-        covers: Math.round(totalCovers * 0.34),
-        avgCheck: Math.round(fnbRecord.avgCheck * 0.92),
-        revpash: Number((fnbRecord.revpash * 0.96).toFixed(2)),
-        revenue: totalFnbRev * 0.31,
-        sharePct: 31,
-        status: 'On Plan',
+        covers: groups[1].covers,
+        avgCheck: Math.round(groups[1].avgCheck),
+        revpash: groups[1].revpash,
+        revenue: groups[1].revenue,
+        sharePct: Math.round(groups[1].sharePct),
+        status: groups[1].status,
       },
       {
         id: `${selectedProperty.id}-ivd`,
@@ -245,12 +255,12 @@ export function FnbPropertyDashboardPage() {
         hours: '24 Hours · On-Demand',
         seating: `${fnbRecord.rooms} Suites & Villas`,
         image: selectedProperty.img,
-        covers: Math.round(totalCovers * 0.14),
-        avgCheck: Math.round(fnbRecord.avgCheck * 0.85),
-        revpash: Number((fnbRecord.revpash * 0.78).toFixed(2)),
-        revenue: totalFnbRev * 0.14,
-        sharePct: 14,
-        status: '22.8m Avg SLA',
+        covers: groups[2].covers,
+        avgCheck: Math.round(groups[2].avgCheck),
+        revpash: groups[2].revpash,
+        revenue: groups[2].revenue,
+        sharePct: Math.round(groups[2].sharePct),
+        status: groups[2].status,
       },
       {
         id: `${selectedProperty.id}-banquet`,
@@ -260,88 +270,45 @@ export function FnbPropertyDashboardPage() {
         hours: 'By Reservation',
         seating: 'Up to 36 Pax · Private Salon',
         image: rest1?.image || selectedProperty.img,
-        covers: Math.round(totalCovers * 0.10),
-        avgCheck: Math.round(fnbRecord.avgCheck * 1.45),
-        revpash: Number((fnbRecord.revpash * 1.08).toFixed(2)),
-        revenue: totalFnbRev * 0.11,
-        sharePct: 11,
-        status: '94% Contracted',
+        covers: groups[3].covers,
+        avgCheck: Math.round(groups[3].avgCheck),
+        revpash: groups[3].revpash,
+        revenue: groups[3].revenue,
+        sharePct: Math.round(groups[3].sharePct),
+        status: groups[3].status,
       },
     ];
-    return rows;
-  }, [propertyRestaurants, selectedProperty, fnbRecord, totalCovers, totalFnbRev]);
+  }, [propertyRestaurants, selectedProperty, fnbRecord, propMetrics]);
 
-  // Daypart Service Rhythm for this property
+  // Daypart Service Rhythm for this property (sums to propMetrics.fnb.covers and propMetrics.fnbRevenue)
   const daypartRows = useMemo(() => {
-    const isUrban = fnbRecord.categoryId === 'urban';
-    const isBeachOrNature = fnbRecord.categoryId === 'beach-resort' || fnbRecord.categoryId === 'nature';
-    const bfastShare = isBeachOrNature ? 22 : 16;
-    const lunchShare = isUrban ? 22 : 20;
-    const sunsetShare = 14;
-    const dinnerShare = 100 - bfastShare - lunchShare - sunsetShare - 8;
-    const lateShare = 8;
-
-    return [
-      {
-        daypart: 'Breakfast & Morning Ritual',
-        window: '06:30 – 11:00',
-        covers: Math.round(totalCovers * (bfastShare / 100) * 1.25),
-        share: bfastShare,
-        rev: totalFnbRev * (bfastShare / 100),
-        revpash: (fnbRecord.revpash * 0.74).toFixed(2),
-        sla: '96.4% < 14m',
-      },
-      {
-        daypart: 'Lunch & Terrace Dining',
-        window: '12:00 – 15:30',
-        covers: Math.round(totalCovers * (lunchShare / 100) * 1.05),
-        share: lunchShare,
-        rev: totalFnbRev * (lunchShare / 100),
-        revpash: (fnbRecord.revpash * 0.91).toFixed(2),
-        sla: '94.8% < 18m',
-      },
-      {
-        daypart: 'Sunset & Aperitif Hour',
-        window: '16:30 – 19:00',
-        covers: Math.round(totalCovers * (sunsetShare / 100) * 0.95),
-        share: sunsetShare,
-        rev: totalFnbRev * (sunsetShare / 100),
-        revpash: (fnbRecord.revpash * 1.12).toFixed(2),
-        sla: '98.1% < 8m',
-      },
-      {
-        daypart: 'Prime Dinner Service',
-        window: '19:00 – 22:30',
-        covers: Math.round(totalCovers * (dinnerShare / 100) * 0.85),
-        share: dinnerShare,
-        rev: totalFnbRev * (dinnerShare / 100),
-        revpash: (fnbRecord.revpash * 1.38).toFixed(2),
-        sla: '93.2% On-Pace',
-      },
-      {
-        daypart: 'In-Villa & Late Night',
-        window: '22:30 – 06:00',
-        covers: Math.round(totalCovers * (lateShare / 100) * 0.9),
-        share: lateShare,
-        rev: totalFnbRev * (lateShare / 100),
-        revpash: (fnbRecord.revpash * 0.58).toFixed(2),
-        sla: '22.8m Avg Delivery',
-      },
-    ];
-  }, [fnbRecord, totalCovers, totalFnbRev]);
+    return getFnbDayparts(propMetrics, fnbRecord.categoryId).map((d) => ({
+      daypart: d.name,
+      window: d.window,
+      covers: d.covers,
+      share: d.sharePct,
+      rev: d.revenue,
+      revpash: d.revpash.toFixed(2),
+      sla: d.sla,
+    }));
+  }, [propMetrics, fnbRecord.categoryId]);
 
   // Property Revenue Centre Mix Donut
   const centreMix = useMemo(() => {
     const shares = [
-      { name: 'Signature Dining', share: 44, color: '#0f172a', avgCheck: Math.round(fnbRecord.avgCheck * 1.18) },
-      { name: 'All-Day & Terrace', share: 21, color: '#334155', avgCheck: Math.round(fnbRecord.avgCheck * 0.88) },
-      { name: 'Bar & Sommelier Cellar', share: 14, color: '#64748b', avgCheck: Math.round(fnbRecord.avgCheck * 0.76) },
-      { name: 'In-Villa Dining', share: 11, color: '#94a3b8', avgCheck: Math.round(fnbRecord.avgCheck * 0.85) },
-      { name: 'Private Events', share: 10, color: '#cbd5e1', avgCheck: Math.round(fnbRecord.avgCheck * 1.45) },
+      { id: 'sig', name: 'Signature Dining', share: 44, color: '#0f172a', avgCheck: Math.round(fnbRecord.avgCheck * 1.18) },
+      { id: 'all', name: 'All-Day & Terrace', share: 21, color: '#334155', avgCheck: Math.round(fnbRecord.avgCheck * 0.88) },
+      { id: 'bar', name: 'Bar & Sommelier Cellar', share: 14, color: '#64748b', avgCheck: Math.round(fnbRecord.avgCheck * 0.76) },
+      { id: 'ivd', name: 'In-Villa Dining', share: 11, color: '#94a3b8', avgCheck: Math.round(fnbRecord.avgCheck * 0.85) },
+      { id: 'evt', name: 'Private Events', share: 10, color: '#cbd5e1', avgCheck: Math.round(fnbRecord.avgCheck * 1.45) },
     ];
-    return shares.map((s) => ({
+    const revs = splitByShares(
+      totalFnbRev,
+      shares.map((s) => ({ id: s.id, name: s.name, share: s.share }))
+    );
+    return shares.map((s, idx) => ({
       ...s,
-      revenue: fmtMoney(totalFnbRev * (s.share / 100)),
+      revenue: fmtMoney(revs[idx].value),
     }));
   }, [fnbRecord, totalFnbRev]);
 
@@ -403,11 +370,17 @@ export function FnbPropertyDashboardPage() {
     };
   }, [fnbRecord, propertyGuests, propertyRestaurants]);
 
+  const heroRevs = splitByShares(totalFnbRev, [
+    { id: 'rest', name: 'Restaurants', share: 65 },
+    { id: 'bar', name: 'Bars & Cellar', share: 14 },
+    { id: 'ivd', name: 'In-Villa', share: 11 },
+    { id: 'evt', name: 'Events', share: 10 },
+  ]);
   const heroBreakdown = [
-    { label: 'Restaurants', val: fmtMoney(totalFnbRev * 0.65), pct: '65%' },
-    { label: 'Bars & Cellar', val: fmtMoney(totalFnbRev * 0.14), pct: '14%' },
-    { label: 'In-Villa', val: fmtMoney(totalFnbRev * 0.11), pct: '11%' },
-    { label: 'Events', val: fmtMoney(totalFnbRev * 0.10), pct: '10%' },
+    { label: 'Restaurants', val: fmtMoney(heroRevs[0].value), pct: '65%' },
+    { label: 'Bars & Cellar', val: fmtMoney(heroRevs[1].value), pct: '14%' },
+    { label: 'In-Villa', val: fmtMoney(heroRevs[2].value), pct: '11%' },
+    { label: 'Events', val: fmtMoney(heroRevs[3].value), pct: '10%' },
   ];
 
   const isNegGrowth = fnbRecord.lflGrowth < 0;
@@ -533,7 +506,7 @@ export function FnbPropertyDashboardPage() {
               <div className="overflow-y-auto custom-scrollbar max-h-[280px] p-1.5">
                 {filteredDropdownProps.length > 0 ? (
                   filteredDropdownProps.map((prop) => {
-                    const pRec = MASTER_FNB_PROPERTIES.find((m) => m.id === prop.id);
+                    const pM = getPropertyMetrics(prop.id, horizon);
                     const isSelected = selectedProperty.id === prop.id;
                     return (
                       <button
@@ -554,7 +527,7 @@ export function FnbPropertyDashboardPage() {
                             {prop.name}
                           </div>
                           <div className="text-[9px] text-zinc-500 mt-0.5 truncate">
-                            {prop.location} · {pRec ? fmtMoney(pRec.mtdFnbRev) : ''} MTD
+                            {prop.location} · {fmtMoney(pM.fnbRevenue)} {FNB_PERIOD_SUFFIX[horizon]}
                           </div>
                         </div>
                         {isSelected && (
@@ -603,7 +576,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — Total F&B Revenue Breakdown`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'total_fnb_rev' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'total_fnb_rev',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -650,7 +629,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — In-House Guest Dining Capture`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'capture_rate' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'capture_rate',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -689,7 +674,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — Average Check & Spend per Guest`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'avg_check' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'avg_check',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -728,7 +719,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — RevPASH & Seat Turnover`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'revpash' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'revpash',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -767,7 +764,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — Beverage, Wine & Mixology Share`,
-              data: { key: 'FNB_HEADLINE_KPI', kpiId: 'beverage' },
+              data: {
+                key: 'FNB_HEADLINE_KPI',
+                kpiId: 'beverage',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -827,7 +830,12 @@ export function FnbPropertyDashboardPage() {
                     openDrawer({
                       type: 'FNB_DETAIL',
                       title: `${venue.name} — ${selectedProperty.name}`,
-                      data: { key: 'FNB_OUTLET_DAYPART' },
+                      data: {
+                        key: 'FNB_OUTLET_DAYPART',
+                        horizon,
+                        propertyId: selectedProperty.id,
+                        propertyIds: [selectedProperty.id],
+                      },
                     })
                   }
                   className="p-2.5 rounded-[10px] border border-zinc-200/70 bg-zinc-50/40 hover:bg-zinc-100/70 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -890,7 +898,12 @@ export function FnbPropertyDashboardPage() {
               openDrawer({
                 type: 'FNB_DETAIL',
                 title: `${selectedProperty.name} — Daypart Productivity & Kitchen SLA`,
-                data: { key: 'FNB_OUTLET_DAYPART' },
+                data: {
+                  key: 'FNB_OUTLET_DAYPART',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: [selectedProperty.id],
+                },
               })
             }
           >
@@ -954,7 +967,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — Revenue Centre Mix`,
-              data: { key: 'FNB_REVENUE_CENTRE_SCORECARD', centre: 'Fine & Specialty Dining' },
+              data: {
+                key: 'FNB_REVENUE_CENTRE_SCORECARD',
+                centre: 'Fine & Specialty Dining',
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >
@@ -1063,7 +1082,13 @@ export function FnbPropertyDashboardPage() {
             openDrawer({
               type: 'FNB_DETAIL',
               title: `${selectedProperty.name} — Culinary Cost, Cellar & Guest Sentiment`,
-              data: { key: 'FNB_ACTION_SIGNAL', idx: 0 },
+              data: {
+                key: 'FNB_ACTION_SIGNAL',
+                idx: 0,
+                horizon,
+                propertyId: selectedProperty.id,
+                propertyIds: [selectedProperty.id],
+              },
             })
           }
         >

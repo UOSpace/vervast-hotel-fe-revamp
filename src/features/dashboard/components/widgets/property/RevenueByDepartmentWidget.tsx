@@ -1,45 +1,46 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import {
+  getPropertyMetrics,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
+import { fmtTrendArrow } from '@/data/portfolio/hospitalitySubMix';
 
 export function RevenueByDepartmentWidget({ 
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName,
+  period = 'mtd',
 }: { 
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  const propertyRevenueMap: Record<string, number> = {
-    'sosei-barcelona': 1480000,
-    'sosei-tokyo': 1350000,
-    'sosei-bali': 980000,
-    'sosei-maldives': 1850000,
-    'sosei-switzerland': 1950000,
-    'sosei-canada': 1120000,
-    'sosei-costa-rica': 820000,
-    'sosei-japan': 1050000,
-    'sosei-oman': 920000,
-    'sosei-egypt': 760000,
-  };
+  const m = getPropertyMetrics(propertyId, period);
 
-  const roomRev = propertyRevenueMap[propertyId] ?? 1480000;
-  const fnbRev = Math.round(roomRev * 0.32);
-  const spaRev = Math.round(roomRev * 0.11);
-  const otherRev = Math.round(roomRev * 0.03);
-  const totalRev = roomRev + fnbRev + spaRev + otherRev;
+  const roomRev = m.roomRevenue;
+  const fnbRev = m.fnbRevenue;
+  const spaRev = m.spaRevenue;
+  const otherRev = m.experienceRevenue;
+  const totalRev = m.totalRevenue;
 
   const data = [
-    { dept: 'Rooms', today: `$${roomRev.toLocaleString()}`, rawVal: roomRev, trend: '↑ 14.0%', up: true },
-    { dept: 'F&B', today: `$${fnbRev.toLocaleString()}`, rawVal: fnbRev, trend: '↑ 8.5%', up: true },
-    { dept: 'Spa & Wellness', today: `$${spaRev.toLocaleString()}`, rawVal: spaRev, trend: '↑ 11.2%', up: true },
-    { dept: 'Other Income', today: `$${otherRev.toLocaleString()}`, rawVal: otherRev, trend: '↑ 5.0%', up: true },
+    { dept: 'Rooms', today: fmtUsdFull(roomRev), rawVal: roomRev, trend: fmtTrendArrow(m.vsLy.roomRevenuePct), up: m.vsLy.roomRevenuePct >= 0 },
+    { dept: 'F&B', today: fmtUsdFull(fnbRev), rawVal: fnbRev, trend: fmtTrendArrow(m.vsLy.fnbRevenuePct), up: m.vsLy.fnbRevenuePct >= 0 },
+    { dept: 'Spa & Wellness', today: fmtUsdFull(spaRev), rawVal: spaRev, trend: fmtTrendArrow(m.vsLy.spaRevenuePct), up: m.vsLy.spaRevenuePct >= 0 },
+    { dept: 'Activities & Experiences', today: fmtUsdFull(otherRev), rawVal: otherRev, trend: fmtTrendArrow(m.vsLy.experienceRevenuePct), up: m.vsLy.experienceRevenuePct >= 0 },
   ];
 
-  const totals = { today: `$${totalRev.toLocaleString()}`, trend: '↑ 12.8%', up: true };
-  const activePropName = propertyName || 'SOSEI Barcelona';
+  const totals = {
+    today: fmtUsdFull(totalRev),
+    trend: fmtTrendArrow(m.vsLy.totalRevenuePct),
+    up: m.vsLy.totalRevenuePct >= 0,
+  };
+  const activePropName = propertyName || m.name;
 
   return (
     <div 
@@ -48,7 +49,7 @@ export function RevenueByDepartmentWidget({
       onClick={() => openDrawer({ 
         type: 'DEPARTMENT_REVENUE', 
         title: `Department Revenue — ${activePropName}`, 
-        data: { propertyId, propertyName: activePropName, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals } 
+        data: { propertyId, propertyName: activePropName, period, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals } 
       })}
     >
       <div className="flex justify-between items-center mb-3 h-4 shrink-0">
@@ -61,14 +62,14 @@ export function RevenueByDepartmentWidget({
               openDrawer({
                 type: 'DEPARTMENT_REVENUE',
                 title: `Department Revenue — ${activePropName}`,
-                data: { propertyId, propertyName: activePropName, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals }
+                data: { propertyId, propertyName: activePropName, period, roomRev, fnbRev, spaRev, otherRev, totalRev, data, totals }
               });
             }}
             className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
           >
             <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
           </button>
-          <InfoTooltip text="Income breakdown across rooms, food & beverage, spa, and miscellaneous departments." />
+          <InfoTooltip text="Income breakdown across rooms, food & beverage, spa, and experience departments." />
         </div>
       </div>
 

@@ -27,7 +27,19 @@ import { IN_HOUSE_FNB_GUESTS } from '@/features/fnb/data/fnbMenuData';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
-import { getPortfolioMetrics, getPropertyMetrics, PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
+import {
+  getPortfolioMetrics,
+  getPropertyMetrics,
+  splitByShares,
+  PERIOD_DEFS,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
+  buildExperienceKpis,
+  getExperienceCategoryRows,
+  getExperienceModelRows,
+  getPropertySessionMatrix,
+} from '@/data/portfolio/experienceMix';
 
 const geoUrl = 'https://unpkg.com/world-atlas@2.0.2/countries-110m.json';
 
@@ -402,6 +414,7 @@ function useExperienceFilteredAnalytics(
     const factor = 1;
     const m = getPortfolioMetrics(ids, horizon);
     const e = m.experiences;
+    const kpis = buildExperienceKpis(m, horizon);
 
     const totalPaidRev = m.experienceRevenue;
     const totalParticipants = e.attendances;
@@ -450,20 +463,27 @@ function useExperienceFilteredAnalytics(
                 isTotal: false,
               };
             })
-        : [
-            { region: 'Asia Pacific', weight: 36.5, capOffset: 1.8 },
-            { region: 'Europe', weight: 25.5, capOffset: -1.2 },
-            { region: 'America', weight: 19.0, capOffset: 2.4 },
-            { region: 'Middle East', weight: 11.5, capOffset: 4.1 },
-            { region: 'Africa', weight: 7.5, capOffset: -4.6 },
-          ].map((g) => ({
-            region: g.region,
-            shareNum: g.weight,
-            partShare: `${g.weight.toFixed(1)}%`,
-            capture: `${Math.min(96, Math.max(35, avgParticipation + g.capOffset)).toFixed(1)}%`,
-            revenue: fmtMoney(totalPaidRev * (g.weight / 100)),
-            isTotal: false,
-          }));
+        : (() => {
+            const weights = [36.5, 25.5, 19.0, 11.5, 7.5];
+            const revs = splitByShares(
+              totalPaidRev,
+              weights.map((w, idx) => ({ id: String(idx), name: String(idx), share: w }))
+            );
+            return [
+              { region: 'Asia Pacific', weight: 36.5, capOffset: 1.8 },
+              { region: 'Europe', weight: 25.5, capOffset: -1.2 },
+              { region: 'America', weight: 19.0, capOffset: 2.4 },
+              { region: 'Middle East', weight: 11.5, capOffset: 4.1 },
+              { region: 'Africa', weight: 7.5, capOffset: -4.6 },
+            ].map((g, idx) => ({
+              region: g.region,
+              shareNum: g.weight,
+              partShare: `${g.weight.toFixed(1)}%`,
+              capture: `${Math.min(96, Math.max(35, avgParticipation + g.capOffset)).toFixed(1)}%`,
+              revenue: fmtMoney(revs[idx].value),
+              isTotal: false,
+            }));
+          })();
 
     const geoTable = [
       ...geoRows,
@@ -477,20 +497,21 @@ function useExperienceFilteredAnalytics(
       },
     ];
 
-    const categoryShares = [
-      { name: 'Water & Marine', share: 24, color: '#0f172a', util: '88.4%' },
-      { name: 'Yoga & Meditation', share: 21, color: '#334155', util: '86.2%' },
-      { name: 'Nature & Adventure', share: 20, color: '#64748b', util: '83.5%' },
-      { name: 'Culture & Workshops', share: 19, color: '#94a3b8', util: '79.6%' },
-      { name: "Kids' Club & Family", share: 16, color: '#cbd5e1', util: '82.4%' },
-    ];
+    const catRows = getExperienceCategoryRows(m);
+    const categoryShares = catRows.map((c) => ({
+      name: c.name,
+      share: c.sharePct,
+      color: c.color,
+      util: `${c.utilPct.toFixed(1)}%`,
+      attendances: c.attendances,
+    }));
 
     const categoryTable = [
       ...categoryShares.map((c) => ({
         category: c.name,
         share: `${c.share}%`,
         util: c.util,
-        attendees: fmtCount(totalParticipants * (c.share / 100)),
+        attendees: fmtCount(c.attendances),
         isTotal: false,
       })),
       {
@@ -502,15 +523,21 @@ function useExperienceFilteredAnalytics(
       },
     ];
 
-    const commercialMix = [
-      { name: 'Complimentary Stay-Enrich', share: avgCompShare, color: '#0f172a', yield: '4.91 CSAT' },
-      { name: 'Paid Private & Bespoke', share: Math.round((100 - avgCompShare) * 0.42), color: '#334155', yield: fmtMoney(totalPaidRev * 0.46) },
-      { name: 'Paid Group Guided', share: Math.round((100 - avgCompShare) * 0.30), color: '#64748b', yield: fmtMoney(totalPaidRev * 0.26) },
-      { name: 'External Partner Trips', share: Math.round((100 - avgCompShare) * 0.16), color: '#94a3b8', yield: fmtMoney(totalPaidRev * 0.20) },
-      { name: 'Package & Upgrades', share: Math.max(2, 100 - avgCompShare - Math.round((100 - avgCompShare) * 0.88)), color: '#cbd5e1', yield: fmtMoney(totalPaidRev * 0.08) },
-    ];
+    const modelRows = getExperienceModelRows(m);
+    const commercialMix = modelRows.map((row, idx) => ({
+      name: row.name,
+      share: Math.round(row.attendanceSharePct),
+      attendances: row.attendances,
+      color: COLOR_PALETTE[idx] || COLOR_PALETTE[COLOR_PALETTE.length - 1],
+      yield: row.isComplimentary
+        ? `${((m.experiences.qualityPct / 100) * 5).toFixed(2)} CSAT`
+        : fmtMoney(row.revenue),
+    }));
 
     return {
+      horizon,
+      propertyIds: ids,
+      kpis,
       activeProps,
       horizonMeta,
       totalPaidRev,
@@ -557,67 +584,15 @@ function ExperienceAnalyticsBody({
     regionColors[reg] = COLOR_PALETTE[idx] || COLOR_PALETTE[COLOR_PALETTE.length - 1];
   });
 
-  const kpis = [
-    {
-      id: 'participation',
-      label: 'GUEST PARTICIPATION RATE',
-      tooltip: 'Unique eligible in-house guests participating in ≥1 activity ÷ eligible in-house guests.',
-      value: `${analytics.avgParticipation}%`,
-      vsLy: '+5.4 pts vs LY',
-      sub1: `${fmtCount(analytics.totalParticipants)} Attendees`,
-      sub2: '1.92 Act / Stay',
-    },
-    {
-      id: 'utilization',
-      label: 'CAPACITY UTILIZATION',
-      tooltip: 'Actual attendees ÷ available participant capacity for delivered sessions.',
-      value: `${analytics.avgCapUtil}%`,
-      vsLy: '+4.2 pts vs LY',
-      sub1: `${analytics.totalSessions.toLocaleString()} Sessions`,
-      sub2: `${analytics.totalPrograms} Programs`,
-    },
-    {
-      id: 'fulfillment',
-      label: 'DEMAND FULFILLMENT',
-      tooltip: 'Bookings accommodated ÷ total valid demand including waitlists and turnaways.',
-      value: `${analytics.avgFulfillment}%`,
-      vsLy: '+3.1 pts vs LY',
-      sub1: `${analytics.totalWaitlist} Waitlisted`,
-      sub2: '3.8% No-Show',
-    },
-    {
-      id: 'quality',
-      label: 'EXPERIENCE QUALITY',
-      tooltip: 'Guest satisfaction score, repeat participation rate, and service quality.',
-      value: `${analytics.avgQuality}%`,
-      vsLy: '+1.4 pts vs LY',
-      sub1: '4.88 / 5.0 CSAT',
-      sub2: '41.2% Repeat',
-    },
-    {
-      id: 'readiness',
-      label: 'STAFF & SESSION READINESS',
-      tooltip: 'Sessions deliverable with certified instructors, equipment, and safe conditions.',
-      value: `${analytics.avgReadiness}%`,
-      vsLy: '+1.8 pts vs LY',
-      sub1: '99.4% Cert Staff',
-      sub2: '0 Severe Incidents',
-    },
-    {
-      id: 'contribution',
-      label: 'PORTFOLIO CONTRIBUTION',
-      tooltip: 'Paid commercial experience revenue alongside complimentary stay-enriching participation.',
-      value: fmtMoney(analytics.totalPaidRev),
-      vsLy: `${analytics.avgLflGrowth >= 0 ? '+' : ''}${analytics.avgLflGrowth}% vs LY`,
-      sub1: `${analytics.avgCompShare}% Comp / ${100 - analytics.avgCompShare}% Paid`,
-      sub2: '+1.4d Stay Uplift',
-    },
-  ];
-
   return (
     <div className="flex flex-col gap-4">
       {/* ───────────────── 5 CORE PERFORMANCE METRICS ───────────────── */}
-      <ExperienceKpiRow kpis={kpis} drawerTitleSuffix={selectionTitle} />
+      <ExperienceKpiRow
+        kpis={analytics.kpis}
+        drawerTitleSuffix={selectionTitle}
+        period={analytics.horizon}
+        propertyIds={analytics.propertyIds}
+      />
 
       {/* ───────────────── ROW 1: 3-COLUMN ANALYTICS (GEO MAP | CATEGORY MIX | PAID VS COMPLIMENTARY MIX) ───────────────── */}
       <div className="-mx-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
@@ -628,7 +603,11 @@ function ExperienceAnalyticsBody({
             openDrawer({
               type: 'EXPERIENCE_DETAIL',
               title: `Geographic Experience Participation — ${selectionTitle}`,
-              data: { key: 'EXP_HEADLINE_KPI', kpiId: 'participation' },
+              data: {
+                key: 'EXP_PARTICIPATION_CAPTURE',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -712,7 +691,11 @@ function ExperienceAnalyticsBody({
             openDrawer({
               type: 'EXPERIENCE_DETAIL',
               title: `Activity Portfolio Category Mix — ${selectionTitle}`,
-              data: { key: 'EXP_PORTFOLIO_TAXONOMY' },
+              data: {
+                key: 'EXP_CATEGORY_MIX',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -781,7 +764,11 @@ function ExperienceAnalyticsBody({
             openDrawer({
               type: 'EXPERIENCE_DETAIL',
               title: `Paid vs Complimentary Experience Role Mix — ${selectionTitle}`,
-              data: { key: 'EXP_COMMERCIAL_STAY_IMPACT' },
+              data: {
+                key: 'EXP_COMMERCIAL_MIX',
+                horizon: analytics.horizon,
+                propertyIds: analytics.propertyIds,
+              },
             })
           }
         >
@@ -830,7 +817,7 @@ function ExperienceAnalyticsBody({
                     <td className="py-2 pr-1 truncate">{row.name}</td>
                     <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">{row.share}%</td>
                     <td className="text-right py-2 px-1 truncate text-zinc-800">
-                      {fmtCount(analytics.totalParticipants * (row.share / 100))}
+                      {fmtCount(row.attendances)}
                     </td>
                     <td className="text-right py-2 pl-1 truncate text-zinc-900 font-semibold">{row.yield}</td>
                   </tr>
@@ -1288,6 +1275,11 @@ export function ExperiencePropertyDashboardPage() {
     [searchQuery]
   );
 
+  const propMetrics = useMemo(
+    () => getPropertyMetrics(selectedProperty.id, horizon),
+    [selectedProperty.id, horizon]
+  );
+
   const expRecord = useMemo(() => {
     const desc =
       EXPERIENCE_STATIC_DESCRIPTORS.find((p) => p.id === selectedProperty.id) ||
@@ -1297,129 +1289,95 @@ export function ExperiencePropertyDashboardPage() {
 
   const baseHorizonMeta = HORIZON_TABS.find((t) => t.id === horizon) || HORIZON_TABS[1];
   const horizonMeta = { ...baseHorizonMeta, factor: 1 };
-  const factor = 1;
 
-  const totalPaidRev = expRecord.mtdPaidRev * factor;
-  const totalParticipants = Math.round(expRecord.mtdParticipants * factor);
-  const totalSessions = Math.round(expRecord.mtdSessions * factor);
-  const totalWaitlist = Math.round(expRecord.mtdWaitlist * factor);
+  const sessionMatrix = useMemo(
+    () => getPropertySessionMatrix(selectedProperty.id, horizon),
+    [selectedProperty.id, horizon]
+  );
 
   const staffCapacityMatrix = useMemo(() => {
-    const sigs = expRecord.signatureExperiences.split('·').map((s) => s.trim());
-    return [
-      {
-        activity: `06:30 Sunrise Yoga & Pranayama (${selectedProperty.name.replace('SOSEI ', '')})`,
-        category: 'Yoga & Meditation',
-        commercial: 'Complimentary',
-        demand: '14 Booked',
-        capacity: '16 Places',
-        reqStaff: '1 RYT-500 Instructor',
-        availStaff: '1 Assigned',
-        state: 'Ready',
-        diagnosis: 'Healthy Fill (87.5%) · Pavilion Mats Sanitized',
-        tone: 'pos',
-      },
-      {
-        activity: `09:00 ${sigs[0] || 'Signature Guided Expedition'}`,
-        category: expRecord.leadPillar.split('/')[0].trim(),
-        commercial: 'Paid ($240/pax)',
-        demand: '12 Booked + 5 Waitlist',
-        capacity: '12 Places',
-        reqStaff: '2 Certified Guides + 1 Safety',
-        availStaff: '3 Assigned (Full Crew)',
-        state: 'Capacity Constrained',
-        diagnosis: 'Turnaway Alert: 5 Guests Waitlisted → Add 14:30 afternoon departure',
-        tone: 'warn',
-      },
-      {
-        activity: "10:00 Kids' Club Nature & Craft Discovery (Ages 4–12)",
-        category: "Kids' Club",
-        commercial: 'Complimentary',
-        demand: '14 Checked In (18 Reg)',
-        capacity: '18 Places',
-        reqStaff: '1:5 Ratio (3 Certified Staff)',
-        availStaff: '3 Assigned (Pediatric First-Aid)',
-        state: 'Ready (Ratio Verified)',
-        diagnosis: '1:4.6 Active Supervision Ratio · Guardian Pickup PIN Locked',
-        tone: 'pos',
-      },
-      {
-        activity: `16:00 ${sigs[1] || 'Private Bespoke Charter'}`,
-        category: 'Signature & Bespoke',
-        commercial: 'Paid Private ($1,850)',
-        demand: '4 Pax (VIP Suite)',
-        capacity: '6 Places',
-        reqStaff: '1 Lead Master + 1 Host',
-        availStaff: '1 Lead Assigned · 1 Host Reallocating',
-        state: 'At Risk (Staffing)',
-        diagnosis: 'Operationally Constrained: Reassign Experience Host by 14:00',
-        tone: 'neg',
-      },
-      {
-        activity: '17:30 Sunset Sound Healing & Breathwork',
-        category: 'Yoga & Meditation',
-        commercial: 'Complimentary',
-        demand: '3 Booked',
-        capacity: '12 Places',
-        reqStaff: '1 Mindfulness Facilitator',
-        availStaff: '1 Assigned',
+    const sigFirst = expRecord.signatureExperiences.split('·')[0].trim();
+    return sessionMatrix.rows.map((r) => {
+      if (r.id === 'yoga') {
+        return {
+          activity: `${r.time} · Morning Movement & Breathwork`,
+          category: 'Wellness & Movement',
+          commercial: 'Complimentary',
+          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
+          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
+          reqStaff: `${r.staffRequired.toLocaleString()} Certified Guides`,
+          availStaff: `${r.staffAssigned.toLocaleString()} On Roster`,
+          state: 'Ready / Full',
+          diagnosis: 'Fully staffed · Venue & audio pre-checked',
+          tone: 'pos' as const,
+        };
+      }
+      if (r.id === 'expedition') {
+        return {
+          activity: `${r.time} · ${sigFirst}`,
+          category: expRecord.leadPillar,
+          commercial: `Paid ($${Math.round(sessionMatrix.revenuePerPaid * 1.15)}/pax)`,
+          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
+          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
+          reqStaff: `${r.staffRequired.toLocaleString()} Certified Specialists`,
+          availStaff: `${r.staffAssigned.toLocaleString()} On Roster`,
+          state: 'Capacity Constrained',
+          diagnosis:
+            r.staffAssigned < r.staffRequired
+              ? 'Specialist shortage — deploy standby guide to clear waitlist'
+              : 'High demand — add afternoon relief departure',
+          tone: 'warn' as const,
+        };
+      }
+      if (r.id === 'kids') {
+        return {
+          activity: `${r.time} · Young Explorers Discovery`,
+          category: "Kids' Club & Family",
+          commercial: 'Package Included',
+          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
+          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
+          reqStaff: `${r.staffRequired.toLocaleString()} Childcare (1:4 Ratio)`,
+          availStaff: `${r.staffAssigned.toLocaleString()} Verified (1:${sessionMatrix.kids.effectiveRatio.toFixed(1)})`,
+          state: 'Ready / Compliant',
+          diagnosis: `Guardian PIN & allergy flags verified (${sessionMatrix.kids.careFlags} care alerts)`,
+          tone: 'pos' as const,
+        };
+      }
+      if (r.id === 'private') {
+        return {
+          activity: `${r.time} · Private Bespoke Charter / Immersion`,
+          category: 'Signature & Bespoke',
+          commercial: `Private Buyout ($${Math.round(sessionMatrix.revenuePerPaid * 3.8)})`,
+          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
+          capacity: `${r.capacity.toLocaleString()} Charters (${r.fillPct}%)`,
+          reqStaff: `${r.staffRequired.toLocaleString()} Master Guides + Crew`,
+          availStaff: `${r.staffAssigned.toLocaleString()} Assigned`,
+          state: r.state === 'at_risk' ? 'Operationally At Risk' : 'Capacity Constrained',
+          diagnosis:
+            r.state === 'at_risk'
+              ? 'Guide relief required at 15:30 — cross-utilize senior facilitator'
+              : 'Convert waitlisted couples to sunset private slot',
+          tone: (r.state === 'at_risk' ? 'neg' : 'warn') as 'neg' | 'warn',
+        };
+      }
+      return {
+        activity: `${r.time} · Twilight Sound Healing & Ritual`,
+        category: 'Mindfulness & Holistic',
+        commercial: 'Complimentary / Tiered',
+        demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
+        capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
+        reqStaff: `${r.staffRequired.toLocaleString()} Sound Practitioner`,
+        availStaff: `${r.staffAssigned.toLocaleString()} Assigned`,
         state: 'Low Demand',
-        diagnosis: 'Low Demand (25% Fill): Do NOT add staff; prompt Concierge invitation',
-        tone: 'neutral',
-      },
-    ];
-  }, [expRecord, selectedProperty.name]);
-
-  const kpis = [
-    {
-      id: 'participation',
-      label: 'GUEST PARTICIPATION RATE',
-      value: `${expRecord.participationRate}%`,
-      vsLy: '+5.2 pts vs LY',
-      sub1: `${fmtCount(totalParticipants)} Attendees`,
-      sub2: `${expRecord.rooms} Keys`,
-    },
-    {
-      id: 'utilization',
-      label: 'CAPACITY UTILIZATION',
-      value: `${expRecord.capacityUtil}%`,
-      vsLy: '+4.0 pts vs LY',
-      sub1: `${totalSessions} Sessions`,
-      sub2: `${expRecord.programsCount} Programs`,
-    },
-    {
-      id: 'fulfillment',
-      label: 'DEMAND FULFILLMENT',
-      value: `${expRecord.demandFulfillment}%`,
-      vsLy: '+2.8 pts vs LY',
-      sub1: `${totalWaitlist} Waitlisted`,
-      sub2: '3.6% No-Show',
-    },
-    {
-      id: 'quality',
-      label: 'EXPERIENCE QUALITY',
-      value: `${expRecord.qualityScore}%`,
-      vsLy: '+1.5 pts vs LY',
-      sub1: '4.90 / 5.0 CSAT',
-      sub2: '42% Repeat',
-    },
-    {
-      id: 'readiness',
-      label: 'STAFF & SESSION READINESS',
-      value: `${expRecord.readinessScore}%`,
-      vsLy: '+1.7 pts vs LY',
-      sub1: '100% Cert Staff',
-      sub2: '0 Incidents',
-    },
-    {
-      id: 'contribution',
-      label: 'PORTFOLIO CONTRIBUTION',
-      value: fmtMoney(totalPaidRev),
-      vsLy: `${expRecord.lflGrowth >= 0 ? '+' : ''}${expRecord.lflGrowth}% vs LY`,
-      sub1: `${expRecord.compSharePct}% Comp / ${100 - expRecord.compSharePct}% Paid`,
-      sub2: '+1.4d Stay Uplift',
-    },
-  ];
+        diagnosis: 'Surplus capacity — trigger 15:00 Butler pre-dinner push',
+        tone: 'neutral' as const,
+      };
+    });
+  }, [sessionMatrix, expRecord]);
+  const kpis = useMemo(
+    () => buildExperienceKpis(propMetrics, horizon),
+    [propMetrics, horizon]
+  );
 
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
@@ -1529,7 +1487,7 @@ export function ExperiencePropertyDashboardPage() {
 
             <div className="overflow-y-auto custom-scrollbar max-h-[280px] p-1.5">
               {filteredDropdownProps.map((prop) => {
-                const pRec = MASTER_EXPERIENCE_PROPERTIES.find((m) => m.id === prop.id);
+                const pM = getPropertyMetrics(prop.id, horizon);
                 const isSelected = selectedProperty.id === prop.id;
                 return (
                   <button
@@ -1550,7 +1508,7 @@ export function ExperiencePropertyDashboardPage() {
                         {prop.name}
                       </div>
                       <div className="text-[9px] text-zinc-500 mt-0.5 truncate">
-                        {prop.location} · {pRec ? `${pRec.participationRate}% Part.` : ''}
+                        {prop.location} · {pM.experiences.participationRatePct.toFixed(1)}% Part. · {fmtMoney(pM.experienceRevenue)}
                       </div>
                     </div>
                   </button>
@@ -1561,7 +1519,12 @@ export function ExperiencePropertyDashboardPage() {
         )}
       </div>
 
-      <ExperienceKpiRow kpis={kpis} drawerTitleSuffix={selectedProperty.name} />
+      <ExperienceKpiRow
+        kpis={kpis}
+        drawerTitleSuffix={selectedProperty.name}
+        period={horizon}
+        propertyIds={[selectedProperty.id]}
+      />
 
       {/* Section 3A: Staff Availability & Capacity Matrix */}
       <div className="-mx-4 rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 animate-card-enter">
@@ -1575,7 +1538,7 @@ export function ExperiencePropertyDashboardPage() {
             </p>
           </div>
           <span className="text-[8.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700">
-            {expRecord.programsCount} Active Programs · Go/No-Go Verified
+            {expRecord.programsCount} Active Programs · {sessionMatrix.attendances.toLocaleString()} Booked / {sessionMatrix.capacity.toLocaleString()} Cap
           </span>
         </div>
 
@@ -1636,7 +1599,12 @@ export function ExperiencePropertyDashboardPage() {
               openDrawer({
                 type: 'EXPERIENCE_DETAIL',
                 title: `Kids' Club — Daily Control View (${selectedProperty.name})`,
-                data: { key: 'EXP_KIDS_CLUB_CONTROL' },
+                data: {
+                  key: 'EXP_KIDS_CLUB_CONTROL',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: [selectedProperty.id],
+                },
               })
             }
           >
@@ -1656,10 +1624,14 @@ export function ExperiencePropertyDashboardPage() {
 
             <div className="grid grid-cols-4 gap-2 mb-3">
               {[
-                { label: 'Registered', val: '18', sub: 'Age Verified' },
-                { label: 'Checked In', val: '14', sub: 'On-Site Now' },
-                { label: 'Staff Assigned', val: '3', sub: '1:4.6 Ratio' },
-                { label: 'Collection Pending', val: '2', sub: 'PIN Locked' },
+                { label: 'Registered', val: sessionMatrix.kids.registered.toLocaleString(), sub: 'Age Verified' },
+                { label: 'Checked In', val: sessionMatrix.kids.checkedIn.toLocaleString(), sub: 'On-Site Active' },
+                {
+                  label: 'Staff Assigned',
+                  val: sessionMatrix.kids.staffAssigned.toLocaleString(),
+                  sub: `1:${sessionMatrix.kids.effectiveRatio.toFixed(1)} Ratio`,
+                },
+                { label: 'Collection Pending', val: sessionMatrix.kids.collectionPending.toLocaleString(), sub: 'PIN Locked' },
               ].map((k) => (
                 <div key={k.label} className="p-2 rounded-lg bg-zinc-50 border border-zinc-200/60">
                   <div className="text-[8px] uppercase tracking-wider text-zinc-400">{k.label}</div>
@@ -1689,7 +1661,21 @@ export function ExperiencePropertyDashboardPage() {
         </div>
 
         <div className="col-span-12 lg:col-span-5 flex flex-col">
-          <div className={CARD_CLASS}>
+          <div
+            className={CARD_CLASS}
+            onClick={() =>
+              openDrawer({
+                type: 'EXPERIENCE_DETAIL',
+                title: `Equipment, Safety & Tomorrow Handover (${selectedProperty.name})`,
+                data: {
+                  key: 'EXP_READINESS_SAFETY',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: [selectedProperty.id],
+                },
+              })
+            }
+          >
             <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200/80 mb-3">
               <div>
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
@@ -1708,8 +1694,8 @@ export function ExperiencePropertyDashboardPage() {
               {[
                 {
                   title: 'Equipment & Venue Inspection',
-                  desc: '97.4% equipment ready; O2 kit, VHF radio, mats, and marine gear pre-checked.',
-                  badge: '97.4% Ready',
+                  desc: `${sessionMatrix.readinessPct.toFixed(1)}% equipment ready; O2 kit, VHF radio, mats, and marine gear pre-checked.`,
+                  badge: `${sessionMatrix.readinessPct.toFixed(1)}% Ready`,
                 },
                 {
                   title: 'Weather & Sea-State Authority',
@@ -1718,8 +1704,8 @@ export function ExperiencePropertyDashboardPage() {
                 },
                 {
                   title: 'Tomorrow Arrival & Commercial Handover',
-                  desc: '8 arriving families pre-booked; 3 waitlisted couples flagged for private charter upgrade.',
-                  badge: '+$4,350 Opp',
+                  desc: `${sessionMatrix.familiesArriving} arriving families pre-booked; ${sessionMatrix.waitlistedCouples} waitlisted couples flagged for private charter upgrade.`,
+                  badge: `+${fmtMoney(sessionMatrix.upsellOpportunity)} Opp`,
                 },
               ].map((item) => (
                 <div key={item.title} className="p-2.5 rounded-lg bg-zinc-50/70 border border-zinc-100">

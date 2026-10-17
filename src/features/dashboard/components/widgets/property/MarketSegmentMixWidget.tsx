@@ -1,68 +1,52 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import {
+  getPropertyMetrics,
+  fmtUsd,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
+  MARKET_SEGMENT_MIX,
+  buildRoomMix,
+} from '@/data/portfolio/hospitalitySubMix';
 
 export function MarketSegmentMixWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  // Property room revenue & ADR mapping for mathematical consistency
-  const propertyBaseMetrics: Record<string, { roomRev: number; adr: number }> = {
-    'sosei-barcelona': { roomRev: 1480000, adr: 1320 },
-    'sosei-tokyo': { roomRev: 1350000, adr: 1450 },
-    'sosei-bali': { roomRev: 980000, adr: 1180 },
-    'sosei-maldives': { roomRev: 1850000, adr: 2650 },
-    'sosei-switzerland': { roomRev: 1950000, adr: 2850 },
-    'sosei-canada': { roomRev: 1120000, adr: 1680 },
-    'sosei-costa-rica': { roomRev: 820000, adr: 1220 },
-    'sosei-japan': { roomRev: 1050000, adr: 1580 },
-    'sosei-oman': { roomRev: 920000, adr: 1380 },
-    'sosei-egypt': { roomRev: 760000, adr: 1150 },
-  };
+  const m = getPropertyMetrics(propertyId, period);
+  const rows = buildRoomMix(MARKET_SEGMENT_MIX, m.roomsSold, m.roomRevenue);
 
-  const base = propertyBaseMetrics[propertyId] ?? propertyBaseMetrics['sosei-barcelona'];
-
-  // Standardized 5 market segments matching global overview & category dashboards
-  const data = [
-    { name: 'Leisure', value: 55, color: '#0f172a', adrFactor: 0.92 },
-    { name: 'Business', value: 25, color: '#334155', adrFactor: 1.09 },
-    { name: 'Social', value: 10, color: '#64748b', adrFactor: 0.68 },
-    { name: 'MICE', value: 7, color: '#94a3b8', adrFactor: 0.97 },
-    { name: 'Others', value: 3, color: '#cbd5e1', adrFactor: 0.61 },
-  ];
+  const data = rows.map((row) => ({
+    name: row.name,
+    value: Math.round(row.sharePct),
+    color: row.color || '#0f172a',
+  }));
 
   // Derive structured table rows compatible with MarketSegmentDrawerContent
-  const segmentTable = data.map(item => {
-    const segRev = Math.round(base.roomRev * (item.value / 100));
-    const segAdr = Math.round(base.adr * item.adrFactor);
-    const revStr = segRev >= 1000000
-      ? `$${(segRev / 1000000).toFixed(2)}M`
-      : `$${Math.round(segRev / 1000)}K`;
-
-    return {
-      segment: item.name,
-      rnights: `${item.value}%`,
-      adr: `$${segAdr.toLocaleString()}`,
-      revenue: revStr,
-      isPositive: true,
-    };
-  });
-
-  const totalRevStr = base.roomRev >= 1000000
-    ? `$${(base.roomRev / 1000000).toFixed(2)}M`
-    : `$${Math.round(base.roomRev / 1000)}K`;
+  const segmentTable = rows.map((row) => ({
+    segment: row.name,
+    rnights: `${Math.round(row.sharePct)}%`,
+    adr: fmtUsdFull(row.adr),
+    revenue: fmtUsd(row.revenue),
+    isPositive: row.trendPct >= 0,
+  }));
 
   segmentTable.push({
     segment: 'Total',
     rnights: '100%',
-    adr: `$${base.adr.toLocaleString()}`,
-    revenue: totalRevStr,
+    adr: fmtUsdFull(m.adr),
+    revenue: fmtUsd(m.roomRevenue),
     isTotal: true,
   } as any);
 

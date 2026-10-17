@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
-import { simulatedCategoryPerformance } from '../../services/propertySimulation';
+import { getCategoryPerformance } from '../../services/propertySimulation';
+import {
+  getPortfolioMetrics,
+  PERIOD_DEFS,
+  fmtUsd,
+  fmtPct,
+  fmtSignedPts,
+  fmtSignedPct,
+  fmtSignedUsd,
+  type PeriodId,
+} from '@/data/portfolio';
 
 export type TimeHorizon = 'today' | 'mtd' | 'ytd';
 
@@ -11,131 +21,34 @@ interface PortfolioPerformanceDrawerContentProps {
   };
 }
 
-function getDynamicPeriodLabel(h: TimeHorizon): string {
-  const now = new Date();
-  const monthLong = now.toLocaleString('en-US', { month: 'long' });
-  const monthShort = now.toLocaleString('en-US', { month: 'short' });
-  const day = now.getDate();
-  const year = now.getFullYear();
-
-  if (h === 'today') return `Today, ${monthLong} ${day}, ${year}`;
-  if (h === 'mtd') return `${monthLong} 1–${day}, ${year}`;
-  if (h === 'ytd') return `Jan 1 – ${monthShort} ${day}, ${year}`;
-  return '';
-}
-
 export function PortfolioPerformanceDrawerContent({ config }: PortfolioPerformanceDrawerContentProps) {
-  const initialHorizon: TimeHorizon = config?.data?.horizon || 'mtd';
+  const initialHorizon: TimeHorizon =
+    config?.data?.horizon || config?.data?.period || 'mtd';
   const [horizon, setHorizon] = useState<TimeHorizon>(initialHorizon);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
-  const activePeriodLabel = getDynamicPeriodLabel(horizon);
+  useEffect(() => {
+    const nextHorizon = config?.data?.horizon || config?.data?.period;
+    if (nextHorizon === 'today' || nextHorizon === 'mtd' || nextHorizon === 'ytd') {
+      setHorizon(nextHorizon);
+    }
+  }, [config?.data?.horizon, config?.data?.period]);
 
-  // Scaled data generator for the 5 collections & 10 sanctuaries
-  const getHorizonCategoryData = (h: TimeHorizon) => {
-    return simulatedCategoryPerformance.map((cat) => {
-      if (h === 'today') {
-        const factor = 1 / 30; // Daily proportion of MTD
-        const occNum = Math.min(92, cat.occNum + 2.5);
-        const adrNum = Math.round(cat.adrNum * 1.03);
-        const revparNum = Math.round((occNum / 100) * adrNum);
-        const revK = Math.round((cat.revenueNum * 1000 * factor));
+  const periodId: PeriodId = horizon;
+  const activePeriodLabel = PERIOD_DEFS[periodId].periodLabel;
+  const currentCategories = getCategoryPerformance(periodId);
+  const m = getPortfolioMetrics(undefined, periodId);
 
-        return {
-          ...cat,
-          occ: `${occNum.toFixed(2)}%`,
-          adr: `$${adrNum.toLocaleString()}`,
-          revenue: `$${revK.toLocaleString()}K`,
-          revpar: `$${revparNum.toLocaleString()}`,
-          status: 'Active Today',
-          children: cat.children.map((ch) => {
-            const chOcc = Math.min(95, parseFloat(ch.occ) + 2.2);
-            const chAdr = Math.round(parseInt(ch.adr.replace(/[^0-9]/g, '')) * 1.03);
-            const chRevpar = Math.round((chOcc / 100) * chAdr);
-            const chRevM = parseFloat(ch.revenue.replace(/[^0-9.]/g, ''));
-            const chRevK = Math.round((chRevM * 1000 * factor));
-            return {
-              ...ch,
-              occ: `${chOcc.toFixed(2)}%`,
-              adr: `$${chAdr.toLocaleString()}`,
-              revenue: `$${chRevK.toLocaleString()}K`,
-              revpar: `$${chRevpar.toLocaleString()}`,
-            };
-          }),
-        };
-      } else if (h === 'ytd') {
-        const factor = 8.4; // Cumulative YTD multiple of MTD
-        const occNum = Math.min(90, cat.occNum + 1.2);
-        const adrNum = Math.round(cat.adrNum * 1.015);
-        const revparNum = Math.round((occNum / 100) * adrNum);
-        const revM = (cat.revenueNum * factor).toFixed(2);
-
-        return {
-          ...cat,
-          occ: `${occNum.toFixed(2)}%`,
-          adr: `$${adrNum.toLocaleString()}`,
-          revenue: `$${revM}M`,
-          revpar: `$${revparNum.toLocaleString()}`,
-          status: 'Ahead of Target',
-          children: cat.children.map((ch) => {
-            const chOcc = Math.min(92, parseFloat(ch.occ) + 1.0);
-            const chAdr = Math.round(parseInt(ch.adr.replace(/[^0-9]/g, '')) * 1.015);
-            const chRevpar = Math.round((chOcc / 100) * chAdr);
-            const chRevM = (parseFloat(ch.revenue.replace(/[^0-9.]/g, '')) * factor).toFixed(2);
-            return {
-              ...ch,
-              occ: `${chOcc.toFixed(2)}%`,
-              adr: `$${chAdr.toLocaleString()}`,
-              revenue: `$${chRevM}M`,
-              revpar: `$${chRevpar.toLocaleString()}`,
-            };
-          }),
-        };
-      } else {
-        // MTD (Month-To-Date base)
-        return {
-          ...cat,
-          children: cat.children.map(ch => ({ ...ch })),
-        };
-      }
-    });
-  };
-
-  const currentCategories = getHorizonCategoryData(horizon);
-
-  // Horizon metrics summary cards
   const summaryMetrics = {
-    today: {
-      totalRev: '$5.10M',
-      revVsLy: '+9.4% vs LY',
-      occ: '76.80%',
-      occVsLy: '+5.2 pts vs LY',
-      adr: '$1,465.00',
-      adrVsLy: '+$97 vs LY (+7.1%)',
-      revpar: '$1,125.00',
-      revparVsLy: '+$104 vs LY (+10.2%)',
-    },
-    mtd: {
-      totalRev: '$152.00M',
-      revVsLy: '+11.0% vs LY',
-      occ: '74.20%',
-      occVsLy: '+4.8 pts vs LY',
-      adr: '$1,420.00',
-      adrVsLy: '+$85 vs LY (+6.0%)',
-      revpar: '$1,054.00',
-      revparVsLy: '+$92 vs LY (+8.5%)',
-    },
-    ytd: {
-      totalRev: '$1.28B',
-      revVsLy: '+12.4% vs LY',
-      occ: '75.40%',
-      occVsLy: '+5.6 pts vs LY',
-      adr: '$1,440.00',
-      adrVsLy: '+$106 vs LY (+8.0%)',
-      revpar: '$1,085.00',
-      revparVsLy: '+$112 vs LY (+11.5%)',
-    },
-  }[horizon];
+    totalRev: fmtUsd(m.totalRevenue),
+    revVsLy: `${fmtSignedPct(m.vsLy.totalRevenuePct)} vs LY`,
+    occ: fmtPct(m.occupancyPct, 1),
+    occVsLy: `${fmtSignedPts(m.vsLy.occupancyPts)} vs LY`,
+    adr: fmtUsd(m.adr),
+    adrVsLy: `${fmtSignedUsd(m.vsLy.adrAbs)} vs LY (${fmtSignedPct(m.vsLy.adrPct)})`,
+    revpar: fmtUsd(m.revpar),
+    revparVsLy: `${fmtSignedUsd(m.vsLy.revparAbs)} vs LY (${fmtSignedPct(m.vsLy.revparPct)})`,
+  };
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -274,7 +187,7 @@ export function PortfolioPerformanceDrawerContent({ config }: PortfolioPerforman
               })}
               <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
                 <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">10 Sanctuaries Worldwide</td>
+                <td className="py-3 px-3 text-zinc-500">{m.propertyCount} Sanctuaries Worldwide</td>
                 <td className="py-3 px-3 text-right text-emerald-700 font-bold">{summaryMetrics.occ}</td>
                 <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{summaryMetrics.adr}</td>
                 <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{summaryMetrics.totalRev}</td>

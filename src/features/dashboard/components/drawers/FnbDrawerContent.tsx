@@ -1,3 +1,38 @@
+import {
+  PERIOD_DEFS,
+  PORTFOLIO_PROPERTY_IDS,
+  fmtCompactInt,
+  fmtInt,
+  fmtPct,
+  fmtSignedPct,
+  fmtUsd,
+  fmtUsdFull,
+  getPortfolioMetrics,
+} from '@/data/portfolio';
+import type { PeriodId } from '@/data/portfolio';
+import {
+  FNB_COST_PROFILE,
+  FNB_GUEST_EXPERIENCE,
+  FNB_PERIOD_SUFFIX,
+  FNB_SERVICE_SIGNALS,
+  diningGuestNights,
+  fnbChecks,
+  getFnbCapacity,
+  getFnbCentres,
+  getFnbCuisines,
+  getFnbDayparts,
+  getFnbDemandSources,
+  getFnbForwardOutlook,
+  getFnbHeaderContext,
+  getFnbHeadlineKpis,
+  getFnbOperationalSignals,
+  getFnbOrigins,
+  getFnbOutletGroups,
+  getFnbPenetrationRows,
+  getFnbResortRanking,
+  getFnbSignatureDishes,
+} from '@/data/portfolio/fnbMix';
+
 interface FnbDrawerContentProps {
   config: {
     title?: string;
@@ -5,49 +40,108 @@ interface FnbDrawerContentProps {
   };
 }
 
+const CENTRE_INSIGHTS: Record<string, string> = {
+  fine: 'Separates weak demand from limited seating across prime dinner sittings.',
+  allday: 'Ties breakfast & buffet demand directly to resort occupancy and meal-plan entitlements.',
+  bars: 'Captures sunset golden-hour footfall and post-dinner cellar spillover.',
+  inVilla: 'Segmented by suite/villa tier, stay stage, and dispatch SLA window.',
+  pool: 'Monitors post-excursion poolside & beach club attachment (1:00–4:00 PM).',
+  banquet: 'High-margin bespoke celebrations and contracted group dining.',
+};
+
 export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
   const detailKey = typeof config.data === 'string' ? config.data : config.data?.key || '';
-  const payload = typeof config.data === 'object' ? config.data : {};
+  const payload = typeof config.data === 'object' && config.data !== null ? config.data : {};
+
+  const horizon: PeriodId = payload.horizon || payload.period || 'mtd';
+  const propertyIds: readonly string[] =
+    payload.propertyIds && payload.propertyIds.length > 0
+      ? payload.propertyIds
+      : payload.propertyId
+        ? [payload.propertyId]
+        : PORTFOLIO_PROPERTY_IDS;
+
+  const ids = [...propertyIds];
+  const m = getPortfolioMetrics(ids, horizon);
+  const periodMeta = PERIOD_DEFS[horizon];
+  const suffix = FNB_PERIOD_SUFFIX[horizon];
+  const headlineKpis = getFnbHeadlineKpis(ids, horizon);
+  const resortRanking = getFnbResortRanking(ids, horizon);
+  const centres = getFnbCentres(m);
+  const cuisines = getFnbCuisines(m);
+  const demandSources = getFnbDemandSources(m);
+  const penetrationRows = getFnbPenetrationRows(m);
+  const origins = getFnbOrigins(m);
+  const signatureDishes = getFnbSignatureDishes(m);
+  const singleCategory = m.properties.length === 1 ? m.properties[0].categoryId : undefined;
+  const dayparts = getFnbDayparts(m, singleCategory);
+  const outletGroups = getFnbOutletGroups(m);
+  const capacity = getFnbCapacity(m);
+  const diningGn = diningGuestNights(m);
+  const checks = fnbChecks(m);
+  const { signals: operationalSignals, pipelineValue } = getFnbOperationalSignals(ids, horizon);
+
+  const scopeLabel =
+    m.propertyCount === 1
+      ? `${m.properties[0].name} (${m.fnb.outlets} operating F&B outlets)`
+      : `${m.propertyCount} SOSEI luxury resorts (${m.fnb.outlets} operating F&B outlets)`;
 
   /* ───────────────────────── 1. HEADLINE KPIs & PORTFOLIO SNAPSHOT ───────────────────────── */
   if (detailKey === 'FNB_HEADLINE_KPI') {
-    const kpiId = payload.kpiId || 'revenue';
+    const rawKpiId = payload.kpiId || 'revenue';
+    const kpiId =
+      rawKpiId === 'total_fnb_rev'
+        ? 'revenue'
+        : rawKpiId === 'capture_rate'
+          ? 'capture'
+          : rawKpiId === 'avg_check'
+            ? 'spend'
+            : rawKpiId === 'revpash'
+              ? 'forward'
+              : rawKpiId === 'beverage'
+                ? 'experience'
+                : rawKpiId;
+
+    const totalRevpor = m.roomsSold > 0 ? m.fnbRevenue / m.roomsSold : 0;
+    const totalCsat = (m.experiences.qualityPct / 100) * 5;
+
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900">
         <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
           <div>
             <p className="text-xs text-zinc-500">
-              Portfolio-wide commercial &amp; operational performance across all 10 SOSEI luxury resorts (68 operating F&amp;B outlets).
+              Commercial &amp; operational F&amp;B performance across {scopeLabel} ·{' '}
+              <strong className="text-zinc-900">{periodMeta.periodLabel}</strong>.
             </p>
           </div>
           <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-            Like-for-Like Comparable Basis · 10 Resorts
+            {getFnbHeaderContext(ids, horizon)}
           </span>
         </div>
 
         {/* 5 Headline Summary Strip Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-          {[
-            { id: 'revenue', label: 'F&B REV & LFL GROWTH', val: '$22.0M', sub: '+9.4% LFL vs LY' },
-            { id: 'spend', label: 'SPEND / IN-HOUSE GUEST', val: '$296', sub: '$1,480 RevPOR (+8.0%)' },
-            { id: 'capture', label: 'GUEST CAPTURE RATE', val: '68.4%', sub: '+4.2 pts · 1.84 Cvr/Guest' },
-            { id: 'forward', label: 'FORWARD VS CAPACITY', val: '84.2%', sub: '48,500 Covers OTB (30D)' },
-            { id: 'experience', label: 'GUEST EXPERIENCE', val: '94.8%', sub: '4.82 CSAT · 14m Recovery' },
-          ].map((box) => (
+          {headlineKpis.map((box) => (
             <div
               key={box.id}
               className={`p-3 rounded-xl border ${
                 kpiId === box.id ? 'border-zinc-900 bg-zinc-100/80' : 'border-zinc-200/80 bg-zinc-50/40'
               }`}
             >
-              <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">{box.label}</div>
-              <div className="text-base font-bold text-zinc-900 mt-1">{box.val}</div>
-              <div className="text-[9px] font-medium text-[#14532d] mt-0.5">{box.sub}</div>
+              <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">{box.boxLabel}</div>
+              <div className="text-base font-bold text-zinc-900 mt-1">{box.value}</div>
+              <div
+                className={`text-[9px] font-medium mt-0.5 ${
+                  box.vsLyPos ? 'text-[#14532d]' : 'text-[#800020]'
+                }`}
+              >
+                {box.boxSub}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* All 10 Resorts Commercial & Operational Ranking */}
+        {/* Resorts Commercial & Operational Ranking */}
         <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
           <table className="w-full text-xs">
             <thead>
@@ -64,30 +158,60 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
               </tr>
             </thead>
             <tbody>
-              {[
-                { prop: 'SOSEI Maldives', model: 'SOSEI Beach Resort', rev: '$3.85M', lfl: '+14.2%', revpor: '$1,980', spend: '$412', cap: '86.4%', util: '91%', csat: '4.92', pos: true },
-                { prop: 'SOSEI Switzerland', model: 'SOSEI Ski', rev: '$3.10M', lfl: '+11.8%', revpor: '$1,740', spend: '$348', cap: '79.2%', util: '87%', csat: '4.88', pos: true },
-                { prop: 'SOSEI Tokyo', model: 'SOSEI Urban', rev: '$2.95M', lfl: '+10.5%', revpor: '$1,620', spend: '$318', cap: '64.0%', util: '89%', csat: '4.89', pos: true },
-                { prop: 'SOSEI Bali', model: 'SOSEI Beach Resort', rev: '$2.40M', lfl: '+9.6%', revpor: '$1,490', spend: '$294', cap: '74.5%', util: '83%', csat: '4.85', pos: true },
-                { prop: 'SOSEI Oman', model: 'SOSEI Wellness', rev: '$2.18M', lfl: '+7.9%', revpor: '$1,410', spend: '$268', cap: '88.0%', util: '84%', csat: '4.78', pos: true },
-                { prop: 'SOSEI Japan', model: 'SOSEI Nature', rev: '$1.92M', lfl: '+8.4%', revpor: '$1,820', spend: '$365', cap: '82.1%', util: '86%', csat: '4.94', pos: true },
-                { prop: 'SOSEI Costa Rica', model: 'SOSEI Nature', rev: '$1.75M', lfl: '-2.4%', revpor: '$1,120', spend: '$214', cap: '54.2%', util: '62%', csat: '4.68', pos: false },
-                { prop: 'SOSEI Barcelona', model: 'SOSEI Urban', rev: '$1.65M', lfl: '+6.4%', revpor: '$1,240', spend: '$242', cap: '58.6%', util: '78%', csat: '4.76', pos: true },
-                { prop: 'SOSEI Canada', model: 'SOSEI Ski', rev: '$1.18M', lfl: '+12.1%', revpor: '$1,680', spend: '$340', cap: '84.0%', util: '81%', csat: '4.90', pos: true },
-                { prop: 'SOSEI Egypt', model: 'SOSEI Wellness', rev: '$1.02M', lfl: '+9.2%', revpor: '$1,890', spend: '$390', cap: '81.5%', util: '85%', csat: '4.87', pos: true },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors">
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900">{row.prop}</td>
-                  <td className="py-2.5 px-3 text-[10px] text-zinc-500">{row.model}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{row.rev}</td>
-                  <td className={`py-2.5 px-3 text-[9.5px] font-medium text-right ${row.pos ? 'text-[#14532d]' : 'text-[#800020]'}`}>{row.lfl}</td>
-                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{row.revpor}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{row.spend}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">{row.cap}</td>
-                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{row.util}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">{row.csat}</td>
-                </tr>
-              ))}
+              {resortRanking.map((row) => {
+                const pos = row.lflPct >= 0;
+                return (
+                  <tr
+                    key={row.propertyId}
+                    className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors"
+                  >
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900">{row.name}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">{row.categoryName}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsd(row.revenue)}
+                    </td>
+                    <td
+                      className={`py-2.5 px-3 text-[9.5px] font-medium text-right ${
+                        pos ? 'text-[#14532d]' : 'text-[#800020]'
+                      }`}
+                    >
+                      {fmtSignedPct(row.lflPct)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtUsdFull(row.revpor)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(row.spendPerGuestNight)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">
+                      {fmtPct(row.capturePct)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">
+                      {fmtPct(row.seatLoadPct, 0)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {row.csat.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+              <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                <td className="py-2.5 px-3 text-[10px]">
+                  Total ({m.propertyCount} {m.propertyCount === 1 ? 'Resort' : 'Resorts'})
+                </td>
+                <td className="py-2.5 px-3 text-[10px] text-zinc-500">{m.fnb.outlets} Outlets</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)}</td>
+                <td
+                  className={`py-2.5 px-3 text-[9.5px] text-right ${
+                    m.vsLy.fnbRevenuePct >= 0 ? 'text-[#14532d]' : 'text-[#800020]'
+                  }`}
+                >
+                  {fmtSignedPct(m.vsLy.fnbRevenuePct)}
+                </td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsdFull(totalRevpor)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsdFull(m.fnb.spendPerGuestNight)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtPct(m.fnb.captureRatePct)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtPct(capacity.loadPct, 0)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{totalCsat.toFixed(2)}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -103,7 +227,8 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
         <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
           <div>
             <p className="text-xs text-zinc-500">
-              Group-level view of the 6 F&amp;B revenue centres. Concept-level operating KPIs (service times, queue, ticket SLA) are managed in the Property View.
+              Revenue-centre performance across {scopeLabel} ·{' '}
+              <strong className="text-zinc-900">{periodMeta.periodLabel}</strong>.
             </p>
           </div>
           <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-zinc-900 text-white">
@@ -111,76 +236,102 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
           </span>
         </div>
 
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">TOTAL F&amp;B REVENUE</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(m.fnbRevenue)}</div>
+            <div className="text-[9px] font-medium text-[#14532d] mt-0.5">
+              {fmtSignedPct(m.vsLy.fnbRevenuePct)} vs LY
+            </div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">TOTAL COVERS</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtInt(m.fnb.covers)}</div>
+            <div className="text-[9px] font-medium text-zinc-600 mt-0.5">
+              {fmtPct(capacity.loadPct)} of {fmtInt(capacity.capacityCovers)} Cap
+            </div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">AVERAGE CHECK</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsdFull(m.fnb.avgCheck)}</div>
+            <div className="text-[9px] font-medium text-zinc-600 mt-0.5">
+              {fmtPct(m.fnb.bevSharePct)} Beverage Share
+            </div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">REVPASH &amp; TURN</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">${m.fnb.revpash.toFixed(2)}</div>
+            <div className="text-[9px] font-medium text-[#14532d] mt-0.5">
+              {m.fnb.seatTurn.toFixed(2)}x Seat Turn
+            </div>
+          </div>
+        </div>
+
         <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Revenue Centre</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">MTD Rev</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Core Commercial KPIs</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Check</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue ({suffix})</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">YoY Growth</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Executive Insight</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                {
-                  name: 'Fine & Specialty Dining',
-                  match: 'Fine & Specialty Dining',
-                  rev: '$7.48M',
-                  comm: '44.5K Covers · $168 Avg Check · 92% Reservation Conversion · 44% Tasting Uptake',
-                  insight: 'Separates weak demand from limited seating (4 resorts at 96% dinner load).',
-                },
-                {
-                  name: 'All-Day Dining & Buffet',
-                  match: 'All-Day Dining & Buffet',
-                  rev: '$4.54M',
-                  comm: '94% In-House Participation · $48 Incremental Paid · 9% External Mix',
-                  insight: 'Ties buffet demand to occupancy and meal-plan entitlements.',
-                },
-                {
-                  name: 'Bars & Sunset Lounges',
-                  match: 'Bars & Sunset Lounges',
-                  rev: '$3.52M',
-                  comm: '$64 Avg Spend · 58% Premium Mix · $2,140 Revenue / Trading Hour',
-                  insight: 'Captures sunset golden-hour and post-dinner spillover.',
-                },
-                {
-                  name: 'In-Villa & Room Service',
-                  match: 'In-Villa & Room Service',
-                  rev: '$2.64M',
-                  comm: '0.68 Orders / Occupied Room · $128 AOV · 41% Repeat Villa Usage',
-                  insight: 'Segmented by villa tier, stay stage and daypart.',
-                },
-                {
-                  name: 'Pool, Beach & Minibar',
-                  match: 'Pool, Beach & Minibar',
-                  rev: '$2.06M',
-                  comm: '$58 Spend / Guest · 52% Beverage Attachment · 34% Minibar Usage',
-                  insight: 'Detects lost demand in post-excursion peaks (1–3 PM).',
-                },
-                {
-                  name: 'Banqueting & Private Dining',
-                  match: 'Banqueting & Private Dining',
-                  rev: '$1.76M',
-                  comm: '526 Bookings & Events · $2,450 Spend / Private Booking · 34% Repeat Group',
-                  insight: 'High-margin bespoke occasions, distinct from everyday trading.',
-                },
-              ].map((row, idx) => {
-                const isSelected = row.match === selectedCentre;
+              {centres.map((row) => {
+                const isSelected = row.name === selectedCentre;
+                const pos = row.growthPct >= 0;
                 return (
                   <tr
-                    key={idx}
+                    key={row.id}
                     className={`border-b border-zinc-200/60 last:border-0 transition-colors ${
                       isSelected ? 'bg-zinc-100/80' : 'hover:bg-zinc-100/40'
                     }`}
                   >
                     <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{row.name}</td>
-                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{row.rev}</td>
-                    <td className="py-2.5 px-3 text-[9.5px] text-zinc-700">{row.comm}</td>
-                    <td className="py-2.5 px-3 text-[9.5px] text-zinc-500">{row.insight}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">{fmtPct(row.sharePct, 1)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">
+                      {fmtInt(row.covers)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(row.avgCheck)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {fmtUsd(row.revenue)}
+                    </td>
+                    <td
+                      className={`py-2.5 px-3 text-[9.5px] font-medium text-right ${
+                        pos ? 'text-[#14532d]' : 'text-[#800020]'
+                      }`}
+                    >
+                      {fmtSignedPct(row.growthPct)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[9.5px] text-zinc-500">
+                      {CENTRE_INSIGHTS[row.id] ?? 'Core resort dining revenue centre.'}
+                    </td>
                   </tr>
                 );
               })}
+              <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                <td className="py-2.5 px-3 text-[10px]">Total F&amp;B Revenue Centres</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">100.0%</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtInt(m.fnb.covers)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsdFull(m.fnb.avgCheck)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)}</td>
+                <td
+                  className={`py-2.5 px-3 text-[9.5px] text-right ${
+                    m.vsLy.fnbRevenuePct >= 0 ? 'text-[#14532d]' : 'text-[#800020]'
+                  }`}
+                >
+                  {fmtSignedPct(m.vsLy.fnbRevenuePct)}
+                </td>
+                <td className="py-2.5 px-3 text-[9.5px] font-normal text-zinc-500">
+                  Reconciled to headline F&amp;B total
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -189,17 +340,17 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
   }
 
   /* ───────────────────────── 3. AI CUISINE CATEGORY & MENU ENGINEERING ───────────────────────── */
-  if (detailKey === 'FNB_AI_CUISINE_CATEGORY') {
+  if (detailKey === 'FNB_AI_CUISINE_CATEGORY' || detailKey === 'FNB_CUISINE_ANALYTICS') {
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900">
         <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
           <div>
             <p className="text-xs text-zinc-500">
-              AI-classified restaurant cuisine concepts (42 restaurants) &amp; contribution-informed signature dish performance.
+              AI-classified restaurant cuisine concepts ({m.fnb.outlets} operating outlets) &amp; signature dish contribution across {scopeLabel}.
             </p>
           </div>
           <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-            AI Culinary Taxonomy · Global View
+            {fmtUsd(m.fnbRevenue)} Total Revenue · {periodMeta.periodLabel}
           </span>
         </div>
 
@@ -210,42 +361,70 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
               <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Cuisine Category (AI Tagged)</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Outlets</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">MTD Covers</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers ({suffix})</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Check</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Bev Attach</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Gross Margin</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">MTD Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue ({suffix})</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">YoY Growth</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { cat: 'Japanese, Omakase & Robatayaki', outlets: 9, covers: '18,400', check: '$182', bev: '46%', margin: '74.2%', rev: '$6.16M (28%)', trend: '+16.4%' },
-                { cat: 'Italian, Coastal & Mediterranean', outlets: 10, covers: '24,200', check: '$136', bev: '42%', margin: '76.8%', rev: '$4.84M (22%)', trend: '+11.2%' },
-                { cat: 'Contemporary Western & Prime Grill', outlets: 8, covers: '16,900', check: '$158', bev: '48%', margin: '69.4%', rev: '$3.96M (18%)', trend: '+8.5%' },
-                { cat: 'Korean Fine Grill & Pan-Asian', outlets: 6, covers: '12,600', check: '$144', bev: '39%', margin: '73.5%', rev: '$3.08M (14%)', trend: '+19.8%' },
-                { cat: 'Local Heritage & Indigenous Gastronomy', outlets: 5, covers: '11,200', check: '$124', bev: '34%', margin: '78.1%', rev: '$2.20M (10%)', trend: '+9.1%' },
-                { cat: 'Botanical, Wellness & Longevity Cuisine', outlets: 4, covers: '9,800', check: '$118', bev: '28%', margin: '79.6%', rev: '$1.76M (8%)', trend: '+15.2%' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors">
-                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{row.cat}</td>
+              {cuisines.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{row.name}</td>
                   <td className="py-2.5 px-3 text-[10px] text-zinc-500 text-right">{row.outlets}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">{row.covers}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{row.check}</td>
-                  <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">{row.bev}</td>
-                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{row.margin}</td>
-                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">{row.rev}</td>
-                  <td className="py-2.5 px-3 text-[9.5px] font-medium text-[#14532d] text-right">{row.trend}</td>
+                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">
+                    {fmtInt(row.covers)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                    {fmtUsdFull(row.avgCheck)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">
+                    {fmtPct(row.bevSharePct, 0)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">
+                    {fmtPct(row.marginPct, 1)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                    {fmtUsd(row.revenue)} ({fmtPct(row.sharePct, 0)})
+                  </td>
+                  <td
+                    className={`py-2.5 px-3 text-[9.5px] font-medium text-right ${
+                      row.growthPct >= 0 ? 'text-[#14532d]' : 'text-[#800020]'
+                    }`}
+                  >
+                    {fmtSignedPct(row.growthPct)}
+                  </td>
                 </tr>
               ))}
+              <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                <td className="py-2.5 px-3 text-[10px]">Total Cuisine Portfolio</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{m.fnb.outlets}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtInt(m.fnb.covers)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsdFull(m.fnb.avgCheck)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtPct(m.fnb.bevSharePct, 0)}</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">74.6%</td>
+                <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)} (100%)</td>
+                <td
+                  className={`py-2.5 px-3 text-[9.5px] text-right ${
+                    m.vsLy.fnbRevenuePct >= 0 ? 'text-[#14532d]' : 'text-[#800020]'
+                  }`}
+                >
+                  {fmtSignedPct(m.vsLy.fnbRevenuePct)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
 
-        {/* Menu & Signature Dish Performance (Module 9) */}
+        {/* Menu & Signature Dish Performance */}
         <div>
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
-            GLOBAL SIGNATURE DISHES &amp; EXPERIENCE CONTRIBUTION LEADERS
+            GLOBAL SIGNATURE DISHES &amp; EXPERIENCE CONTRIBUTION LEADERS ({suffix.toUpperCase()})
           </h4>
           <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
             <table className="w-full text-xs">
@@ -253,26 +432,24 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
                 <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
                   <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400">Signature Dish / Experience</th>
                   <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400">Cuisine Category</th>
-                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Orders MTD</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Orders ({suffix})</th>
                   <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Menu Price</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Dish Revenue</th>
                   <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Contribution %</th>
                   <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Pairing Attach</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { item: 'A5 Miyazaki Wagyu Striploin & Truffle Jus', cat: 'Japanese / Grill', ord: '4,820', price: '$145', cm: '72%', pair: '64% Red/Saké' },
-                  { item: '12-Course Chef Omakase & Rare Saké Flight', cat: 'Japanese Omakase', ord: '3,410', price: '$260', cm: '76%', pair: '82% Flight' },
-                  { item: 'White Truffle Tagliolini & Aged Parmigiano', cat: 'Italian Coastal', ord: '5,190', price: '$78', cm: '84%', pair: '54% Barolo' },
-                  { item: 'Patagonian Toothfish & Yuzu Miso Glaze', cat: 'Pan-Asian / Japanese', ord: '4,280', price: '$92', cm: '75%', pair: '49% White' },
-                  { item: 'Jeju Black Pork & Hanwoo Galbi Tasting', cat: 'Korean Fine Grill', ord: '3,640', price: '$138', cm: '74%', pair: '58% Soju/Wine' },
-                ].map((d, i) => (
-                  <tr key={i} className="border-b border-zinc-200/60 last:border-0">
-                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900">{d.item}</td>
+                {signatureDishes.map((d) => (
+                  <tr key={d.name} className="border-b border-zinc-200/60 last:border-0">
+                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900">{d.name}</td>
                     <td className="py-2 px-3 text-[10px] text-zinc-500">{d.cat}</td>
-                    <td className="py-2 px-3 text-[10px] text-zinc-700 text-right">{d.ord}</td>
-                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900 text-right">{d.price}</td>
-                    <td className="py-2 px-3 text-[10px] font-medium text-[#14532d] text-right">{d.cm}</td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(d.orders)}</td>
+                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900 text-right">${d.price}</td>
+                    <td className="py-2 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {fmtUsd(d.orders * d.price)}
+                    </td>
+                    <td className="py-2 px-3 text-[10px] font-medium text-[#14532d] text-right">{d.marginPct}%</td>
                     <td className="py-2 px-3 text-[10px] text-zinc-600 text-right">{d.pair}</td>
                   </tr>
                 ))}
@@ -286,37 +463,91 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
 
   /* ───────────────────────── 4. DEMAND CONVERSION, CAPTURE & GUEST SPEND MIX ───────────────────────── */
   if (detailKey === 'FNB_DEMAND_CAPTURE') {
+    const coversPerGn = m.guestNights > 0 ? m.fnb.covers / m.guestNights : 0;
+    const avgCheckPerTx = checks > 0 ? m.fnbRevenue / checks : 0;
+    const coversPerCheck = checks > 0 ? m.fnb.covers / checks : 0;
+
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900">
         <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
-            Distinguishing Covers (245,600), Unique F&amp;B Guests (50,750), and Transactions (118,400) across Meal-Plan vs À La Carte demand.
+            Distinguishing Covers ({fmtInt(m.fnb.covers)}), Dining Guest-Nights ({fmtInt(diningGn)}), and POS Checks ({fmtInt(checks)}) across Meal-Plan vs À La Carte demand.
           </p>
           <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200">
-            74,200 In-House Guest Nights MTD
+            {fmtInt(m.guestNights)} In-House Guest Nights ({suffix})
           </span>
         </div>
 
-        {/* 3 Denominator Distinction Cards (Rule: Distinguish Covers, Unique Guests & Transactions) */}
+        {/* 3 Denominator Distinction Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
             <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">1. TOTAL COVERS SERVED</div>
-            <div className="text-lg font-bold text-zinc-900 mt-1">245,600 Covers</div>
-            <div className="text-[9.5px] text-zinc-600 mt-0.5">Avg Check per Cover: <strong>$89.58</strong> · 1.84 Covers / Guest-Day</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{fmtInt(m.fnb.covers)} Covers</div>
+            <div className="text-[9.5px] text-zinc-600 mt-0.5">
+              Avg Check per Cover: <strong>{fmtUsdFull(m.fnb.avgCheck)}</strong> · {coversPerGn.toFixed(2)} Covers / Guest-Night
+            </div>
           </div>
           <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
-            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">2. UNIQUE IN-HOUSE F&amp;B GUESTS</div>
-            <div className="text-lg font-bold text-zinc-900 mt-1">50,750 Guests (68.4% Capture)</div>
-            <div className="text-[9.5px] text-[#14532d] font-medium mt-0.5">Spend per In-House Guest-Day: <strong>$296</strong></div>
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">2. DINING GUEST-NIGHTS</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">
+              {fmtInt(diningGn)} ({fmtPct(m.fnb.captureRatePct)} Capture)
+            </div>
+            <div className="text-[9.5px] text-[#14532d] font-medium mt-0.5">
+              Spend per In-House Guest-Night: <strong>{fmtUsdFull(m.fnb.spendPerGuestNight)}</strong>
+            </div>
           </div>
           <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
             <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">3. POS CHECK TRANSACTIONS</div>
-            <div className="text-lg font-bold text-zinc-900 mt-1">118,400 Checks</div>
-            <div className="text-[9.5px] text-zinc-600 mt-0.5">Avg Check Size: <strong>$185.80</strong> (2.07 Covers / Check)</div>
+            <div className="text-lg font-bold text-zinc-900 mt-1">{fmtInt(checks)} Checks</div>
+            <div className="text-[9.5px] text-zinc-600 mt-0.5">
+              Avg Check Size: <strong>{fmtUsdFull(avgCheckPerTx)}</strong> ({coversPerCheck.toFixed(2)} Covers / Check)
+            </div>
           </div>
         </div>
 
-        {/* Guest Spend by Origin Market & Stay Profile (Module 6) */}
+        {/* Demand Source Split Table */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+            DINING DEMAND SOURCE &amp; MEAL-PLAN SPLIT ({suffix.toUpperCase()})
+          </h4>
+          <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400">Demand Source</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Rev Share</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Check</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {demandSources.map((d) => (
+                  <tr key={d.id} className="border-b border-zinc-200/60 last:border-0">
+                    <td className="py-2 px-3 text-[10px] font-bold text-zinc-900">{d.name}</td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-600 text-right">{fmtPct(d.sharePct, 0)}</td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(d.covers)}</td>
+                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(d.avgCheck)}
+                    </td>
+                    <td className="py-2 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {fmtUsd(d.revenue)}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                  <td className="py-2 px-3 text-[10px]">Total F&amp;B Demand</td>
+                  <td className="py-2 px-3 text-[10px] text-right">100%</td>
+                  <td className="py-2 px-3 text-[10px] text-right">{fmtInt(m.fnb.covers)}</td>
+                  <td className="py-2 px-3 text-[10px] text-right">{fmtUsdFull(m.fnb.avgCheck)}</td>
+                  <td className="py-2 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Guest Spend by Origin Market & Stay Profile */}
         <div>
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
             GUEST F&amp;B SPEND &amp; CAPTURE BY ORIGIN MARKET / NATIONALITY
@@ -326,26 +557,177 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
               <thead>
                 <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Origin Market</th>
-                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">In-House Share</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Guest Nights</th>
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">F&amp;B Capture %</th>
-                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Spend / Guest-Day</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Spend / Guest-Night</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">F&amp;B Revenue</th>
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Top Concept &amp; Purchasing Behavior</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { mkt: 'Asia Pacific', share: '35%', cap: '72.4%', spend: '$318', pref: 'Strong Omakase, Tasting Menu & Vintage Wine/Whisky flight conversion (JP, SG, AU)' },
-                  { mkt: 'Europe', share: '25%', cap: '68.2%', spend: '$284', pref: 'High Half-Board utilization + Coastal Mediterranean & Wine Cellar uptake (UK, CH, FR)' },
-                  { mkt: 'America', share: '20%', cap: '74.6%', spend: '$342', pref: 'High Prime Grill, Sunset Cocktails & In-Villa Dining attachment (US, CA, BR)' },
-                  { mkt: 'Middle East', share: '12%', cap: '84.6%', spend: '$418', pref: 'Highest Private Sandbank Dining, In-Villa BBQ & Zero-Proof Elixir spend (UAE, KSA, QA)' },
-                  { mkt: 'Africa', share: '8%', cap: '64.0%', spend: '$256', pref: 'Strong Beach Club, Restorative Wellness Grazing & Chef Table participation (ZA, EG, MA)' },
-                ].map((row, idx) => (
-                  <tr key={idx} className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors">
-                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{row.mkt}</td>
-                    <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">{row.share}</td>
-                    <td className="py-2.5 px-3 text-[10px] font-medium text-[#14532d] text-right">{row.cap}</td>
-                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">{row.spend}</td>
-                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">{row.pref}</td>
+                {origins.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors"
+                  >
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">
+                      {row.name} ({fmtPct(row.guestSharePct, 0)})
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">{fmtInt(row.guestNights)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-[#14532d] text-right">
+                      {fmtPct(row.capturePct)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(row.covers)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {fmtUsdFull(row.spendPerGuestNight)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                      {fmtUsd(row.revenue)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">{row.behaviour}</td>
+                  </tr>
+                ))}
+                <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                  <td className="py-2.5 px-3 text-[10px]">Total Portfolio (100%)</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtInt(m.guestNights)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-[#14532d] text-right">{fmtPct(m.fnb.captureRatePct)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtInt(m.fnb.covers)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsdFull(m.fnb.spendPerGuestNight)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)}</td>
+                  <td className="py-2.5 px-3 text-[10px] font-normal text-zinc-500">
+                    {penetrationRows[0]?.label}: {penetrationRows[0]?.value}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ───────────────────────── 5. OUTLET PRODUCTIVITY & DAYPART SERVICE RHYTHM ───────────────────────── */
+  if (detailKey === 'FNB_OUTLET_PRODUCTIVITY' || detailKey === 'FNB_OUTLET_DAYPART') {
+    const groupLabels: Record<string, string> = {
+      signature: 'Signature & Fine Dining Venues',
+      allday: 'All-Day Terrace, Bars & Pool Lounges',
+      ivd: 'In-Villa & Suite Private Dining',
+      banquet: 'Private Cellar, Banqueting & Events',
+    };
+
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
+          <p className="text-xs text-zinc-500">
+            Outlet seat productivity, RevPASH, table turnover, and daypart SLA across {scopeLabel}.
+          </p>
+          <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
+            {fmtInt(m.fnb.seats)} Seats · ${m.fnb.revpash.toFixed(2)} RevPASH · {m.fnb.seatTurn.toFixed(2)}x Turn
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">F&amp;B REVENUE ({suffix})</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(m.fnbRevenue)}</div>
+            <div className="text-[9px] text-[#14532d] font-medium mt-0.5">{fmtInt(m.fnb.covers)} Covers Served</div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">REVPASH</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">${m.fnb.revpash.toFixed(2)}</div>
+            <div className="text-[9px] text-zinc-600 font-medium mt-0.5">{fmtInt(m.fnb.seats)} Portfolio Seats</div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">SEAT TURNOVER</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{m.fnb.seatTurn.toFixed(2)}x</div>
+            <div className="text-[9px] text-[#14532d] font-medium mt-0.5">{fmtPct(capacity.loadPct)} Capacity Load</div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/40">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">IN-VILLA DELIVERY SLA</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{FNB_SERVICE_SIGNALS.villaSlaMinutes}m Avg</div>
+            <div className="text-[9px] text-zinc-600 font-medium mt-0.5">
+              {fmtPct(100 - FNB_SERVICE_SIGNALS.villaSlaBreachPct)} Within 30m Promise
+            </div>
+          </div>
+        </div>
+
+        {/* Daypart Table */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+            DAYPART SERVICE RHYTHM &amp; KITCHEN SLA ({suffix.toUpperCase()})
+          </h4>
+          <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Service Daypart</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Service Window</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Rev Share</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">RevPASH</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Kitchen SLA</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dayparts.map((d) => (
+                  <tr key={d.id} className="border-b border-zinc-200/60 last:border-0">
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{d.name}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">{d.window}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600 text-right">{d.sharePct}%</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-700 text-right">{fmtInt(d.covers)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      ${d.revpash.toFixed(2)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-[#14532d] font-medium text-right">{d.sla}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">{fmtUsd(d.revenue)}</td>
+                  </tr>
+                ))}
+                <tr className="border-t border-zinc-300 bg-zinc-100/70 font-bold text-zinc-900">
+                  <td className="py-2.5 px-3 text-[10px]">Total All Dayparts</td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-500">24-Hour Operation</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">100%</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtInt(m.fnb.covers)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">${m.fnb.revpash.toFixed(2)}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-[#14532d] text-right">95.2% On-Time</td>
+                  <td className="py-2.5 px-3 text-[10px] text-right">{fmtUsd(m.fnbRevenue)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Outlet Trading Groups */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 mb-2">
+            OPERATING VENUE GROUPS ({suffix.toUpperCase()})
+          </h4>
+          <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400">Venue Group</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Share</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Check</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">RevPASH</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Status</th>
+                  <th className="py-2 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {outletGroups.map((g) => (
+                  <tr key={g.id} className="border-b border-zinc-200/60 last:border-0">
+                    <td className="py-2 px-3 text-[10px] font-bold text-zinc-900">{groupLabels[g.id] ?? g.id}</td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-600 text-right">{fmtPct(g.sharePct, 0)}</td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(g.covers)}</td>
+                    <td className="py-2 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(g.avgCheck)}
+                    </td>
+                    <td className="py-2 px-3 text-[10px] text-zinc-700 text-right">${g.revpash.toFixed(2)}</td>
+                    <td className="py-2 px-3 text-[10px] text-[#14532d] font-medium text-right">{g.status}</td>
+                    <td className="py-2 px-3 text-[10px] font-bold text-zinc-900 text-right">{fmtUsd(g.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -356,16 +738,195 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
     );
   }
 
-  /* ───────────────────────── 5. GUEST EXPERIENCE & REPUTATION (MODULE 8) ───────────────────────── */
-  if (detailKey === 'FNB_GUEST_EXPERIENCE') {
+  /* ───────────────────────── 6. FORWARD OUTLOOK (7D / 30D / 90D) ───────────────────────── */
+  if (detailKey === 'FNB_FORWARD_OUTLOOK') {
+    const fwWindows = ([7, 30, 90] as const).map((w) => getFnbForwardOutlook(ids, w));
+    const fw30 = fwWindows[1];
+
     return (
       <div className="space-y-6 animate-fade-in text-zinc-900">
         <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
           <p className="text-xs text-zinc-500">
-            Connecting commercial F&amp;B performance to dining quality, complaint themes, and service recovery speed across properties.
+            Forward F&amp;B demand, pre-reserved OTB covers, and banquet/event pipeline across {scopeLabel}.
           </p>
           <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-            4.82 / 5.0 Portfolio CSAT · 0.8% Complaint Rate
+            {fmtSignedPct(fw30.paceVsLyPct)} Booking Pace vs STLY
+          </span>
+        </div>
+
+        <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Forward Horizon</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Confirmed Covers OTB</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Forecast Covers</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Seat Capacity</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">F&amp;B Revenue OTB</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Forecast F&amp;B Rev</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Private Events</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fwWindows.map((fw) => (
+                <tr key={fw.windowDays} className="border-b border-zinc-200/60 last:border-0">
+                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">Next {fw.windowDays} Days</td>
+                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">
+                    {fmtInt(fw.otbCovers)} ({fmtPct(fw.otbCapPct, 0)} Cap)
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">
+                    {fmtInt(fw.expectedCovers)} ({fmtPct(fw.forecastCapPct, 0)} Cap)
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-500 text-right">{fmtInt(fw.capacityCovers)}</td>
+                  <td className="py-2.5 px-3 text-[10px] font-bold text-[#14532d] text-right">
+                    {fmtUsd(fw.otbFnbRevenue)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900 text-right">
+                    {fmtUsd(fw.forecastFnbRevenue)}
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">
+                    {fmtInt(fw.events)} Evts ({fmtUsd(fw.eventRevenue)})
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  /* ───────────────────────── 7. OPERATIONAL SIGNALS & ACTION TRACKER ───────────────────────── */
+  if (detailKey === 'FNB_OPERATIONAL_SIGNAL' || detailKey === 'FNB_ACTION_SIGNAL') {
+    const statusKey = m.properties.length === 1 ? m.properties[0].status : 'above_plan';
+    const costProfile = FNB_COST_PROFILE.byStatus[statusKey];
+
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
+          <p className="text-xs text-zinc-500">
+            Operational exceptions, COGS discipline, and commercial opportunity pipeline across {scopeLabel}.
+          </p>
+          <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
+            +{fmtUsd(pipelineValue)} Revenue Opportunity Pipeline ({suffix})
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">FOOD COST %</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{costProfile.foodPct}%</div>
+            <div className="text-[9px] text-[#14532d] font-medium mt-0.5">
+              Target {FNB_COST_PROFILE.targetFoodPct}.0%
+            </div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">BEVERAGE COST %</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{costProfile.bevPct}%</div>
+            <div className="text-[9px] text-[#14532d] font-medium mt-0.5">
+              Target {FNB_COST_PROFILE.targetBevPct}.0% · {fmtUsd(m.fnb.bevRevenue)} Bev Rev
+            </div>
+          </div>
+          <div className="p-3 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[8.5px] font-bold uppercase tracking-wider text-zinc-500">PRIME COST RATIO</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">
+              {(costProfile.foodPct + FNB_COST_PROFILE.labourPct).toFixed(1)}%
+            </div>
+            <div className="text-[9px] text-zinc-600 font-medium mt-0.5">
+              Blended COGS + {FNB_COST_PROFILE.labourPct}% Culinary Labor
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          {operationalSignals.map((sig) => {
+            const isRisk = sig.type === 'risk';
+            return (
+              <div
+                key={sig.id}
+                className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+              >
+                <div>
+                  <div className="text-xs font-bold text-zinc-900">{sig.title}</div>
+                  <div className="text-[10px] text-zinc-600 mt-0.5">{sig.detail}</div>
+                  <div className="text-[9px] text-zinc-400 mt-1">
+                    {sig.confidence} · Accountable: <strong className="text-zinc-700">{sig.owner}</strong>
+                  </div>
+                </div>
+                <span
+                  className={`text-[9px] font-semibold px-2 py-0.5 rounded shrink-0 self-start sm:self-center ${
+                    isRisk ? 'bg-[#fff1f2] text-[#800020]' : 'bg-[#ecfdf5] text-[#14532d]'
+                  }`}
+                >
+                  {sig.exposure}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  /* ───────────────────────── 8. GUEST EXPERIENCE & REPUTATION (MODULE 8) ───────────────────────── */
+  if (detailKey === 'FNB_GUEST_EXPERIENCE') {
+    const centreById = (id: string) => centres.find((c) => c.id === id);
+    const reputationRows = [
+      {
+        p: 'Fine Dining & Omakase Dinner',
+        covers: centreById('fine')?.covers ?? 0,
+        rev: centreById('fine')?.revenue ?? 0,
+        csat: '4.92 / 5.0',
+        comp: '0.4%',
+        rec: '8 mins (Table-side)',
+        theme: 'Praise for sommelier pairing; minor waitlist friction for 8 PM prime slots',
+      },
+      {
+        p: 'Breakfast & All-Day Buffet',
+        covers: centreById('allday')?.covers ?? 0,
+        rev: centreById('allday')?.revenue ?? 0,
+        csat: '4.78 / 5.0',
+        comp: '1.1%',
+        rec: '11 mins',
+        theme: '9:00 AM barista coffee wait during weekend checkout peaks',
+      },
+      {
+        p: 'Sunset Bars & Beach Clubs',
+        covers: (centreById('bars')?.covers ?? 0) + (centreById('pool')?.covers ?? 0),
+        rev: (centreById('bars')?.revenue ?? 0) + (centreById('pool')?.revenue ?? 0),
+        csat: '4.86 / 5.0',
+        comp: '0.6%',
+        rec: '9 mins',
+        theme: 'High acclaim for botanical elixirs; sunbed shade requests at peak sun',
+      },
+      {
+        p: 'In-Villa & Room Service',
+        covers: centreById('inVilla')?.covers ?? 0,
+        rev: centreById('inVilla')?.revenue ?? 0,
+        csat: '4.71 / 5.0',
+        comp: '1.8%',
+        rec: `${FNB_SERVICE_SIGNALS.villaSlaMinutes}m Avg (Butler)`,
+        theme: 'Delivery SLA >30m during peak buggy windows at cliffside & jetty resorts',
+      },
+      {
+        p: 'Private Destination Dining & Events',
+        covers: centreById('banquet')?.covers ?? 0,
+        rev: centreById('banquet')?.revenue ?? 0,
+        csat: '4.96 / 5.0',
+        comp: '0.2%',
+        rec: '6 mins',
+        theme: 'Highest NPS (+91) across portfolio; strong repeat celebration demand',
+      },
+    ];
+
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
+          <p className="text-xs text-zinc-500">
+            Connecting commercial F&amp;B performance ({fmtUsd(m.fnbRevenue)}) to dining quality, complaint themes, and service recovery speed across {scopeLabel}.
+          </p>
+          <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
+            {FNB_GUEST_EXPERIENCE.csat.toFixed(2)} / 5.0 Portfolio CSAT · {fmtPct(FNB_GUEST_EXPERIENCE.complaintRatePct)} Complaint Rate
           </span>
         </div>
 
@@ -374,6 +935,8 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Meal Period / Concept</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers ({suffix})</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue ({suffix})</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">CSAT Score</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Complaint Rate</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Recovery Time</th>
@@ -381,15 +944,11 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
               </tr>
             </thead>
             <tbody>
-              {[
-                { p: 'Fine Dining & Omakase Dinner', csat: '4.92 / 5.0', comp: '0.4%', rec: '8 mins (Table-side)', theme: 'Praise for sommelier pairing; minor waitlist friction for 8 PM prime slots' },
-                { p: 'Breakfast & All-Day Buffet', csat: '4.78 / 5.0', comp: '1.1%', rec: '11 mins', theme: '9:00 AM barista coffee wait during weekend checkout peaks at 2 resorts' },
-                { p: 'Sunset Bars & Beach Clubs', csat: '4.86 / 5.0', comp: '0.6%', rec: '9 mins', theme: 'High acclaim for botanical elixirs; sunbed shade requests at peak sun' },
-                { p: 'In-Villa & Room Service', csat: '4.71 / 5.0', comp: '1.8%', rec: '19 mins (Butler)', theme: 'Delivery SLA >30m during rain/peak buggy windows at cliffside & jetty resorts' },
-                { p: 'Private Destination Dining', csat: '4.96 / 5.0', comp: '0.2%', rec: '6 mins', theme: 'Highest NPS (+91) across portfolio; strong repeat celebration demand' },
-              ].map((r, i) => (
+              {reputationRows.map((r, i) => (
                 <tr key={i} className="border-b border-zinc-200/60 last:border-0">
                   <td className="py-2.5 px-3 text-[10px] font-bold text-zinc-900">{r.p}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(r.covers)}</td>
+                  <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{fmtUsd(r.rev)}</td>
                   <td className="py-2.5 px-3 text-[10px] font-bold text-[#14532d] text-right">{r.csat}</td>
                   <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{r.comp}</td>
                   <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{r.rec}</td>
@@ -403,74 +962,39 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
     );
   }
 
-  /* ───────────────────────── LEGACY EXPERIENCE & F&B DRAWERS (KEPT FOR COMPATIBILITY) ───────────────────────── */
-  if (detailKey === 'EXP_BOOKINGS_OVER_TIME') {
-    return (
-      <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-        <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <p className="text-xs text-zinc-500">Daily trend of curated experience bookings and guest satisfaction rating MTD.</p>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-            96.8% Avg Completion Rate
-          </span>
-        </div>
-        <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Date</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Confirmed Bookings</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Completion Rate</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Guest CSAT</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { date: 'May 1', val: 380, pct: '95%', rate: '4.85 / 5.0' },
-                { date: 'May 8', val: 530, pct: '97%', rate: '4.78 / 5.0' },
-                { date: 'May 15', val: 410, pct: '94%', rate: '4.82 / 5.0' },
-                { date: 'May 22', val: 680, pct: '96%', rate: '4.91 / 5.0' },
-                { date: 'May 29', val: 610, pct: '95%', rate: '4.75 / 5.0' },
-                { date: 'May 31', val: 892, pct: '98%', rate: '4.94 / 5.0' },
-              ].map((row, idx) => (
-                <tr key={idx} className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.date}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 dark:text-emerald-400 font-medium">{row.val}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">{row.pct}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rate}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
-
+  /* ───────────────────────── DEFAULT FALLBACK (ENGINE-DERIVED) ───────────────────────── */
   return (
     <div className="space-y-4 animate-fade-in text-zinc-900">
       <div className="flex justify-between items-center pb-2 border-b border-zinc-200">
         <p className="text-xs text-zinc-500">
-          Executive commercial &amp; operational intelligence drill-down for <span className="font-semibold text-zinc-900">{config.title || 'F&B Portfolio'}</span>.
+          Executive commercial &amp; operational intelligence drill-down for{' '}
+          <span className="font-semibold text-zinc-900">{config.title || 'F&B Portfolio'}</span> ({periodMeta.periodLabel}).
         </p>
         <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
-          Live Resort Context Connected
+          {getFnbHeaderContext(ids, horizon)}
         </span>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">PORTFOLIO BENCHMARK</div>
-          <div className="text-base font-semibold text-zinc-900 mt-1">Comparable Resort Peers</div>
-          <div className="text-[10px] text-zinc-500 mt-0.5">Normalized by occupancy, meal plan &amp; concept</div>
+          <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">F&amp;B REVENUE ({suffix})</div>
+          <div className="text-base font-semibold text-zinc-900 mt-1">{fmtUsd(m.fnbRevenue)}</div>
+          <div className="text-[10px] text-[#14532d] mt-0.5">
+            {fmtSignedPct(m.vsLy.fnbRevenuePct)} vs LY · {fmtCompactInt(m.fnb.covers)} Covers
+          </div>
         </div>
         <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
           <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">COMMERCIAL IMPACT</div>
-          <div className="text-base font-semibold text-[#14532d] mt-1">+$1.42M Opportunity</div>
+          <div className="text-base font-semibold text-[#14532d] mt-1">+{fmtUsd(pipelineValue)} Opportunity</div>
           <div className="text-[10px] text-zinc-500 mt-0.5">Identified via capture &amp; capacity optimization</div>
         </div>
         <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">ACCOUNTABLE GOVERNANCE</div>
-          <div className="text-base font-semibold text-zinc-900 mt-1">Group &amp; Regional F&amp;B</div>
-          <div className="text-[10px] text-zinc-500 mt-0.5">Tracked weekly with resort GMs &amp; Culinary Directors</div>
+          <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">GUEST CAPTURE &amp; CHECK</div>
+          <div className="text-base font-semibold text-zinc-900 mt-1">
+            {fmtPct(m.fnb.captureRatePct)} · {fmtUsdFull(m.fnb.avgCheck)}
+          </div>
+          <div className="text-[10px] text-zinc-500 mt-0.5">
+            {fmtUsdFull(m.fnb.spendPerGuestNight)} Spend / In-House Guest-Night
+          </div>
         </div>
       </div>
     </div>

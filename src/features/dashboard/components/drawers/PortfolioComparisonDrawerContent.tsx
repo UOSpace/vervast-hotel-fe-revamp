@@ -1,112 +1,127 @@
+import { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import { useNavigate } from 'react-router-dom';
 import {
-  simulatedPortfolioComparisonData,
-  simulatedPropertiesData,
+  getPortfolioComparisonData,
+  getSimulatedPropertiesData,
 } from '../../services/propertySimulation';
+import {
+  getPortfolioMetrics,
+  PERIOD_DEFS,
+  fmtUsd,
+  fmtPct,
+  fmtSignedPct,
+  type PeriodId,
+} from '@/data/portfolio';
 
-export function PortfolioComparisonDrawerContent() {
+interface PortfolioComparisonDrawerContentProps {
+  config?: {
+    title?: string;
+    data?: any;
+  };
+}
+
+export function PortfolioComparisonDrawerContent(
+  props: PortfolioComparisonDrawerContentProps
+) {
   const navigate = useNavigate();
-  const { config } = useDashboardDrawer();
-  const defaultData = simulatedPortfolioComparisonData;
+  const drawerCtx = useDashboardDrawer();
+  const config = props.config ?? drawerCtx.config;
+
+  const initialPeriod: PeriodId =
+    (config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon)) ||
+    'mtd';
+  const [period, setPeriod] = useState<PeriodId>(initialPeriod);
+
+  useEffect(() => {
+    const nextPeriod =
+      config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon);
+    if (nextPeriod === 'today' || nextPeriod === 'mtd' || nextPeriod === 'ytd') {
+      setPeriod(nextPeriod);
+    }
+  }, [config?.data]);
+
+  const periodDef = PERIOD_DEFS[period];
+  const comparisonData = getPortfolioComparisonData(period);
+  const propertiesData = getSimulatedPropertiesData(period);
+  const portfolioMetrics = getPortfolioMetrics(undefined, period);
   const customData = Array.isArray(config?.data) ? config.data : null;
 
-  // Derive active items and hero cards
-  let items: any[] = defaultData.items;
-  let heroTopRev = {
-    title: 'Top Revenue Driver',
-    val: 'SOSEI Ski',
-    tag: '↑ +18% vs LY',
-    sub: '$34.5M Total',
-    isPositive: true,
-  };
-  let heroTopOcc = {
-    title: 'Highest Occupancy',
-    val: 'SOSEI Ski',
-    tag: '76.2% Occ',
-    sub: '↑ +4.8 pts vs LY',
-  };
-  let heroTopAdr = {
-    title: 'Highest ADR Yield',
-    val: '$2,709 ADR',
-    sub: '+$85 vs LY',
-    tag: 'Ski Collection',
-  };
-  let heroAttention = {
-    title: 'Attention / Softening',
-    val: 'SOSEI Wellness',
-    tag: '62% Occ',
-    sub: 'Monitoring',
-  };
+  let items: any[] = comparisonData.items;
 
   if (customData && customData.length > 0) {
     items = customData.map((prop: any, idx: number) => ({
       id: prop.id || `prop-${idx}`,
       property: prop.name,
       location: prop.location,
-      occupancy: typeof prop.occupancyPct === 'number' ? `${prop.occupancyPct.toFixed(1)}%` : prop.occupancy || '70%',
+      occupancy:
+        typeof prop.occupancyPct === 'number'
+          ? fmtPct(prop.occupancyPct, 1)
+          : prop.occupancy || '70.0%',
       occupancyNum: prop.occupancyPct || 70,
-      adrFormatted: typeof prop.adr === 'number' ? `$${prop.adr.toLocaleString()}` : prop.adr || '$2,000',
+      adrFormatted:
+        typeof prop.adr === 'number' ? fmtUsd(prop.adr) : prop.adr || '$2,000',
       adrNum: prop.adr || 2000,
-      revparFormatted: typeof prop.revpar === 'number' ? `$${prop.revpar.toLocaleString()}` : prop.revpar || '$1,500',
+      revparFormatted:
+        typeof prop.revpar === 'number' ? fmtUsd(prop.revpar) : prop.revpar || '$1,500',
       revparNum: prop.revpar || 1500,
-      roomRevenueFormatted: typeof prop.roomRevenue === 'number' ? `$${(prop.roomRevenue / 1000000).toFixed(2)}M` : prop.roomRevenue || '$1.0M',
+      roomRevenueFormatted:
+        typeof prop.roomRevenue === 'number'
+          ? fmtUsd(prop.roomRevenue)
+          : prop.roomRevenue || '$1.0M',
       roomRevenueNum: prop.roomRevenue || 1000000,
-      totalRevenueFormatted: typeof prop.roomRevenue === 'number' ? `$${((prop.roomRevenue * 1.25) / 1000000).toFixed(2)}M` : '$1.25M',
-      totalRevenueNum: (prop.roomRevenue || 1000000) * 1.25,
-      growthVsLy: '+12%',
-      growthVsLyNum: 12,
-      vsBudget: '+4%',
-      vsBudgetNum: 4,
+      totalRevenueFormatted:
+        typeof prop.totalRevenue === 'number'
+          ? fmtUsd(prop.totalRevenue)
+          : typeof prop.roomRevenue === 'number'
+          ? fmtUsd(prop.roomRevenue * 1.25)
+          : '$1.25M',
+      totalRevenueNum: prop.totalRevenue || (prop.roomRevenue || 1000000) * 1.25,
+      growthVsLy: prop.growthVsLy || '+12.0%',
+      growthVsLyNum: prop.growthVsLyNum ?? 12,
+      vsBudget: prop.vsBudget || '+4.0%',
+      vsBudgetNum: prop.vsBudgetNum ?? 4,
       status: prop.status || 'above_plan',
       propertyRoute: prop.propertyRoute || '/dashboard/property',
     }));
-
-    // Find top revenue item
-    const topRevItem = [...items].sort((a, b) => b.roomRevenueNum - a.roomRevenueNum)[0];
-    if (topRevItem) {
-      heroTopRev = {
-        title: 'Top Revenue Sanctuary',
-        val: topRevItem.property,
-        tag: '↑ +14% vs LY',
-        sub: `${topRevItem.roomRevenueFormatted} Rooms`,
-        isPositive: true,
-      };
-    }
-
-    // Find top occupancy item
-    const topOccItem = [...items].sort((a, b) => b.occupancyNum - a.occupancyNum)[0];
-    if (topOccItem) {
-      heroTopOcc = {
-        title: 'Highest Occupancy',
-        val: topOccItem.property,
-        tag: topOccItem.occupancy,
-        sub: 'Peak Room Flow',
-      };
-    }
-
-    // Find top ADR item
-    const topAdrItem = [...items].sort((a, b) => b.adrNum - a.adrNum)[0];
-    if (topAdrItem) {
-      heroTopAdr = {
-        title: 'Highest ADR Yield',
-        val: topAdrItem.adrFormatted,
-        sub: topAdrItem.property,
-        tag: 'Rate Leader',
-      };
-    }
-
-    // Find attention item
-    const attItem = items.find((i: any) => i.status === 'attention') || items[items.length - 1];
-    if (attItem) {
-      heroAttention = {
-        title: 'Opportunity / Focus',
-        val: attItem.property,
-        tag: attItem.occupancy,
-        sub: `${attItem.adrFormatted} ADR`,
-      };
-    }
   }
+
+  // Dynamically derive the 4 hero benchmark cards from items
+  const topRevItem =
+    [...items].sort((a, b) => b.totalRevenueNum - a.totalRevenueNum)[0] || items[0];
+  const topOccItem =
+    [...items].sort((a, b) => b.occupancyNum - a.occupancyNum)[0] || items[0];
+  const topAdrItem =
+    [...items].sort((a, b) => b.adrNum - a.adrNum)[0] || items[0];
+  const attItem =
+    items.find((i: any) => i.status === 'attention') ||
+    [...items].sort((a, b) => a.occupancyNum - b.occupancyNum)[0] ||
+    items[items.length - 1];
+
+  const heroTopRev = {
+    title: customData ? 'Top Revenue Sanctuary' : 'Top Revenue Driver',
+    val: topRevItem?.property || 'SOSEI Ski',
+    tag: `↑ ${topRevItem?.growthVsLy || '+14%'} vs LY`,
+    sub: `${topRevItem?.totalRevenueFormatted || '$34.5M'} Total`,
+  };
+  const heroTopOcc = {
+    title: 'Highest Occupancy',
+    val: topOccItem?.property || 'SOSEI Ski',
+    tag: `${topOccItem?.occupancy || '76.2%'} Occ`,
+    sub: `${topOccItem?.revparFormatted || '$1,054'} RevPAR`,
+  };
+  const heroTopAdr = {
+    title: 'Highest ADR Yield',
+    val: `${topAdrItem?.adrFormatted || '$2,709'} ADR`,
+    sub: topAdrItem?.property || 'SOSEI Ski',
+    tag: 'Rate Leader',
+  };
+  const heroAttention = {
+    title: 'Attention / Opportunity',
+    val: attItem?.property || 'SOSEI Wellness',
+    tag: `${attItem?.occupancy || '62.0%'} Occ`,
+    sub: `${attItem?.adrFormatted || '$1,200'} ADR`,
+  };
 
   return (
     <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
@@ -122,20 +137,43 @@ export function PortfolioComparisonDrawerContent() {
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            {config?.title || 'Portfolio Comparison & Collection Benchmarks'}
+            {config?.title || 'Portfolio Comparison & Collection Benchmarks'} ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Direct property comparison of Occupancy, ADR, RevPAR, and revenue pacing across sanctuaries.
+            Direct comparison of Occupancy, ADR, RevPAR, and revenue pacing across collections and sanctuaries ·{' '}
+            <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigate('/dashboard/property')}
-          className="px-3 py-1.5 rounded-lg bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800 transition-colors shadow-xs self-start sm:self-auto cursor-pointer"
-        >
-          View Full Property Portal →
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
+            {(['today', 'mtd', 'ytd'] as const).map((h) => {
+              const isActive = period === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setPeriod(h)}
+                  className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                  }`}
+                >
+                  {h === 'today' ? 'Today' : h.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard/property')}
+            className="px-3 py-1.5 rounded-lg bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800 transition-colors shadow-xs cursor-pointer"
+          >
+            View Full Property Portal →
+          </button>
+        </div>
       </div>
 
       {/* 4 Hero Benchmarks */}
@@ -192,7 +230,7 @@ export function PortfolioComparisonDrawerContent() {
       {/* Primary Collection Comparison Table */}
       <div>
         <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-2">
-          Collection Performance League
+          Collection Performance League ({periodDef.label})
         </h5>
         <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-2xs">
           <table className="w-full min-w-[760px] text-xs text-zinc-800 border-separate border-spacing-0">
@@ -279,6 +317,24 @@ export function PortfolioComparisonDrawerContent() {
                   </td>
                 </tr>
               ))}
+              <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
+                <td className="py-3 px-3 text-zinc-900">Portfolio Total / Average</td>
+                <td className="py-3 px-3 text-zinc-500">10 Sanctuaries · 5 Collections</td>
+                <td className="py-3 px-3 text-right text-emerald-700">{fmtPct(portfolioMetrics.occupancyPct, 1)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.adr)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.revpar)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.roomRevenue)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.totalRevenue)}</td>
+                <td className="py-3 px-3 text-right text-emerald-700">
+                  ↑ {fmtSignedPct(portfolioMetrics.vsLy.totalRevenuePct)}
+                </td>
+                <td className="py-3 px-3 text-right text-emerald-700">
+                  ↑ {fmtSignedPct(portfolioMetrics.vsBudget.totalRevenuePct)}
+                </td>
+                <td className="py-3 px-3 text-center">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#14532d]" />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -288,7 +344,7 @@ export function PortfolioComparisonDrawerContent() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Sanctuary Roster (10 Properties Live Audit)
+            Sanctuary Roster (10 Properties Live Audit — {periodDef.label})
           </h5>
           <span className="text-[10px] text-zinc-400">
             Click any sanctuary to inspect inventory
@@ -305,12 +361,12 @@ export function PortfolioComparisonDrawerContent() {
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Occ %</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">ADR</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">RevPAR</th>
-                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">MTD Revenue</th>
+                <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">{periodDef.label} Revenue</th>
                 <th className="py-2.5 px-3 text-right font-semibold text-[10px] border-b border-zinc-200">Status</th>
               </tr>
             </thead>
             <tbody>
-              {simulatedPropertiesData.map((prop, idx) => (
+              {propertiesData.map((prop, idx) => (
                 <tr
                   key={prop.id}
                   onClick={() => navigate('/dashboard/property')}

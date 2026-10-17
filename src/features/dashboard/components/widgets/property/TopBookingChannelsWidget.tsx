@@ -1,72 +1,67 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import {
+  getPropertyMetrics,
+  fmtUsd,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
+  BOOKING_CHANNEL_MIX,
+  buildRoomMix,
+  fmtTrendArrow,
+  mixTrendPct,
+} from '@/data/portfolio/hospitalitySubMix';
 
 export function TopBookingChannelsWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  // Property room revenue & ADR mapping for mathematical consistency
-  const propertyBaseMetrics: Record<string, { roomRev: number; adr: number }> = {
-    'sosei-barcelona': { roomRev: 1480000, adr: 1320 },
-    'sosei-tokyo': { roomRev: 1350000, adr: 1450 },
-    'sosei-bali': { roomRev: 980000, adr: 1180 },
-    'sosei-maldives': { roomRev: 1850000, adr: 2650 },
-    'sosei-switzerland': { roomRev: 1950000, adr: 2850 },
-    'sosei-canada': { roomRev: 1120000, adr: 1680 },
-    'sosei-costa-rica': { roomRev: 820000, adr: 1220 },
-    'sosei-japan': { roomRev: 1050000, adr: 1580 },
-    'sosei-oman': { roomRev: 920000, adr: 1380 },
-    'sosei-egypt': { roomRev: 760000, adr: 1150 },
-  };
+  const m = getPropertyMetrics(propertyId, period);
+  const rows = buildRoomMix(BOOKING_CHANNEL_MIX, m.roomsSold, m.roomRevenue);
 
-  const base = propertyBaseMetrics[propertyId] ?? propertyBaseMetrics['sosei-barcelona'];
+  const data = rows.map((row) => ({
+    channel: row.name,
+    shareNum: Math.round(row.sharePct),
+    pct: `${Math.round(row.sharePct)}%`,
+    trend: fmtTrendArrow(row.trendPct),
+    up: row.trendPct >= 0,
+  }));
 
-  const data = [
-    { channel: 'Direct Brand Website', shareNum: 52, pct: '52%', trend: '↑ 6%', up: true, adrFactor: 1.05 },
-    { channel: 'Virtuoso & Advisors', shareNum: 28, pct: '28%', trend: '↓ 2%', up: false, adrFactor: 1.08 },
-    { channel: 'Luxury OTA', shareNum: 12, pct: '12%', trend: '↑ 1%', up: true, adrFactor: 0.83 },
-    { channel: 'Corporate & Groups', shareNum: 8, pct: '8%', trend: '↑ 1%', up: true, adrFactor: 0.78 },
-  ];
+  const channelTable = rows.map((row) => ({
+    channel: row.name,
+    rnights: `${Math.round(row.sharePct)}%`,
+    adr: fmtUsdFull(row.adr),
+    revenue: fmtUsd(row.revenue),
+    trend: fmtTrendArrow(row.trendPct),
+    up: row.trendPct >= 0,
+  }));
 
-  const channelTable = data.map(item => {
-    const chRev = Math.round(base.roomRev * (item.shareNum / 100));
-    const chAdr = Math.round(base.adr * item.adrFactor);
-    const revStr = chRev >= 1000000
-      ? `$${(chRev / 1000000).toFixed(2)}M`
-      : `$${Math.round(chRev / 1000)}K`;
-
-    return {
-      channel: item.channel,
-      rnights: item.pct,
-      adr: `$${chAdr.toLocaleString()}`,
-      revenue: revStr,
-      trend: item.trend,
-      up: item.up,
-    };
-  });
-
-  const totalRevStr = base.roomRev >= 1000000
-    ? `$${(base.roomRev / 1000000).toFixed(2)}M`
-    : `$${Math.round(base.roomRev / 1000)}K`;
-
+  const avgTrend = mixTrendPct(rows);
   channelTable.push({
     channel: 'Total',
     rnights: '100%',
-    adr: `$${base.adr.toLocaleString()}`,
-    revenue: totalRevStr,
-    trend: '↑ 6%',
-    up: true,
+    adr: fmtUsdFull(m.adr),
+    revenue: fmtUsd(m.roomRevenue),
+    trend: fmtTrendArrow(avgTrend),
+    up: avgTrend >= 0,
     isTotal: true,
   } as any);
 
-  const totals = { pct: '100%', trend: '↑ 6%', up: true };
+  const totals = {
+    pct: '100%',
+    trend: fmtTrendArrow(avgTrend),
+    up: avgTrend >= 0,
+  };
 
   return (
     <div 

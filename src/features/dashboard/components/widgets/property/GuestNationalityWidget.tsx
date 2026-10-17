@@ -1,61 +1,64 @@
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
+import {
+  getPropertyMetrics,
+  fmtUsd,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
+  GUEST_NATIONALITY_MIX,
+  GUEST_NATIONALITY_TOP_COUNT,
+  buildRoomMix,
+  fmtTrendArrow,
+  mixTrendPct,
+} from '@/data/portfolio/hospitalitySubMix';
 
 export function GuestNationalityWidget({
   propertyId: rawPropertyId = 'sosei-barcelona',
   propertyName = 'SOSEI Barcelona',
+  period = 'mtd',
 }: {
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const propertyId = resolvePropertyId(rawPropertyId);
   const { openDrawer } = useDashboardDrawer();
 
-  const propertyBaseMetrics: Record<string, { roomRev: number; adr: number }> = {
-    'sosei-barcelona': { roomRev: 1480000, adr: 1320 },
-    'sosei-tokyo': { roomRev: 1350000, adr: 1450 },
-    'sosei-bali': { roomRev: 980000, adr: 1180 },
-    'sosei-maldives': { roomRev: 1850000, adr: 2650 },
-    'sosei-switzerland': { roomRev: 1950000, adr: 2850 },
-    'sosei-canada': { roomRev: 1120000, adr: 1680 },
-    'sosei-costa-rica': { roomRev: 820000, adr: 1220 },
-    'sosei-japan': { roomRev: 1050000, adr: 1580 },
-    'sosei-oman': { roomRev: 920000, adr: 1380 },
-    'sosei-egypt': { roomRev: 760000, adr: 1150 },
+  const m = getPropertyMetrics(propertyId, period);
+  const allRows = buildRoomMix(GUEST_NATIONALITY_MIX, m.roomsSold, m.roomRevenue);
+  const topRows = allRows.slice(0, GUEST_NATIONALITY_TOP_COUNT);
+
+  const data = topRows.map((row) => ({
+    country: row.name,
+    shareNum: Math.round(row.sharePct),
+    pct: `${Math.round(row.sharePct)}%`,
+    trend: fmtTrendArrow(row.trendPct),
+    up: row.trendPct >= 0,
+  }));
+
+  const nationalityTable = topRows.map((row) => ({
+    code: row.id,
+    country: row.name,
+    name: row.name,
+    pct: Math.round(row.sharePct),
+    share: `${Math.round(row.sharePct)}%`,
+    adr: fmtUsdFull(row.adr),
+    revenue: fmtUsd(row.revenue),
+    trend: fmtTrendArrow(row.trendPct),
+    up: row.trendPct >= 0,
+    val: Math.round(row.adr * (m.occupancyPct / 100)),
+  }));
+
+  const topShareSum = topRows.reduce((acc, r) => acc + Math.round(r.sharePct), 0);
+  const topTrend = mixTrendPct(topRows);
+  const totals = {
+    pct: `${topShareSum}%`,
+    trend: fmtTrendArrow(topTrend),
+    up: topTrend >= 0,
   };
-
-  const base = propertyBaseMetrics[propertyId] ?? propertyBaseMetrics['sosei-barcelona'];
-
-  const data = [
-    { country: 'United States', shareNum: 24, pct: '24%', trend: '↑ 2%', up: true, adrFactor: 1.08 },
-    { country: 'United Kingdom', shareNum: 16, pct: '16%', trend: '↑ 1%', up: true, adrFactor: 1.02 },
-    { country: 'Germany', shareNum: 12, pct: '12%', trend: '↓ 1%', up: false, adrFactor: 0.95 },
-    { country: 'Switzerland', shareNum: 10, pct: '10%', trend: '↑ 3%', up: true, adrFactor: 1.12 },
-  ];
-
-  const nationalityTable = data.map((item, idx) => {
-    const natRev = Math.round(base.roomRev * (item.shareNum / 100));
-    const natAdr = Math.round(base.adr * item.adrFactor);
-    const revStr = natRev >= 1000000
-      ? `$${(natRev / 1000000).toFixed(2)}M`
-      : `$${Math.round(natRev / 1000)}K`;
-
-    return {
-      code: `nat-${idx}`,
-      country: item.country,
-      name: item.country,
-      pct: item.shareNum,
-      share: item.pct,
-      adr: `$${natAdr.toLocaleString()}`,
-      revenue: revStr,
-      trend: item.trend,
-      up: item.up,
-      val: Math.round(natAdr * 0.76),
-    };
-  });
-
-  const totals = { pct: '62%', trend: '↑ 5%', up: true };
 
   return (
     <div 

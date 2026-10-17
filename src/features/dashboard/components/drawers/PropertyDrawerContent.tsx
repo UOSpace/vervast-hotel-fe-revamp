@@ -1,18 +1,39 @@
+import { resolvePropertyId } from '@/constants/categories';
+import {
+  getPropertyMetrics,
+  fmtUsd,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
+  buildRoomTiers,
+  buildDepartmentOutlets,
+  getPropertyGuestActivity,
+  getPropertyHourlyTimeline,
+  getPropertyEvents,
+  fmtTrendArrow,
+} from '@/data/portfolio/hospitalitySubMix';
+
 // ── 1. Property Today's Activity Drawer ─────────────────────────────────────
 export function PropertyActivityDrawerContent({ data }: { data: any }) {
-  const arrivals = data?.arrivals ?? 24;
-  const deps = data?.deps ?? 18;
-  const inhouse = data?.inhouse ?? 144;
-  const vip = data?.vip ?? 14;
-  const propName = data?.propertyName || 'SOSEI Barcelona';
-  const location = data?.location || 'Barcelona, Spain';
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const activity = getPropertyGuestActivity(propertyId);
+  const todayMetrics = getPropertyMetrics(propertyId, 'today');
+
+  const arrivals = data?.arrivals ?? activity.arrivals;
+  const deps = data?.deps ?? activity.departures;
+  const inhouse = data?.inhouse ?? activity.inHouse;
+  const vip = data?.vip ?? activity.vip;
+  const propName = data?.propertyName || todayMetrics.name;
+  const location = data?.location || todayMetrics.location;
+  const occupiedKeys = Math.round(activity.keysOccupied);
 
   const arrivalList = [
-    { name: 'Lord & Lady Harrington', suite: 'Matterhorn Chalet 12', time: '14:30', vip: 'Ultra VIP', butler: 'Jean-Paul', notes: 'Private helicopter transfer, vintage Krug in suite' },
-    { name: 'Ambassador Philippe Chen', suite: 'Glacier Suite 402', time: '15:15', vip: 'Diplomatic', butler: 'Marc', notes: 'High-security discreet entrance, diplomatic escort' },
-    { name: 'Dr. & Mrs. Kenji Sato', suite: 'Alpine Signature 204', time: '16:00', vip: 'Privilege Member', butler: 'Sophie', notes: 'Anniversary celebration, custom onsen floral bath' },
-    { name: 'Countess Beatrix Von Berg', suite: 'Panorama Suite 308', time: '17:30', vip: 'VVIP Returning', butler: 'Jean-Paul', notes: 'Gluten-free bespoke menu, mountain view terrace' },
-    { name: 'Mr. David Sterling', suite: 'Alpine Chalet 08', time: '18:15', vip: 'Executive Member', butler: 'Marc', notes: 'Private ski equipment fitting at 19:00' },
+    { name: 'Lord & Lady Harrington', suite: 'Signature Penthouse 12', time: '14:30', vip: 'Ultra VIP', butler: 'Jean-Paul', notes: 'Private luxury transfer, vintage Krug in suite' },
+    { name: 'Ambassador Philippe Chen', suite: 'Sanctuary Suite 402', time: '15:15', vip: 'Diplomatic', butler: 'Marc', notes: 'High-security discreet entrance, diplomatic escort' },
+    { name: 'Dr. & Mrs. Kenji Sato', suite: 'Reserve Villa 204', time: '16:00', vip: 'Privilege Member', butler: 'Sophie', notes: 'Anniversary celebration, custom thermal bath' },
+    { name: 'Countess Beatrix Von Berg', suite: 'Panorama Suite 308', time: '17:30', vip: 'VVIP Returning', butler: 'Jean-Paul', notes: 'Gluten-free bespoke menu, private view terrace' },
+    { name: 'Mr. David Sterling', suite: 'Estate Pavilion 08', time: '18:15', vip: 'Executive Member', butler: 'Marc', notes: 'Private sommelier tasting scheduled at 19:00' },
   ];
 
   return (
@@ -32,17 +53,17 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Scheduled Arrivals</span>
           <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">{arrivals} Guests</div>
-          <span className="text-[9.5px] text-zinc-400 mt-0.5 block">5 Pending Check-in</span>
+          <span className="text-[9.5px] text-zinc-400 mt-0.5 block">{activity.pendingCheckIn} Pending Check-in</span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Departures</span>
           <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">{deps} Guests</div>
-          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">14 Completed Cleared</span>
+          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">{activity.cleared} Completed Cleared</span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Total In-House</span>
           <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">{inhouse} Guests</div>
-          <span className="text-[9.5px] text-zinc-400 mt-0.5 block">Occupying 72 Keys</span>
+          <span className="text-[9.5px] text-zinc-400 mt-0.5 block">Occupying {occupiedKeys} / {todayMetrics.rooms} Keys</span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">VIP & VVIP Roster</span>
@@ -93,16 +114,10 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
 
 // ── 2. Property Rhythm & Peak Load Schedule Drawer ──────────────────────────
 export function PropertyRhythmDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Barcelona';
-
-  const hourlyTimeline = [
-    { time: '07:00 – 09:30', dept: 'In-Room Breakfast & Alpine Dining', load: 78, staff: '10 Culinary / Waitstaff', status: 'Moderate Flow' },
-    { time: '10:00 – 13:00', dept: 'Housekeeping & Midday Turn-down', load: 90, staff: '12 Attendants & Supervisors', status: 'Peak Load' },
-    { time: '14:00 – 16:00', dept: 'Front Desk & Guest Arrivals', load: 85, staff: '8 Butlers / Valet Reception', status: 'High Volume' },
-    { time: '15:00 – 18:00', dept: 'Thermal Spa & Recovery Sanctuary', load: 75, staff: '6 Therapists & Attendants', status: 'Active Bookings' },
-    { time: '19:00 – 21:30', dept: 'F&B Fine Dining & Sommelier Bar', load: 92, staff: '14 Culinary & Sommeliers', status: 'Peak Load' },
-    { time: '21:30 – 23:00', dept: 'Evening Turn-down & Concierge Bar', load: 60, staff: '6 Night Concierge & Porters', status: 'Wind Down' },
-  ];
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const todayMetrics = getPropertyMetrics(propertyId, 'today');
+  const propName = data?.propertyName || todayMetrics.name;
+  const hourlyTimeline = getPropertyHourlyTimeline(propertyId);
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -182,31 +197,32 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
 
 // ── 3. Property Room Tier Occupancy Drawer ───────────────────────────────────
 export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Barcelona';
-  const totals = data?.totals || { occ: 76, occupied: 72, available: 95 };
-  const types = data?.types || [
-    { type: 'Mountain Chalet', occ: 80, available: 30 },
-    { type: 'Alpine Signature Suite', occ: 76, available: 25 },
-    { type: 'Panorama Matterhorn Suite', occ: 75, available: 20 },
-    { type: 'Glacier Wellness Villa', occ: 70, available: 20 },
-  ];
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const period: PeriodId = data?.period || 'mtd';
+  const m = getPropertyMetrics(propertyId, period);
+  const propName = data?.propertyName || m.name;
 
-  const rows = types.map((t: any) => {
-    const occupied = Math.round(t.available * (t.occ / 100));
-    const baseRate = t.type.includes('Chalet') ? 3200 : t.type.includes('Signature') ? 2800 : t.type.includes('Panorama') ? 2500 : 2200;
-    const rev = occupied * baseRate * 9; // MTD 9 days
-    const revStr = `$${Math.round(rev / 1000)}K`;
+  const tiers = buildRoomTiers(m);
+  const paceStr = fmtTrendArrow(m.vsLy.roomRevenuePct);
 
-    return {
-      type: t.type,
-      occ: t.occ,
-      occupied,
-      available: t.available,
-      adr: `$${baseRate.toLocaleString()}`,
-      rev: revStr,
-      pacing: '↑ +6.5%',
-    };
-  });
+  const rows = tiers.map((t) => ({
+    type: t.name,
+    occ: Math.round(t.occPct),
+    occupied: Math.round(t.occupiedRn / Math.max(1, m.days)),
+    available: t.keys,
+    adrNum: t.adr,
+    adr: fmtUsdFull(t.adr),
+    rev: fmtUsd(t.revenue),
+    pacing: paceStr,
+  }));
+
+  const totals = {
+    occ: Math.round(m.occupancyPct),
+    occupied: rows.reduce((sum, r) => sum + r.occupied, 0),
+    available: m.rooms,
+  };
+
+  const topTier = rows.reduce((best, cur) => (cur.adrNum > best.adrNum ? cur : best), rows[0]);
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -224,19 +240,19 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Total Occupancy</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{totals.occ}%</div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-0.5 block">↑ +6.2% vs baseline</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{m.occupancyPct.toFixed(1)}%</div>
+          <span className="text-[10px] text-emerald-700 font-semibold mt-0.5 block">↑ +{m.vsLy.occupancyPts.toFixed(1)} pts vs LY</span>
         </div>
         <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Keys Occupied</span>
           <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{totals.occupied} / {totals.available} Keys</div>
-          <span className="text-[10px] text-zinc-400 mt-0.5 block">{totals.available - totals.occupied} Keys Available Tonight</span>
+          <span className="text-[10px] text-zinc-400 mt-0.5 block">{Math.max(0, totals.available - totals.occupied)} Keys Available Tonight</span>
         </div>
         <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Top Performing Tier</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-tight">$3,200</div>
-          <div className="text-[11px] font-normal text-zinc-600 dark:text-zinc-400 mt-0.5">Mountain Chalet</div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-1 block">80% Occupancy · ADR</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-tight">{topTier.adr}</div>
+          <div className="text-[11px] font-normal text-zinc-600 dark:text-zinc-400 mt-0.5">{topTier.type}</div>
+          <span className="text-[10px] text-emerald-700 font-semibold mt-1 block">{topTier.occ}% Occupancy · ADR</span>
         </div>
       </div>
 
@@ -254,12 +270,12 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Occupied Keys</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Total Keys</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
-                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">MTD Revenue</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Revenue</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Pace</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row: any, idx: number) => (
+              {rows.map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.type}</td>
                   <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.occ}%</td>
@@ -275,9 +291,9 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
                 <td className="py-3 px-3 text-right text-emerald-700">{totals.occ}%</td>
                 <td className="py-3 px-3 text-right">{totals.occupied}</td>
                 <td className="py-3 px-3 text-right">{totals.available}</td>
-                <td className="py-3 px-3 text-right">$2,700</td>
-                <td className="py-3 px-3 text-right">$1.15M</td>
-                <td className="py-3 px-3 text-right text-emerald-700">↑ +6.2%</td>
+                <td className="py-3 px-3 text-right">{fmtUsdFull(m.adr)}</td>
+                <td className="py-3 px-3 text-right">{fmtUsd(m.roomRevenue)}</td>
+                <td className="py-3 px-3 text-right text-emerald-700">{paceStr}</td>
               </tr>
             </tbody>
           </table>
@@ -289,20 +305,39 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
 
 // ── 4. Property Department Revenue Drawer ────────────────────────────────────
 export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Barcelona';
-  const totalRev = data?.totalRev ?? 1680000;
-  const roomRev = data?.roomRev ?? 1150000;
-  const fnbRev = data?.fnbRev ?? 368000;
-  const spaRev = data?.spaRev ?? 126000;
-  const otherRev = data?.otherRev ?? 36000;
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const period: PeriodId = data?.period || 'mtd';
+  const m = getPropertyMetrics(propertyId, period);
+  const propName = data?.propertyName || m.name;
 
-  const outlets = [
-    { dept: 'Rooms', outlet: 'Suites & Mountain Chalets', rev: `$${(roomRev / 1000).toFixed(0)}K`, share: `${Math.round((roomRev / totalRev) * 100)}%`, trend: '↑ 14.0%', detail: '72 rooms occupied at $2,700 average realized daily rate' },
-    { dept: 'F&B', outlet: 'Matterhorn Signature Restaurant', rev: `$${Math.round(fnbRev * 0.65 / 1000)}K`, share: '14%', trend: '↑ 9.2%', detail: 'Fine dining covers averaging $240 per guest check' },
-    { dept: 'F&B', outlet: 'Alpine Lounge & Sommelier Bar', rev: `$${Math.round(fnbRev * 0.35 / 1000)}K`, share: '8%', trend: '↑ 7.8%', detail: 'Rare vintage wine pairings & evening fireside service' },
-    { dept: 'Spa & Wellness', outlet: 'Glacier Thermal Springs & Spa', rev: `$${(spaRev / 1000).toFixed(0)}K`, share: `${Math.round((spaRev / totalRev) * 100)}%`, trend: '↑ 11.2%', detail: 'Bespoke herbal recovery & thermal hydrotherapy sessions' },
-    { dept: 'Other Income', outlet: 'Helicopter & Ski Guiding Concierge', rev: `$${(otherRev / 1000).toFixed(0)}K`, share: `${Math.round((otherRev / totalRev) * 100)}%`, trend: '↑ 5.0%', detail: 'Certified alpine guides and luxury excursion bookings' },
-  ];
+  const totalRev = m.totalRevenue || 1;
+  const roomRev = m.roomRevenue;
+  const fnbRev = m.fnbRevenue;
+  const spaRev = m.spaRevenue;
+  const otherRev = m.experienceRevenue;
+
+  const outletRows = buildDepartmentOutlets(m);
+  const deptTrendPct = (dept: string): number => {
+    if (dept === 'Rooms') return m.vsLy.roomRevenuePct;
+    if (dept === 'F&B') return m.vsLy.fnbRevenuePct;
+    if (dept.includes('Spa')) return m.vsLy.spaRevenuePct;
+    return m.vsLy.experienceRevenuePct;
+  };
+  const deptDetail = (dept: string): string => {
+    if (dept === 'Rooms') return `${Math.round(m.roomsSold / Math.max(1, m.days))} rooms occupied daily at ${fmtUsdFull(m.adr)} ADR`;
+    if (dept === 'F&B') return `Fine dining & lounge covers averaging ${fmtUsdFull(m.fnb.avgCheck)} per check`;
+    if (dept.includes('Spa')) return `Bespoke thermal recovery & holistic treatments averaging ${fmtUsdFull(m.spa.avgTreatmentUsd)}`;
+    return `Curated destination expeditions & private guest activities`;
+  };
+
+  const outlets = outletRows.map((o) => ({
+    dept: o.dept,
+    outlet: o.outlet,
+    rev: fmtUsdFull(o.value),
+    share: `${Math.round((o.value / totalRev) * 100)}%`,
+    trend: fmtTrendArrow(deptTrendPct(o.dept)),
+    detail: deptDetail(o.dept),
+  }));
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -312,7 +347,7 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
           <p className="text-[10px] text-zinc-500">Comprehensive departmental revenue breakdown and outlet contributions</p>
         </div>
         <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-          Total Hotel Revenue: ${(totalRev / 1000000).toFixed(2)}M
+          Total Hotel Revenue: {fmtUsd(m.totalRevenue)}
         </span>
       </div>
 
@@ -320,23 +355,31 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Rooms Revenue</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">${(roomRev / 1000000).toFixed(2)}M</div>
-          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">{Math.round((roomRev / totalRev) * 100)}% Share · ↑ 14.0%</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsd(roomRev)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">
+            {Math.round((roomRev / totalRev) * 100)}% Share · {fmtTrendArrow(m.vsLy.roomRevenuePct)}
+          </span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">F&B Fine Dining</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">${Math.round(fnbRev / 1000)}K</div>
-          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">{Math.round((fnbRev / totalRev) * 100)}% Share · ↑ 8.5%</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsd(fnbRev)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">
+            {Math.round((fnbRev / totalRev) * 100)}% Share · {fmtTrendArrow(m.vsLy.fnbRevenuePct)}
+          </span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Spa & Wellness</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">${Math.round(spaRev / 1000)}K</div>
-          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">{Math.round((spaRev / totalRev) * 100)}% Share · ↑ 11.2%</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsd(spaRev)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">
+            {Math.round((spaRev / totalRev) * 100)}% Share · {fmtTrendArrow(m.vsLy.spaRevenuePct)}
+          </span>
         </div>
         <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Other Ancillary</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">${Math.round(otherRev / 1000)}K</div>
-          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">{Math.round((otherRev / totalRev) * 100)}% Share · ↑ 5.0%</span>
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Activities & Experiences</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsd(otherRev)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-medium mt-0.5 block">
+            {Math.round((otherRev / totalRev) * 100)}% Share · {fmtTrendArrow(m.vsLy.experienceRevenuePct)}
+          </span>
         </div>
       </div>
 
@@ -370,9 +413,9 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
               ))}
               <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                 <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100" colSpan={2}>Total Property Generated Revenue</td>
-                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">${(totalRev / 1000000).toFixed(2)}M</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsdFull(m.totalRevenue)}</td>
                 <td className="py-3 px-3 text-right text-zinc-700">100%</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">↑ 12.8%</td>
+                <td className="py-3 px-3 text-right text-emerald-700 font-bold">{fmtTrendArrow(m.vsLy.totalRevenuePct)}</td>
                 <td className="py-3 px-3 text-[10px] text-zinc-400 pl-4">All revenue lines exceeding budget benchmark</td>
               </tr>
             </tbody>
@@ -385,12 +428,13 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
 
 // ── 5. Property Upcoming Events Drawer ───────────────────────────────────────
 export function PropertyUpcomingEventsDrawerContent({ data }: { data: any }) {
-  const propName = data?.propertyName || 'SOSEI Barcelona';
-  const events = data?.events || [
-    { title: 'Alpine Peak Wellness Retreat', date: 'Oct 14 – Oct 18, 2026', category: 'Wellness Sanctuary', attendees: 24, revenue: '$148,000' },
-    { title: 'Zermatt Private Chalet Buyout', date: 'Oct 22 – Oct 25, 2026', category: 'Corporate Buyout', attendees: 38, revenue: '$285,000' },
-    { title: 'Matterhorn Sommeliers Evening', date: 'Nov 02, 2026', category: 'Culinary Gala', attendees: 45, revenue: '$42,000' },
-  ];
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const todayMetrics = getPropertyMetrics(propertyId, 'today');
+  const propName = data?.propertyName || todayMetrics.name;
+  const events = (data?.events || getPropertyEvents(propertyId)).map((ev: any) => ({
+    ...ev,
+    revenue: ev.revenue ?? fmtUsdFull(ev.revenueUsd ?? 0),
+  }));
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">

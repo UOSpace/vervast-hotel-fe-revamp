@@ -1,8 +1,16 @@
+import { useState, useEffect } from 'react';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import {
-  simulatedGeoMarketData,
-  simulatedPropertiesData,
+  getGeoMarketData,
+  getSimulatedPropertiesData,
 } from '../../services/propertySimulation';
+import {
+  getPortfolioMetrics,
+  PERIOD_DEFS,
+  fmtUsd,
+  fmtSignedPct,
+  type PeriodId,
+} from '@/data/portfolio';
 
 const regionalMeta: Record<string, { feederCountries: string[]; keyHubs: string; vsLy: string }> = {
   'Asia Pacific': {
@@ -10,12 +18,12 @@ const regionalMeta: Record<string, { feederCountries: string[]; keyHubs: string;
     keyHubs: 'HND, NRT, SIN, SYD',
     vsLy: '↑ +16%',
   },
-  'Europe': {
+  Europe: {
     feederCountries: ['United Kingdom', 'Switzerland', 'Germany', 'France'],
     keyHubs: 'LHR, ZRH, CDG, FRA',
     vsLy: '↑ +12%',
   },
-  'America': {
+  America: {
     feederCountries: ['United States', 'Canada', 'Brazil', 'Mexico'],
     keyHubs: 'JFK, SFO, LAX, MIA',
     vsLy: '↑ +8%',
@@ -25,36 +33,78 @@ const regionalMeta: Record<string, { feederCountries: string[]; keyHubs: string;
     keyHubs: 'DXB, DOH, RUH',
     vsLy: '↑ +9%',
   },
-  'Africa': {
+  Africa: {
     feederCountries: ['South Africa', 'Nigeria', 'Kenya', 'Morocco'],
     keyHubs: 'JNB, CPT, NBO',
     vsLy: '↑ +5%',
   },
 };
 
-export function GeoMarketDrawerContent() {
-  const { config } = useDashboardDrawer();
-  const data = simulatedGeoMarketData;
-  const customData: any[] | null = Array.isArray(config?.data) && config.data.length > 0 ? config.data : null;
+interface GeoMarketDrawerContentProps {
+  config?: {
+    title?: string;
+    data?: any;
+  };
+}
 
-  const totalRow = customData ? (customData.find((r: any) => r.isTotal || r.region === 'Total') || customData[customData.length - 1]) : null;
-  const activeItems = customData ? customData.filter((r: any) => !r.isTotal && r.region !== 'Total') : null;
+export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
+  const drawerCtx = useDashboardDrawer();
+  const config = props.config ?? drawerCtx.config;
+
+  const initialPeriod: PeriodId =
+    (config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon)) ||
+    'mtd';
+  const [period, setPeriod] = useState<PeriodId>(initialPeriod);
+
+  useEffect(() => {
+    const nextPeriod =
+      config?.data && !Array.isArray(config.data) && (config.data.period || config.data.horizon);
+    if (nextPeriod === 'today' || nextPeriod === 'mtd' || nextPeriod === 'ytd') {
+      setPeriod(nextPeriod);
+    }
+  }, [config?.data]);
+
+  const periodDef = PERIOD_DEFS[period];
+  const data = getGeoMarketData(period);
+  const propertiesData = getSimulatedPropertiesData(period);
+  const pm = getPortfolioMetrics(undefined, period);
+
+  const customData: any[] | null =
+    Array.isArray(config?.data) && config.data.length > 0 ? config.data : null;
+
+  const totalRow = customData
+    ? customData.find((r: any) => r.isTotal || r.region === 'Total') ||
+      customData[customData.length - 1]
+    : null;
+  const activeItems = customData
+    ? customData.filter((r: any) => !r.isTotal && r.region !== 'Total')
+    : null;
 
   const totalRevenueDisplay = totalRow?.revenue || data.totalRevenue;
 
-  // Derive dynamic hero metrics if customData is present
-  const volumeLeader = activeItems ? activeItems[0] : null;
-  const highestAdr = activeItems ? [...activeItems].sort((a, b) => {
-    const valA = parseFloat(a.adr.replace(/[^0-9.]/g, '')) || 0;
-    const valB = parseFloat(b.adr.replace(/[^0-9.]/g, '')) || 0;
-    return valB - valA;
-  })[0] : null;
+  // Derive dynamic hero metrics from either customData or portfolio engine items
+  const defaultTopVol = data.items[0];
+  const defaultHighAdr = [...data.items].sort((a, b) => b.adrUsd - a.adrUsd)[0] || data.items[0];
+  const defaultRevAnchor =
+    [...data.items].sort((a, b) => b.revenueUsdMillions - a.revenueUsdMillions)[0] || data.items[0];
+  const defaultEmerging = data.items[data.items.length - 1] || data.items[0];
 
-  const revenueAnchor = activeItems ? [...activeItems].sort((a, b) => {
-    const valA = parseFloat(a.revenue.replace(/[^0-9.]/g, '')) || 0;
-    const valB = parseFloat(b.revenue.replace(/[^0-9.]/g, '')) || 0;
-    return valB - valA;
-  })[0] : null;
+  const volumeLeader = activeItems ? activeItems[0] : null;
+  const highestAdr = activeItems
+    ? [...activeItems].sort((a, b) => {
+        const valA = parseFloat(a.adr.replace(/[^0-9.]/g, '')) || 0;
+        const valB = parseFloat(b.adr.replace(/[^0-9.]/g, '')) || 0;
+        return valB - valA;
+      })[0]
+    : null;
+
+  const revenueAnchor = activeItems
+    ? [...activeItems].sort((a, b) => {
+        const valA = parseFloat(a.revenue.replace(/[^0-9.]/g, '')) || 0;
+        const valB = parseFloat(b.revenue.replace(/[^0-9.]/g, '')) || 0;
+        return valB - valA;
+      })[0]
+    : null;
 
   const emergingMarket = activeItems ? activeItems[activeItems.length - 1] : null;
 
@@ -72,56 +122,117 @@ export function GeoMarketDrawerContent() {
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Geo Market Distribution (Where is demand coming from?)
+            Geo Market Distribution ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Cross-continental guest origin breakdown across all luxury destinations.
+            Cross-continental guest origin breakdown across all luxury destinations ·{' '}
+            <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
           </p>
         </div>
 
-        <div className="text-right">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-            Total Room Revenue MTD
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          {!customData && (
+            <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
+              {(['today', 'mtd', 'ytd'] as const).map((h) => {
+                const isActive = period === h;
+                return (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => setPeriod(h)}
+                    className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-zinc-900 text-white shadow-xs'
+                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                    }`}
+                  >
+                    {h === 'today' ? 'Today' : h.toUpperCase()}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="text-right">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+              Total Room Revenue ({periodDef.label})
+            </div>
+            <div className="text-lg font-bold text-zinc-900">{totalRevenueDisplay}</div>
           </div>
-          <div className="text-lg font-bold text-zinc-900">{totalRevenueDisplay}</div>
         </div>
       </div>
 
       {/* Top 4 Hero KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Volume Leader</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Volume Leader
+          </span>
           <div>
-            <div className="text-xl font-bold text-zinc-900 leading-tight">{volumeLeader ? volumeLeader.rnights : '35%'}</div>
-            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{volumeLeader ? volumeLeader.region : 'Asia Pacific'}</div>
-            <div className="text-[10px] font-medium text-emerald-700 mt-1">{volumeLeader ? `${volumeLeader.revenue} · Rank 1 Share` : '↑ +16% vs LY'}</div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">
+              {volumeLeader ? volumeLeader.rnights : defaultTopVol.roomNightsFormatted}
+            </div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">
+              {volumeLeader ? volumeLeader.region : defaultTopVol.market}
+            </div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">
+              {volumeLeader
+                ? `${volumeLeader.revenue} · Rank 1 Share`
+                : `${defaultTopVol.revenueFormatted} · ${defaultTopVol.vsLyFormatted}`}
+            </div>
           </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Highest Yield ADR</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Highest Yield ADR
+          </span>
           <div>
-            <div className="text-xl font-bold text-zinc-900 leading-tight">{highestAdr ? highestAdr.adr : '$1,650'}</div>
-            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{highestAdr ? highestAdr.region : 'Middle East'}</div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">
+              {highestAdr ? highestAdr.adr : defaultHighAdr.adrFormatted}
+            </div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">
+              {highestAdr ? highestAdr.region : defaultHighAdr.market}
+            </div>
             <div className="text-[10px] font-medium text-zinc-500 mt-1">Peak Rate</div>
           </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Revenue Anchor</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Revenue Anchor
+          </span>
           <div>
-            <div className="text-xl font-bold text-zinc-900 leading-tight">{revenueAnchor ? revenueAnchor.revenue : '$41M'}</div>
-            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{revenueAnchor ? revenueAnchor.region : 'Asia Pacific'}</div>
-            <div className="text-[10px] font-medium text-emerald-700 mt-1">{revenueAnchor ? `${revenueAnchor.rnights} Room Nights` : '35% Room Nights'}</div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">
+              {revenueAnchor ? revenueAnchor.revenue : defaultRevAnchor.revenueFormatted}
+            </div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">
+              {revenueAnchor ? revenueAnchor.region : defaultRevAnchor.market}
+            </div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">
+              {revenueAnchor
+                ? `${revenueAnchor.rnights} Room Nights`
+                : `${defaultRevAnchor.roomNightsFormatted} Room Nights`}
+            </div>
           </div>
         </div>
 
         <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Emerging Feeder</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
+            Emerging Feeder
+          </span>
           <div>
-            <div className="text-xl font-bold text-zinc-900 leading-tight">{emergingMarket ? emergingMarket.revenue : '$7M'}</div>
-            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">{emergingMarket ? emergingMarket.region : 'Africa'}</div>
-            <div className="text-[10px] font-medium text-emerald-700 mt-1">{emergingMarket ? `${emergingMarket.rnights} Feeder Share` : '8% RN'}</div>
+            <div className="text-xl font-bold text-zinc-900 leading-tight">
+              {emergingMarket ? emergingMarket.revenue : defaultEmerging.revenueFormatted}
+            </div>
+            <div className="text-[11px] font-normal text-zinc-600 mt-0.5">
+              {emergingMarket ? emergingMarket.region : defaultEmerging.market}
+            </div>
+            <div className="text-[10px] font-medium text-emerald-700 mt-1">
+              {emergingMarket
+                ? `${emergingMarket.rnights} Feeder Share`
+                : `${defaultEmerging.roomNightsFormatted} Feeder Share`}
+            </div>
           </div>
         </div>
       </div>
@@ -131,7 +242,7 @@ export function GeoMarketDrawerContent() {
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70 flex justify-between items-center">
           <div>
             <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-              Continental Feeder Performance
+              Continental Feeder Performance ({periodDef.label})
             </h5>
             <p className="text-[11px] text-zinc-500 mt-0.5">
               Room nights share, pricing yield, and total room revenue by geographic source
@@ -187,10 +298,16 @@ export function GeoMarketDrawerContent() {
               {/* Total Row */}
               <tr className="bg-zinc-50 font-bold border-t border-zinc-200">
                 <td className="py-3 px-4 text-zinc-900">Total Portfolio</td>
-                <td className="py-3 px-4 text-right text-zinc-900">{totalRow ? totalRow.rnights : '100%'}</td>
-                <td className="py-3 px-4 text-right text-zinc-900">{totalRow ? totalRow.adr : '$1,420'}</td>
+                <td className="py-3 px-4 text-right text-zinc-900">
+                  {totalRow ? totalRow.rnights : '100%'}
+                </td>
+                <td className="py-3 px-4 text-right text-zinc-900">
+                  {totalRow ? totalRow.adr : fmtUsd(pm.adr)}
+                </td>
                 <td className="py-3 px-4 text-right text-zinc-900">{totalRevenueDisplay}</td>
-                <td className="py-3 px-4 text-right text-emerald-700">↑ +14%</td>
+                <td className="py-3 px-4 text-right text-emerald-700">
+                  ↑ {fmtSignedPct(pm.vsLy.roomRevenuePct)}
+                </td>
                 <td className="py-3 px-4 text-zinc-600 text-[11px]" colSpan={2}>
                   Realized Geographical Contribution
                 </td>
@@ -204,10 +321,10 @@ export function GeoMarketDrawerContent() {
       <div className="border border-zinc-200 rounded-xl overflow-hidden bg-white">
         <div className="p-4 border-b border-zinc-200 bg-zinc-50/70">
           <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-900">
-            Property-Level Feeder Distribution (10 Sanctuaries)
+            Property-Level Feeder Distribution (10 Sanctuaries — {periodDef.label})
           </h5>
           <p className="text-[11px] text-zinc-500 mt-0.5">
-            Single Source of Truth cross-referenced with simulated PMS live property records
+            Single Source of Truth cross-referenced with live PMS property records
           </p>
         </div>
 
@@ -225,8 +342,7 @@ export function GeoMarketDrawerContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {simulatedPropertiesData.map((prop) => {
-                // Determine property's primary feeder logically by grouping
+              {propertiesData.map((prop) => {
                 const topFeeder =
                   prop.grouping === 'Alpine' || prop.grouping === 'Countryside'
                     ? { name: 'Europe', share: '46%' }
@@ -249,9 +365,7 @@ export function GeoMarketDrawerContent() {
                     <td className="py-2.5 px-4 text-right font-medium text-zinc-900">
                       {topFeeder.name}
                     </td>
-                    <td className="py-2.5 px-4 text-right text-zinc-600">
-                      {topFeeder.share}
-                    </td>
+                    <td className="py-2.5 px-4 text-right text-zinc-600">{topFeeder.share}</td>
                     <td className="py-2.5 px-4 text-center">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold ${

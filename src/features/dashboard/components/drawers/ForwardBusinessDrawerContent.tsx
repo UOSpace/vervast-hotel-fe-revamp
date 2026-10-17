@@ -1,52 +1,86 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useMemo, useState, useEffect } from 'react';
 import { RoundAltArrowDown, RoundAltArrowRight } from '@solar-icons/react';
 import {
-  simulatedForwardBusinessData,
-  simulatedPropertiesData,
+  getForwardBusinessData,
+  getSimulatedPropertiesData,
+  FORWARD_WINDOW_DAYS,
   type ForwardBusinessWindow,
 } from '../../services/propertySimulation';
+import { MASTER_CATEGORIES } from '@/constants/categories';
+import { getForwardBusiness } from '@/data/portfolio/hospitalityMix';
+import {
+  fmtUsd,
+  fmtPct,
+} from '@/data/portfolio';
 
-export function ForwardBusinessDrawerContent() {
-  const [selectedWindow, setSelectedWindow] = useState<ForwardBusinessWindow>('90D');
-  const data = simulatedForwardBusinessData[selectedWindow];
+interface ForwardBusinessDrawerContentProps {
+  config?: {
+    title?: string;
+    data?: any;
+  };
+}
+
+export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerContentProps) {
+  const initialWindow: ForwardBusinessWindow =
+    (config?.data?.window as ForwardBusinessWindow) || '90D';
+  const [selectedWindow, setSelectedWindow] = useState<ForwardBusinessWindow>(initialWindow);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const w = config?.data?.window as ForwardBusinessWindow;
+    if (w === '30D' || w === '90D' || w === '180D' || w === '365D') {
+      setSelectedWindow(w);
+    }
+  }, [config?.data?.window]);
+
+  const data = getForwardBusinessData(selectedWindow);
+  const windowDays = FORWARD_WINDOW_DAYS[selectedWindow];
+  const propertiesMap = getSimulatedPropertiesData('mtd');
 
   const statusMeta = (status: 'above_plan' | 'on_plan' | 'attention') =>
     status === 'above_plan'
       ? { label: 'Above Plan', cls: 'bg-emerald-50 text-emerald-700 border border-emerald-100' }
       : status === 'on_plan'
-        ? { label: 'On Plan', cls: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
-        : { label: 'Attention', cls: 'bg-rose-50 text-rose-600 border border-rose-100' };
+      ? { label: 'On Plan', cls: 'bg-zinc-100 text-zinc-700 border border-zinc-200' }
+      : { label: 'Attention', cls: 'bg-rose-50 text-rose-600 border border-rose-100' };
 
   const categoryGroups = useMemo(() => {
-    const map = new Map<string, typeof simulatedPropertiesData>();
-    simulatedPropertiesData.forEach((p) => {
-      map.set(p.grouping, [...(map.get(p.grouping) ?? []), p]);
-    });
-    return Array.from(map.entries()).map(([grouping, props]) => {
+    return MASTER_CATEGORIES.map((cat) => {
+      const catPropIds = cat.propertyIds;
+      const catFb = getForwardBusiness(catPropIds, windowDays);
+      const props = propertiesMap.filter((p) => catPropIds.includes(p.id));
       const rows = props.map((p) => {
-        const rev = (p.monthlyRevenueUsd * 2.8) / 1000000;
-        return { prop: p, rev, rn: Math.round(p.occupiedRooms * 84), risk: rev * 0.054 };
+        const pFb = getForwardBusiness([p.id], windowDays);
+        return {
+          prop: p,
+          revUsd: pFb.otbRevenue,
+          rn: pFb.window.otbRoomsSold,
+          occPct: pFb.window.otbOccupancyPct,
+          adrUsd: pFb.window.adr,
+          riskUsd: pFb.cancellationExposure,
+        };
       });
-      const totalRooms = props.reduce((s, p) => s + p.totalRooms, 0);
-      const occupied = props.reduce((s, p) => s + p.occupiedRooms, 0);
-      const status: 'above_plan' | 'on_plan' | 'attention' = props.some((p) => p.status === 'attention')
+      const status: 'above_plan' | 'on_plan' | 'attention' = props.some(
+        (p) => p.status === 'attention'
+      )
         ? 'attention'
         : props.every((p) => p.status === 'above_plan')
-          ? 'above_plan'
-          : 'on_plan';
+        ? 'above_plan'
+        : 'on_plan';
+
       return {
-        grouping,
+        id: cat.id,
+        name: cat.name,
         rows,
-        rev: rows.reduce((s, r) => s + r.rev, 0),
-        rn: rows.reduce((s, r) => s + r.rn, 0),
-        risk: rows.reduce((s, r) => s + r.risk, 0),
-        occ: totalRooms ? (occupied / totalRooms) * 100 : 0,
-        adr: occupied ? props.reduce((s, p) => s + p.adrUsd * p.occupiedRooms, 0) / occupied : 0,
+        revUsd: catFb.otbRevenue,
+        rn: catFb.window.otbRoomsSold,
+        occPct: catFb.window.otbOccupancyPct,
+        adrUsd: catFb.window.adr,
+        riskUsd: catFb.cancellationExposure,
         status,
       };
     });
-  }, []);
+  }, [windowDays, propertiesMap]);
 
   return (
     <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
@@ -62,7 +96,7 @@ export function ForwardBusinessDrawerContent() {
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Forward Business (On-The-Books Intelligence)
+            Forward Business — {data.timeframe}
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
             Committed reservations and contracted revenue already on the books (not vague forecast or pipeline).
@@ -76,10 +110,11 @@ export function ForwardBusinessDrawerContent() {
               key={period}
               type="button"
               onClick={() => setSelectedWindow(period)}
-              className={`px-3 py-1 text-xs rounded-md font-medium transition-all ${selectedWindow === period
+              className={`px-3 py-1 text-xs rounded-md font-medium transition-all cursor-pointer ${
+                selectedWindow === period
                   ? 'bg-white text-zinc-900 shadow-xs font-semibold'
                   : 'text-zinc-500 hover:text-zinc-900'
-                }`}
+              }`}
             >
               {period}
             </button>
@@ -93,9 +128,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             OTB Revenue
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {data.revenueOtb}
-          </div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{data.revenueOtb}</div>
           <div className="text-[9px] text-zinc-600 font-medium mt-1 flex items-center gap-1">
             <span className="text-zinc-900 font-bold">Def: {data.definiteRevenue}</span>
             <span className="text-zinc-400">·</span>
@@ -107,9 +140,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             OTB Room Nights
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {data.roomNightsOtb}
-          </div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{data.roomNightsOtb}</div>
           <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
             ↑ {data.roomNightsTrend}
           </span>
@@ -119,9 +150,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             OTB Occupancy
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {data.occupancyOtb}
-          </div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{data.occupancyOtb}</div>
           <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
             {data.occupancyTrend}
           </span>
@@ -131,9 +160,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             OTB ADR
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {data.adrOtb}
-          </div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{data.adrOtb}</div>
           <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
             ↑ {data.adrTrend}
           </span>
@@ -143,9 +170,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Leads Pipeline
           </span>
-          <div className="text-xl font-bold text-zinc-900 mt-1">
-            {data.leadsPipeline}
-          </div>
+          <div className="text-xl font-bold text-zinc-900 mt-1">{data.leadsPipeline}</div>
           <span className="text-[10px] text-emerald-700 font-medium mt-0.5 block">
             ↑ {data.leadsPipelineTrend} ({data.leadsCount} leads)
           </span>
@@ -155,9 +180,7 @@ export function ForwardBusinessDrawerContent() {
           <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">
             Cancellation Exposure
           </span>
-          <div className="text-xl font-bold text-rose-600 mt-1">
-            {data.cancellationExposure}
-          </div>
+          <div className="text-xl font-bold text-rose-600 mt-1">{data.cancellationExposure}</div>
           <span className="text-[10px] text-rose-600 font-medium mt-0.5 block">
             ↑ {data.cancellationTrend}
           </span>
@@ -189,7 +212,7 @@ export function ForwardBusinessDrawerContent() {
       {/* Period Buckets Breakdown: Definite, Tentative & Pipeline Cadence */}
       <div>
         <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-2">
-          Definite, Tentative & Pipeline Cadence ({data.timeframe})
+          Definite, Tentative &amp; Pipeline Cadence ({data.timeframe})
         </h5>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {data.buckets.map((b) => (
@@ -202,7 +225,7 @@ export function ForwardBusinessDrawerContent() {
                   {b.label}
                 </span>
                 <span className="text-[9.5px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                  {b.occupancyPct}% Occ OTB
+                  {fmtPct(b.occupancyPct, 1)} Occ OTB
                 </span>
               </div>
               <div className="text-2xl font-bold mt-2">{b.revenueFormatted}</div>
@@ -214,15 +237,15 @@ export function ForwardBusinessDrawerContent() {
               <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-zinc-100 text-[8.5px]">
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-900 text-white font-medium">
                   <span className="w-1 h-1 rounded-full bg-white inline-block" />
-                  Definite: ${b.definiteRevenueUsd}M
+                  Definite: {fmtUsd(b.definiteRevenueUsd)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-medium border border-zinc-200">
                   <span className="w-1 h-1 rounded-full bg-zinc-400 inline-block" />
-                  Tentative: ${b.tentativeRevenueUsd}M
+                  Tentative: {fmtUsd(b.tentativeRevenueUsd)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-50 text-zinc-500 font-medium border border-zinc-200/80">
                   <span className="w-1 h-1 rounded-full bg-zinc-300 inline-block" />
-                  Pipeline: ${b.pipelineRevenueUsd}M
+                  Pipeline: {fmtUsd(b.pipelineRevenueUsd)}
                 </span>
               </div>
             </div>
@@ -234,7 +257,7 @@ export function ForwardBusinessDrawerContent() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-            Property On-The-Books Status Across All 10 Sanctuaries
+            Property On-The-Books Status Across All 10 Sanctuaries ({selectedWindow})
           </h5>
           <span className="text-[10px] text-zinc-400">
             100% Single Source of Truth
@@ -273,13 +296,18 @@ export function ForwardBusinessDrawerContent() {
             </thead>
             <tbody>
               {categoryGroups.map((g) => {
-                const collapsed = !!collapsedCategories[g.grouping];
+                const collapsed = !!collapsedCategories[g.id];
                 const gs = statusMeta(g.status);
                 return (
-                  <Fragment key={g.grouping}>
+                  <Fragment key={g.id}>
                     <tr
                       className="bg-zinc-50/70 hover:bg-zinc-100/60 cursor-pointer transition-colors"
-                      onClick={() => setCollapsedCategories((prev) => ({ ...prev, [g.grouping]: !prev[g.grouping] }))}
+                      onClick={() =>
+                        setCollapsedCategories((prev) => ({
+                          ...prev,
+                          [g.id]: !prev[g.id],
+                        }))
+                      }
                     >
                       <td className="py-2.5 px-3 font-bold text-zinc-900 border-b border-zinc-100">
                         <span className="flex items-center gap-1.5">
@@ -288,35 +316,67 @@ export function ForwardBusinessDrawerContent() {
                           ) : (
                             <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
                           )}
-                          Sosei {g.grouping}
+                          {g.name}
                         </span>
                       </td>
                       <td className="py-2.5 px-3 text-zinc-500 text-[10px] border-b border-zinc-100">
                         {g.rows.length} {g.rows.length === 1 ? 'property' : 'properties'}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">${g.rev.toFixed(2)}M</td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">{g.rn.toLocaleString()} RN</td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">{g.occ.toFixed(1)}%</td>
-                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">${Math.round(g.adr).toLocaleString()}</td>
-                      <td className="py-2.5 px-3 text-right text-rose-600 font-medium border-b border-zinc-100">${g.risk.toFixed(2)}M</td>
+                      <td className="py-2.5 px-3 text-right font-bold text-zinc-900 border-b border-zinc-100">
+                        {fmtUsd(g.revUsd)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
+                        {g.rn.toLocaleString()} RN
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-semibold text-zinc-800 border-b border-zinc-100">
+                        {fmtPct(g.occPct, 1)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right font-medium text-zinc-700 border-b border-zinc-100">
+                        {fmtUsd(g.adrUsd)}
+                      </td>
+                      <td className="py-2.5 px-3 text-right text-rose-600 font-medium border-b border-zinc-100">
+                        {fmtUsd(g.riskUsd)}
+                      </td>
                       <td className="py-2.5 px-3 text-right border-b border-zinc-100">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${gs.cls}`}>{gs.label}</span>
+                        <span
+                          className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${gs.cls}`}
+                        >
+                          {gs.label}
+                        </span>
                       </td>
                     </tr>
                     {!collapsed &&
-                      g.rows.map(({ prop, rev, rn, risk }) => {
+                      g.rows.map(({ prop, revUsd, rn, occPct, adrUsd, riskUsd }) => {
                         const ps = statusMeta(prop.status);
                         return (
                           <tr key={prop.id} className="bg-white hover:bg-zinc-50 transition-colors">
-                            <td className="py-2 px-3 pl-9 font-medium text-zinc-800 border-b border-zinc-100">{prop.name}</td>
-                            <td className="py-2 px-3 text-zinc-400 text-[10px] border-b border-zinc-100">{prop.city}</td>
-                            <td className="py-2 px-3 text-right font-medium text-zinc-900 border-b border-zinc-100">${rev.toFixed(2)}M</td>
-                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">{rn.toLocaleString()} RN</td>
-                            <td className="py-2 px-3 text-right text-zinc-700 border-b border-zinc-100">{prop.occupancyFormatted}</td>
-                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">{prop.adrFormatted}</td>
-                            <td className="py-2 px-3 text-right text-rose-600 border-b border-zinc-100">${risk.toFixed(2)}M</td>
+                            <td className="py-2 px-3 pl-9 font-medium text-zinc-800 border-b border-zinc-100">
+                              {prop.name}
+                            </td>
+                            <td className="py-2 px-3 text-zinc-400 text-[10px] border-b border-zinc-100">
+                              {prop.city}
+                            </td>
+                            <td className="py-2 px-3 text-right font-medium text-zinc-900 border-b border-zinc-100">
+                              {fmtUsd(revUsd)}
+                            </td>
+                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">
+                              {rn.toLocaleString()} RN
+                            </td>
+                            <td className="py-2 px-3 text-right text-zinc-700 border-b border-zinc-100">
+                              {fmtPct(occPct, 1)}
+                            </td>
+                            <td className="py-2 px-3 text-right text-zinc-600 border-b border-zinc-100">
+                              {fmtUsd(adrUsd)}
+                            </td>
+                            <td className="py-2 px-3 text-right text-rose-600 border-b border-zinc-100">
+                              {fmtUsd(riskUsd)}
+                            </td>
                             <td className="py-2 px-3 text-right border-b border-zinc-100">
-                              <span className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${ps.cls}`}>{ps.label}</span>
+                              <span
+                                className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold ${ps.cls}`}
+                              >
+                                {ps.label}
+                              </span>
                             </td>
                           </tr>
                         );
@@ -324,6 +384,16 @@ export function ForwardBusinessDrawerContent() {
                   </Fragment>
                 );
               })}
+              <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
+                <td className="py-2.5 px-3 text-zinc-900">Total Portfolio ({selectedWindow})</td>
+                <td className="py-2.5 px-3 text-zinc-500">10 Sanctuaries · 5 Collections</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900">{data.revenueOtb}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900">{data.roomNightsOtb} RN</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700">{data.occupancyOtb}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900">{data.adrOtb}</td>
+                <td className="py-2.5 px-3 text-right text-rose-600">{data.cancellationExposure}</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700">Above Plan</td>
+              </tr>
             </tbody>
           </table>
         </div>

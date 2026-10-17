@@ -13,131 +13,64 @@ function getTooltipText(label: string) {
 }
 
 import { resolvePropertyId } from '@/constants/categories';
+import {
+  getPropertyMetrics,
+  fmtPct,
+  fmtUsd,
+  fmtUsdFull,
+  fmtSignedPct,
+  fmtSignedPts,
+  type PeriodId,
+} from '@/data/portfolio';
+import { getPropertyGuestActivity, getPropertyLosNights } from '@/data/portfolio/hospitalitySubMix';
 
 export function PropertyKPIWidget({ 
   propertyId = 'sosei-barcelona',
   propertyName,
+  period = 'mtd',
 }: { 
   propertyId?: string;
   propertyName?: string;
+  period?: PeriodId;
 }) {
   const { openDrawer } = useDashboardDrawer();
-  
-  // Real PMS-aligned metrics synchronized with Dashboard All (MTD & YTD portfolioPerformance)
-  const kpiDataMap: Record<string, any> = {
-    // ── SOSEI Urban (Barcelona, Tokyo) ──────────────────────────────────
-    'sosei-barcelona': {
-      name: 'SOSEI Barcelona', location: 'Barcelona, Spain', category: 'SOSEI Urban',
-      occ: '68', rev: '$1,750,000', revpar: '$1,732', adr: '$2,540', los: '3.4',
-      arrivals: 22, deps: 18, inhouse: 132, vip: 16,
-      occVsLy: '+5.1 pts vs LY', occVsBudget: '+2.4 pts vs Budget', occVsForecast: '+1.4 pts vs Forecast',
-      revVsLy: '+14.5% vs LY', revVsBudget: '+4.8% vs Budget', revVsForecast: '+2.1% vs Forecast',
-      revparVsLy: '+14.6% vs LY', revparVsBudget: '+4.6% vs Budget', revparVsForecast: '+2.0% vs Forecast',
-      adrVsLy: '+7.8% vs LY', adrVsBudget: '+3.2% vs Budget', adrVsForecast: '+1.4% vs Forecast',
-      losVsLy: '+0.2N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-    'sosei-tokyo': {
-      name: 'SOSEI Tokyo', location: 'Tokyo, Japan', category: 'SOSEI Urban',
-      occ: '71', rev: '$1,280,000', revpar: '$1,742', adr: '$2,450', los: '3.2',
-      arrivals: 18, deps: 15, inhouse: 118, vip: 14,
-      occVsLy: '+4.9 pts vs LY', occVsBudget: '+2.2 pts vs Budget', occVsForecast: '+1.3 pts vs Forecast',
-      revVsLy: '+14.2% vs LY', revVsBudget: '+4.6% vs Budget', revVsForecast: '+2.0% vs Forecast',
-      revparVsLy: '+14.4% vs LY', revparVsBudget: '+4.4% vs Budget', revparVsForecast: '+1.9% vs Forecast',
-      adrVsLy: '+7.5% vs LY', adrVsBudget: '+3.0% vs Budget', adrVsForecast: '+1.3% vs Forecast',
-      losVsLy: '+0.2N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-
-    // ── SOSEI Beach Resort (Bali, Maldives) ─────────────────────────────
-    'sosei-bali': {
-      name: 'SOSEI Bali', location: 'Uluwatu, Bali, Indonesia', category: 'SOSEI Beach Resort',
-      occ: '71', rev: '$1,220,000', revpar: '$1,520', adr: '$2,150', los: '5.2',
-      arrivals: 15, deps: 12, inhouse: 104, vip: 12,
-      occVsLy: '+4.5 pts vs LY', occVsBudget: '+2.1 pts vs Budget', occVsForecast: '+1.2 pts vs Forecast',
-      revVsLy: '+13.8% vs LY', revVsBudget: '+4.4% vs Budget', revVsForecast: '+1.9% vs Forecast',
-      revparVsLy: '+14.0% vs LY', revparVsBudget: '+4.2% vs Budget', revparVsForecast: '+1.8% vs Forecast',
-      adrVsLy: '+7.2% vs LY', adrVsBudget: '+2.9% vs Budget', adrVsForecast: '+1.3% vs Forecast',
-      losVsLy: '+0.3N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-    'sosei-maldives': {
-      name: 'SOSEI Maldives', location: 'North Malé Atoll, Maldives', category: 'SOSEI Beach Resort',
-      occ: '77', rev: '$1,380,000', revpar: '$1,861', adr: '$2,420', los: '6.4',
-      arrivals: 14, deps: 10, inhouse: 98, vip: 16,
-      occVsLy: '+5.6 pts vs LY', occVsBudget: '+2.6 pts vs Budget', occVsForecast: '+1.5 pts vs Forecast',
-      revVsLy: '+15.8% vs LY', revVsBudget: '+5.2% vs Budget', revVsForecast: '+2.3% vs Forecast',
-      revparVsLy: '+16.0% vs LY', revparVsBudget: '+4.9% vs Budget', revparVsForecast: '+2.2% vs Forecast',
-      adrVsLy: '+8.6% vs LY', adrVsBudget: '+3.7% vs Budget', adrVsForecast: '+1.7% vs Forecast',
-      losVsLy: '+0.4N vs LY', losVsBudget: '+0.2N vs Budget', losVsForecast: '+0.2N vs Forecast',
-    },
-
-    // ── SOSEI Ski (Switzerland, Canada) ─────────────────────────────────
-    'sosei-switzerland': {
-      name: 'SOSEI Switzerland', location: 'Zermatt, Switzerland', category: 'SOSEI Ski',
-      occ: '79', rev: '$2,180,000', revpar: '$2,185', adr: '$2,780', los: '4.8',
-      arrivals: 18, deps: 14, inhouse: 125, vip: 18,
-      occVsLy: '+5.4 pts vs LY', occVsBudget: '+2.5 pts vs Budget', occVsForecast: '+1.4 pts vs Forecast',
-      revVsLy: '+16.2% vs LY', revVsBudget: '+5.4% vs Budget', revVsForecast: '+2.4% vs Forecast',
-      revparVsLy: '+16.4% vs LY', revparVsBudget: '+5.1% vs Budget', revparVsForecast: '+2.3% vs Forecast',
-      adrVsLy: '+8.9% vs LY', adrVsBudget: '+3.9% vs Budget', adrVsForecast: '+1.8% vs Forecast',
-      losVsLy: '+0.3N vs LY', losVsBudget: '+0.2N vs Budget', losVsForecast: '+0.2N vs Forecast',
-    },
-    'sosei-canada': {
-      name: 'SOSEI Canada', location: 'Whistler, Canada', category: 'SOSEI Ski',
-      occ: '73', rev: '$2,020,000', revpar: '$1,921', adr: '$2,620', los: '4.5',
-      arrivals: 12, deps: 9, inhouse: 92, vip: 12,
-      occVsLy: '+4.6 pts vs LY', occVsBudget: '+2.0 pts vs Budget', occVsForecast: '+1.1 pts vs Forecast',
-      revVsLy: '+14.4% vs LY', revVsBudget: '+4.5% vs Budget', revVsForecast: '+2.0% vs Forecast',
-      revparVsLy: '+14.6% vs LY', revparVsBudget: '+4.3% vs Budget', revparVsForecast: '+1.9% vs Forecast',
-      adrVsLy: '+7.8% vs LY', adrVsBudget: '+3.2% vs Budget', adrVsForecast: '+1.5% vs Forecast',
-      losVsLy: '+0.3N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-
-    // ── SOSEI Nature (Costa Rica, Japan) ────────────────────────────────
-    'sosei-costa-rica': {
-      name: 'SOSEI Costa Rica', location: 'Papagayo, Costa Rica', category: 'SOSEI Nature',
-      occ: '73', rev: '$1,550,000', revpar: '$1,421', adr: '$1,950', los: '4.6',
-      arrivals: 12, deps: 10, inhouse: 88, vip: 10,
-      occVsLy: '+4.4 pts vs LY', occVsBudget: '+1.9 pts vs Budget', occVsForecast: '+1.0 pts vs Forecast',
-      revVsLy: '+13.2% vs LY', revVsBudget: '+4.1% vs Budget', revVsForecast: '+1.8% vs Forecast',
-      revparVsLy: '+13.4% vs LY', revparVsBudget: '+3.9% vs Budget', revparVsForecast: '+1.7% vs Forecast',
-      adrVsLy: '+7.1% vs LY', adrVsBudget: '+2.9% vs Budget', adrVsForecast: '+1.3% vs Forecast',
-      losVsLy: '+0.2N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-    'sosei-japan': {
-      name: 'SOSEI Japan', location: 'Kyoto, Japan', category: 'SOSEI Nature',
-      occ: '69', rev: '$1,250,000', revpar: '$1,234', adr: '$1,780', los: '3.8',
-      arrivals: 11, deps: 9, inhouse: 85, vip: 9,
-      occVsLy: '+4.0 pts vs LY', occVsBudget: '+1.7 pts vs Budget', occVsForecast: '+0.9 pts vs Forecast',
-      revVsLy: '+12.1% vs LY', revVsBudget: '+3.8% vs Budget', revVsForecast: '+1.6% vs Forecast',
-      revparVsLy: '+12.3% vs LY', revparVsBudget: '+3.6% vs Budget', revparVsForecast: '+1.5% vs Forecast',
-      adrVsLy: '+6.6% vs LY', adrVsBudget: '+2.7% vs Budget', adrVsForecast: '+1.2% vs Forecast',
-      losVsLy: '+0.2N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-
-    // ── SOSEI Wellness (Oman, Egypt) ────────────────────────────────────
-    'sosei-oman': {
-      name: 'SOSEI Oman', location: 'Jebel Akhdar, Oman', category: 'SOSEI Wellness',
-      occ: '66', rev: '$1,420,000', revpar: '$1,225', adr: '$1,860', los: '4.4',
-      arrivals: 10, deps: 8, inhouse: 94, vip: 10,
-      occVsLy: '+3.9 pts vs LY', occVsBudget: '+1.6 pts vs Budget', occVsForecast: '+0.9 pts vs Forecast',
-      revVsLy: '+11.8% vs LY', revVsBudget: '+3.7% vs Budget', revVsForecast: '+1.6% vs Forecast',
-      revparVsLy: '+12.0% vs LY', revparVsBudget: '+3.5% vs Budget', revparVsForecast: '+1.5% vs Forecast',
-      adrVsLy: '+6.5% vs LY', adrVsBudget: '+2.6% vs Budget', adrVsForecast: '+1.2% vs Forecast',
-      losVsLy: '+0.2N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-    'sosei-egypt': {
-      name: 'SOSEI Egypt', location: 'Siwa Oasis, Egypt', category: 'SOSEI Wellness',
-      occ: '59', rev: '$1,180,000', revpar: '$1,022', adr: '$1,740', los: '3.6',
-      arrivals: 8, deps: 6, inhouse: 74, vip: 7,
-      occVsLy: '+3.1 pts vs LY', occVsBudget: '+1.2 pts vs Budget', occVsForecast: '+0.6 pts vs Forecast',
-      revVsLy: '+10.2% vs LY', revVsBudget: '+3.1% vs Budget', revVsForecast: '+1.3% vs Forecast',
-      revparVsLy: '+10.4% vs LY', revparVsBudget: '+2.9% vs Budget', revparVsForecast: '+1.2% vs Forecast',
-      adrVsLy: '+5.8% vs LY', adrVsBudget: '+2.1% vs Budget', adrVsForecast: '+0.9% vs Forecast',
-      losVsLy: '+0.1N vs LY', losVsBudget: '+0.1N vs Budget', losVsForecast: '+0.1N vs Forecast',
-    },
-  };
 
   const canonicalId = resolvePropertyId(propertyId);
-  const data = kpiDataMap[propertyId] ?? kpiDataMap[canonicalId] ?? kpiDataMap['sosei-barcelona'];
+  const m = getPropertyMetrics(canonicalId, period);
+  const activity = getPropertyGuestActivity(canonicalId);
+  const losNights = getPropertyLosNights(canonicalId);
+
+  const data = {
+    name: m.name,
+    location: m.location,
+    category: m.categoryName,
+    occ: m.occupancyPct.toFixed(1),
+    rev: fmtUsd(m.totalRevenue),
+    roomRev: fmtUsd(m.roomRevenue),
+    revpar: fmtUsdFull(m.revpar),
+    adr: fmtUsdFull(m.adr),
+    los: losNights.toFixed(1),
+    arrivals: activity.arrivals,
+    deps: activity.departures,
+    inhouse: activity.inHouse,
+    vip: activity.vip,
+    occVsLy: `${fmtSignedPts(m.vsLy.occupancyPts)} vs LY`,
+    occVsBudget: `${fmtSignedPts(m.vsBudget.occupancyPts)} vs Budget`,
+    occVsForecast: `${fmtSignedPts(m.vsForecast.occupancyPts)} vs Forecast`,
+    revVsLy: `${fmtSignedPct(m.vsLy.totalRevenuePct)} vs LY`,
+    revVsBudget: `${fmtSignedPct(m.vsBudget.totalRevenuePct)} vs Budget`,
+    revVsForecast: `${fmtSignedPct(m.vsForecast.totalRevenuePct)} vs Forecast`,
+    revparVsLy: `${fmtSignedPct(m.vsLy.revparPct)} vs LY`,
+    revparVsBudget: `${fmtSignedPct(m.vsBudget.revparPct)} vs Budget`,
+    revparVsForecast: `${fmtSignedPct(m.vsForecast.revparPct)} vs Forecast`,
+    adrVsLy: `${fmtSignedPct(m.vsLy.adrPct)} vs LY`,
+    adrVsBudget: `${fmtSignedPct(m.vsBudget.adrPct)} vs Budget`,
+    adrVsForecast: `${fmtSignedPct(m.vsForecast.adrPct)} vs Forecast`,
+    losVsLy: '+0.2N vs LY',
+    losVsBudget: '+0.1N vs Budget',
+    losVsForecast: '+0.1N vs Forecast',
+  };
+
   const activePropName = propertyName || data.name;
 
   // Compact badge text derived from real data (e.g. '+1.1 pts vs Forecast' -> '+1.1 pts Fcst')
@@ -147,58 +80,58 @@ export function PropertyKPIWidget({
   const kpis = [
     { 
       label: 'Occupancy', 
-      value: `${data.occ}%`, 
-      vsLy: data.occVsLy || '+4.8 pts vs LY',
-      vsBudget: data.occVsBudget || '+2.1 pts vs Budget',
-      vsBudgetShort: '+2.1 pts vs Bud',
-      vsForecast: data.occVsForecast || '+1.2 pts vs Forecast',
-      vsForecastShort: '+1.2 pts vs Fcst',
-      upLy: !data.occVsLy?.includes('-'),
-      change: data.occVsLy || '+4.8 pts vs LY',
+      value: fmtPct(m.occupancyPct, 1), 
+      vsLy: data.occVsLy,
+      vsBudget: data.occVsBudget,
+      vsBudgetShort: shortBadge(data.occVsBudget),
+      vsForecast: data.occVsForecast,
+      vsForecastShort: shortBadge(data.occVsForecast),
+      upLy: m.vsLy.occupancyPts >= 0,
+      change: data.occVsLy,
     },
     { 
-      label: 'Room Revenue', 
+      label: 'Total Revenue', 
       value: data.rev, 
-      vsLy: data.revVsLy || '+14.0% vs LY',
-      vsBudget: data.revVsBudget || '+4.8% vs Budget',
-      vsBudgetShort: '+4.8% vs Bud',
-      vsForecast: data.revVsForecast || '+2.1% vs Forecast',
-      vsForecastShort: '+2.1% vs Fcst',
-      upLy: !data.revVsLy?.includes('-'),
-      change: data.revVsLy || '+14.0% vs LY',
+      vsLy: data.revVsLy,
+      vsBudget: data.revVsBudget,
+      vsBudgetShort: shortBadge(data.revVsBudget),
+      vsForecast: data.revVsForecast,
+      vsForecastShort: shortBadge(data.revVsForecast),
+      upLy: m.vsLy.totalRevenuePct >= 0,
+      change: data.revVsLy,
     },
     { 
       label: 'RevPAR', 
       value: data.revpar, 
-      vsLy: data.revparVsLy || '+14.2% vs LY',
-      vsBudget: data.revparVsBudget || '+4.5% vs Budget',
-      vsBudgetShort: '+4.5% vs Bud',
-      vsForecast: data.revparVsForecast || '+2.0% vs Forecast',
-      vsForecastShort: '+2.0% vs Fcst',
-      upLy: !data.revparVsLy?.includes('-'),
-      change: data.revparVsLy || '+14.2% vs LY',
+      vsLy: data.revparVsLy,
+      vsBudget: data.revparVsBudget,
+      vsBudgetShort: shortBadge(data.revparVsBudget),
+      vsForecast: data.revparVsForecast,
+      vsForecastShort: shortBadge(data.revparVsForecast),
+      upLy: m.vsLy.revparPct >= 0,
+      change: data.revparVsLy,
     },
     { 
       label: 'ADR', 
       value: data.adr, 
-      vsLy: data.adrVsLy || '+8.0% vs LY',
-      vsBudget: data.adrVsBudget || '+3.4% vs Budget',
-      vsBudgetShort: '+3.4% vs Bud',
-      vsForecast: data.adrVsForecast || '+1.5% vs Forecast',
-      vsForecastShort: '+1.5% vs Fcst',
-      upLy: !data.adrVsLy?.includes('-'),
-      change: data.adrVsLy || '+8.0% vs LY',
+      vsLy: data.adrVsLy,
+      vsBudget: data.adrVsBudget,
+      vsBudgetShort: shortBadge(data.adrVsBudget),
+      vsForecast: data.adrVsForecast,
+      vsForecastShort: shortBadge(data.adrVsForecast),
+      upLy: m.vsLy.adrPct >= 0,
+      change: data.adrVsLy,
     },
     { 
       label: 'Av. Length of Stay', 
       value: `${data.los} Nights`, 
-      vsLy: data.losVsLy || '+0.3N vs LY',
-      vsBudget: data.losVsBudget || '+0.1N vs Budget',
-      vsBudgetShort: '+0.1N vs Bud',
-      vsForecast: data.losVsForecast || '+0.2N vs Forecast',
-      vsForecastShort: '+0.2N vs Fcst',
+      vsLy: data.losVsLy,
+      vsBudget: data.losVsBudget,
+      vsBudgetShort: shortBadge(data.losVsBudget),
+      vsForecast: data.losVsForecast,
+      vsForecastShort: shortBadge(data.losVsForecast),
       upLy: true,
-      change: data.losVsLy || '+0.3N vs LY',
+      change: data.losVsLy,
     },
   ];
 
@@ -211,8 +144,9 @@ export function PropertyKPIWidget({
           type: 'PROPERTY_ACTIVITY', 
           title: `Today's Activity — ${activePropName}`, 
           data: {
-            propertyId,
+            propertyId: canonicalId,
             propertyName: activePropName,
+            period,
             location: data.location,
             category: data.category,
             arrivals: data.arrivals,
@@ -262,9 +196,11 @@ export function PropertyKPIWidget({
             value: kpis[0].value,
             change: kpis[0].change,
             propertyName: activePropName,
-            propertyId,
+            propertyId: canonicalId,
+            period,
             occ: data.occ,
             rev: data.rev,
+            roomRev: data.roomRev,
             revpar: data.revpar,
             adr: data.adr,
             los: data.los,
@@ -326,9 +262,11 @@ export function PropertyKPIWidget({
                 value: kpi.value,
                 change: kpi.change,
                 propertyName: activePropName,
-                propertyId,
+                propertyId: canonicalId,
+                period,
                 occ: data.occ,
                 rev: data.rev,
+                roomRev: data.roomRev,
                 revpar: data.revpar,
                 adr: data.adr,
                 los: data.los,
