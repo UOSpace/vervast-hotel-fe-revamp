@@ -3,7 +3,7 @@ import { Calendar, AltArrowDown, Magnifer } from '@solar-icons/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { PeriodTabsWidget } from '../resort-type/PeriodTabsWidget';
-import { PERIOD_IDS, type PeriodId } from '@/data/portfolio';
+import type { PeriodId } from '@/data/portfolio';
 
 export function PropertyHeaderWidget({
   startDate, endDate, onDateChange,
@@ -180,7 +180,6 @@ export function PropertyHeaderWidget({
               <PeriodTabsWidget
                 period={period}
                 setPeriod={onPeriodChange}
-                periods={PERIOD_IDS}
                 showLabel={false}
               />
             </div>

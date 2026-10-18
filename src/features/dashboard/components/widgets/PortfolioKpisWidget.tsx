@@ -238,7 +238,7 @@ export function PortfolioKpisWidget({
             <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[8px]">Pillars:</span>
             {data.totalRevenue.breakdown.map((item, idx) => (
               <span key={item.label} className="flex items-center gap-1">
-                <span className="text-zinc-500">{item.label}</span>
+                <span className="text-zinc-500">{item.label} :</span>
                 <span className="font-bold text-zinc-900">{item.val}</span>
                 {idx < data.totalRevenue.breakdown.length - 1 && (
                   <span className="text-zinc-300 ml-1">·</span>

@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ResortPickerWidget } from '../components/widgets/resort-type/ResortPickerWidget';
-import { DateRangeWidget } from '../components/widgets/resort-type/DateRangeWidget';
 import { PeriodTabsWidget } from '../components/widgets/resort-type/PeriodTabsWidget';
 import { ResortKPIWidget, type CategoryKpiData } from '../components/widgets/resort-type/ResortKPIWidget';
-import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
+import { ResortRevenueDemandMixWidget } from '../components/widgets/resort-type/ResortRevenueDemandMixWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
 import {
@@ -14,7 +13,7 @@ import {
   type MasterHotelProperty,
 } from '@/constants/categories';
 import {
-  PERIOD_IDS,
+  PERIOD_DEFS,
   fmtInt,
   fmtPct,
   fmtSignedPct,
@@ -63,28 +62,21 @@ export type CategoryPropertyDefinition = MasterHotelProperty;
 export const CATEGORY_HOTEL_PROPERTIES: MasterHotelProperty[] = MASTER_PROPERTIES;
 
 // Static breakdown configurations
-const geoConfigs = [
-  { region: 'Asia Pacific', share: 35, adrFactor: 0.95 },
-  { region: 'Europe', share: 25, adrFactor: 1.09 },
-  { region: 'America', share: 20, adrFactor: 0.86 },
-  { region: 'Middle East', share: 12, adrFactor: 0.77 },
-  { region: 'Africa', share: 8, adrFactor: 0.68 },
-];
 
 export const segmentConfigs = [
-  { segment: 'Leisure', share: 55, adrFactor: 0.92, color: '#0f172a' },
-  { segment: 'Business', share: 25, adrFactor: 1.09, color: '#334155' },
-  { segment: 'Social', share: 10, adrFactor: 0.68, color: '#64748b' },
-  { segment: 'MICE', share: 7, adrFactor: 0.97, color: '#94a3b8' },
-  { segment: 'Others', share: 3, adrFactor: 0.61, color: '#cbd5e1' },
+  { segment: 'Leisure', share: 55, adrFactor: 0.92, occOffset: 2.4, color: '#0f172a' },
+  { segment: 'Business', share: 25, adrFactor: 1.09, occOffset: -1.8, color: '#334155' },
+  { segment: 'Social', share: 10, adrFactor: 0.68, occOffset: -4.2, color: '#64748b' },
+  { segment: 'MICE', share: 7, adrFactor: 0.97, occOffset: -3.5, color: '#94a3b8' },
+  { segment: 'Others', share: 3, adrFactor: 0.61, occOffset: -6.8, color: '#cbd5e1' },
 ];
 
 export const channelConfigs = [
-  { channel: 'Direct', share: 33, adrFactor: 1.11, color: '#0f172a' },
-  { channel: 'OTA', share: 28, adrFactor: 0.81, color: '#334155' },
-  { channel: 'Consortia', share: 15, adrFactor: 0.87, color: '#64748b' },
-  { channel: 'Own Web', share: 11, adrFactor: 1.06, color: '#94a3b8' },
-  { channel: 'Others', share: 13, adrFactor: 0.71, color: '#cbd5e1' },
+  { channel: 'Direct', share: 33, adrFactor: 1.11, occOffset: 2.1, color: '#0f172a' },
+  { channel: 'OTA', share: 28, adrFactor: 0.81, occOffset: -1.5, color: '#334155' },
+  { channel: 'Consortia', share: 15, adrFactor: 0.87, occOffset: 0.8, color: '#64748b' },
+  { channel: 'Own Web', share: 11, adrFactor: 1.06, occOffset: 1.6, color: '#94a3b8' },
+  { channel: 'Others', share: 13, adrFactor: 0.71, occOffset: -4.5, color: '#cbd5e1' },
 ];
 
 // Helper to distribute metrics to categories consistently
@@ -256,31 +248,6 @@ export function ResortTypeDashboard() {
     window.scrollTo(0, 0);
   }, []);
 
-  const [initialStart, initialEnd] = getPeriodDateRange('mtd');
-  const [startDate, setStartDateState] = useState<Date | null>(initialStart);
-  const [endDate, setEndDateState] = useState<Date | null>(initialEnd);
-
-  const handleSelectPeriod = (nextPeriod: PeriodId) => {
-    setPeriod(nextPeriod);
-    const [s, e] = getPeriodDateRange(nextPeriod);
-    setStartDateState(s);
-    setEndDateState(e);
-  };
-
-  const handleSetStartDate = (nextStart: Date | null) => {
-    setStartDateState(nextStart);
-    if (nextStart && endDate) {
-      setPeriod(inferPeriodFromDates(nextStart, endDate));
-    }
-  };
-
-  const handleSetEndDate = (nextEnd: Date | null) => {
-    setEndDateState(nextEnd);
-    if (startDate && nextEnd) {
-      setPeriod(inferPeriodFromDates(startDate, nextEnd));
-    }
-  };
-
   const activeList = useMemo(() => {
     return activeResorts.length > 0 ? activeResorts.map(resolveCategoryId) : ['urban'];
   }, [activeResorts]);
@@ -332,15 +299,6 @@ export function ResortTypeDashboard() {
   }, [m, categoryDisplayName]);
 
   // Compute synchronized breakdown data
-  const geoDistribution = useMemo(() => {
-    return distributeMetrics(
-      geoConfigs.map((c) => ({ name: c.region, share: c.share, adrFactor: c.adrFactor })),
-      totalOccupiedNights,
-      totalRevenue,
-      avgAdr
-    );
-  }, [totalOccupiedNights, totalRevenue, avgAdr]);
-
   const segmentDistribution = useMemo(() => {
     return distributeMetrics(
       segmentConfigs.map((c) => ({ name: c.segment, share: c.share, adrFactor: c.adrFactor })),
@@ -359,25 +317,6 @@ export function ResortTypeDashboard() {
     );
   }, [totalOccupiedNights, totalRevenue, avgAdr]);
 
-  const dynamicGeoData = useMemo(() => {
-    const tableData: any[] = geoDistribution.map((item) => ({
-      region: item.name,
-      rnights: totalOccupiedNights > 0 ? fmtPct((item.nights / totalOccupiedNights) * 100) : '0.0%',
-      adr: fmtUsdFull(item.adr),
-      revenue: fmtUsd(item.revenue),
-    }));
-
-    tableData.push({
-      region: 'Total',
-      rnights: '100%',
-      adr: fmtUsdFull(avgAdr),
-      revenue: fmtUsd(totalRevenue),
-      isTotal: true,
-    });
-
-    return tableData;
-  }, [geoDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
-
   const dynamicSegmentData = useMemo(() => {
     return segmentConfigs.map((cfg) => {
       const finalItem = segmentDistribution.find((item) => item.name === cfg.segment);
@@ -394,23 +333,32 @@ export function ResortTypeDashboard() {
   }, [segmentDistribution, totalOccupiedNights]);
 
   const dynamicSegmentTable = useMemo(() => {
-    const tableData: any[] = segmentDistribution.map((item) => ({
-      segment: item.name,
-      rnights: totalOccupiedNights > 0 ? fmtPct((item.nights / totalOccupiedNights) * 100) : '0.0%',
-      adr: fmtUsdFull(item.adr),
-      revenue: fmtUsd(item.revenue),
-    }));
+    const tableData: any[] = segmentDistribution.map((item) => {
+      const cfg = segmentConfigs.find((c) => c.segment === item.name);
+      const occPct = Math.min(98, Math.max(40, m.occupancyPct + (cfg?.occOffset ?? 0)));
+      const revparUsd = Math.round(item.adr * (occPct / 100));
+      return {
+        segment: item.name,
+        rnights: totalOccupiedNights > 0 ? fmtPct((item.nights / totalOccupiedNights) * 100) : '0.0%',
+        occupancy: fmtPct(occPct, 1),
+        adr: fmtUsdFull(item.adr),
+        revpar: fmtUsdFull(revparUsd),
+        revenue: fmtUsd(item.revenue),
+      };
+    });
 
     tableData.push({
       segment: 'Total',
       rnights: '100%',
+      occupancy: fmtPct(m.occupancyPct, 1),
       adr: fmtUsdFull(avgAdr),
+      revpar: fmtUsdFull(m.revpar),
       revenue: fmtUsd(totalRevenue),
       isTotal: true,
     });
 
     return tableData;
-  }, [segmentDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
+  }, [segmentDistribution, totalOccupiedNights, totalRevenue, avgAdr, m]);
 
   const dynamicChannelData = useMemo(() => {
     return channelConfigs.map((cfg) => {
@@ -428,55 +376,61 @@ export function ResortTypeDashboard() {
   }, [channelDistribution, totalOccupiedNights]);
 
   const dynamicChannelTable = useMemo(() => {
-    const tableData: any[] = channelDistribution.map((item) => ({
-      channel: item.name,
-      rnights: totalOccupiedNights > 0 ? fmtPct((item.nights / totalOccupiedNights) * 100) : '0.0%',
-      adr: fmtUsdFull(item.adr),
-      revenue: fmtUsd(item.revenue),
-    }));
+    const tableData: any[] = channelDistribution.map((item) => {
+      const cfg = channelConfigs.find((c) => c.channel === item.name);
+      const occPct = Math.min(98, Math.max(40, m.occupancyPct + (cfg?.occOffset ?? 0)));
+      const revparUsd = Math.round(item.adr * (occPct / 100));
+      return {
+        channel: item.name,
+        rnights: totalOccupiedNights > 0 ? fmtPct((item.nights / totalOccupiedNights) * 100) : '0.0%',
+        occupancy: fmtPct(occPct, 1),
+        adr: fmtUsdFull(item.adr),
+        revpar: fmtUsdFull(revparUsd),
+        revenue: fmtUsd(item.revenue),
+      };
+    });
 
     tableData.push({
       channel: 'Total',
       rnights: '100%',
+      occupancy: fmtPct(m.occupancyPct, 1),
       adr: fmtUsdFull(avgAdr),
+      revpar: fmtUsdFull(m.revpar),
       revenue: fmtUsd(totalRevenue),
       isTotal: true,
     });
 
     return tableData;
-  }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr]);
+  }, [channelDistribution, totalOccupiedNights, totalRevenue, avgAdr, m]);
 
   return (
     <div className="w-full px-4 lg:px-6 pb-6 text-[10px] flex flex-col gap-4">
-      {/* Title, Date Filter, and Time (Full-Width Header at the very top) */}
+      {/* Title and Time (Full-Width Header at the very top) */}
       <div className="w-full border-b border-zinc-200/80 pb-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3 animate-fade-in">
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            Resort & Destination Analytics (Hotel Type Level)
+            Property Categories Analytics (Hotel Type Level)
           </h2>
         </div>
-        <div className="flex flex-wrap items-center sm:items-end gap-3 shrink-0">
-          <PeriodTabsWidget
-            period={period}
-            setPeriod={handleSelectPeriod}
-            periods={PERIOD_IDS}
-          />
-          <DateRangeWidget
-            startDate={startDate}
-            setStartDate={handleSetStartDate}
-            endDate={endDate}
-            setEndDate={handleSetEndDate}
-          />
-          <div className="text-right shrink-0 pb-0.5">
-            <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-            <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
-          </div>
+        <div className="text-right shrink-0 pb-0.5">
+          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
+          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
         </div>
       </div>
 
-      {/* Horizontal Resort Picker Gallery */}
-      <div className="w-full pb-3 pt-1">
+      {/* Period Picker & As-Of above Horizontal Resort Picker Gallery */}
+      <div className="w-full pb-3 pt-1 flex flex-col gap-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-[10px] text-zinc-500 font-medium">
+            As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[period].periodLabel}</span>
+          </span>
+          <PeriodTabsWidget
+            period={period}
+            setPeriod={setPeriod}
+            showLabel={false}
+          />
+        </div>
         <ResortPickerWidget activeResorts={activeResorts} setActiveResorts={setActiveResorts} />
       </div>
 
@@ -485,7 +439,7 @@ export function ResortTypeDashboard() {
 
       {/* Analytics Breakdown Grid (Matches gap-4 & card height of view=all) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-        <ResortGeoMarketWidget geoData={dynamicGeoData} />
+        <ResortRevenueDemandMixWidget period={period} propertyIds={activeProperties.map((p) => p.id)} />
         <ResortMarketSegmentWidget segmentData={dynamicSegmentData} segmentTable={dynamicSegmentTable} totalRnights={dynamicTotal} />
         <ResortChannelStatsWidget channelData={dynamicChannelData} channelTable={dynamicChannelTable} totalRnights={dynamicTotal} />
       </div>

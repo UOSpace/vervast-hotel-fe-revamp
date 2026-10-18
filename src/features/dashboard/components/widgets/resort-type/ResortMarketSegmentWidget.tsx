@@ -1,3 +1,4 @@
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { SharedDonutChart } from './SharedDonutChart';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
@@ -8,22 +9,23 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
     <div
       className="rounded-[12px] p-4 flex flex-col justify-between gap-3 bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.45s' }}
-      onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Stats', data: segmentTable })}
+      onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment', data: segmentTable })}
     >
       <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
         <div className="flex items-center gap-1.5">
-          <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">Market Segment Stats</span>
-          <InfoTooltip text="Customer segment breakdown showing leisure, business, social, and MICE groups." />
+          <InfoTooltip text="Customer segment breakdown showing leisure, business, social, and MICE groups.">
+            <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900 cursor-help">Market Segment</span>
+          </InfoTooltip>
         </div>
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Stats', data: segmentTable });
+            openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment', data: segmentTable });
           }}
-          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+          className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
         >
-          <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+          <span>See details</span> <RoundAltArrowRight size={10} />
         </button>
       </div>
       <div className="flex items-center gap-6 px-2 py-1 h-[120px]">
@@ -44,10 +46,11 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
         <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
             <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">
-              <th className="text-left pb-2.5 pt-1 pr-1.5 w-[30%] truncate font-medium">Segment</th>
-              <th className="text-right pb-2.5 pt-1 px-1.5 w-[18%] truncate font-medium">% Rnights</th>
-              <th className="text-right pb-2.5 pt-1 px-1.5 w-[22%] truncate font-medium">ADR (USD)</th>
-              <th className="text-right pb-2.5 pt-1 pl-1.5 w-[30%] truncate font-medium">Room Revenue</th>
+              <th className="text-left pb-2.5 pt-1 pr-1 w-[22%] truncate font-medium">Segment</th>
+              <th className="text-right pb-2.5 pt-1 px-1 w-[19%] truncate font-medium">Occupancy</th>
+              <th className="text-right pb-2.5 pt-1 px-1 w-[19%] truncate font-medium">ADR</th>
+              <th className="text-right pb-2.5 pt-1 px-1 w-[19%] truncate font-medium">RevPAR</th>
+              <th className="text-right pb-2.5 pt-1 pl-1 w-[21%] truncate font-medium">Revenue</th>
             </tr>
           </thead>
           <tbody>
@@ -55,10 +58,11 @@ export function ResortMarketSegmentWidget({ segmentData, segmentTable, totalRnig
               const isTotal = idx === segmentTable.length - 1;
               return (
                 <tr key={row.segment} className={`text-[10px] border-b border-zinc-100 ${isTotal ? 'font-bold text-zinc-900 border-b-0 pt-2' : 'text-zinc-700'}`}>
-                  <td className="py-2 pr-1.5 truncate">{row.segment}</td>
-                  <td className="text-right py-2 px-1.5 truncate text-zinc-900 font-medium">{row.rnights}</td>
-                  <td className="text-right py-2 px-1.5 truncate text-zinc-900 font-medium">{row.adr}</td>
-                  <td className="text-right py-2 pl-1.5 truncate text-zinc-900 font-medium">{row.revenue}</td>
+                  <td className="py-2 pr-1 truncate">{row.segment}</td>
+                  <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">{row.occupancy}</td>
+                  <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">{row.adr}</td>
+                  <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">{row.revpar}</td>
+                  <td className="text-right py-2 pl-1 truncate text-zinc-900 font-medium">{row.revenue}</td>
                 </tr>
               );
             })}

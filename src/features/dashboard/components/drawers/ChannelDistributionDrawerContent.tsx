@@ -137,7 +137,7 @@ export function ChannelDistributionDrawerContent(
             </span>
           </div>
           <h4 className="text-sm font-bold uppercase tracking-wider text-zinc-900 mt-1">
-            Channel Distribution Stats &amp; Revenue Yield ({periodDef.label})
+            Channel Distribution &amp; ({periodDef.label})
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
             Booking channel volume, net ADR yield, and commission economics across channels · As of:{' '}

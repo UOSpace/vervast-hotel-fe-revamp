@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
-import { AltArrowDown, UsersGroupTwoRounded } from '@solar-icons/react';
+import { AltArrowDown, RoundAltArrowRight, UsersGroupTwoRounded } from '@solar-icons/react';
 import { ResortPickerWidget } from '../components/widgets/resort-type/ResortPickerWidget';
 import { RegionalPickerWidget } from '../components/widgets/regional/RegionalPickerWidget';
 import {
@@ -714,13 +714,14 @@ function FnbAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                {mode === 'regional' ? 'Regional F&B Footprint' : 'Diner Origin Market Stats'}
-              </span>
-              <InfoTooltip text="Geographic distribution of F&B covers, guest capture rate, average check, and F&B revenue across global regions." />
+              <InfoTooltip text="Geographic distribution of F&B covers, guest capture rate, average check, and F&B revenue across global regions.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  {mode === 'regional' ? 'Regional F&B Footprint' : 'Diner Origin Market Stats'}
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors">
-              See details →
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
             </span>
           </div>
 
@@ -805,13 +806,14 @@ function FnbAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Revenue Centre Mix
-              </span>
-              <InfoTooltip text="F&B revenue and average check contribution across Specialty Dining, All-Day Dining, Bars, Private Events, and In-Villa Dining." />
+              <InfoTooltip text="F&B revenue and average check contribution across Specialty Dining, All-Day Dining, Bars, Private Events, and In-Villa Dining.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  Revenue Centre Mix
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors">
-              See details →
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
             </span>
           </div>
 
@@ -880,13 +882,14 @@ function FnbAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Dining Source &amp; Channel Mix
-              </span>
-              <InfoTooltip text="Distribution of F&B revenue between Paid À La Carte in-house guests, Meal-Plan allocations, Private Dining, External guests, and In-Villa Service." />
+              <InfoTooltip text="Distribution of F&B revenue between Paid À La Carte in-house guests, Meal-Plan allocations, Private Dining, External guests, and In-Villa Service.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  Dining Source &amp; Channel Mix
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors">
-              See details →
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
             </span>
           </div>
 

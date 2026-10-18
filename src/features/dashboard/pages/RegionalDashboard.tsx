@@ -1,9 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { RegionalPickerWidget } from '../components/widgets/regional/RegionalPickerWidget';
-import { DateRangeWidget } from '../components/widgets/resort-type/DateRangeWidget';
 import { PeriodTabsWidget } from '../components/widgets/resort-type/PeriodTabsWidget';
 import { ResortKPIWidget, type CategoryKpiData } from '../components/widgets/resort-type/ResortKPIWidget';
-import { ResortGeoMarketWidget } from '../components/widgets/resort-type/ResortGeoMarketWidget';
+import { ResortRevenueDemandMixWidget } from '../components/widgets/resort-type/ResortRevenueDemandMixWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
 import {
@@ -12,8 +11,6 @@ import {
   channelConfigs,
   getGreeting,
   getFormattedDateTime,
-  getPeriodDateRange,
-  inferPeriodFromDates,
   buildScopeKpiData,
 } from './ResortTypeDashboard';
 import {
@@ -22,7 +19,7 @@ import {
   formatRegionSelectionTitle,
 } from '@/constants/regions';
 import {
-  PERIOD_IDS,
+  PERIOD_DEFS,
   fmtInt,
   fmtPct,
   fmtUsd,
@@ -40,31 +37,6 @@ export function RegionalDashboard() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const [initialStart, initialEnd] = getPeriodDateRange('mtd');
-  const [startDate, setStartDateState] = useState<Date | null>(initialStart);
-  const [endDate, setEndDateState] = useState<Date | null>(initialEnd);
-
-  const handleSelectPeriod = (nextPeriod: PeriodId) => {
-    setPeriod(nextPeriod);
-    const [s, e] = getPeriodDateRange(nextPeriod);
-    setStartDateState(s);
-    setEndDateState(e);
-  };
-
-  const handleSetStartDate = (nextStart: Date | null) => {
-    setStartDateState(nextStart);
-    if (nextStart && endDate) {
-      setPeriod(inferPeriodFromDates(nextStart, endDate));
-    }
-  };
-
-  const handleSetEndDate = (nextEnd: Date | null) => {
-    setEndDateState(nextEnd);
-    if (startDate && nextEnd) {
-      setPeriod(inferPeriodFromDates(startDate, nextEnd));
-    }
-  };
 
   const selected = useMemo(() => {
     const ids = activeRegions.map(resolveRegionId);
@@ -84,27 +56,6 @@ export function RegionalDashboard() {
   const kpiData: CategoryKpiData = useMemo(() => {
     return buildScopeKpiData(m, regionTitle);
   }, [m, regionTitle]);
-
-  // Regional table: each selected region computed directly from the engine for the active period
-  const geoData = useMemo(() => {
-    const rows: any[] = selected.map((r) => {
-      const rm = getPortfolioMetrics(getPropertyIdsByRegion([r.id]), period);
-      return {
-        region: r.name,
-        rnights: fmtPct(totalNights > 0 ? (rm.roomsSold / totalNights) * 100 : 0),
-        adr: fmtUsdFull(rm.adr),
-        revenue: fmtUsd(rm.roomRevenue),
-      };
-    });
-    rows.push({
-      region: 'Total',
-      rnights: '100%',
-      adr: fmtUsdFull(m.adr),
-      revenue: fmtUsd(m.roomRevenue),
-      isTotal: true,
-    });
-    return rows;
-  }, [selected, period, totalNights, m.adr, m.roomRevenue]);
 
   const segmentDistribution = useMemo(
     () =>
@@ -128,16 +79,26 @@ export function RegionalDashboard() {
   );
 
   const buildTable = (dist: typeof segmentDistribution, key: 'segment' | 'channel') => {
-    const rows: any[] = dist.map((item) => ({
-      [key]: item.name,
-      rnights: totalNights > 0 ? fmtPct((item.nights / totalNights) * 100) : '0.0%',
-      adr: fmtUsdFull(item.adr),
-      revenue: fmtUsd(item.revenue),
-    }));
+    const configs = key === 'segment' ? segmentConfigs : channelConfigs;
+    const rows: any[] = dist.map((item) => {
+      const cfg = configs.find((c: any) => (c.segment || c.channel) === item.name);
+      const occPct = Math.min(98, Math.max(40, m.occupancyPct + (cfg?.occOffset ?? 0)));
+      const revparUsd = Math.round(item.adr * (occPct / 100));
+      return {
+        [key]: item.name,
+        rnights: totalNights > 0 ? fmtPct((item.nights / totalNights) * 100) : '0.0%',
+        occupancy: fmtPct(occPct, 1),
+        adr: fmtUsdFull(item.adr),
+        revpar: fmtUsdFull(revparUsd),
+        revenue: fmtUsd(item.revenue),
+      };
+    });
     rows.push({
       [key]: 'Total',
       rnights: '100%',
+      occupancy: fmtPct(m.occupancyPct, 1),
       adr: fmtUsdFull(m.adr),
+      revpar: fmtUsdFull(m.revpar),
       revenue: fmtUsd(m.roomRevenue),
       isTotal: true,
     });
@@ -157,33 +118,30 @@ export function RegionalDashboard() {
             Regional Market Analytics (Region Level)
           </h2>
         </div>
-        <div className="flex flex-wrap items-center sm:items-end gap-3 shrink-0">
-          <PeriodTabsWidget
-            period={period}
-            setPeriod={handleSelectPeriod}
-            periods={PERIOD_IDS}
-          />
-          <DateRangeWidget
-            startDate={startDate}
-            setStartDate={handleSetStartDate}
-            endDate={endDate}
-            setEndDate={handleSetEndDate}
-          />
-          <div className="text-right shrink-0 pb-0.5">
-            <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-            <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
-          </div>
+        <div className="text-right shrink-0 pb-0.5">
+          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
+          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
         </div>
       </div>
 
-      <div className="w-full pb-3 pt-1">
+      <div className="w-full pb-3 pt-1 flex flex-col gap-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-[10px] text-zinc-500 font-medium">
+            As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[period].periodLabel}</span>
+          </span>
+          <PeriodTabsWidget
+            period={period}
+            setPeriod={setPeriod}
+            showLabel={false}
+          />
+        </div>
         <RegionalPickerWidget activeRegions={activeRegions} setActiveRegions={setActiveRegions} />
       </div>
 
       <ResortKPIWidget data={kpiData} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-        <ResortGeoMarketWidget geoData={geoData} />
+        <ResortRevenueDemandMixWidget period={period} propertyIds={propIds} />
         <ResortMarketSegmentWidget segmentData={segmentData} segmentTable={buildTable(segmentDistribution, 'segment')} totalRnights={dynamicTotal} />
         <ResortChannelStatsWidget channelData={channelData} channelTable={buildTable(channelDistribution, 'channel')} totalRnights={dynamicTotal} />
       </div>

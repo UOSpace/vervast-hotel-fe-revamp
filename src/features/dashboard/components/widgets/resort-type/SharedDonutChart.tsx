@@ -1,6 +1,14 @@
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
-export function SharedDonutChart({ data, total }: { data: { name: string; value: number; color: string }[]; total: string }) {
+export function SharedDonutChart({
+  data,
+  total,
+  subLabel = 'Rnights',
+}: {
+  data: { name: string; value: number; color: string }[];
+  total: string;
+  subLabel?: string;
+}) {
   const size = 110;
   const center = size / 2;
 
@@ -24,7 +32,7 @@ export function SharedDonutChart({ data, total }: { data: { name: string; value:
           {total}
         </text>
         <text x={center} y={center + 8} textAnchor="middle" dominantBaseline="central" fill="#64748b" className="text-[7.5px] font-medium tracking-wide">
-          Rnights
+          {subLabel}
         </text>
       </PieChart>
     </div>

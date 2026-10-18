@@ -1,3 +1,4 @@
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
@@ -39,7 +40,9 @@ export function GuestSatisfactionWidget({
       })}
     >
       <div className="flex justify-between items-center mb-3 h-4">
-        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Guest Satisfaction (MTD)</h3>
+        <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining.">
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">Guest Satisfaction (MTD)</h3>
+        </InfoTooltip>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -51,11 +54,10 @@ export function GuestSatisfactionWidget({
                 data: { propertyName, propertyId, period, score: `${GUEST_SATISFACTION_SCORE} / 5.0` },
               });
             }}
-            className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+            className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
           >
-            <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+            <span>See details</span> <RoundAltArrowRight size={10} />
           </button>
-          <InfoTooltip text="Average score based on guest survey feedback across service, cleanliness, comfort, and dining." />
         </div>
       </div>
 

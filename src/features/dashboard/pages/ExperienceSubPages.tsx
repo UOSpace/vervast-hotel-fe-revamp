@@ -4,6 +4,7 @@ import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import {
   AltArrowDown,
   Magnifer,
+  RoundAltArrowRight,
   UsersGroupTwoRounded,
 } from '@solar-icons/react';
 import { ResortPickerWidget } from '../components/widgets/resort-type/ResortPickerWidget';
@@ -601,12 +602,15 @@ function ExperienceAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                {mode === 'regional' ? 'Regional Experience Footprint' : 'Participant Origin Market Stats'}
-              </span>
-              <InfoTooltip text="Distribution of experience participants, eligible guest capture rate, and paid experience revenue across SOSEI's 5 global regions." />
+              <InfoTooltip text="Distribution of experience participants, eligible guest capture rate, and paid experience revenue across SOSEI's 5 global regions.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  {mode === 'regional' ? 'Regional Experience Footprint' : 'Participant Origin Market Stats'}
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400">See details →</span>
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
+            </span>
           </div>
 
           <div className="w-full flex justify-center items-center py-1 h-[120px] overflow-hidden">
@@ -689,12 +693,15 @@ function ExperienceAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Activity Category Mix
-              </span>
-              <InfoTooltip text="Participant share and capacity utilization across Water & Marine, Yoga & Meditation, Nature, Culture, and Kids & Family." />
+              <InfoTooltip text="Participant share and capacity utilization across Water & Marine, Yoga & Meditation, Nature, Culture, and Kids & Family.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  Activity Category Mix
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400">See details →</span>
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
+            </span>
           </div>
 
           <div className="flex items-center gap-5 px-1 py-1 h-[120px]">
@@ -762,12 +769,15 @@ function ExperienceAnalyticsBody({
         >
           <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
             <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Paid vs Complimentary Mix
-              </span>
-              <InfoTooltip text="Balancing complimentary stay-enriching participation with paid private bespoke experiences, guided adventures, and partner excursions." />
+              <InfoTooltip text="Balancing complimentary stay-enriching participation with paid private bespoke experiences, guided adventures, and partner excursions.">
+                <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
+                  Paid vs Complimentary Mix
+                </span>
+              </InfoTooltip>
             </div>
-            <span className="text-[9.5px] font-medium text-zinc-400">See details →</span>
+            <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 whitespace-nowrap">
+              <span>See details</span> <RoundAltArrowRight size={10} />
+            </span>
           </div>
 
           <div className="flex items-center gap-5 px-1 py-1 h-[120px]">

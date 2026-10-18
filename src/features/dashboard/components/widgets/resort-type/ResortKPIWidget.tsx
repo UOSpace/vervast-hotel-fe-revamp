@@ -63,10 +63,10 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
   const { openDrawer } = useDashboardDrawer();
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-6 gap-2.5 items-stretch w-full">
-      {/* CARD 1 (Hero): TOTAL HOTEL REVENUE (Hospitality 5 Pillars per category) */}
+    <div className="flex flex-col gap-2.5 w-full">
+      {/* ROW 1 (Hero Top): TOTAL REVENUE (HOSPITALITY) */}
       <div
-        className="col-span-2 relative rounded-[12px] p-3 flex flex-col justify-between gap-2.5 animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all group"
+        className="w-full relative rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between gap-2.5 animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
         style={{ animationDelay: '0.15s' }}
         onClick={() =>
           openDrawer({
@@ -76,30 +76,31 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
           })
         }
       >
-        <div className="flex items-center justify-between gap-1">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <InfoTooltip text="Total Hospitality revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities) for the active category.">
-              <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                TOTAL REVENUE (HOSPITALITY)
-              </span>
-            </InfoTooltip>
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <InfoTooltip text="Total Hospitality revenue across all 5 hospitality pillars (Rooms, F&B, Spa, Wellness, Activities) for the active category.">
+                <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-900 truncate cursor-help">
+                  TOTAL REVENUE (HOSPITALITY)
+                </span>
+              </InfoTooltip>
+            </div>
+            <div className="text-[22px] font-normal text-zinc-900 leading-tight mt-1">
+              {data.totalRevenue.value}
+            </div>
           </div>
-          <span
-            className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${data.totalRevenue.upLy
-              ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-              : 'bg-rose-50 text-rose-700 border border-rose-200/80'
-              }`}
-          >
-            {data.totalRevenue.vsLy}
-          </span>
-        </div>
 
-        <div>
-          <div className="text-[20px] font-normal text-zinc-900 leading-tight my-1">
-            {data.totalRevenue.value}
-          </div>
-          {/* Comparison Badges: vs Budget, vs Forecast */}
-          <div className="flex items-center gap-1 flex-wrap">
+          {/* Comparison Badges: vs LY, vs Budget, vs Forecast */}
+          <div className="flex items-center gap-1.5 flex-wrap sm:justify-end">
+            <span
+              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                data.totalRevenue.upLy
+                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+              }`}
+            >
+              {data.totalRevenue.vsLy}
+            </span>
             <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
               {data.totalRevenue.vsBudget}
             </span>
@@ -109,26 +110,26 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
           </div>
         </div>
 
-        {/* 5-Pillar breakdown as a horizontal row */}
-        <div
-          className="grid gap-2 pt-2 border-t border-zinc-200/60"
-          style={{ gridTemplateColumns: `repeat(${data.totalRevenue.breakdown.length}, minmax(0, 1fr))` }}
-        >
-          {data.totalRevenue.breakdown.map((item) => (
-            <div key={item.label} className="min-w-0">
-              <div className="text-[9px] text-zinc-500 truncate">{item.label}</div>
-              <div className="text-[12px] font-medium text-zinc-900 leading-tight">{item.val}</div>
-              <div className="text-[8.5px] text-zinc-400">{item.pct}</div>
-            </div>
+        {/* 5-Pillar Breakdown summary bar */}
+        <div className="mt-1 pt-1.5 border-t border-zinc-200/60 flex items-center justify-between text-[9px] text-zinc-500 flex-wrap gap-x-2.5 gap-y-1">
+          <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[8px]">Pillars:</span>
+          {data.totalRevenue.breakdown.map((item, idx) => (
+            <span key={item.label} className="flex items-center gap-1">
+              <span className="text-zinc-500">{item.label} :</span>
+              <span className="font-bold text-zinc-900">{item.val}</span>
+              {idx < data.totalRevenue.breakdown.length - 1 && (
+                <span className="text-zinc-300 ml-1">·</span>
+              )}
+            </span>
           ))}
         </div>
       </div>
 
-      {/* 4 Room Metrics — share the same row as the hero card */}
-      <div className="contents">
+      {/* ROW 2: 4 Room Metrics below Total Revenue (Hospitality) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 items-stretch w-full">
         {/* Card 2: OCCUPANCY */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all group"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.2s' }}
           onClick={() =>
             openDrawer({
@@ -169,7 +170,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 3: ADR */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all group"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.25s' }}
           onClick={() =>
             openDrawer({
@@ -210,7 +211,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 4: REVPAR */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all group"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.3s' }}
           onClick={() =>
             openDrawer({
@@ -251,7 +252,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 5: ROOM REVENUE */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all group"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.35s' }}
           onClick={() =>
             openDrawer({

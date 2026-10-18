@@ -1,3 +1,4 @@
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
@@ -54,8 +55,9 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
     >
       <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-1">
         <div className="flex items-center gap-1.5">
-          <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">Geo Market Stats</span>
-          <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region." />
+          <InfoTooltip text="Geographic mix showing room night and revenue contribution per global region.">
+            <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900 cursor-help">Geo Market Stats</span>
+          </InfoTooltip>
         </div>
         <button
           type="button"
@@ -63,9 +65,9 @@ export function ResortGeoMarketWidget({ geoData }: { geoData: any[] }) {
             e.stopPropagation();
             openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Stats', data: geoData });
           }}
-          className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-0.5 cursor-pointer lowercase"
+          className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
         >
-          <span className="capitalize">See</span> details <span className="text-zinc-600">→</span>
+          <span>See details</span> <RoundAltArrowRight size={10} />
         </button>
       </div>
       {/* Mini world map using react-simple-maps */}
