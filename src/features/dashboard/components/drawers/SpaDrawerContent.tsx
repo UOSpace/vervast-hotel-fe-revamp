@@ -131,7 +131,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             Spa &amp; wellness revenue contribution across all collections and sanctuaries ({spa.periodLabel}).
           </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Total Revenue: {fmtUsd(spa.revenue)} (Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)})
+            Total Wellness Revenue: {fmtUsd(spa.revenue)} (Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)})
           </span>
         </div>
 
@@ -144,7 +144,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments Conducted</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Average Session Rate</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -189,7 +189,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Rate</th>
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">YoY</th>
                   <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
-                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                  <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
                 </tr>
               </thead>
               <tbody>
@@ -431,7 +431,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Hours Clocked / Cap</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Utilization</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue Generated</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -496,7 +496,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Units Sold</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Unit Price</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">% Share</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Retail Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -558,7 +558,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                   {periodShort} Packages Sold
                 </th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Package Price</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -625,7 +625,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Sessions</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Rating</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Ticket</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -664,7 +664,7 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
             Spa &amp; wellness revenue breakdown by category ({spa.periodLabel}).
           </p>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            Total Revenue: {fmtUsd(spa.revenue)}
+            Total Wellness Revenue: {fmtUsd(spa.revenue)}
           </span>
         </div>
         <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
@@ -674,9 +674,9 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Wellness Category</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Sessions / Units</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Therapist Hours</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Revenue Share</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue Share</th>
                 <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Ticket</th>
-                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Total Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -891,6 +891,71 @@ export function SpaDrawerContent({ config }: SpaDrawerContentProps) {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  if (detailKey === 'WELLNESS_REVENUE_BY_REGION') {
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <p className="text-xs text-zinc-500">
+            Spa &amp; wellness revenue, treatment volume, and YoY growth across global regions ({spa.periodLabel}).
+          </p>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+            Total Wellness Revenue: {fmtUsd(spa.revenue)} ({fmtSignedPct(spa.vsLyPct, 1)} vs LY)
+          </span>
+        </div>
+
+        <div className="overflow-x-auto border border-zinc-200/80 dark:border-zinc-800 rounded-xl bg-zinc-50/30 dark:bg-zinc-800/20">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Region</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Properties</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Treatments</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Wellness Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Share</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">YoY Growth</th>
+              </tr>
+            </thead>
+            <tbody>
+              {spa.regions.map((reg) => (
+                <tr
+                  key={reg.id}
+                  className="border-b border-zinc-200/60 dark:border-zinc-800/60 last:border-0 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 transition-colors"
+                >
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{reg.name}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500">{reg.propertyCount}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-700 dark:text-zinc-300 font-medium">
+                    {fmtInt(reg.treatments)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                    {fmtUsd(reg.revenue)}
+                  </td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-300">
+                    {fmtPct(reg.sharePct, 1)}
+                  </td>
+                  <td
+                    className={`py-2.5 px-3 text-right font-medium ${
+                      reg.vsLyPct >= 0 ? 'text-[#14532d]' : 'text-[#800020]'
+                    }`}
+                  >
+                    {fmtSignedPct(reg.vsLyPct, 1)}
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 font-bold">
+                <td className="py-2.5 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio ({periodShort})</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{spa.propertyCount}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(spa.treatments)}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtUsd(spa.revenue)}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-900 dark:text-zinc-100">100.0%</td>
+                <td className="py-2.5 px-3 text-right text-[#14532d]">{fmtSignedPct(spa.vsLyPct, 1)}</td>
+              </tr>
             </tbody>
           </table>
         </div>

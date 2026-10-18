@@ -10,9 +10,9 @@ import {
   segmentConfigs,
   channelConfigs,
   getGreeting,
-  getFormattedDateTime,
   buildScopeKpiData,
 } from './ResortTypeDashboard';
+import { HeaderClockDisplay } from '../components/widgets/DashboardHeaderWidget';
 import {
   MASTER_REGIONS,
   resolveRegionId,
@@ -32,7 +32,6 @@ import {
 export function RegionalDashboard() {
   const [activeRegions, setActiveRegions] = useState<string[]>(MASTER_REGIONS.map((r) => r.id));
   const [period, setPeriod] = useState<PeriodId>('mtd');
-  const { date, time, tz } = getFormattedDateTime();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -118,10 +117,7 @@ export function RegionalDashboard() {
             Regional Market Analytics (Regional Level)
           </h2>
         </div>
-        <div className="text-right shrink-0 pb-0.5">
-          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
-        </div>
+        <HeaderClockDisplay />
       </div>
 
       <div className="w-full pb-3 pt-1 flex flex-col gap-2.5">

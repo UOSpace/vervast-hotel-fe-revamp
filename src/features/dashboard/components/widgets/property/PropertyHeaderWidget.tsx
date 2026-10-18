@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { AltArrowDown, Magnifer } from '@solar-icons/react';
 import { PeriodTabsWidget } from '../resort-type/PeriodTabsWidget';
+import { HeaderClockDisplay } from '../DashboardHeaderWidget';
 import { PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
 
 export function PropertyHeaderWidget({
@@ -48,16 +49,6 @@ export function PropertyHeaderWidget({
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.location.toLowerCase().includes(search.toLowerCase())
   );
-
-  const getFormattedDateTime = () => {
-    const now = new Date();
-    const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return { date, time, tz };
-  };
-
-  const { date, time, tz } = getFormattedDateTime();
 
   return (
     <div className="w-full flex flex-col gap-3.5">
@@ -146,10 +137,7 @@ export function PropertyHeaderWidget({
         </div>
 
         {/* Top-right: Date/Time */}
-        <span className="text-right shrink-0 leading-tight">
-          <span className="block text-[10px] text-zinc-900 font-semibold">{date}</span>
-          <span className="block text-[9px] text-zinc-500">{time} · {tz}</span>
-        </span>
+        <HeaderClockDisplay />
       </div>
 
       {/* Second row: As of (left) & Period Tabs (right) */}

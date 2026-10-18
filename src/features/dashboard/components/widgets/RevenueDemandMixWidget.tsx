@@ -162,6 +162,14 @@ export function RevenueDemandMixWidget({
 
         {/* Right: Breakdown Table / Rows */}
         <div className="flex-1 flex flex-col justify-between py-0.5 space-y-0.5 min-w-0">
+          <div className="flex items-center justify-between pb-1 px-1.5 border-b border-zinc-100 text-[9px] font-medium text-zinc-400">
+            <span>Pillar</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="w-7 text-right">Share</span>
+              <span className="w-[56px] text-right">{isRevenue ? 'Revenue' : 'Volume'}</span>
+              <span className="min-w-[64px] text-right">YoY</span>
+            </div>
+          </div>
           {data.items.map((item) => {
             const isHovered = hoveredId === item.id;
             const isFaded = hoveredId !== null && !isHovered;

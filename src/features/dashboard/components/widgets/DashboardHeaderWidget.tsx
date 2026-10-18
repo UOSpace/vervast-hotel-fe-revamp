@@ -84,6 +84,28 @@ export function getUserLocationAndTimezone(now: Date = new Date()) {
   return { location, timeZone, gmtOffset, time, date, lastUpdatedLabel };
 }
 
+export const HeaderClockDisplay: React.FC<{ className?: string }> = ({
+  className = 'flex flex-col items-start sm:items-end shrink-0 sm:ml-4 pt-0.5 pb-0.5',
+}) => {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const { location, timeZone, gmtOffset, time, date } = getUserLocationAndTimezone(now);
+
+  return (
+    <div className={className}>
+      <p className="text-[10px] text-zinc-900 font-semibold leading-tight">{date}</p>
+      <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5 leading-tight">
+        {location} · {time} <span className="text-zinc-400">({gmtOffset} · {timeZone})</span>
+      </p>
+    </div>
+  );
+};
+
 export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
   greeting,
   title = 'Welcome to SOSEI Hospitality Dashboard (Corporate Group Level)',
@@ -103,8 +125,6 @@ export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
     return 'Konbanwa Alfonso!';
   };
 
-  const { location, timeZone, gmtOffset, time, date } = getUserLocationAndTimezone(now);
-
   return (
     <header className="shrink-0 flex flex-col mb-4 px-4 lg:px-6">
       <div
@@ -119,12 +139,7 @@ export const DashboardHeaderWidget: React.FC<DashboardHeaderWidgetProps> = ({
             <span>{title}</span>
           </h2>
         </div>
-        <div className="flex flex-col items-start sm:items-end shrink-0 sm:ml-4 pt-0.5 pb-0.5">
-          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-          <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-            {location} · {time} <span className="text-zinc-400">({gmtOffset} · {timeZone})</span>
-          </p>
-        </div>
+        <HeaderClockDisplay />
       </div>
     </header>
   );

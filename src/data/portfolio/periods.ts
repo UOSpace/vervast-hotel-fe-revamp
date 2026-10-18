@@ -10,6 +10,7 @@ export type PeriodId = 'today' | 'mtd' | 'ytd' | 'forward';
 export interface PeriodDef {
   id: PeriodId;
   label: string;
+  shortLabel: string;
   /** Number of calendar days the period spans (Forward = window length in days). */
   days: number;
   /** Header text such as "MTD (October 1-17, 2026)". */
@@ -50,6 +51,7 @@ export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
   today: {
     id: 'today',
     label: 'Yesterday',
+    shortLabel: 'Yesterday',
     days: 1,
     periodLabel: AS_OF_DATE_LABEL,
     description: `Operating actuals as of yesterday close (${AS_OF_DATE_LABEL}).`,
@@ -58,6 +60,7 @@ export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
   mtd: {
     id: 'mtd',
     label: 'MTD',
+    shortLabel: 'MTD',
     days: MTD_DAYS,
     periodLabel: AS_OF_DATE_LABEL,
     description: `Month-to-date as of yesterday close (${AS_OF_DATE_LABEL}).`,
@@ -66,6 +69,7 @@ export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
   ytd: {
     id: 'ytd',
     label: 'YTD',
+    shortLabel: 'YTD',
     days: YTD_DAYS,
     periodLabel: AS_OF_DATE_LABEL,
     description: `Year-to-date as of yesterday close (${AS_OF_DATE_LABEL}).`,
@@ -74,6 +78,7 @@ export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
   forward: {
     id: 'forward',
     label: 'Forward Business',
+    shortLabel: 'Forward',
     days: FORWARD_DEFAULT_DAYS,
     periodLabel: AS_OF_DATE_LABEL,
     description: `On-the-books business for the next 90 days as of ${AS_OF_DATE_LABEL}.`,

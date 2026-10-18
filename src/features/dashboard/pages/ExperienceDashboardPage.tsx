@@ -7,6 +7,7 @@ import {
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { ExperienceKpiRow } from '../components/widgets/experience/ExperienceKpiRow';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
+import { HeaderClockDisplay } from '../components/widgets/DashboardHeaderWidget';
 import { IN_HOUSE_FNB_GUESTS } from '@/features/fnb/data/fnbMenuData';
 import {
   PERIOD_DEFS,
@@ -761,25 +762,29 @@ export function ExperienceDashboardPage() {
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
       {/* ───────────────── EXECUTIVE HEADER ───────────────── */}
-      <div className="w-full border-b border-zinc-200/80 pb-3 flex flex-col gap-3 animate-fade-in">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3">
+      <div className="w-full flex flex-col gap-3 animate-fade-in">
+        <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
               Welcome To SOSEI Experiences Dashboard
             </h1>
-            <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-zinc-900 font-medium">
-                As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
-              </span>
-              <span>·</span>
-              <span>
-                Scope:{' '}
-                <strong className="font-semibold text-zinc-900">
-                  10 SOSEI Resorts · {fmtInt(m.experiences.programs)} Resort Programs · {fmtPct(m.occupancyPct)} Occ
-                </strong>{' '}
-                (Excludes Spa Operations)
-              </span>
-            </div>
+          </div>
+          <HeaderClockDisplay />
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
+            <span className="text-zinc-900 font-medium">
+              As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
+            </span>
+            <span>·</span>
+            <span>
+              Scope:{' '}
+              <strong className="font-semibold text-zinc-900">
+                10 SOSEI Resorts · {fmtInt(m.experiences.programs)} Resort Programs · {fmtPct(m.occupancyPct)} Occ
+              </strong>{' '}
+              (Excludes Spa Operations)
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">

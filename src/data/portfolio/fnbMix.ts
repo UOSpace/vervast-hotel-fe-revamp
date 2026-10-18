@@ -503,13 +503,13 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
   const spendLyPct = spendLy > 0 ? (spendLyAbs / spendLy) * 100 : 0;
   const spendBudgetAbs = m.fnb.spendPerGuestNight - spendBudget;
 
-  const revenueVsLy = `${fmtSignedPct(m.vsLy.fnbRevenuePct)} ${forward ? 'vs STLY' : 'LFL vs LY'}`;
+  const revenueVsLy = `${fmtSignedPct(m.vsLy.fnbRevenuePct)} ${forward ? 'vs STLY' : 'vs LY'}`;
   const dining = diningGuestNights(m);
 
   return [
     {
       id: 'revenue',
-      label: forward ? 'FORWARD F&B REVENUE OTB (90D)' : 'F&B REVENUE & LFL GROWTH',
+      label: forward ? 'FORWARD F&B REVENUE OTB (90D)' : 'F&B REVENUE',
       value: fmtUsd(m.fnbRevenue),
       vsLy: revenueVsLy,
       vsLyPos: m.vsLy.fnbRevenuePct >= 0,
@@ -518,7 +518,7 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
         : `${fmtSignedPct(m.vsBudget.fnbRevenuePct)} vs Budget`,
       vsTargetPos: (forward ? m.vsForecast.fnbRevenuePct : m.vsBudget.fnbRevenuePct) >= 0,
       context: `${m.fnb.outlets} Operating Outlets · ${m.propertyCount} ${m.propertyCount === 1 ? 'Resort' : 'Resorts'}`,
-      boxLabel: 'F&B REV & LFL GROWTH',
+      boxLabel: 'F&B REVENUE',
       boxSub: revenueVsLy,
     },
     {

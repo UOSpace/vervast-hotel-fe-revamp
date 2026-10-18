@@ -89,20 +89,24 @@ export function PropertyRhythmWidget({
               <span className="text-[9.5px] font-medium text-zinc-700 truncate pr-1 transition-all duration-300" title={item.department}>
                 {item.department}
               </span>
-              {item.timeframeLoads.map((slotLoad, tIdx) => (
-                <div
-                  key={TIMEFRAMES[tIdx]}
-                  className={`group/blk relative h-5 rounded-[3px] flex items-center justify-center text-[8.5px] font-medium tabular-nums ${getBlockColorClass(slotLoad)} ${slotLoad >= 50 ? 'text-white' : 'text-zinc-700'} transition-colors duration-500 hover:opacity-90`}
-                >
-                  {slotLoad}%
-                  <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 opacity-0 translate-y-0.5 group-hover/blk:opacity-100 group-hover/blk:translate-y-0 transition-all duration-150 whitespace-nowrap rounded-lg bg-white border border-zinc-200 shadow-lg shadow-black/10 px-2.5 py-1.5 text-left">
-                    <div className="text-[9.5px] font-semibold text-zinc-900 leading-tight">{item.department}</div>
-                    <div className="text-[9px] text-zinc-500 leading-tight mt-0.5">
-                      {TIMEFRAMES[tIdx]} · <span className="font-semibold text-zinc-900">{slotLoad}% load</span>
+              {item.timeframeLoads.map((slotLoad, tIdx) => {
+                const tooltipPosClass =
+                  tIdx >= 4 ? 'right-0' : tIdx === 0 ? 'left-0' : 'left-1/2 -translate-x-1/2';
+                return (
+                  <div
+                    key={TIMEFRAMES[tIdx]}
+                    className={`group/blk relative h-5 rounded-[3px] flex items-center justify-center text-[8.5px] font-medium tabular-nums ${getBlockColorClass(slotLoad)} ${slotLoad >= 50 ? 'text-white' : 'text-zinc-700'} transition-colors duration-500 hover:opacity-90`}
+                  >
+                    {slotLoad}%
+                    <div className={`pointer-events-none absolute bottom-full ${tooltipPosClass} mb-1.5 z-30 hidden group-hover/blk:block whitespace-nowrap rounded-lg bg-white border border-zinc-200 shadow-lg shadow-black/10 px-2.5 py-1.5 text-left`}>
+                      <div className="text-[9.5px] font-semibold text-zinc-900 leading-tight">{item.department}</div>
+                      <div className="text-[9px] text-zinc-500 leading-tight mt-0.5">
+                        {TIMEFRAMES[tIdx]} · <span className="font-semibold text-zinc-900">{slotLoad}% load</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ))}
         </div>

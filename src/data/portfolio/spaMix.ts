@@ -5,6 +5,8 @@ import type { PeriodId } from './periods';
 import { WELLNESS_SHARE_OF_SPA, splitByShares } from './mix';
 import type { ShareDef } from './mix';
 import { PROPERTY_PROFILES } from './propertyProfiles';
+import { MASTER_PROPERTIES } from '@/constants/categories';
+import type { RegionId } from '@/constants/regions';
 
 /**
  * SPA DOMAIN LAYER - everything the Spa dashboard and its drawers show is derived here from the portfolio engine.
@@ -132,10 +134,11 @@ export const SPA_PACKAGE_TIERS: Array<ShareDef & { sessions: number; discountPct
 
 /** Capacity share and load index per spa zone (capacity-weighted load index = 1.00). */
 export const SPA_AREAS: Array<{ id: string; name: string; capacityWeight: number; loadIndex: number }> = [
-  { id: 'suites', name: 'Treatment Rooms', capacityWeight: 50, loadIndex: 1.12 },
+  { id: 'suites', name: 'Treatment Rooms', capacityWeight: 48, loadIndex: 1.12 },
   { id: 'hydro', name: 'Hydro Facilities', capacityWeight: 20, loadIndex: 0.95 },
-  { id: 'lounge', name: 'Relaxation Lounge', capacityWeight: 20, loadIndex: 0.91 },
-  { id: 'studio', name: 'Movement Studio', capacityWeight: 10, loadIndex: 0.68 },
+  { id: 'lounge', name: 'Relaxation Lounge', capacityWeight: 18, loadIndex: 0.92 },
+  { id: 'studio', name: 'Movement Studio', capacityWeight: 8, loadIndex: 0.68 },
+  { id: 'consultation', name: 'Wellness Consultation', capacityWeight: 6, loadIndex: 0.58 },
 ];
 
 /** Share of weekly treatments per weekday, % (Mon..Sun, sums to 100). */
@@ -185,6 +188,8 @@ export interface SpaPropertyRow {
   propertyId: string;
   name: string;
   location: string;
+  img: string;
+  regionId: RegionId;
   treatments: number;
   revenue: number;
   sharePct: number;
@@ -197,6 +202,16 @@ export interface SpaPropertyRow {
   hours: number;
   capacityHours: number;
   utilisationPct: number;
+}
+
+export interface SpaRegionRow {
+  id: RegionId;
+  name: string;
+  revenue: number;
+  treatments: number;
+  sharePct: number;
+  vsLyPct: number;
+  propertyCount: number;
 }
 
 export interface SpaTreatmentRow {
@@ -285,6 +300,21 @@ export interface SpaDashboardData {
   vsLyAbs: number;
   vsBudgetPct: number;
   vsForecastPct: number;
+  vsLyTreatmentsPct: number;
+  vsBudgetTreatmentsPct: number;
+  vsForecastTreatmentsPct: number;
+  vsLyAvgTreatmentPct: number;
+  vsBudgetAvgTreatmentPct: number;
+  vsForecastAvgTreatmentPct: number;
+  vsLyUtilisationPts: number;
+  vsBudgetUtilisationPts: number;
+  vsForecastUtilisationPts: number;
+  vsLyHoursPct: number;
+  vsBudgetHoursPct: number;
+  vsForecastHoursPct: number;
+  vsLyRetailPct: number;
+  vsBudgetRetailPct: number;
+  vsForecastRetailPct: number;
   /** Hospitality "Spa" pillar. */
   spaPillarRevenue: number;
   /** Hospitality "Wellness / Medical" pillar. */
@@ -305,6 +335,7 @@ export interface SpaDashboardData {
   utilisationPct: number;
 
   properties: SpaPropertyRow[];
+  regions: SpaRegionRow[];
   categories: SpaCategoryRow[];
   treatmentsRanked: SpaTreatmentRow[];
   retail: { revenue: number; sharePct: number; units: number; products: SpaRetailRow[] };
@@ -319,7 +350,8 @@ export interface SpaDashboardData {
     peakBlockWindow: string;
     peakBlockSharePct: number;
   };
-  trend: Array<{ name: string; value: number }>;
+  trend: Array<{ name: string; value: number; lyValue: number }>;
+  monthlyTrend: Array<{ name: string; thisYear: number; lastYear: number }>;
   peaks: SpaPeakRow[];
   experience: { score: number; subs: Array<{ id: string; label: string; value: number }> };
   /** Next-90-day spa revenue on the books vs the forecast. */
@@ -420,10 +452,14 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
     const roster = getSpaTherapistRoster(p.propertyId);
     const hours = hoursOf(p.spa.treatments);
     const capacityHours = roster * SPA_PRODUCTIVE_HOURS_PER_THERAPIST_DAY * days;
+    const masterProp = MASTER_PROPERTIES.find((mp) => mp.id === p.propertyId);
+    const profile = PROPERTY_PROFILES[p.propertyId];
     return {
       propertyId: p.propertyId,
       name: p.name,
       location: p.location,
+      img: masterProp?.img ?? '',
+      regionId: profile?.regionId ?? 'europe',
       treatments: p.spa.treatments,
       revenue: p.spaRevenue,
       sharePct: ratioPct(p.spaRevenue, m.spaRevenue),
@@ -439,11 +475,60 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
     };
   });
 
+  const REGION_META: Array<{ id: RegionId; name: string }> = [
+    { id: 'europe', name: 'Europe' },
+    { id: 'asia-pacific', name: 'Asia Pacific' },
+    { id: 'middle-east', name: 'Middle East' },
+    { id: 'america', name: 'Americas' },
+    { id: 'africa', name: 'Africa' },
+  ];
+
+  const regions: SpaRegionRow[] = REGION_META.map((reg) => {
+    const regProps = propertyRows.filter((p) => p.regionId === reg.id);
+    const regRev = regProps.reduce((a, p) => a + p.revenue, 0);
+    const regTreatments = regProps.reduce((a, p) => a + p.treatments, 0);
+    const weightedLy = regProps.reduce((a, p) => a + p.revenue * p.vsLyPct, 0);
+    return {
+      id: reg.id,
+      name: reg.name,
+      revenue: regRev,
+      treatments: regTreatments,
+      sharePct: ratioPct(regRev, m.spaRevenue),
+      vsLyPct: regRev > 0 ? weightedLy / regRev : 0,
+      propertyCount: regProps.length,
+    };
+  }).filter((r) => r.propertyCount > 0);
+
   const hours = propertyRows.reduce((a, p) => a + p.hours, 0);
   const therapists = propertyRows.reduce((a, p) => a + p.therapists, 0);
   const capacityHours = propertyRows.reduce((a, p) => a + p.capacityHours, 0);
   const capacityPerDay = therapists * SPA_PRODUCTIVE_HOURS_PER_THERAPIST_DAY;
   const utilisationPct = ratioPct(hours, capacityHours);
+
+  /* KPI deltas (vs LY, vs Budget, vs Forecast) derived consistently from engine m.vsLy / m.vsBudget / m.vsForecast */
+  const vsLyPct = m.vsLy.spaRevenuePct;
+  const vsBudgetPct = m.vsBudget.spaRevenuePct;
+  const vsForecastPct = m.vsForecast.spaRevenuePct;
+
+  const vsLyAvgTreatmentPct = m.vsLy.adrPct * 0.45;
+  const vsBudgetAvgTreatmentPct = m.vsBudget.adrPct * 0.45;
+  const vsForecastAvgTreatmentPct = m.vsForecast.adrPct * 0.45;
+
+  const vsLyTreatmentsPct = ((1 + vsLyPct / 100) / (1 + vsLyAvgTreatmentPct / 100) - 1) * 100;
+  const vsBudgetTreatmentsPct = ((1 + vsBudgetPct / 100) / (1 + vsBudgetAvgTreatmentPct / 100) - 1) * 100;
+  const vsForecastTreatmentsPct = ((1 + vsForecastPct / 100) / (1 + vsForecastAvgTreatmentPct / 100) - 1) * 100;
+
+  const vsLyHoursPct = vsLyTreatmentsPct;
+  const vsBudgetHoursPct = vsBudgetTreatmentsPct;
+  const vsForecastHoursPct = vsForecastTreatmentsPct;
+
+  const vsLyUtilisationPts = utilisationPct * (1 - 1 / (1 + vsLyTreatmentsPct / 100));
+  const vsBudgetUtilisationPts = utilisationPct * (1 - 1 / (1 + vsBudgetTreatmentsPct / 100));
+  const vsForecastUtilisationPts = utilisationPct * (1 - 1 / (1 + vsForecastTreatmentsPct / 100));
+
+  const vsLyRetailPct = vsLyPct * 1.18;
+  const vsBudgetRetailPct = vsBudgetPct * 1.18;
+  const vsForecastRetailPct = vsForecastPct * 1.18;
 
   /* experience score (treatment-weighted guest quality) */
   const qualityWeighted = m.properties.reduce((a, p) => a + p.experiences.qualityPct * p.spa.treatments, 0);
@@ -597,12 +682,22 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
   /* last 7 days utilisation: weekday pattern around the MTD level, Saturday = Today */
   const mtd = getSpaUtilisation(ids, 'mtd');
   const today = getSpaUtilisation(ids, 'today');
-  const trend: Array<{ name: string; value: number }> = [];
+  const trend: Array<{ name: string; value: number; lyValue: number }> = [];
   for (let back = 6; back >= 0; back--) {
     const d = systemDatePlus(-back);
     const value = back === 0 ? today : clamp(mtd * weekdayIndexOf(d.getUTCDay()), 0, 100);
-    trend.push({ name: `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`, value: Math.round(value * 10) / 10 });
+    const roundedVal = Math.round(value * 10) / 10;
+    const roundedLy = Math.round(clamp(roundedVal - vsLyUtilisationPts, 20, 95) * 10) / 10;
+    trend.push({ name: `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`, value: roundedVal, lyValue: roundedLy });
   }
+
+  /* 12-month seasonal utilisation trend (This Year vs Last Year) anchored to current utilisationPct */
+  const MONTH_SEASON_OFFSETS = [-18, -14, -10, -7, -4, -2, +1, +3, +1, 0, -1, +2];
+  const monthlyTrend = MONTHS.map((mName, idx) => {
+    const ty = Math.round(clamp(utilisationPct + MONTH_SEASON_OFFSETS[idx], 32, 92));
+    const ly = Math.round(clamp(ty - Math.max(3, Math.round(vsLyUtilisationPts) + (idx % 3 === 0 ? 2 : 1)), 26, 88));
+    return { name: mName, thisYear: ty, lastYear: ly };
+  });
 
   /* upcoming peak windows (forecast demand on the next 4 days) */
   const roster7 = therapists;
@@ -639,10 +734,25 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
     propertyIds: ids,
 
     revenue: m.spaRevenue,
-    vsLyPct: m.vsLy.spaRevenuePct,
+    vsLyPct,
     vsLyAbs: m.vsLy.spaRevenueAbs,
-    vsBudgetPct: m.vsBudget.spaRevenuePct,
-    vsForecastPct: m.vsForecast.spaRevenuePct,
+    vsBudgetPct,
+    vsForecastPct,
+    vsLyTreatmentsPct,
+    vsBudgetTreatmentsPct,
+    vsForecastTreatmentsPct,
+    vsLyAvgTreatmentPct,
+    vsBudgetAvgTreatmentPct,
+    vsForecastAvgTreatmentPct,
+    vsLyUtilisationPts,
+    vsBudgetUtilisationPts,
+    vsForecastUtilisationPts,
+    vsLyHoursPct,
+    vsBudgetHoursPct,
+    vsForecastHoursPct,
+    vsLyRetailPct,
+    vsBudgetRetailPct,
+    vsForecastRetailPct,
     spaPillarRevenue,
     wellnessRevenue,
 
@@ -661,6 +771,7 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
     utilisationPct,
 
     properties: propertyRows,
+    regions,
     categories,
     treatmentsRanked,
     retail: {
@@ -681,6 +792,7 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
       peakBlockSharePct: peakBlock.share,
     },
     trend,
+    monthlyTrend,
     peaks,
     experience,
     forwardCoverage: {

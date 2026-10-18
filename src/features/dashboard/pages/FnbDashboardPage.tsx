@@ -4,6 +4,7 @@ import { AltArrowDown } from '@solar-icons/react';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
+import { HeaderClockDisplay } from '../components/widgets/DashboardHeaderWidget';
 import {
   PERIOD_DEFS,
   PERIOD_ORDER,
@@ -102,21 +103,25 @@ export function FnbDashboardPage() {
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 bg-white text-[10px]">
       {/* ───────────────────────── TOP EXECUTIVE HEADER ───────────────────────── */}
-      <div className="shrink-0 flex flex-col gap-3 pt-4 lg:pt-6 border-b border-zinc-200/80 pb-3 animate-card-enter">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3">
+      <div className="shrink-0 flex flex-col gap-3 pt-4 lg:pt-6 animate-card-enter">
+        <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
               Welcome To SOSEI F&amp;B Dashboard
             </h1>
-            <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-zinc-900 font-medium">
-                As of: <strong className="font-semibold text-zinc-900">{PERIOD_DEFS[horizon].periodLabel}</strong>
-              </span>
-              <span>·</span>
-              <span className="text-zinc-600 font-medium">
-                Resort Context: {getFnbHeaderContext(PORTFOLIO_PROPERTY_IDS, horizon)}
-              </span>
-            </div>
+          </div>
+          <HeaderClockDisplay />
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
+            <span className="text-zinc-900 font-medium">
+              As of: <strong className="font-semibold text-zinc-900">{PERIOD_DEFS[horizon].periodLabel}</strong>
+            </span>
+            <span>·</span>
+            <span className="text-zinc-600 font-medium">
+              Resort Context: {getFnbHeaderContext(PORTFOLIO_PROPERTY_IDS, horizon)}
+            </span>
           </div>
 
           {/* Right Controls: Time Horizon (Today | MTD | YTD | Forward Business) + Export */}
@@ -266,7 +271,15 @@ export function FnbDashboardPage() {
               </div>
 
               {/* Right Table */}
-              <div className="flex-1 min-w-0 flex flex-col justify-between gap-1.5">
+              <div className="flex-1 min-w-0 flex flex-col justify-between gap-1">
+                <div className="flex items-center justify-between gap-1.5 pb-1 px-1 border-b border-zinc-100 text-[9px] font-medium text-zinc-400">
+                  <span>Centre</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span>Share</span>
+                    <span className="w-12 text-right">F&amp;B Rev.</span>
+                    <span className="w-11 text-right">YoY</span>
+                  </div>
+                </div>
                 {centres.map((c) => (
                   <div
                     key={c.id}

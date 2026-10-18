@@ -5,6 +5,7 @@ import { ResortKPIWidget, type CategoryKpiData } from '../components/widgets/res
 import { ResortRevenueDemandMixWidget } from '../components/widgets/resort-type/ResortRevenueDemandMixWidget';
 import { ResortMarketSegmentWidget } from '../components/widgets/resort-type/ResortMarketSegmentWidget';
 import { ResortChannelStatsWidget } from '../components/widgets/resort-type/ResortChannelStatsWidget';
+import { HeaderClockDisplay, getUserLocationAndTimezone } from '../components/widgets/DashboardHeaderWidget';
 import {
   MASTER_PROPERTIES,
   CATEGORY_ROOM_COUNTS,
@@ -234,17 +235,13 @@ export const getGreeting = () => {
 };
 
 export const getFormattedDateTime = () => {
-  const now = new Date();
-  const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  return { date, time, tz };
+  const { location, timeZone, gmtOffset, time, date } = getUserLocationAndTimezone();
+  return { date, time, tz: timeZone, location, gmtOffset, timeZone };
 };
 
 export function ResortTypeDashboard() {
   const [activeResorts, setActiveResorts] = useState<string[]>(['urban']);
   const [period, setPeriod] = useState<PeriodId>('mtd');
-  const { date, time, tz } = getFormattedDateTime();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -415,10 +412,7 @@ export function ResortTypeDashboard() {
             Property Categories Analytics (Hotel Type Level)
           </h2>
         </div>
-        <div className="text-right shrink-0 pb-0.5">
-          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
-        </div>
+        <HeaderClockDisplay />
       </div>
 
       {/* Period Picker & As-Of above Horizontal Resort Picker Gallery */}

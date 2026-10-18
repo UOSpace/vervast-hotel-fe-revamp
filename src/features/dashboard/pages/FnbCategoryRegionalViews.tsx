@@ -20,6 +20,7 @@ import { IN_HOUSE_FNB_GUESTS } from '@/features/fnb/data/fnbMenuData';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
+import { HeaderClockDisplay } from '../components/widgets/DashboardHeaderWidget';
 import { getPortfolioMetrics, getPropertyMetrics, PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
 import { FNB_PROPERTY_STATIC } from '@/data/portfolio/fnbMix';
 
@@ -1192,12 +1193,18 @@ export function FnbCategoriesView() {
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
       {/* Top Executive Header */}
-      <div className="w-full border-b border-zinc-200/80 pb-3 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            F&amp;B Dashboard Property Categories
-          </h1>
-          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
+      <div className="w-full flex flex-col gap-3 animate-fade-in">
+        <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
+              F&amp;B Dashboard Property Categories
+            </h1>
+          </div>
+          <HeaderClockDisplay />
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
             <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
@@ -1206,46 +1213,46 @@ export function FnbCategoriesView() {
               Collection Filter: <strong className="font-semibold text-zinc-900">{selectionTitle}</strong> ({analytics.activeProps.length} Resorts · {analytics.totalOutlets} F&amp;B Outlets)
             </span>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {canonicalCategories.length < MASTER_CATEGORIES.length && (
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {canonicalCategories.length < MASTER_CATEGORIES.length && (
+              <button
+                type="button"
+                onClick={() => setActiveResorts(MASTER_CATEGORIES.map((c) => c.id))}
+                className="px-2.5 py-1 rounded-lg border border-zinc-200 text-[9.5px] font-medium text-zinc-700 hover:bg-zinc-100 cursor-pointer transition-colors"
+              >
+                All 5 Collections
+              </button>
+            )}
+
+            {/* Time Horizon Pill Filter */}
+            <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
+              {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
+                const active = horizon === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setHorizon(t.id)}
+                    className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
+                      active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
             <button
               type="button"
-              onClick={() => setActiveResorts(MASTER_CATEGORIES.map((c) => c.id))}
-              className="px-2.5 py-1 rounded-lg border border-zinc-200 text-[9.5px] font-medium text-zinc-700 hover:bg-zinc-100 cursor-pointer transition-colors"
+              onClick={() => setShowDevModal(true)}
+              className="h-7 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3 font-medium flex items-center gap-1.5 bg-white transition-all shadow-2xs cursor-pointer"
             >
-              All 5 Collections
+              <AltArrowDown size={13} className="rotate-180 text-zinc-500" />
+              <span>Export</span>
             </button>
-          )}
-
-          {/* Time Horizon Pill Filter */}
-          <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
-              const active = horizon === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setHorizon(t.id)}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                    active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowDevModal(true)}
-            className="h-7 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3 font-medium flex items-center gap-1.5 bg-white transition-all shadow-2xs cursor-pointer"
-          >
-            <AltArrowDown size={13} className="rotate-180 text-zinc-500" />
-            <span>Export</span>
-          </button>
         </div>
       </div>
 
@@ -1290,12 +1297,18 @@ export function FnbRegionalView() {
   return (
     <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
       {/* Top Executive Header */}
-      <div className="w-full border-b border-zinc-200/80 pb-3 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            F&amp;B Dashboard Regional
-          </h1>
-          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
+      <div className="w-full flex flex-col gap-3 animate-fade-in">
+        <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
+              F&amp;B Dashboard Regional
+            </h1>
+          </div>
+          <HeaderClockDisplay />
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+          <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
             <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
@@ -1304,46 +1317,46 @@ export function FnbRegionalView() {
               Regional Filter: <strong className="font-semibold text-zinc-900">{selectionTitle}</strong> ({analytics.activeProps.length} Resorts · {analytics.totalOutlets} F&amp;B Outlets)
             </span>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {canonicalRegions.length < MASTER_REGIONS.length && (
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {canonicalRegions.length < MASTER_REGIONS.length && (
+              <button
+                type="button"
+                onClick={() => setActiveRegions(MASTER_REGIONS.map((r) => r.id))}
+                className="px-2.5 py-1 rounded-lg border border-zinc-200 text-[9.5px] font-medium text-zinc-700 hover:bg-zinc-100 cursor-pointer transition-colors"
+              >
+                All 5 Regions
+              </button>
+            )}
+
+            {/* Time Horizon Pill Filter */}
+            <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
+              {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
+                const active = horizon === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setHorizon(t.id)}
+                    className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
+                      active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
             <button
               type="button"
-              onClick={() => setActiveRegions(MASTER_REGIONS.map((r) => r.id))}
-              className="px-2.5 py-1 rounded-lg border border-zinc-200 text-[9.5px] font-medium text-zinc-700 hover:bg-zinc-100 cursor-pointer transition-colors"
+              onClick={() => setShowDevModal(true)}
+              className="h-7 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3 font-medium flex items-center gap-1.5 bg-white transition-all shadow-2xs cursor-pointer"
             >
-              All 5 Regions
+              <AltArrowDown size={13} className="rotate-180 text-zinc-500" />
+              <span>Export</span>
             </button>
-          )}
-
-          {/* Time Horizon Pill Filter */}
-          <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
-              const active = horizon === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setHorizon(t.id)}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                    active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowDevModal(true)}
-            className="h-7 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3 font-medium flex items-center gap-1.5 bg-white transition-all shadow-2xs cursor-pointer"
-          >
-            <AltArrowDown size={13} className="rotate-180 text-zinc-500" />
-            <span>Export</span>
-          </button>
         </div>
       </div>
 

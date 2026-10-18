@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ResponsiveContainer, AreaChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip } from 'recharts';
 import { createPortal } from 'react-dom';
 import { PeriodTabsWidget } from '../../dashboard/components/widgets/resort-type/PeriodTabsWidget';
+import { HeaderClockDisplay } from '../../dashboard/components/widgets/DashboardHeaderWidget';
 import { getPortfolioMetrics, PERIOD_DEFS, fmtUsd, fmtInt, fmtPct, type PeriodId } from '@/data/portfolio';
 import { getBookingPaceSeries } from '@/data/portfolio/hospitalityMix';
 import { InfoTooltip } from '../../common/components/InfoTooltip';
@@ -532,29 +533,34 @@ export function PartnersPage() {
   return (
     <div className="w-full h-full flex flex-col pt-4 lg:pt-6 overflow-x-hidden overflow-y-auto custom-scrollbar px-4 lg:px-6 pb-8 text-[10px] relative">
       {/* Header Container */}
-      <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 z-10 animate-card-enter">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-wide mb-0.5">
-            Relationship Intelligence Dashboard
-          </h1>
+      <div className="shrink-0 flex flex-col gap-3 mb-5 z-10 animate-card-enter min-w-0">
+        <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
+              Relationship Intelligence Dashboard
+            </h1>
+          </div>
+          <HeaderClockDisplay />
+        </div>
+
+        {/* As of & Filters/Export Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-zinc-900 text-xs font-medium">
             As of: {PERIOD_DEFS[period].periodLabel}
           </p>
-        </div>
+          <div className="flex items-center gap-3">
+            <PeriodTabsWidget period={period} setPeriod={setPeriod} showLabel={false} />
 
-        {/* Filters/Export Actions */}
-        <div className="flex items-center gap-3">
-          <PeriodTabsWidget period={period} setPeriod={setPeriod} showLabel={false} />
-
-          <button className="h-9 border border-zinc-200/80 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3.5 font-medium flex items-center gap-2 bg-white/80 backdrop-blur-sm transition-all shadow-xs cursor-pointer">
-            <AltArrowDown size={14} className="rotate-180 text-zinc-500" />
-            <span>Export</span>
-          </button>
+            <button className="h-9 border border-zinc-200/80 text-zinc-800 hover:bg-zinc-100 rounded-lg text-[10px] px-3.5 font-medium flex items-center gap-2 bg-white/80 backdrop-blur-sm transition-all shadow-xs cursor-pointer">
+              <AltArrowDown size={14} className="rotate-180 text-zinc-500" />
+              <span>Export</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Grid Content Container */}
-      <div className="flex-1 flex flex-col gap-5 pb-4">
+      <div className="flex-1 flex flex-col gap-5 pb-4 min-w-0">
         {/* KPI strip: partner-driven hotel performance for the selected period */}
         {(() => {
           const rev = partners.reduce((s, x) => s + x.rN, 0);
@@ -572,7 +578,7 @@ export function PartnersPage() {
 
           const kpis = [
             {
-              label: 'Hotel Revenue',
+              label: 'Total Room Revenue',
               value: fmtUsd(rev),
               vsLy: `+${revLy.toFixed(1)}% vs LY`,
               vsBudget: `+${(revLy * 0.36).toFixed(1)}% vs Budget`,
@@ -690,7 +696,7 @@ export function PartnersPage() {
                   vsForecast: `+${(rnLy * 0.17).toFixed(1)}% vs Forecast`,
                 },
                 {
-                  label: 'Revenue',
+                  label: 'Room Revenue',
                   value: fmtUsd(totalRevenue),
                   vsLy: `+${revLy.toFixed(1)}% vs LY`,
                   vsBudget: `+${(revLy * 0.36).toFixed(1)}% vs Budget`,
@@ -763,7 +769,7 @@ export function PartnersPage() {
                           <th className="py-3 px-3 text-right">Guests</th>
                           <th className="py-3 px-3 text-right">Bookings</th>
                           <th className="py-3 px-3 text-right">Room Nights</th>
-                          <th className="py-3 px-3 text-right">Revenue</th>
+                          <th className="py-3 px-3 text-right">Room Revenue</th>
                           <th className="py-3 px-3 text-right">ADR</th>
                           <th className="py-3 px-3 text-right">Avg Stay</th>
                           <th className="py-3 px-4 text-right">Repeat</th>
@@ -810,17 +816,17 @@ export function PartnersPage() {
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Partner Performance</h3>
                 <span className="text-[8.5px] font-medium text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">Top 5</span>
               </div>
-              <div className="flex items-center gap-2"><InfoTooltip text="Comparative booking volume, revenue generation, and ADR trends across luxury consortia." /><SeeDetailsLink /></div>
+              <div className="flex items-center gap-2"><InfoTooltip text="Comparative booking volume, room revenue generation, and ADR trends across luxury consortia." /><SeeDetailsLink /></div>
             </div>
 
             <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between pt-0.5 pb-0.5">
               {/* Header */}
-              <div className="grid grid-cols-[26%_13%_15%_18%_15%_13%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400 shrink-0">
+              <div className="grid grid-cols-[24%_12%_14%_18%_19%_13%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400 shrink-0">
                 <div>Partner</div>
                 <div className="text-right">Guests</div>
                 <div className="text-right">Bookings</div>
                 <div className="text-right">Room Nights</div>
-                <div className="text-right">Revenue</div>
+                <div className="text-right">Room Revenue</div>
                 <div className="text-right">ADR</div>
               </div>
 
@@ -835,7 +841,7 @@ export function PartnersPage() {
                         e.stopPropagation();
                         setSelectedPartner(partner);
                       }}
-                      className={`grid grid-cols-[26%_13%_15%_18%_15%_13%] items-center text-[10px] rounded-md px-1 py-1 transition-colors ${isSelected ? 'bg-zinc-100 font-bold' : 'hover:bg-zinc-50'}`}
+                      className={`grid grid-cols-[24%_12%_14%_18%_19%_13%] items-center text-[10px] rounded-md px-1 py-1 transition-colors ${isSelected ? 'bg-zinc-100 font-bold' : 'hover:bg-zinc-50'}`}
                     >
                       <div className="text-zinc-900 font-medium truncate pr-1">{partner.name}</div>
                       <div className="text-right font-medium text-zinc-900">
@@ -893,7 +899,7 @@ export function PartnersPage() {
                   vsForecast: `+${(rnLy * 0.17).toFixed(1)}% vs Forecast`,
                 },
                 {
-                  label: 'Revenue',
+                  label: 'Room Revenue',
                   value: selectedPartner.revenue,
                   vsLy: `+${revLy.toFixed(1)}% vs LY`,
                   vsBudget: `+${(revLy * 0.36).toFixed(1)}% vs Budget`,
@@ -994,7 +1000,7 @@ export function PartnersPage() {
                           <th className="py-3 px-3 text-right">Guests</th>
                           <th className="py-3 px-3 text-right">Bookings</th>
                           <th className="py-3 px-3 text-right">Room Nights</th>
-                          <th className="py-3 px-3 text-right">Revenue</th>
+                          <th className="py-3 px-3 text-right">Room Revenue</th>
                           <th className="py-3 px-4 text-right">ADR</th>
                         </tr>
                       </thead>
@@ -1063,7 +1069,7 @@ export function PartnersPage() {
                 </div>
                 <div className="flex flex-col border-l border-zinc-100 pl-1.5">
                   <span className="text-sm font-normal text-zinc-900 leading-none mb-1">{selectedPartner.revenue}</span>
-                  <span className="text-[8px] text-zinc-400 font-medium truncate">Revenue</span>
+                  <span className="text-[8px] text-zinc-400 font-medium truncate">Room Revenue</span>
                 </div>
               </div>
 
@@ -1167,7 +1173,7 @@ export function PartnersPage() {
 
             const metricLegendLabel = (m: 'revenue' | 'roomNights' | 'bookings') =>
               m === 'revenue'
-                ? { low: 'Low Revenue', high: 'High Revenue' }
+                ? { low: 'Low Room Revenue', high: 'High Room Revenue' }
                 : m === 'roomNights'
                   ? { low: 'Low Room Nights', high: 'High Room Nights' }
                   : { low: 'Low Bookings', high: 'High Bookings' };
@@ -1192,7 +1198,7 @@ export function PartnersPage() {
                     </span>
                     <div className="inline-flex items-center p-0.5 rounded-full bg-zinc-100 border border-zinc-200/80 shadow-2xs">
                       {([
-                        { id: 'revenue', label: 'Revenue' },
+                        { id: 'revenue', label: 'Room Revenue' },
                         { id: 'roomNights', label: 'Room Nights' },
                         { id: 'bookings', label: 'Bookings' },
                       ] as const).map((tab) => (
@@ -1308,19 +1314,19 @@ export function PartnersPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <InfoTooltip text="Partner performance breakdown across SOSEI's 5 luxury hotel categories by Revenue, Room Nights, and Bookings." />
+                      <InfoTooltip text="Partner performance breakdown across SOSEI's 5 luxury hotel categories by Room Revenue, Room Nights, and Bookings." />
                       <SeeDetailsLink />
                     </div>
                   </div>
 
-                  {/* Toggle Pill: Revenue | Room Nights | Bookings */}
+                  {/* Toggle Pill: Room Revenue | Room Nights | Bookings */}
                   <div
                     className="flex justify-end"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="inline-flex items-center p-0.5 rounded-full bg-zinc-100 border border-zinc-200/80 shadow-2xs">
                       {([
-                        { id: 'revenue', label: 'Revenue' },
+                        { id: 'revenue', label: 'Room Revenue' },
                         { id: 'roomNights', label: 'Room Nights' },
                         { id: 'bookings', label: 'Bookings' },
                       ] as const).map((tab) => (
@@ -1368,7 +1374,7 @@ export function PartnersPage() {
                           >
                             {partner.name}
                           </span>
-                          {cells.map((blk) => {
+                          {cells.map((blk, cIdx) => {
                             const valStr =
                               categoryMetric === 'revenue'
                                 ? blk.revFmt
@@ -1382,13 +1388,15 @@ export function PartnersPage() {
                                   ? blk.rnSharePct
                                   : blk.bkSharePct;
                             const shade = blk.shades[categoryMetric];
+                            const tooltipPosClass =
+                              cIdx >= 3 ? 'right-0' : cIdx === 0 ? 'left-0' : 'left-1/2 -translate-x-1/2';
                             return (
                               <div
                                 key={blk.key}
                                 className={`group/blk relative h-5 rounded-[3px] flex items-center justify-center text-[8px] tabular-nums ${shade.bgClass} ${shade.textClass} transition-colors duration-300 hover:opacity-90`}
                               >
                                 {valStr}
-                                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 opacity-0 translate-y-0.5 group-hover/blk:opacity-100 group-hover/blk:translate-y-0 transition-all duration-150 whitespace-nowrap rounded-lg bg-white border border-zinc-200 shadow-lg shadow-black/10 px-2.5 py-1.5 text-left">
+                                <div className={`pointer-events-none absolute bottom-full ${tooltipPosClass} mb-1.5 z-30 hidden group-hover/blk:block whitespace-nowrap rounded-lg bg-white border border-zinc-200 shadow-lg shadow-black/10 px-2.5 py-1.5 text-left`}>
                                   <div className="text-[9.5px] font-semibold text-zinc-900 leading-tight">
                                     {partner.name} · {blk.label}
                                   </div>
@@ -1475,7 +1483,7 @@ export function PartnersPage() {
                       <div className="text-[9px] text-[#14532d] font-semibold mt-0.5">↑ {dTotals.roomNightsTrend} vs LY</div>
                     </div>
                     <div className="bg-zinc-50 border border-zinc-100 rounded-[12px] p-3">
-                      <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Revenue OTB ({drawerWin}D)</div>
+                      <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Room Revenue OTB ({drawerWin}D)</div>
                       <div className="text-lg font-bold text-zinc-900 mt-0.5">{dTotals.revenueOtb}</div>
                       <div className="text-[9px] text-[#14532d] font-semibold mt-0.5">↑ {dTotals.revenueTrend} vs LY</div>
                     </div>
@@ -1498,7 +1506,7 @@ export function PartnersPage() {
                           ))}
                           <th className="py-3 px-3 text-right">Bookings OTB</th>
                           <th className="py-3 px-3 text-right">Room Nights OTB</th>
-                          <th className="py-3 px-3 text-right">Revenue OTB</th>
+                          <th className="py-3 px-3 text-right">Room Revenue OTB</th>
                           <th className="py-3 px-4 text-right">Pace vs LY</th>
                         </tr>
                       </thead>
@@ -1549,7 +1557,7 @@ export function PartnersPage() {
                 onClick={() =>
                   openDrawer(
                     'Partner Booking Pace',
-                    `Forward bookings, room nights & revenue on the books vs same time last year · All 10 CRM partners`,
+                    `Forward bookings, room nights & room revenue on the books vs same time last year · All 10 CRM partners`,
                     <PartnerPaceDrawerBody />
                   )
                 }
@@ -1558,7 +1566,7 @@ export function PartnersPage() {
               >
                 {/* Header matching Hospitality BookingPaceWidget */}
                 <div className="flex justify-between items-start mb-1 gap-2">
-                  <InfoTooltip text="Measures partner booking velocity and demand acceleration. Bookings, room nights & revenue on-the-books (OTB) for the selected forward window vs same time last year.">
+                  <InfoTooltip text="Measures partner booking velocity and demand acceleration. Bookings, room nights & room revenue on-the-books (OTB) for the selected forward window vs same time last year.">
                     <div>
                       <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">
                         PARTNER BOOKING PACE
@@ -1759,7 +1767,7 @@ export function PartnersPage() {
                         <div className="text-[8px] text-zinc-500 font-normal">Room Nights OTB</div>
                       </div>
 
-                      {/* Revenue OTB */}
+                      {/* Room Revenue OTB */}
                       <div>
                         <div className="flex items-center justify-between gap-1 text-[10px]">
                           <span className="font-bold text-zinc-900 leading-none">{paceTotals.revenueOtb}</span>
@@ -1767,7 +1775,7 @@ export function PartnersPage() {
                             ↑ {paceTotals.revenueTrend} vs LY
                           </span>
                         </div>
-                        <div className="text-[8px] text-zinc-500 font-normal">Revenue OTB</div>
+                        <div className="text-[8px] text-zinc-500 font-normal">Room Revenue OTB</div>
                       </div>
 
                       {/* Pickups */}
@@ -1870,13 +1878,13 @@ export function PartnersPage() {
                     : fmtInt(totBk);
               const centerLabel =
                 contributionMetric === 'revenue'
-                  ? 'Total Rev'
+                  ? 'Total Room Revenue'
                   : contributionMetric === 'roomNights'
                     ? 'Room Nights'
                     : 'Bookings';
               const valueHeader =
                 contributionMetric === 'revenue'
-                  ? 'Revenue'
+                  ? 'Room Revenue'
                   : contributionMetric === 'roomNights'
                     ? 'Room Nights'
                     : 'Bookings';
@@ -1885,7 +1893,7 @@ export function PartnersPage() {
                 { label: 'Guests', value: fmtInt(totGuests), trend: '↑ 13% vs LY' },
                 { label: 'Bookings', value: fmtInt(totBk), trend: '↑ 13% vs LY' },
                 { label: 'Room Nights', value: fmtInt(totRn), trend: '↑ 14% vs LY' },
-                { label: 'Revenue', value: fmtUsd(totRev), trend: '↑ 13% vs LY' },
+                { label: 'Room Revenue', value: fmtUsd(totRev), trend: '↑ 13% vs LY' },
                 { label: 'ADR', value: `$${fmtInt(avgAdr)}`, trend: '↑ 8% vs LY' },
                 { label: 'Avg Nights', value: avgLos, trend: '↑ 0.3 vs LY' },
                 { label: 'Repeat Ratio', value: `${avgRepeat}%`, trend: '↑ 5pp vs LY' },
@@ -1910,7 +1918,7 @@ export function PartnersPage() {
 
                     <div className="flex items-center justify-between gap-2 flex-wrap px-0.5">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                        Partner Contribution Breakdown ({PERIOD_DEFS[period].shortLabel})
+                        Partner Contribution Breakdown ({PERIOD_DEFS[period].label})
                       </span>
                       <span className="text-[9.5px] text-zinc-400">
                         Click Other row to expand/collapse partner agencies
@@ -1926,7 +1934,7 @@ export function PartnersPage() {
                             <th className="py-2.5 px-3 text-right">Guests</th>
                             <th className="py-2.5 px-3 text-right">Bookings</th>
                             <th className="py-2.5 px-3 text-right">Room Nights</th>
-                            <th className="py-2.5 px-3 text-right">Revenue</th>
+                            <th className="py-2.5 px-3 text-right">Room Revenue</th>
                             <th className="py-2.5 px-3 text-right">Share</th>
                             <th className="py-2.5 px-3 text-right">ADR</th>
                             <th className="py-2.5 px-3 text-right">Avg Nights</th>
@@ -2023,14 +2031,14 @@ export function PartnersPage() {
                     <div className="flex justify-between items-center h-4">
                       <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Partner Contribution</h3>
                       <div className="flex items-center gap-2">
-                        <InfoTooltip text="Percentage share of revenue, room nights, and bookings contributed by partner agencies." />
+                        <InfoTooltip text="Percentage share of room revenue, room nights, and bookings contributed by partner agencies." />
                         <SeeDetailsLink />
                       </div>
                     </div>
                     <div className="flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
                       <div className="inline-flex items-center p-0.5 rounded-full bg-zinc-100 border border-zinc-200/80 shadow-2xs">
                         {([
-                          { id: 'revenue', label: 'Revenue' },
+                          { id: 'revenue', label: 'Room Revenue' },
                           { id: 'roomNights', label: 'Room Nights' },
                           { id: 'bookings', label: 'Bookings' },
                         ] as const).map((tab) => (
@@ -2076,22 +2084,22 @@ export function PartnersPage() {
                           );
                         })}
                       </svg>
-                      <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                      <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none px-2 text-center">
                         <span className="text-sm font-bold text-zinc-900 leading-none">{centerValue}</span>
-                        <span className="text-[8px] text-zinc-500 font-medium mt-0.5">{centerLabel}</span>
+                        <span className="text-[7.5px] text-zinc-500 font-medium mt-0.5 leading-tight">{centerLabel}</span>
                       </div>
                     </div>
 
                     {/* Legend with Column Headers */}
                     <div className="flex flex-col flex-1 min-w-0 pr-1">
-                      <div className="grid grid-cols-[1fr_52px_34px] gap-1 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
+                      <div className="grid grid-cols-[1fr_68px_34px] gap-1 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
                         <span>Partner</span>
-                        <span className="text-right">{valueHeader}</span>
+                        <span className="text-right whitespace-nowrap">{valueHeader}</span>
                         <span className="text-right">Share</span>
                       </div>
                       <div className="flex flex-col gap-1">
                         {activeRows.map((item) => (
-                          <div key={item.name} className="grid grid-cols-[1fr_52px_34px] gap-1 items-center text-[10px]">
+                          <div key={item.name} className="grid grid-cols-[1fr_68px_34px] gap-1 items-center text-[10px]">
                             <div className="flex items-center gap-1.5 min-w-0 truncate">
                               <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                               <span className="text-zinc-600 font-medium truncate">{item.name}</span>
@@ -2150,7 +2158,7 @@ export function PartnersPage() {
                 { label: 'Guests', value: fmtInt(totGuests), trend: '↑ 13% vs LY' },
                 { label: 'Bookings', value: fmtInt(totBk), trend: '↑ 13% vs LY' },
                 { label: 'Room Nights', value: fmtInt(totRn), trend: '↑ 14% vs LY' },
-                { label: 'Revenue', value: fmtUsd(totRev), trend: '↑ 13% vs LY' },
+                { label: 'Room Revenue', value: fmtUsd(totRev), trend: '↑ 13% vs LY' },
                 { label: 'ADR', value: `$${fmtInt(avgAdr)}`, trend: '↑ 8% vs LY' },
                 { label: 'Avg Nights', value: avgLos, trend: '↑ 0.3 vs LY' },
                 { label: 'Repeat Ratio', value: `${avgRepeat}%`, trend: '↑ 5pp vs LY' },
@@ -2179,7 +2187,7 @@ export function PartnersPage() {
                     <div>
                       <div className="flex justify-between items-center mb-2 px-0.5">
                         <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                          Tier Breakdown by Summary Performance ({PERIOD_DEFS[period].shortLabel})
+                          Tier Breakdown by Summary Performance ({PERIOD_DEFS[period].label})
                         </h4>
                         <span className="text-[9.5px] text-zinc-400">
                           Click tier row to expand/collapse partner agencies
@@ -2194,8 +2202,8 @@ export function PartnersPage() {
                               <th className="py-2.5 px-3 text-right">Guests</th>
                               <th className="py-2.5 px-3 text-right">Bookings</th>
                               <th className="py-2.5 px-3 text-right">Room Nights</th>
-                              <th className="py-2.5 px-3 text-right">Revenue</th>
-                              <th className="py-2.5 px-3 text-right">Rev Share</th>
+                              <th className="py-2.5 px-3 text-right">Room Revenue</th>
+                              <th className="py-2.5 px-3 text-right">Room Rev Share</th>
                               <th className="py-2.5 px-3 text-right">ADR</th>
                               <th className="py-2.5 px-3 text-right">Avg Nights</th>
                               <th className="py-2.5 px-3 text-right">Repeat Ratio</th>
@@ -2289,7 +2297,7 @@ export function PartnersPage() {
                   <div className="flex justify-between items-center mb-3 h-4 shrink-0">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">Partner Tier Distribution</h3>
                     <div className="flex items-center gap-2">
-                      <InfoTooltip text="Distribution of the 10 partner agencies across Tier 1, Tier 2, and Tier 3 based on revenue, ADR, and repeat ratio." />
+                      <InfoTooltip text="Distribution of the 10 partner agencies across Tier 1, Tier 2, and Tier 3 based on room revenue, ADR, and repeat ratio." />
                       <SeeDetailsLink />
                     </div>
                   </div>
@@ -2327,14 +2335,14 @@ export function PartnersPage() {
 
                     {/* Legend with Column Headers */}
                     <div className="flex flex-col flex-1 min-w-0 pr-1">
-                      <div className="grid grid-cols-[1fr_48px_48px] gap-1 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
+                      <div className="grid grid-cols-[1fr_48px_62px] gap-1 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
                         <span>Tier</span>
                         <span className="text-right">Partners</span>
-                        <span className="text-right">Rev Share</span>
+                        <span className="text-right whitespace-nowrap">Room Rev Share</span>
                       </div>
                       <div className="flex flex-col gap-1.5">
                         {tierGroups.map((item) => (
-                          <div key={item.id} className="grid grid-cols-[1fr_48px_48px] gap-1 items-center text-[10px]">
+                          <div key={item.id} className="grid grid-cols-[1fr_48px_62px] gap-1 items-center text-[10px]">
                             <div className="flex items-center gap-1.5 min-w-0 truncate">
                               <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                               <span className="text-zinc-600 font-medium truncate">{item.label}</span>
@@ -2409,7 +2417,7 @@ export function PartnersPage() {
               { label: 'Guests', value: fmtInt(totGuests), trend: '↑ 14% vs LY' },
               { label: 'Bookings', value: fmtInt(totBk), trend: '↑ 13% vs LY' },
               { label: 'Room Nights', value: fmtInt(totRn), trend: '↑ 15% vs LY' },
-              { label: 'Revenue', value: fmtUsd(totRev), trend: '↑ 14% vs LY' },
+              { label: 'Room Revenue', value: fmtUsd(totRev), trend: '↑ 14% vs LY' },
               { label: 'ADR', value: `$${fmtInt(avgAdr)}`, trend: '↑ 9% vs LY' },
               { label: 'Avg Nights', value: avgLos, trend: '↑ 0.3 vs LY' },
               { label: 'Repeat Ratio', value: `${avgRepeat}%`, trend: '↑ 5pp vs LY' },
@@ -2448,7 +2456,7 @@ export function PartnersPage() {
                               <th className="py-2.5 px-3 text-right">Guests</th>
                               <th className="py-2.5 px-3 text-right">Bookings</th>
                               <th className="py-2.5 px-3 text-right">Room Nights</th>
-                              <th className="py-2.5 px-3 text-right">Revenue</th>
+                              <th className="py-2.5 px-3 text-right">Room Revenue</th>
                               <th className="py-2.5 px-3 text-right">ADR</th>
                               <th className="py-2.5 px-3 text-right">Avg Nights</th>
                               <th className="py-2.5 px-3 text-right">Repeat Ratio</th>
@@ -2498,11 +2506,11 @@ export function PartnersPage() {
 
                 <div className="flex-1 flex flex-col justify-between">
                   {/* Column Headers */}
-                  <div className="grid grid-cols-[1fr_48px_62px_52px] gap-1.5 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
+                  <div className="grid grid-cols-[1fr_48px_62px_68px] gap-1.5 items-center text-[8.5px] font-medium text-zinc-400 border-b border-zinc-100 pb-1 mb-1">
                     <span>Account</span>
                     <span className="text-right">Bookings</span>
                     <span className="text-right">Room Nights</span>
-                    <span className="text-right">Revenue</span>
+                    <span className="text-right whitespace-nowrap">Room Revenue</span>
                   </div>
 
                   {/* Account Rows */}
@@ -2510,7 +2518,7 @@ export function PartnersPage() {
                     {corpRows.slice(0, 4).map((row) => (
                       <div
                         key={row.id}
-                        className="grid grid-cols-[1fr_48px_62px_52px] gap-1.5 items-center py-1.5 first:pt-0.5 last:pb-0"
+                        className="grid grid-cols-[1fr_48px_62px_68px] gap-1.5 items-center py-1.5 first:pt-0.5 last:pb-0"
                       >
                         <div className="min-w-0 pr-1">
                           <div className="text-[10px] font-semibold text-zinc-900 truncate leading-tight">
@@ -2796,7 +2804,7 @@ export function PartnersPage() {
                 </div>
               </div>
             ))}
-            className="col-span-12 relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between"
+            className="col-span-12 min-w-0 overflow-hidden relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between"
             style={{ animationDelay: '0.4s' }}
           >
             <div className="flex justify-between items-center mb-3 h-5 shrink-0">
@@ -2830,7 +2838,7 @@ export function PartnersPage() {
 
             <div
               ref={momentsScrollRef}
-              className="flex gap-3.5 overflow-x-auto scroll-smooth snap-x snap-mandatory py-1 pb-1.5 flex-1 items-stretch [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="w-full min-w-0 flex gap-3.5 overflow-x-auto scroll-smooth snap-x snap-mandatory py-1 pb-1.5 flex-1 items-stretch [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {SHARED_MOMENTS_DATA.map((moment, idx) => (
                 <div
@@ -2856,39 +2864,32 @@ export function PartnersPage() {
       </div>
 
       {/* Modal Panel Portal */}
-      {createPortal(
+      {drawerOpen && drawerContent && createPortal(
         <>
           <div
-            className={`fixed inset-0 bg-black/40 backdrop-blur-xs z-[9998] transition-opacity duration-300 ${drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[9998] transition-opacity duration-300 opacity-100"
             onClick={() => setDrawerOpen(false)}
           />
 
           <div
-            className={`fixed top-1/2 left-1/2 z-[9999] max-h-[90vh] w-[95vw] ${drawerContent?.widthClass ?? 'sm:w-[960px] lg:w-[1140px] xl:w-[1340px]'} bg-white shadow-2xl rounded-2xl border border-zinc-200/90 flex flex-col overflow-hidden transition-all duration-300 ease-out transform -translate-x-1/2 ${drawerOpen
-              ? 'opacity-100 scale-100 -translate-y-1/2'
-              : 'opacity-0 scale-95 -translate-y-[45%] pointer-events-none'
-              }`}
+            className={`fixed top-1/2 left-1/2 z-[9999] max-h-[90vh] w-[95vw] ${drawerContent.widthClass ?? 'sm:w-[960px] lg:w-[1140px] xl:w-[1340px]'} bg-white shadow-2xl rounded-2xl border border-zinc-200/90 flex flex-col overflow-hidden transition-all duration-300 ease-out transform -translate-x-1/2 opacity-100 scale-100 -translate-y-1/2`}
           >
-            {drawerContent && (
-              <>
-                <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 bg-zinc-50/70 backdrop-blur-xs">
-                  <div>
-                    <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">{drawerContent.title}</h2>
-                    <p className="text-[11px] text-zinc-500 font-medium mt-0.5">{drawerContent.description}</p>
-                  </div>
-                  <button
-                    onClick={() => setDrawerOpen(false)}
-                    className="p-1.5 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
-                  >
-                    <CloseCircle size={20} />
-                  </button>
-                </div>
+            <div className="shrink-0 px-6 py-4 flex justify-between items-center border-b border-zinc-100 bg-zinc-50/70 backdrop-blur-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">{drawerContent.title}</h2>
+                <p className="text-[11px] text-zinc-500 font-medium mt-0.5">{drawerContent.description}</p>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="p-1.5 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
+              >
+                <CloseCircle size={20} />
+              </button>
+            </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 text-zinc-800">
-                  {drawerContent.children}
-                </div>
-              </>
-            )}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 text-zinc-800">
+              {drawerContent.children}
+            </div>
           </div>
         </>,
         document.body
