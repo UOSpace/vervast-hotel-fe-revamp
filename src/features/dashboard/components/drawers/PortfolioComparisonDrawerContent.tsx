@@ -141,7 +141,7 @@ export function PortfolioComparisonDrawerContent(
           </h4>
           <p className="text-xs text-zinc-500 mt-0.5">
             Direct comparison of Occupancy, ADR, RevPAR, and revenue pacing across collections and properties ·{' '}
-            As of: <span className="font-semibold text-zinc-700">{periodDef.periodLabel}</span>
+            As of: <span className="font-semibold text-zinc-900">{periodDef.periodLabel}</span>
           </p>
         </div>
 

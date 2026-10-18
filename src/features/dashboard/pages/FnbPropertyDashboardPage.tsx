@@ -394,7 +394,7 @@ export function FnbPropertyDashboardPage() {
             FNB Dashboard Property View
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -407,7 +407,7 @@ export function FnbPropertyDashboardPage() {
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           {/* Time Horizon Pill Filter */}
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button

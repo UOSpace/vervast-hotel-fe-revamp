@@ -21,7 +21,7 @@ export function AlertsTasksWidget({
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
+      className="relative rounded-[12px] p-4 flex flex-col transition-[background-color,box-shadow,transform] duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.6s' }}
       onClick={() => openDrawer({ 
         type: 'ALERTS', 

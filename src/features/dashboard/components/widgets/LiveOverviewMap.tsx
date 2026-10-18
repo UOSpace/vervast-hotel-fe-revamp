@@ -118,7 +118,9 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
 
   const { lastUpdatedLabel } = getUserLocationAndTimezone();
 
-  const mapDateBadgeLabel = 'As of Oct 16, 2026';
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const mapDateBadgeLabel = `As of ${yesterdayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
 
   return (
     <div
@@ -252,7 +254,7 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
 
         {/* Active Date / Period Badge at top-right */}
         <div
-          className={`absolute top-2 right-2 px-2.5 py-1.5 rounded-md flex items-center gap-1.5 backdrop-blur-xs transition-opacity duration-200 z-10 pointer-events-none ${
+          className={`absolute top-2 right-2 px-2.5 py-1.5 rounded-md flex items-center gap-1.5 transition-opacity duration-200 z-10 pointer-events-none ${
             hoveredItem ? 'opacity-30' : 'opacity-90'
           }`}
           style={{

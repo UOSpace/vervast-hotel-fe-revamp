@@ -102,6 +102,13 @@ export function BookingPaceWidget({ onOpenDetails }: BookingPaceWidgetProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 9, fill: '#71717a' }}
+                interval={0}
+                padding={{ left: 14, right: 14 }}
+                tickFormatter={(v: string) => {
+                  const wk = v.match(/^Week (\d)/);
+                  if (wk) return `W${wk[1]}`;
+                  return String(v).split('\u2013')[0].trim();
+                }}
                 dy={4}
               />
               <YAxis

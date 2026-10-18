@@ -66,7 +66,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
     <div className="flex flex-col gap-2.5 w-full">
       {/* ROW 1 (Hero Top): TOTAL REVENUE (HOSPITALITY) */}
       <div
-        className="w-full relative rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between gap-2.5 animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+        className="w-full relative rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between gap-2.5 animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
         style={{ animationDelay: '0.15s' }}
         onClick={() =>
           openDrawer({
@@ -129,7 +129,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 items-stretch w-full">
         {/* Card 2: OCCUPANCY */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.2s' }}
           onClick={() =>
             openDrawer({
@@ -170,7 +170,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 3: ADR */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.25s' }}
           onClick={() =>
             openDrawer({
@@ -211,7 +211,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 4: REVPAR */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.3s' }}
           onClick={() =>
             openDrawer({
@@ -252,7 +252,7 @@ export function ResortKPIWidget({ data }: ResortKPIWidgetProps) {
 
         {/* Card 5: ROOM REVENUE */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.35s' }}
           onClick={() =>
             openDrawer({

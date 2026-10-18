@@ -145,11 +145,13 @@ export function distributeMetrics(
 }
 
 export function getPeriodDateRange(period: PeriodId): [Date, Date] {
-  const sysYesterday = new Date(2026, 9, 16);
+  const now = new Date();
+  const sysYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
   if (period === 'today') return [sysYesterday, sysYesterday];
-  if (period === 'mtd') return [new Date(2026, 9, 1), sysYesterday];
-  if (period === 'ytd') return [new Date(2026, 0, 1), sysYesterday];
-  return [new Date(2026, 9, 17), new Date(2027, 0, 14)];
+  if (period === 'mtd') return [new Date(sysYesterday.getFullYear(), sysYesterday.getMonth(), 1), sysYesterday];
+  if (period === 'ytd') return [new Date(sysYesterday.getFullYear(), 0, 1), sysYesterday];
+  const forwardEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 89);
+  return [new Date(now.getFullYear(), now.getMonth(), now.getDate()), forwardEnd];
 }
 
 export function inferPeriodFromDates(start: Date | null, end: Date | null): PeriodId {
@@ -422,7 +424,7 @@ export function ResortTypeDashboard() {
       {/* Period Picker & As-Of above Horizontal Resort Picker Gallery */}
       <div className="w-full pb-3 pt-1 flex flex-col gap-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-[10px] text-zinc-500 font-medium">
+          <span className="text-[10px] text-zinc-900 font-medium">
             As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[period].periodLabel}</span>
           </span>
           <PeriodTabsWidget

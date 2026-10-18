@@ -115,7 +115,7 @@ export function RegionalDashboard() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">{getGreeting()}</p>
           <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">
-            Regional Market Analytics (Region Level)
+            Regional Market Analytics (Regional Level)
           </h2>
         </div>
         <div className="text-right shrink-0 pb-0.5">
@@ -126,7 +126,7 @@ export function RegionalDashboard() {
 
       <div className="w-full pb-3 pt-1 flex flex-col gap-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-[10px] text-zinc-500 font-medium">
+          <span className="text-[10px] text-zinc-900 font-medium">
             As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[period].periodLabel}</span>
           </span>
           <PeriodTabsWidget

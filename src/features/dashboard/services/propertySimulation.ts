@@ -167,7 +167,7 @@ const PROPERTY_META: PropertyMeta[] = [
     guest: { guestId: 'gst_ind_008', guestName: 'Lord Sterling', guestTitle: 'Lord', vipTier: 'Founding Circle', nationality: 'British', roomType: 'Corcovado Rainforest Canopy Villa', roomNumber: 'Villa 14', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private naturalist wildlife expedition in Osa Peninsula', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-bali', name: 'SOSEI BALI', city: 'Bali, Indonesia', country: 'Indonesia', grouping: 'Wellness',
+    id: 'sosei-bali', name: 'SOSEI Bali', city: 'Bali, Indonesia', country: 'Indonesia', grouping: 'Wellness',
     coordinates: [115.1889, -8.4095],
     guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Holistic Sanctuary Cliffside Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification & longevity ritual', bookingStatus: 'in_house' },
   },

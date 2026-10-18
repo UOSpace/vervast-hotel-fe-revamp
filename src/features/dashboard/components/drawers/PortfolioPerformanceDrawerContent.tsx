@@ -74,8 +74,8 @@ export function PortfolioPerformanceDrawerContent({ config }: PortfolioPerforman
       {/* Top Header Filter Bar: Subtitle & Period + Horizon Filter Tabs (Yesterday | MTD | YTD) */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
         <div>
-          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800 dark:text-zinc-200">{activePeriodLabel}</span>
+          <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900 dark:text-zinc-100">{activePeriodLabel}</span>
           </p>
         </div>
 

@@ -66,15 +66,14 @@ export function getUserLocationAndTimezone(now: Date = new Date()) {
     day: 'numeric',
   });
 
-  // Fixed UTC snapshot timestamp for yesterday's global PMS close (2026-10-16 23:59 GMT+7 = 16:59 UTC)
-  // Converted dynamically into whatever timezone the user is in
-  const lastSyncUtc = new Date('2026-10-16T16:59:00Z');
-  const syncDatePart = lastSyncUtc.toLocaleDateString('en-US', {
+  // Dynamic H-1 snapshot timestamp for yesterday's global PMS close (23:59 local)
+  const yesterdayClose = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 0);
+  const syncDatePart = yesterdayClose.toLocaleDateString('en-US', {
     timeZone,
     month: 'short',
     day: 'numeric',
   });
-  const syncTimePart = lastSyncUtc.toLocaleTimeString('en-GB', {
+  const syncTimePart = yesterdayClose.toLocaleTimeString('en-GB', {
     timeZone,
     hour: '2-digit',
     minute: '2-digit',

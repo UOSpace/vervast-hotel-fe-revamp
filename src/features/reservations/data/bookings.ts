@@ -186,7 +186,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'rosa.rios@wellnesscollective.org',
     phone: '+1 (305) 555-0814',
     notes: '7-day silent rejuvenation program with daily Ayurvedic doctor consultations, herbal bath, and vegan raw dining.',
-    hotel: 'SOSEI BALI',
+    hotel: 'SOSEI Bali',
     destinationCountry: 'Indonesia',
     propertyType: 'Wellness',
     folioItems: [

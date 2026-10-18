@@ -30,7 +30,7 @@ export function PeriodTabsWidget({ period, setPeriod, periods = ACTUAL_PERIOD_ID
         })}
       </div>
       {showLabel && (
-        <span className="text-[9.5px] text-zinc-500 font-medium">As of: {PERIOD_DEFS[period].periodLabel}</span>
+        <span className="text-[9.5px] text-zinc-900 font-medium">As of: {PERIOD_DEFS[period].periodLabel}</span>
       )}
     </div>
   );

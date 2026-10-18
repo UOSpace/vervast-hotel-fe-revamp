@@ -8,7 +8,7 @@ import {
 } from '../../services/propertySimulation';
 import { MASTER_CATEGORIES } from '@/constants/categories';
 import { getForwardBusiness, getForwardDateRange } from '@/data/portfolio/hospitalityMix';
-import { fmtUsd, fmtUsdFull, fmtPct, fmtSignedPct } from '@/data/portfolio';
+import { fmtUsd, fmtUsdFull, fmtPct, fmtSignedPct, PERIOD_DEFS } from '@/data/portfolio';
 
 const PACE_WINDOWS: { id: BookingPaceWindow; label: string; cadenceLabel: string }[] = [
   { id: 7, label: '7D', cadenceLabel: 'Daily Cadence' },
@@ -83,8 +83,8 @@ export function BookingPaceDrawerContent({ theme, config }: BookingPaceDrawerCon
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
       {/* Header & Horizon Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-zinc-200/80 dark:border-zinc-800">
-        <p className="text-[11px] text-zinc-500 font-medium">
-          As of: October 16, 2026 · Forward Window:{' '}
+        <p className="text-[11px] text-zinc-900 font-medium">
+          As of: {PERIOD_DEFS.mtd.periodLabel} · Forward Window:{' '}
           <span className="font-semibold text-zinc-800 dark:text-zinc-200">
             {horizonDateRange} ({windowDays} Days)
           </span>

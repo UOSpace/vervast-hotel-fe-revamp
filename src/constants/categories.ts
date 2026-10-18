@@ -3,7 +3,7 @@ import oceanImg from '@/assets/property_types/ocean_hills.jpg';
 import cityImg from '@/assets/property_types/city-thumb.jpg';
 import forestImg from '@/assets/property_types/forest_rindang.jpg';
 import desertImg from '@/assets/property_types/desert.png';
-import wellnessImg from '@/assets/contents/wellness_retreat.png';
+import wellnessImg from '@/assets/portal/sanctuary.png';
 import { MTD_DAYS } from '@/data/portfolio/periods';
 
 export type HotelCategoryId = 'urban' | 'beach-resort' | 'ski' | 'nature' | 'wellness';
@@ -45,7 +45,7 @@ export interface MasterHotelProperty {
  * 2. SOSEI Beach Resort (SOSEI El Gouna - Egypt, SOSEI AUH - UAE, SOSEI Melides - Portugal, SOSEI Umbria - Italy, SOSEI Tinos - Greece)
  * 3. SOSEI Urban (SOSEI Barcelona - Spain)
  * 4. SOSEI Nature (SOSEI OSA - Costa Rica)
- * 5. SOSEI Wellness (SOSEI BALI - Bali)
+ * 5. SOSEI Wellness (SOSEI Bali - Bali)
  */
 export const MASTER_CATEGORIES: HotelCategory[] = [
   {
@@ -249,7 +249,7 @@ const RAW_MASTER_PROPERTIES: MasterHotelProperty[] = [
   // ── SOSEI Wellness (90 Rooms) ────────────────────────────────────────────
   {
     id: 'sosei-bali',
-    name: 'SOSEI BALI',
+    name: 'SOSEI Bali',
     categoryId: 'wellness',
     categoryName: 'SOSEI Wellness',
     location: 'Bali, Indonesia',

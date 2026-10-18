@@ -768,7 +768,7 @@ export function ExperienceDashboardPage() {
               Welcome To SOSEI Experiences Dashboard
             </h1>
             <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-              <span>
+              <span className="text-zinc-900 font-medium">
                 As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
               </span>
               <span>·</span>
@@ -785,7 +785,7 @@ export function ExperienceDashboardPage() {
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             {/* Time Horizon Pill Filter (Today | MTD | YTD | Forward Business) */}
             <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-              {PERIOD_ORDER.map((id) => {
+              {PERIOD_ORDER.filter((pid) => pid !== 'forward').map((id) => {
                 const t = PERIOD_DEFS[id];
                 const active = horizon === id;
                 return (

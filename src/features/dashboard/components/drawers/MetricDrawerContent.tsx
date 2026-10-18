@@ -10,6 +10,7 @@ import {
   getPortfolioMetrics,
   fmtUsd,
   fmtPct,
+  PERIOD_DEFS,
   type PeriodId,
 } from '@/data/portfolio';
 
@@ -26,9 +27,9 @@ interface MetricDrawerContentProps {
 }
 
 const AS_OF_DATE_LABELS: Record<TimeHorizon, string> = {
-  today: 'October 16, 2026',
-  mtd: 'October 16, 2026',
-  ytd: 'October 16, 2026',
+  today: PERIOD_DEFS.today.periodLabel,
+  mtd: PERIOD_DEFS.mtd.periodLabel,
+  ytd: PERIOD_DEFS.ytd.periodLabel,
 };
 
 const PERIOD_SHORT_LABELS: Record<TimeHorizon, string> = {
@@ -109,8 +110,8 @@ export function MetricDrawerContent({ config }: MetricDrawerContentProps) {
       {/* Top Header Filter Bar: Subtitle & As Of Date + Horizon Filter Tabs (Yesterday | MTD | YTD) */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
         <div>
-          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800 dark:text-zinc-200">{asOfLabel}</span>
+          <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900 dark:text-zinc-100">{asOfLabel}</span>
           </p>
         </div>
 

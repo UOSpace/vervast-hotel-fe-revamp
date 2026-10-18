@@ -55,7 +55,7 @@ export function RevenueDemandMixWidget({
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
             REVENUE &amp; DEMAND MIX
           </h3>
-          <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
+          <p className="text-[9px] text-zinc-900 font-medium mt-0.5">
             {data.timeframe}
           </p>
         </div>

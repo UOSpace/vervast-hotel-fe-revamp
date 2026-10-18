@@ -19,14 +19,31 @@ export interface PeriodDef {
   isForward: boolean;
 }
 
-export const SYSTEM_DATE_ISO = '2026-10-17';
-export const SYSTEM_DATE_LABEL = 'October 17, 2026';
+const _now = new Date();
+const _yesterday = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - 1);
 
-/** Jan 1 -> Oct 16, 2026 = 31+28+31+30+31+30+31+31+30+16 */
+export const SYSTEM_DATE_ISO = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, '0')}-${String(_now.getDate()).padStart(2, '0')}`;
+export const SYSTEM_DATE_LABEL = _now.toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+export const AS_OF_DATE_LABEL = _yesterday.toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+export const AS_OF_DATE_SHORT_LABEL = _yesterday.toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+/** Jan 1 -> yesterday close */
 export const YTD_DAYS = 289;
-/** Oct 1 -> Oct 16, 2026 (as of yesterday close) */
+/** Month-to-date as of yesterday close */
 export const MTD_DAYS = 16;
-/** Forward business window (Oct 17, 2026 -> Jan 14, 2027). */
+/** Forward business window (next 90 days). */
 export const FORWARD_DEFAULT_DAYS = 90;
 
 export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
@@ -34,32 +51,32 @@ export const PERIOD_DEFS: Record<PeriodId, PeriodDef> = {
     id: 'today',
     label: 'Yesterday',
     days: 1,
-    periodLabel: 'October 16, 2026',
-    description: 'Operating actuals as of yesterday close (October 16, 2026).',
+    periodLabel: AS_OF_DATE_LABEL,
+    description: `Operating actuals as of yesterday close (${AS_OF_DATE_LABEL}).`,
     isForward: false,
   },
   mtd: {
     id: 'mtd',
     label: 'MTD',
     days: MTD_DAYS,
-    periodLabel: 'October 16, 2026',
-    description: 'Month-to-date as of yesterday close (October 16, 2026).',
+    periodLabel: AS_OF_DATE_LABEL,
+    description: `Month-to-date as of yesterday close (${AS_OF_DATE_LABEL}).`,
     isForward: false,
   },
   ytd: {
     id: 'ytd',
     label: 'YTD',
     days: YTD_DAYS,
-    periodLabel: 'October 16, 2026',
-    description: 'Year-to-date as of yesterday close (October 16, 2026).',
+    periodLabel: AS_OF_DATE_LABEL,
+    description: `Year-to-date as of yesterday close (${AS_OF_DATE_LABEL}).`,
     isForward: false,
   },
   forward: {
     id: 'forward',
     label: 'Forward Business',
     days: FORWARD_DEFAULT_DAYS,
-    periodLabel: 'October 16, 2026',
-    description: 'On-the-books business for the next 90 days as of October 16, 2026.',
+    periodLabel: AS_OF_DATE_LABEL,
+    description: `On-the-books business for the next 90 days as of ${AS_OF_DATE_LABEL}.`,
     isForward: true,
   },
 };

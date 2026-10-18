@@ -24,6 +24,7 @@ import {
   PropertyRoomTierDrawerContent,
   PropertyDepartmentRevenueDrawerContent,
   PropertyUpcomingEventsDrawerContent,
+  PropertyGuestSatisfactionDrawerContent,
 } from './drawers/PropertyDrawerContent';
 import { getCategoryPerformance } from '../services/propertySimulation';
 import { MASTER_CATEGORIES } from '@/constants/categories';
@@ -153,11 +154,6 @@ export function DashboardDrawer() {
                           </span>
                         </div>
                         <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">{alert.text || alert.desc}</p>
-                        {alert.detail && (
-                          <div className="mt-2.5 pt-2.5 border-t border-zinc-200/80 dark:border-zinc-800 text-[11px] text-zinc-500 leading-relaxed">
-                            {alert.detail}
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
@@ -298,8 +294,8 @@ export function DashboardDrawer() {
             {/* Top Header Filter Bar: As of Date + Horizon Filter Tabs (Yesterday | MTD | YTD) */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
               <div>
-                <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-                  As of: <span className="font-semibold text-zinc-800 dark:text-zinc-200">{PERIOD_DEFS[worldMapHorizon].periodLabel}</span>
+                <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+                  As of: <span className="font-semibold text-zinc-900 dark:text-zinc-100">{PERIOD_DEFS[worldMapHorizon].periodLabel}</span>
                 </p>
               </div>
 
@@ -394,27 +390,19 @@ export function DashboardDrawer() {
 
       case 'TOP_NATIONALITIES':
         {
+          const payload = config.data && !Array.isArray(config.data) ? config.data : null;
           const computed = getDashboardComputedData();
-          const nationalityData = computed.topNationalities;
-
-          const totalShare = nationalityData.reduce((acc, item) => acc + (item.pct || 0), 0);
-          const totalRevenueUsd = nationalityData.reduce((acc, item) => {
-            const num = parseFloat(item.revenue.replace(/[^0-9.]/g, '')) || 0;
-            return acc + num;
-          }, 0);
-          const avgAdrUsd = nationalityData.length > 0
-            ? nationalityData.reduce((acc, item) => acc + (parseFloat(item.adr.replace(/[^0-9.]/g, '')) || 0), 0) / nationalityData.length
-            : 0;
-          const avgRevParUsd = nationalityData.length > 0
-            ? nationalityData.reduce((acc, item) => acc + (item.val || 0), 0) / nationalityData.length
-            : 0;
+          const nationalityData: any[] = payload?.rows ?? (Array.isArray(config.data) && config.data.length ? config.data : computed.topNationalities);
+          const totalRow = payload?.total;
 
           return (
             <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
               <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Top nationality performance metrics & market guest share MTD.</p>
+                <p className="text-xs text-zinc-900">
+                  As of: <span className="font-semibold text-zinc-900 dark:text-zinc-100">{PERIOD_DEFS[activePeriod].periodLabel}</span>
+                </p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
-                  Global Feeder Markets
+                  {nationalityData.length} Markets
                 </span>
               </div>
               <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -423,10 +411,10 @@ export function DashboardDrawer() {
                     <tr className="text-left text-zinc-400">
                       <th className="py-2.5 px-3 font-medium text-[9.5px] w-8 border-b border-zinc-200 dark:border-zinc-800">#</th>
                       <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Nationality</th>
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Occupancy Share</th>
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Total Revenue</th>
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">RevPAR (USD)</th>
+                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Occupancy</th>
+                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">ADR</th>
+                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">RevPAR</th>
+                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Revenue</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -434,20 +422,22 @@ export function DashboardDrawer() {
                       <tr key={item.code || idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                         <td className="py-2.5 px-3 text-zinc-400 font-bold">{idx + 1}</td>
                         <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{item.country}</td>
-                        <td className="py-2.5 px-3 text-right font-medium text-emerald-700">{item.occ || `${item.pct.toFixed(2)}%`}</td>
+                        <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{item.occ || `${Number(item.pct || 0).toFixed(1)}%`}</td>
                         <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{item.adr}</td>
-                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{item.revenue}</td>
                         <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100">{item.revPar}</td>
+                        <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{item.revenue}</td>
                       </tr>
                     ))}
-                    <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-                      <td className="py-3 px-3"></td>
-                      <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Top Markets Share</td>
-                      <td className="py-3 px-3 text-right text-emerald-700">{totalShare.toFixed(2)}%</td>
-                      <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">${avgAdrUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                      <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">${totalRevenueUsd.toFixed(2)}M</td>
-                      <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">${avgRevParUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    </tr>
+                    {totalRow && (
+                      <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
+                        <td className="py-3 px-3"></td>
+                        <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total</td>
+                        <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{totalRow.occ}</td>
+                        <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{totalRow.adr}</td>
+                        <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{totalRow.revPar}</td>
+                        <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{totalRow.revenue}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -456,136 +446,7 @@ export function DashboardDrawer() {
         }
 
       case 'SENTIMENT_SCORE':
-        {
-          const sentimentByProperty = [
-            {
-              id: 'urban',
-              name: 'SOSEI Urban',
-              score: '4.8',
-              children: [
-                { name: 'Location', score: '4.9' },
-                { name: 'Rooms', score: '4.7' },
-                { name: 'Value', score: '4.6' },
-                { name: 'Cleanliness', score: '4.9' },
-                { name: 'Service', score: '4.8' },
-                { name: 'Sleep Quality', score: '4.7' },
-              ],
-            },
-            {
-              id: 'beach-resort',
-              name: 'SOSEI Beach Resort',
-              score: '4.9',
-              children: [
-                { name: 'Location', score: '5.0' },
-                { name: 'Rooms', score: '4.9' },
-                { name: 'Value', score: '4.7' },
-                { name: 'Cleanliness', score: '4.9' },
-                { name: 'Service', score: '4.9' },
-                { name: 'Sleep Quality', score: '4.8' },
-              ],
-            },
-            {
-              id: 'ski',
-              name: 'SOSEI Ski',
-              score: '4.8',
-              children: [
-                { name: 'Location', score: '4.9' },
-                { name: 'Rooms', score: '4.8' },
-                { name: 'Value', score: '4.7' },
-                { name: 'Cleanliness', score: '4.9' },
-                { name: 'Service', score: '4.8' },
-                { name: 'Sleep Quality', score: '4.8' },
-              ],
-            },
-            {
-              id: 'nature',
-              name: 'SOSEI Nature',
-              score: '4.7',
-              children: [
-                { name: 'Location', score: '4.8' },
-                { name: 'Rooms', score: '4.6' },
-                { name: 'Value', score: '4.6' },
-                { name: 'Cleanliness', score: '4.8' },
-                { name: 'Service', score: '4.7' },
-                { name: 'Sleep Quality', score: '4.7' },
-              ],
-            },
-            {
-              id: 'wellness',
-              name: 'SOSEI Wellness',
-              score: '4.9',
-              children: [
-                { name: 'Location', score: '4.8' },
-                { name: 'Rooms', score: '4.9' },
-                { name: 'Value', score: '4.8' },
-                { name: 'Cleanliness', score: '5.0' },
-                { name: 'Service', score: '4.9' },
-                { name: 'Sleep Quality', score: '4.9' },
-              ],
-            },
-          ];
-
-          return (
-            <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500">Sentiment score breakdown by property categories and service touchpoints.</p>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                  Portfolio Avg: 4.7 / 5.0
-                </span>
-              </div>
-              <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
-                  <thead className="bg-zinc-50/90 dark:bg-zinc-800/90 shadow-2xs">
-                    <tr className="text-left text-zinc-400">
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Property Categories</th>
-                      <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 dark:border-zinc-800">Overall Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sentimentByProperty.map((prop) => {
-                      const isExpanded = !!expandedRows[prop.id];
-                      return (
-                        <React.Fragment key={prop.id}>
-                          <tr
-                            className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition-colors"
-                            onClick={() => setExpandedRows(prev => ({ ...prev, [prop.id]: !prev[prop.id] }))}
-                          >
-                            <td className="py-3 px-3 font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
-                              {isExpanded ? (
-                                <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
-                              ) : (
-                                <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                              )}
-                              {prop.name}
-                            </td>
-                            <td className="py-3 px-3 text-right font-bold text-emerald-700">{prop.score}</td>
-                          </tr>
-                          {isExpanded && prop.children.map((child, cIdx) => {
-                            const scoreNum = parseFloat(child.score);
-                            const barWidth = Math.round((scoreNum / 5) * 100);
-                            return (
-                              <tr key={`${prop.id}-child-${cIdx}`} className="border-b border-zinc-100/60 dark:border-zinc-800/60 bg-zinc-50/40 dark:bg-zinc-800/20">
-                                <td className="py-2.5 px-3 pl-8">
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-zinc-500 w-24 shrink-0 text-[10.5px]">{child.name}</span>
-                                    <div className="flex-1 max-w-[200px] h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                      <div className="h-full bg-zinc-900 dark:bg-zinc-100 rounded-full transition-all" style={{ width: `${barWidth}%` }}></div>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="py-2.5 px-3 text-right font-medium text-zinc-700 dark:text-zinc-300 text-[10.5px]">{child.score}</td>
-                              </tr>
-                            );
-                          })}
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        }
+        return <PropertyGuestSatisfactionDrawerContent data={config.data} />;
 
       case 'SENTIMENT_OVER_TIME':
         {

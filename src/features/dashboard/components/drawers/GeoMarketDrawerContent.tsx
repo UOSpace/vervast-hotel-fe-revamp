@@ -77,20 +77,20 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
     },
     {
       label: 'ADR',
-      value: fmtUsd(pm.adr),
+      value: fmtUsdFull(pm.adr),
       vsBudget: `${fmtSignedPct(pm.vsBudget.adrPct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.adrPct)} vs Forecast`,
       vsLy: `${fmtSignedPct(pm.vsLy.adrPct)} vs LY`,
     },
     {
       label: 'RevPAR',
-      value: fmtUsd(pm.revpar),
+      value: fmtUsdFull(pm.revpar),
       vsBudget: `${fmtSignedPct(pm.vsBudget.revparPct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.revparPct)} vs Forecast`,
       vsLy: `${fmtSignedPct(pm.vsLy.revparPct)} vs LY`,
     },
     {
-      label: 'Room Revenue',
+      label: 'Revenue',
       value: fmtUsd(pm.roomRevenue),
       vsBudget: `${fmtSignedPct(pm.vsBudget.roomRevenuePct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.roomRevenuePct)} vs Forecast`,
@@ -105,7 +105,6 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
         return {
           id: regId,
           market: item.region,
-          location: rm.properties.map((p) => p.location.split(',')[0].trim()).join(', '),
           occupancy: item.occ || fmtPct(rm.occupancyPct, 1),
           adr: item.adr || fmtUsdFull(rm.adr),
           revpar: item.revpar || fmtUsdFull(rm.revpar),
@@ -113,7 +112,6 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
           children: rm.properties.map((p) => ({
             id: p.propertyId,
             name: p.name,
-            location: p.location,
             occupancy: fmtPct(p.occupancyPct, 1),
             adr: fmtUsdFull(p.adr),
             revpar: fmtUsdFull(p.revpar),
@@ -128,7 +126,6 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
         return {
           id: item.id,
           market: item.market,
-          location: rm.properties.map((p) => p.location.split(',')[0].trim()).join(', '),
           occupancy: fmtPct(rm.occupancyPct, 1),
           adr: item.adrFormatted,
           revpar: fmtUsdFull(revparUsd),
@@ -136,7 +133,6 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
           children: rm.properties.map((p) => ({
             id: p.propertyId,
             name: p.name,
-            location: p.location,
             occupancy: fmtPct(p.occupancyPct, 1),
             adr: fmtUsdFull(p.adr),
             revpar: fmtUsdFull(p.revpar),
@@ -146,12 +142,12 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
       }));
 
   return (
-    <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
+    <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-zinc-200">
         <div>
-          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800">{periodDef.periodLabel}</span>
+          <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900">{periodDef.periodLabel}</span>
           </p>
         </div>
 
@@ -180,7 +176,7 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
         </div>
       </div>
 
-      {/* Top 4 Summary KPI Cards: Occupancy, ADR, RevPAR, Room Revenue */}
+      {/* Top 4 Summary KPI Cards: Occupancy, ADR, RevPAR, Revenue */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {summaryCards.map((card) => (
           <div
@@ -210,124 +206,105 @@ export function GeoMarketDrawerContent(props: GeoMarketDrawerContentProps) {
         ))}
       </div>
 
-      {/* Regional Feeder Breakdown Table with Expandable Properties */}
-      <div>
-        <div className="flex justify-between items-center mb-2 px-0.5">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-            Continental Feeder Performance ({periodDef.label})
-          </h4>
-          <span className="text-[9.5px] text-zinc-400">
-            Click market row to expand individual properties
-          </span>
-        </div>
+      {/* Simple Market Table: Market, Occupancy, ADR, RevPAR, Revenue */}
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+        <table className="w-full text-xs text-zinc-800 border-separate border-spacing-0">
+          <thead className="bg-zinc-50/90">
+            <tr className="text-left text-zinc-400">
+              <th className="py-2.5 px-4 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
+                Market
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                Occupancy
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                ADR
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                RevPAR
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                Revenue
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rowsToRender.map((row) => {
+              const isExpanded = !!expandedRows[row.id];
+              return (
+                <React.Fragment key={row.id}>
+                  <tr
+                    className="border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
+                    onClick={() =>
+                      setExpandedRows((prev) => ({ ...prev, [row.id]: !prev[row.id] }))
+                    }
+                  >
+                    <td className="py-3 px-4 font-semibold text-zinc-900 flex items-center gap-1.5 whitespace-nowrap">
+                      {isExpanded ? (
+                        <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
+                      ) : (
+                        <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
+                      )}
+                      {row.market}
+                    </td>
+                    <td className="py-3 px-4 text-right font-medium text-zinc-900 whitespace-nowrap">
+                      {row.occupancy}
+                    </td>
+                    <td className="py-3 px-4 text-right font-medium text-zinc-900 whitespace-nowrap">
+                      {row.adr}
+                    </td>
+                    <td className="py-3 px-4 text-right font-semibold text-zinc-900 whitespace-nowrap">
+                      {row.revpar}
+                    </td>
+                    <td className="py-3 px-4 text-right font-bold text-zinc-900 whitespace-nowrap">
+                      {row.revenue}
+                    </td>
+                  </tr>
+                  {isExpanded &&
+                    row.children.map((child) => (
+                      <tr
+                        key={`${row.id}-${child.id}`}
+                        className="border-b border-zinc-100/60 bg-zinc-50/40 text-zinc-600"
+                      >
+                        <td className="py-2.5 px-4 pl-9 text-[10.5px] font-medium text-zinc-700 whitespace-nowrap">
+                          {child.name}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.occupancy}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.adr}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.revpar}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] font-medium text-zinc-800 whitespace-nowrap">
+                          {child.revenue}
+                        </td>
+                      </tr>
+                    ))}
+                </React.Fragment>
+              );
+            })}
 
-        <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-          <table className="w-full text-xs text-zinc-800 border-separate border-spacing-0">
-            <thead className="bg-zinc-50/90">
-              <tr className="text-left text-zinc-400">
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
-                  Market
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
-                  Location
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  Occupancy
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  ADR (USD)
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  RevPAR (USD)
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  Room Revenue ({periodDef.label})
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rowsToRender.map((row) => {
-                const isExpanded = !!expandedRows[row.id];
-                return (
-                  <React.Fragment key={row.id}>
-                    <tr
-                      className="border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
-                      onClick={() =>
-                        setExpandedRows((prev) => ({ ...prev, [row.id]: !prev[row.id] }))
-                      }
-                    >
-                      <td className="py-3 px-3 font-semibold text-zinc-900 flex items-center gap-1.5 whitespace-nowrap">
-                        {isExpanded ? (
-                          <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
-                        ) : (
-                          <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                        )}
-                        {row.market}
-                      </td>
-                      <td className="py-3 px-3 text-zinc-500 whitespace-nowrap">{row.location}</td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-900 whitespace-nowrap">
-                        {row.occupancy}
-                      </td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-900 whitespace-nowrap">
-                        {row.adr}
-                      </td>
-                      <td className="py-3 px-3 text-right font-semibold text-zinc-900 whitespace-nowrap">
-                        {row.revpar}
-                      </td>
-                      <td className="py-3 px-3 text-right font-bold text-zinc-900 whitespace-nowrap">
-                        {row.revenue}
-                      </td>
-                    </tr>
-                    {isExpanded &&
-                      row.children.map((child) => (
-                        <tr
-                          key={`${row.id}-${child.id}`}
-                          className="border-b border-zinc-100/60 bg-zinc-50/40 text-zinc-600"
-                        >
-                          <td className="py-2.5 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 whitespace-nowrap">
-                            {child.name}
-                          </td>
-                          <td className="py-2.5 px-3 text-[10px] text-zinc-400 whitespace-nowrap">
-                            {child.location}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.occupancy}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.adr}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.revpar}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 whitespace-nowrap">
-                            {child.revenue}
-                          </td>
-                        </tr>
-                      ))}
-                  </React.Fragment>
-                );
-              })}
-
-              {/* Total Row */}
-              <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
-                <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">{pm.propertyCount} Properties Worldwide</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">
-                  {fmtPct(pm.occupancyPct, 1)}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {totalRow ? totalRow.adr : fmtUsd(pm.adr)}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {fmtUsd(pm.revpar)}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {totalRevenueDisplay}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            {/* Total Row */}
+            <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
+              <td className="py-3 px-4 text-zinc-900">Total</td>
+              <td className="py-3 px-4 text-right text-emerald-700 font-bold">
+                {fmtPct(pm.occupancyPct, 1)}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {totalRow ? totalRow.adr : fmtUsdFull(pm.adr)}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {fmtUsdFull(pm.revpar)}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {totalRevenueDisplay}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

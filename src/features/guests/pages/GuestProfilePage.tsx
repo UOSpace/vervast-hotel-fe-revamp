@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 
-import stayMizuImg from '../../../assets/contents/stay_mizu_maldives.jpg';
+import stayAndermattImg from '../../../assets/contents/property_switzerland.jpg';
 import journeyAlpineImg from '../../../assets/contents/journey_alpine.jpg';
 import journeySingaporeImg from '../../../assets/contents/journey_singapore.jpg';
 import journeyOmanImg from '../../../assets/contents/journey_oman.jpg';
@@ -17,7 +17,7 @@ export function GuestProfilePage() {
       {/* Header & Back button */}
       <div className="flex justify-between items-end mb-6 animate-card-enter">
         <div>
-          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">The Anderson Family (Client Proposal Dashboard)</h2>
+          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide">The Anderson Family (Client Profile Dashboard)</h2>
           <div className="flex items-center gap-2 mt-1.5 text-zinc-500 text-[10px]">
             <span className="font-semibold text-zinc-900">Loyalty tier: Gold</span>
             <span className="mx-0.5">•</span>
@@ -127,7 +127,7 @@ export function GuestProfilePage() {
 
           {/* Upcoming Stay (col-span-5) */}
           <div
-            onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-01')}
+            onClick={() => navigate('/dashboard/reservations/bookings/BK-JA-02')}
             className="col-span-1 lg:col-span-5 rounded-[12px] p-3 transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer flex flex-col h-full"
           >
             <div className="flex justify-between items-center mb-3 h-4">
@@ -141,14 +141,14 @@ export function GuestProfilePage() {
               {/* Left: Image on Top, Clean Key Details Below (col-7) */}
               <div className="col-span-1 md:col-span-7 flex flex-col justify-between h-full gap-2.5">
                 <div className="rounded-lg overflow-hidden shrink-0">
-                  <img src={stayMizuImg} alt="SOSEI Mizu" className="w-full h-[125px] object-cover hover:scale-105 transition-transform duration-500" />
+                  <img src={stayAndermattImg} alt="SOSEI Andermatt" className="w-full h-[125px] object-cover hover:scale-105 transition-transform duration-500" />
                 </div>
 
                 <div className="flex flex-col flex-1 justify-between gap-2.5">
                   <div className="flex justify-between items-baseline">
                     <div>
-                      <h4 className="text-xl font-serif text-zinc-900 leading-none">SOSEI Mizu</h4>
-                      <div className="text-zinc-500 text-[10px] font-normal mt-1">North Malé Atoll, Maldives</div>
+                      <h4 className="text-xl font-serif text-zinc-900 leading-none">SOSEI Andermatt</h4>
+                      <div className="text-zinc-500 text-[10px] font-normal mt-1">Andermatt, Switzerland</div>
                     </div>
                   </div>
 
@@ -163,7 +163,7 @@ export function GuestProfilePage() {
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[9px] text-zinc-500 font-medium">Accommodation</span>
-                      <span className="font-medium text-zinc-900 text-[10px]">Ocean Pavilion</span>
+                      <span className="font-medium text-zinc-900 text-[10px]">Andermatt Summit Penthouse</span>
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[9px] text-zinc-500 font-medium">Dedicated Service</span>
@@ -176,9 +176,9 @@ export function GuestProfilePage() {
               {/* Right: Clean, Uncluttered Item List (col-5) - Flush top with image */}
               <div className="col-span-1 md:col-span-5 flex flex-col justify-between h-full pt-0 pb-0.5">
                 {[
-                  { label: "Airport Transfer", desc: "Private Yacht Transfer" },
-                  { label: "Villa Preference", desc: "Ocean Pavilion · High Floor" },
-                  { label: "Private Sunset Dinner", desc: "Reserved for May 26" },
+                  { label: "Airport Transfer", desc: "Private Helicopter Transfer" },
+                  { label: "Chalet Preference", desc: "Summit Penthouse · Glacier View" },
+                  { label: "Private Alpine Dinner", desc: "Reserved for May 26" },
                   { label: "Special Occasion", desc: "Anniversary Setup" },
                 ].map((item, idx) => (
                   <div key={idx} className="flex flex-col gap-0.5">
@@ -204,10 +204,10 @@ export function GuestProfilePage() {
             </div>
             <div className="flex flex-col justify-between flex-1 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 py-1 gap-2">
               {[
-                { date: 'Mar 2025', name: 'SOSEI Alpine', loc: 'Switzerland', img: journeyAlpineImg, bookingId: 'BK-JA-02' },
-                { date: 'Aug 2024', name: 'SOSEI City', loc: 'Singapore', img: journeySingaporeImg, bookingId: 'BK-JA-03' },
-                { date: 'Feb 2024', name: 'SOSEI Desert', loc: 'Oman', img: journeyOmanImg, bookingId: 'BK-JA-04' },
-                { date: 'May 2023', name: 'SOSEI Ocean', loc: 'Maldives', img: journeyMaldivesImg, bookingId: 'BK-JA-05' },
+                { date: 'Mar 2025', name: 'SOSEI Andermatt', loc: 'Switzerland', img: journeyAlpineImg, bookingId: 'BK-JA-02' },
+                { date: 'Aug 2024', name: 'SOSEI Barcelona', loc: 'Spain', img: journeySingaporeImg, bookingId: 'BK-JA-03' },
+                { date: 'Feb 2024', name: 'SOSEI Tinos', loc: 'Greece', img: journeyOmanImg, bookingId: 'BK-JA-04' },
+                { date: 'May 2023', name: 'SOSEI AUH', loc: 'UAE', img: journeyMaldivesImg, bookingId: 'BK-JA-05' },
               ].map((stay, idx) => (
                 <div
                   key={idx}

@@ -1,8 +1,13 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '@/constants/categories';
 import {
   getPropertyMetrics,
   fmtUsd,
   fmtUsdFull,
+  fmtInt,
+  PERIOD_DEFS,
   type PeriodId,
 } from '@/data/portfolio';
 import {
@@ -11,6 +16,7 @@ import {
   getPropertyGuestActivity,
   getPropertyHourlyTimeline,
   getPropertyEvents,
+  getPropertyGuestSatisfaction,
   fmtTrendArrow,
 } from '@/data/portfolio/hospitalitySubMix';
 
@@ -117,7 +123,8 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
   const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
   const todayMetrics = getPropertyMetrics(propertyId, 'today');
   const propName = data?.propertyName || todayMetrics.name;
-  const hourlyTimeline = getPropertyHourlyTimeline(propertyId);
+  const period: PeriodId = data?.period || 'mtd';
+  const hourlyTimeline = getPropertyHourlyTimeline(propertyId, period);
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
@@ -131,29 +138,21 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
         </span>
       </div>
 
-      {/* Explanatory Banner */}
-      <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 text-xs">
-        <div className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">
-          Understanding Capacity Load (%)
-        </div>
-        <p className="text-zinc-500 text-[11px] leading-relaxed">
-          <strong>Capacity Load</strong> mengukur persentase beban kapasitas utilitas fasilitas atau staf yang sedang digunakan terhadap kapasitas maksimal departemen pada jam operasional tertentu. Angka di atas 85% menunjukkan jam sibuk (*Peak Load*) yang membutuhkan siaga staf penuh.
-        </p>
-      </div>
-
-      {/* 24-Hour Schedule Breakdown */}
+      {/* 24-Hour Schedule & Capacity Load Breakdown */}
       <div>
         <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 mb-2">
-          Daily Operational Windows & Capacity Distribution
+          Daily Operational Windows &amp; Capacity Breakdown (Active Demand ÷ Total Capacity)
         </h5>
         <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
             <thead className="bg-zinc-50/80 dark:bg-zinc-800/80">
               <tr className="text-zinc-400">
-                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Time Window</th>
-                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Department / Outlet</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Peak Window</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Department / Activity</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Active Demand</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Total Capacity</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Capacity Load</th>
-                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 pl-6">Staff Deployed</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 pl-5">Staff Deployed</th>
                 <th className="py-2.5 px-3 text-center font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Operating Status</th>
               </tr>
             </thead>
@@ -161,11 +160,17 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
               {hourlyTimeline.map((item, idx) => (
                 <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{item.time}</td>
-                  <td className="py-2.5 px-3 font-medium text-zinc-700 dark:text-zinc-300">{item.dept}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                  <td className="py-2.5 px-3 font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{item.dept}</td>
+                  <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
+                    {item.activeDemand} <span className="text-[10px] font-normal text-zinc-400">{item.unitLabel}</span>
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
+                    {item.totalCapacity} <span className="text-[10px] font-normal text-zinc-400">Max</span>
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
                     <div className="flex items-center justify-end gap-2">
                       <span>{item.load}%</span>
-                      <div className="w-16 h-1.5 bg-zinc-100 rounded-full overflow-hidden hidden sm:block">
+                      <div className="w-14 h-1.5 bg-zinc-100 rounded-full overflow-hidden hidden sm:block">
                         <div 
                           className={`h-full rounded-full ${item.load >= 90 ? 'bg-zinc-900' : item.load >= 80 ? 'bg-zinc-700' : 'bg-zinc-500'}`}
                           style={{ width: `${item.load}%` }}
@@ -173,8 +178,8 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
                       </div>
                     </div>
                   </td>
-                  <td className="py-2.5 px-3 text-zinc-500 text-[10.5px] pl-6">{item.staff}</td>
-                  <td className="py-2.5 px-3 text-center">
+                  <td className="py-2.5 px-3 text-zinc-500 text-[10.5px] pl-5 whitespace-nowrap">{item.staff}</td>
+                  <td className="py-2.5 px-3 text-center whitespace-nowrap">
                     <span className={`px-2 py-0.5 rounded text-[9px] font-semibold ${
                       item.load >= 90
                         ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
@@ -191,109 +196,223 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
           </table>
         </div>
       </div>
-    </div>
-  );
-}
 
-// ── 3. Property Room Tier Occupancy Drawer ───────────────────────────────────
-export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
-  const period: PeriodId = data?.period || 'mtd';
-  const m = getPropertyMetrics(propertyId, period);
-  const propName = data?.propertyName || m.name;
-
-  const tiers = buildRoomTiers(m);
-  const paceStr = fmtTrendArrow(m.vsLy.roomRevenuePct);
-
-  const rows = tiers.map((t) => ({
-    type: t.name,
-    occ: Math.round(t.occPct),
-    occupied: Math.round(t.occupiedRn / Math.max(1, m.days)),
-    available: t.keys,
-    adrNum: t.adr,
-    adr: fmtUsdFull(t.adr),
-    rev: fmtUsd(t.revenue),
-    pacing: paceStr,
-  }));
-
-  const totals = {
-    occ: Math.round(m.occupancyPct),
-    occupied: rows.reduce((sum, r) => sum + r.occupied, 0),
-    available: m.rooms,
-  };
-
-  const topTier = rows.reduce((best, cur) => (cur.adrNum > best.adrNum ? cur : best), rows[0]);
-
-  return (
-    <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-      <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-        <div>
-          <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{propName}</h4>
-          <p className="text-[10px] text-zinc-500">Detailed room tier and suite inventory occupancy breakdown</p>
-        </div>
-        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-          Average {totals.occ}% Occupied
-        </span>
-      </div>
-
-      {/* 3 Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Total Occupancy</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{m.occupancyPct.toFixed(1)}%</div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-0.5 block">↑ +{m.vsLy.occupancyPts.toFixed(1)} pts vs LY</span>
-        </div>
-        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Keys Occupied</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{totals.occupied} / {totals.available} Keys</div>
-          <span className="text-[10px] text-zinc-400 mt-0.5 block">{Math.max(0, totals.available - totals.occupied)} Keys Available Tonight</span>
-        </div>
-        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Top Performing Tier</span>
-          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-tight">{topTier.adr}</div>
-          <div className="text-[11px] font-normal text-zinc-600 dark:text-zinc-400 mt-0.5">{topTier.type}</div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-1 block">{topTier.occ}% Occupancy · ADR</span>
-        </div>
-      </div>
-
-      {/* Room Tiers Table */}
+      {/* Timeframe Utilization Breakdown Table (6 AM – 9 PM) */}
       <div>
         <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 mb-2">
-          Room Tier Performance & Inventory Breakdown
+          Utilization Load by Timeframe (6 AM – 9 PM)
         </h5>
         <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
             <thead className="bg-zinc-50/80 dark:bg-zinc-800/80">
               <tr className="text-zinc-400">
-                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Room Category</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Department / Activity</th>
+                {['6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM'].map((tf) => (
+                  <th key={tf} className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">
+                    {tf}
+                  </th>
+                ))}
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Peak Load</th>
+              </tr>
+            </thead>
+            <tbody>
+              {hourlyTimeline.map((item, idx) => (
+                <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
+                  <td className="py-2.5 px-3 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{item.dept}</td>
+                  {item.timeframeLoads.map((slotPct, sIdx) => (
+                    <td
+                      key={sIdx}
+                      className={`py-2.5 px-3 text-right tabular-nums whitespace-nowrap ${
+                        slotPct >= 88
+                          ? 'font-bold text-zinc-900 dark:text-zinc-100'
+                          : slotPct >= 72
+                          ? 'font-semibold text-zinc-700 dark:text-zinc-300'
+                          : 'text-zinc-500'
+                      }`}
+                    >
+                      {slotPct}%
+                    </td>
+                  ))}
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 tabular-nums whitespace-nowrap">
+                    {item.load}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 3. Property Room Type Performance Drawer ─────────────────────────────────
+export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const initialPeriod: 'today' | 'mtd' | 'ytd' =
+    data?.period === 'today' || data?.period === 'mtd' || data?.period === 'ytd'
+      ? data.period
+      : 'mtd';
+  const [horizon, setHorizon] = useState<'today' | 'mtd' | 'ytd'>(initialPeriod);
+
+  const m = getPropertyMetrics(propertyId, horizon);
+  const propName = data?.propertyName || m.name;
+
+  const tiers = buildRoomTiers(m);
+  const totalRoomRev = m.roomRevenue || 1;
+
+  const rows = tiers.map((t) => {
+    const revparNum = t.availableRn > 0 ? t.revenue / t.availableRn : 0;
+    const revSharePct = Math.round((t.revenue / totalRoomRev) * 100);
+    return {
+      type: t.name,
+      occ: t.occPct.toFixed(1),
+      occupied: Math.round(t.occupiedRn / Math.max(1, m.days)),
+      available: t.keys,
+      adrNum: t.adr,
+      adr: fmtUsdFull(t.adr),
+      revparNum,
+      revpar: fmtUsdFull(revparNum),
+      revNum: t.revenue,
+      rev: fmtUsd(t.revenue),
+      revSharePct,
+    };
+  });
+
+  const totals = {
+    occ: m.occupancyPct.toFixed(1),
+    occupied: rows.reduce((sum, r) => sum + r.occupied, 0),
+    available: m.rooms,
+  };
+
+  const topRevTier = rows.reduce((best, cur) => (cur.revNum > best.revNum ? cur : best), rows[0]);
+
+  return (
+    <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
+      {/* Top Header Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+          <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+            {propName} · <span className="font-normal text-zinc-500">{m.location}</span>
+          </h4>
+          <p className="text-[10px] text-zinc-900 mt-0.5">
+            Room type revenue contribution, RevPAR, ADR, and occupancy performance · As of:{' '}
+            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+              {PERIOD_DEFS[horizon].periodLabel}
+            </span>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="inline-flex items-center p-0.5 bg-zinc-200/70 dark:bg-zinc-800 rounded-lg">
+            {(['today', 'mtd', 'ytd'] as const).map((h) => {
+              const isActive = horizon === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setHorizon(h)}
+                  className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                  }`}
+                >
+                  {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            Room Revenue: {fmtUsd(m.roomRevenue)}
+          </span>
+        </div>
+      </div>
+
+      {/* 4 Summary Cards ordered: Occupancy, ADR, RevPAR, Revenue (Revenue Focus) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Occupancy</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{totals.occ}%</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            ↑ +{m.vsLy.occupancyPts.toFixed(1)} pts vs LY · {totals.occupied}/{totals.available} Keys
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">ADR (USD)</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsdFull(m.adr)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            {fmtTrendArrow(m.vsLy.adrPct)} vs LY · Top {topRevTier.adr}
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">RevPAR (USD)</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsdFull(m.revpar)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            {fmtTrendArrow(m.vsLy.revparPct)} vs LY · Yield per Key
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-300 dark:border-zinc-700">
+          <span className="text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">Room Revenue</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtUsd(m.roomRevenue)}</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block truncate">
+            {fmtTrendArrow(m.vsLy.roomRevenuePct)} vs LY · Lead: {topRevTier.type} ({topRevTier.rev})
+          </span>
+        </div>
+      </div>
+
+      {/* Room Type Performance & Revenue Breakdown Table */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+            Room Type Performance &amp; Revenue Breakdown
+          </h5>
+          <span className="text-[10px] text-zinc-400">Ordered by Revenue Contribution</span>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+            <thead className="bg-zinc-50/80 dark:bg-zinc-800/80">
+              <tr className="text-zinc-400">
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Room Type</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Keys (Occ / Total)</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Occupancy</th>
-                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Occupied Keys</th>
-                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Total Keys</th>
                 <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">ADR (USD)</th>
-                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Revenue</th>
-                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Pace</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">RevPAR (USD)</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200">Revenue (USD)</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">% Rev Share</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, idx) => (
                 <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
                   <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.type}</td>
-                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.occ}%</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-800 dark:text-zinc-200 font-medium">{row.occupied}</td>
-                  <td className="py-2.5 px-3 text-right text-zinc-400">{row.available}</td>
-                  <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{row.adr}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-600 dark:text-zinc-400 font-medium">
+                    <span className="text-zinc-900 dark:text-zinc-100 font-semibold">{row.occupied}</span> / {row.available}
+                  </td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-800 dark:text-zinc-200">{row.occ}%</td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-800 dark:text-zinc-200">{row.adr}</td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-800 dark:text-zinc-200">{row.revpar}</td>
                   <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{row.rev}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-700 font-semibold">{row.pacing}</td>
+                  <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100">
+                    <div className="flex items-center justify-end gap-2">
+                      <span>{row.revSharePct}%</span>
+                      <div className="w-14 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden hidden sm:block">
+                        <div className="h-full bg-zinc-900 dark:bg-zinc-100 rounded-full" style={{ width: `${row.revSharePct}%` }} />
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               ))}
               <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
                 <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Property Inventory</td>
+                <td className="py-3 px-3 text-right text-zinc-800 dark:text-zinc-200">
+                  {totals.occupied} / {totals.available}
+                </td>
                 <td className="py-3 px-3 text-right text-emerald-700">{totals.occ}%</td>
-                <td className="py-3 px-3 text-right">{totals.occupied}</td>
-                <td className="py-3 px-3 text-right">{totals.available}</td>
-                <td className="py-3 px-3 text-right">{fmtUsdFull(m.adr)}</td>
-                <td className="py-3 px-3 text-right">{fmtUsd(m.roomRevenue)}</td>
-                <td className="py-3 px-3 text-right text-emerald-700">{paceStr}</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtUsdFull(m.adr)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtUsdFull(m.revpar)}</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtUsd(m.roomRevenue)}</td>
+                <td className="py-3 px-3 text-right text-emerald-700">100%</td>
               </tr>
             </tbody>
           </table>
@@ -426,50 +545,456 @@ export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) 
   );
 }
 
-// ── 5. Property Upcoming Events Drawer ───────────────────────────────────────
+// ── 5. Property Upcoming Events & Buyouts Drawer (Ma & Wabi-Sabi Edition) ─────
 export function PropertyUpcomingEventsDrawerContent({ data }: { data: any }) {
+  const navigate = useNavigate();
+  const { closeDrawer } = useDashboardDrawer();
+  const [filterType, setFilterType] = useState<'all' | 'booking' | 'lead'>('all');
+
   const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
   const todayMetrics = getPropertyMetrics(propertyId, 'today');
   const propName = data?.propertyName || todayMetrics.name;
-  const events = (data?.events || getPropertyEvents(propertyId)).map((ev: any) => ({
+  const rawEvents = getPropertyEvents(propertyId);
+  const events = (data?.events?.length >= rawEvents.length ? data.events : rawEvents).map((ev: any) => ({
     ...ev,
     revenue: ev.revenue ?? fmtUsdFull(ev.revenueUsd ?? 0),
+    targetType: ev.targetType ?? 'lead',
+    targetId: ev.targetId ?? 'LD-001',
+    stage: ev.stage ?? 'Confirmed OTB',
+    client: ev.client ?? 'Private Account',
+    keysBlocked: ev.keysBlocked ?? 12,
+    venue: ev.venue ?? 'Private Wing & Pavilion',
   }));
 
+  const filteredEvents = events.filter((ev: any) =>
+    filterType === 'all' ? true : ev.targetType === filterType
+  );
+
+  const totalRevenueUsd = events.reduce((acc: number, e: any) => acc + (e.revenueUsd || 0), 0);
+  const confirmedCount = events.filter((e: any) => e.targetType === 'booking' || e.stage === 'Confirmed OTB' || e.stage === 'Definite').length;
+  const activeLeadsCount = events.filter((e: any) => e.targetType === 'lead').length;
+  const totalKeysBlocked = events.reduce((acc: number, e: any) => acc + (e.keysBlocked || 0), 0);
+
+  const handleNavigate = (ev: any) => {
+    closeDrawer();
+    if (ev.targetType === 'booking') {
+      navigate(`/dashboard/reservations/bookings/${ev.targetId}`);
+    } else {
+      navigate(`/dashboard/reservations/leads/${ev.targetId}`);
+    }
+  };
+
+  const getStageBadgeClass = (stage: string) => {
+    if (stage === 'Confirmed OTB' || stage === 'Definite') {
+      return 'bg-[#ecfdf5] text-[#14532d] border-[#bbf7d0]/80';
+    }
+    if (stage === 'Verbal Definite') {
+      return 'bg-zinc-900 text-white border-zinc-900';
+    }
+    if (stage === 'Tentative') {
+      return 'bg-zinc-100 text-zinc-700 border-zinc-200/80';
+    }
+    return 'bg-white text-zinc-500 border-zinc-200/80';
+  };
+
   return (
-    <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
-      <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
+    <div className="space-y-8 animate-fade-in text-zinc-900 dark:text-zinc-100 pb-6">
+      {/* Header — Ma Breathing Space */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-zinc-200/70 dark:border-zinc-800">
         <div>
-          <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{propName}</h4>
-          <p className="text-[10px] text-zinc-500">Upcoming curated retreats, private buyouts, and guest events</p>
+          <h4 className="text-base font-serif tracking-wide text-zinc-900 dark:text-zinc-100">
+            {propName} · <span className="text-zinc-500 font-sans text-xs font-normal">{todayMetrics.location}</span>
+          </h4>
         </div>
-        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
-          {events.length} Confirmed Events
-        </span>
+
+        {/* Filter Pills */}
+        <div className="inline-flex items-center p-0.5 rounded-lg bg-zinc-100/80 dark:bg-zinc-800 border border-zinc-200/70 dark:border-zinc-700 self-start sm:self-auto">
+          {[
+            { id: 'all', label: `All (${events.length})` },
+            { id: 'booking', label: `Bookings (${events.filter((e: any) => e.targetType === 'booking').length})` },
+            { id: 'lead', label: `Leads (${activeLeadsCount})` },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setFilterType(tab.id as 'all' | 'booking' | 'lead')}
+              className={`px-3 py-1 text-[10px] tracking-wider uppercase rounded-md transition-all cursor-pointer ${
+                filterType === tab.id
+                  ? 'bg-zinc-900 text-white font-semibold shadow-2xs'
+                  : 'text-zinc-500 hover:text-zinc-900 font-medium'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {events.map((ev: any, idx: number) => (
-          <div key={idx} className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 flex justify-between items-center">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
-                  {ev.category}
-                </span>
-                <span className="text-[10px] text-zinc-500">{ev.date}</span>
-              </div>
-              <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-1">{ev.title}</h4>
-              <p className="text-[10.5px] text-zinc-500 mt-0.5">
-                Expected attendees: <strong className="text-zinc-700 dark:text-zinc-300 font-semibold">{ev.attendees} Guests</strong> · Dedicated concierge team assigned
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{ev.revenue}</div>
-              <span className="text-[9.5px] text-emerald-700 font-semibold">Contracted OTB</span>
-            </div>
+      {/* Wabi-Sabi Minimalist Summary Strip (Hairline Divided) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-zinc-200/70 dark:border-zinc-800 divide-y sm:divide-y-0 sm:divide-x divide-zinc-200/60 dark:divide-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/30">
+        <div className="py-4 px-4 first:pl-2">
+          <span className="text-[9.5px] uppercase tracking-widest text-zinc-400 font-normal block">
+            Total Event Value
+          </span>
+          <div className="text-[22px] font-normal text-zinc-900 dark:text-zinc-100 leading-tight mt-1.5">
+            {fmtUsd(totalRevenueUsd)}
           </div>
-        ))}
+          <span className="text-[9.5px] text-[#14532d] font-medium mt-1 block">
+            Contracted &amp; Pipeline
+          </span>
+        </div>
+
+        <div className="py-4 px-4">
+          <span className="text-[9.5px] uppercase tracking-widest text-zinc-400 font-normal block">
+            Confirmed &amp; Definite
+          </span>
+          <div className="text-[22px] font-normal text-zinc-900 dark:text-zinc-100 leading-tight mt-1.5">
+            {confirmedCount} <span className="text-xs text-zinc-400 font-normal">/ {events.length}</span>
+          </div>
+          <span className="text-[9.5px] text-zinc-500 font-normal mt-1 block">
+            Guaranteed Buyouts
+          </span>
+        </div>
+
+        <div className="py-4 px-4">
+          <span className="text-[9.5px] uppercase tracking-widest text-zinc-400 font-normal block">
+            Active Event Leads
+          </span>
+          <div className="text-[22px] font-normal text-zinc-900 dark:text-zinc-100 leading-tight mt-1.5">
+            {activeLeadsCount}
+          </div>
+          <span className="text-[9.5px] text-zinc-500 font-normal mt-1 block">
+            Direct to Sales Pipeline
+          </span>
+        </div>
+
+        <div className="py-4 px-4 last:pr-2">
+          <span className="text-[9.5px] uppercase tracking-widest text-zinc-400 font-normal block">
+            Inventory Committed
+          </span>
+          <div className="text-[22px] font-normal text-zinc-900 dark:text-zinc-100 leading-tight mt-1.5">
+            {totalKeysBlocked} <span className="text-xs text-zinc-400 font-normal">Keys</span>
+          </div>
+          <span className="text-[9.5px] text-zinc-500 font-normal mt-1 block">
+            Across {events.length} Gatherings
+          </span>
+        </div>
+      </div>
+
+      {/* Ma & Wabi-Sabi Ledger List — Clickable to Leads / Bookings */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-100">
+            Schedule of Retreats, Buyouts &amp; Pipeline Leads
+          </h5>
+          <span className="text-[9.5px] text-zinc-400 italic font-serif">
+            Select any record to open its live Booking or Lead dossier
+          </span>
+        </div>
+
+        <div className="divide-y divide-zinc-200/70 dark:divide-zinc-800 border-t border-b border-zinc-200/70 dark:border-zinc-800">
+          {filteredEvents.map((ev: any, idx: number) => (
+            <div
+              key={`${ev.targetId}-${idx}`}
+              onClick={() => handleNavigate(ev)}
+              className="group py-4 px-3 -mx-3 transition-all duration-300 hover:bg-zinc-50/90 dark:hover:bg-zinc-800/40 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              {/* Left: Index + Date & Title + Metadata */}
+              <div className="flex items-start gap-4 min-w-0">
+                <span className="text-[10px] font-mono text-zinc-300 dark:text-zinc-600 pt-1 select-none w-5 shrink-0">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+
+                <div className="min-w-0 space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-medium tracking-wide text-zinc-900 dark:text-zinc-200">
+                      {ev.date}
+                    </span>
+                    <span className="text-zinc-300">·</span>
+                    <span className="text-[9.5px] uppercase tracking-widest text-zinc-500 font-medium">
+                      {ev.category}
+                    </span>
+                    <span
+                      className={`text-[8.5px] font-medium px-2 py-0.5 rounded border ${getStageBadgeClass(ev.stage)}`}
+                    >
+                      {ev.stage}
+                    </span>
+                    <span className="text-[9px] font-mono text-zinc-400 bg-zinc-100/80 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-200/60 dark:border-zinc-700">
+                      {ev.targetType === 'booking' ? 'Booking' : 'Lead'} · {ev.targetId}
+                    </span>
+                  </div>
+
+                  <h4 className="text-sm font-serif text-zinc-900 dark:text-zinc-100 group-hover:translate-x-0.5 transition-transform">
+                    {ev.title}
+                  </h4>
+
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-500">
+                    <span>
+                      Client: <strong className="font-medium text-zinc-800 dark:text-zinc-200">{ev.client}</strong>
+                    </span>
+                    <span className="text-zinc-300">·</span>
+                    <span>
+                      Sanctuary: <strong className="font-medium text-zinc-700 dark:text-zinc-300">{ev.venue}</strong>
+                    </span>
+                    <span className="text-zinc-300">·</span>
+                    <span>
+                      Allocation: <strong className="font-medium text-zinc-700 dark:text-zinc-300">{ev.keysBlocked} Keys · {ev.attendees} Guests</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Valuation & Subtle Action Link */}
+              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center shrink-0 pl-9 sm:pl-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-zinc-100 dark:border-zinc-800/60">
+                <div className="text-base font-normal text-zinc-900 dark:text-zinc-100 tabular-nums">
+                  {ev.revenue}
+                </div>
+                <div className="flex items-center gap-1 text-[9.5px] text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors mt-0.5 font-medium">
+                  <span>Open {ev.targetType === 'booking' ? 'Booking' : 'Lead'}</span>
+                  <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+
+// ── 6. Property Guest Satisfaction & Sentiment Drawer ────────────────────────
+export function PropertyGuestSatisfactionDrawerContent({ data }: { data: any }) {
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const initialPeriod: 'today' | 'mtd' | 'ytd' =
+    data?.period === 'today' || data?.period === 'mtd' || data?.period === 'ytd'
+      ? data.period
+      : 'mtd';
+  const [horizon, setHorizon] = useState<'today' | 'mtd' | 'ytd'>(initialPeriod);
+
+  const m = getPropertyMetrics(propertyId, horizon);
+  const sat = getPropertyGuestSatisfaction(propertyId, horizon);
+  const propName = data?.propertyName || m.name;
+
+  return (
+    <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
+      {/* Top Header Bar: Property + As of Date (H-1) + Horizon Switcher */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+          <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+            {propName} · <span className="font-normal text-zinc-500">{m.location}</span>
+          </h4>
+          <p className="text-[10px] text-zinc-900 mt-0.5">
+            Verified reputation &amp; guest sentiment across TripAdvisor, Google, Booking.com &amp; Post-Stay Surveys · As of:{' '}
+            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+              {PERIOD_DEFS[horizon].periodLabel}
+            </span>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="inline-flex items-center p-0.5 bg-zinc-200/70 dark:bg-zinc-800 rounded-lg">
+            {(['today', 'mtd', 'ytd'] as const).map((h) => {
+              const isActive = horizon === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setHorizon(h)}
+                  className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                  }`}
+                >
+                  {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            {sat.score.toFixed(1)} / 5.0 Overall
+          </span>
+        </div>
+      </div>
+
+      {/* 4 Summary KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Overall Guest Rating</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{sat.score.toFixed(1)} / 5.0</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            {sat.distribution[0].value}% 5-Star Verified Ratings
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Cleanliness &amp; Hygiene</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{sat.cleanlinessScore.toFixed(1)} / 5.0</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            #1 Rated Pillar · {sat.pillars[0]?.positivePct ?? 98}% Positive
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Verified Reviews</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{fmtInt(sat.totalReviews)} Reviews</div>
+          <span className="text-[9.5px] text-zinc-500 font-medium mt-0.5 block">
+            62% Post-Stay Capture ({fmtInt(m.stays)} Stays)
+          </span>
+        </div>
+        <div className="p-3.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Net Promoter &amp; Rank</span>
+          <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">+{sat.nps} NPS</div>
+          <span className="text-[9.5px] text-emerald-700 font-semibold mt-0.5 block">
+            TripAdvisor #1 in {m.location.split(',')[0]}
+          </span>
+        </div>
+      </div>
+
+      {/* Section 1: Satisfaction Breakdown by Hospitality Pillar (incl. Cleanliness) */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+            Satisfaction Breakdown by Rating Criteria (TripAdvisor &amp; Global Luxury Standard)
+          </h5>
+          <span className="text-[10px] text-zinc-400">Normalized 5.0 Scale</span>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+            <thead className="bg-zinc-50/80 dark:bg-zinc-800/80">
+              <tr className="text-zinc-400">
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Rating Criteria</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Score</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Verified Mentions</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Positive Sentiment</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 pl-4">Key Guest Feedback Highlight</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sat.pillars.map((row, idx) => (
+                <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{row.pillar}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{row.scoreLabel}</td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">{fmtInt(row.mentions)}</td>
+                  <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-2">
+                      <span>{row.positivePct}%</span>
+                      <div className="w-14 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden hidden sm:block">
+                        <div className="h-full bg-zinc-900 dark:bg-zinc-100 rounded-full" style={{ width: `${row.positivePct}%` }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-500 pl-4">{row.highlight}</td>
+                </tr>
+              ))}
+              <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
+                <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Overall Weighted Property Score</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{sat.score.toFixed(1)} / 5.0</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(sat.totalReviews)}</td>
+                <td className="py-3 px-3 text-right text-emerald-700">
+                  {sat.distribution[0].value + sat.distribution[1].value}%
+                </td>
+                <td className="py-3 px-3 text-[10px] text-zinc-500 font-normal pl-4">
+                  Exceeding luxury hospitality standard across all 6 inspection pillars
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section 2: Ratings by Review Platform (TripAdvisor, Google Reviews, Booking.com, etc.) */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+            Reputation by Review Source (TripAdvisor, Google, Booking.com, Forbes &amp; Direct)
+          </h5>
+          <span className="text-[10px] text-zinc-400">100% Verified Stays</span>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+          <table className="w-full text-xs text-zinc-800 dark:text-zinc-200 border-separate border-spacing-0">
+            <thead className="bg-zinc-50/80 dark:bg-zinc-800/80">
+              <tr className="text-zinc-400">
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Platform / Review Source</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Native Score</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Normalized (5.0)</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Reviews</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">% Share</th>
+                <th className="py-2.5 px-3 text-right font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800">Mgmt Response</th>
+                <th className="py-2.5 px-3 text-left font-medium text-[9.5px] border-b border-zinc-200 dark:border-zinc-800 pl-4">Standing &amp; Accolade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sat.platforms.map((plat, idx) => (
+                <tr key={idx} className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40">
+                  <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{plat.platform}</td>
+                  <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{plat.nativeRating}</td>
+                  <td className="py-2.5 px-3 text-right font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">{plat.normalizedScore}</td>
+                  <td className="py-2.5 px-3 text-right font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">{fmtInt(plat.reviews)}</td>
+                  <td className="py-2.5 px-3 text-right text-zinc-500 font-medium whitespace-nowrap">{plat.sharePct}%</td>
+                  <td className="py-2.5 px-3 text-right text-emerald-700 font-medium whitespace-nowrap">{plat.responseRate}</td>
+                  <td className="py-2.5 px-3 text-[10px] text-zinc-500 pl-4">{plat.accolade}</td>
+                </tr>
+              ))}
+              <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
+                <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Consolidated Reputation</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{sat.score.toFixed(1)} / 5.0</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{sat.score.toFixed(1)} / 5.0</td>
+                <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100">{fmtInt(sat.totalReviews)}</td>
+                <td className="py-3 px-3 text-right text-zinc-700 dark:text-zinc-300">100%</td>
+                <td className="py-3 px-3 text-right text-emerald-700">99.8%</td>
+                <td className="py-3 px-3 text-[10px] text-zinc-500 font-normal pl-4">
+                  Consolidated across public OTA/review platforms and verified PMS surveys
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section 3: Recent Verified Guest Reviews */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
+            Recent Verified Guest Reviews &amp; Cleanliness Audits
+          </h5>
+          <span className="text-[10px] text-zinc-400">Latest Verified Stays</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {sat.recentReviews.map((rev, idx) => (
+            <div
+              key={idx}
+              className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 flex flex-col justify-between gap-2"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
+                      {rev.platform}
+                    </span>
+                    <span className="text-[10px] text-zinc-400">{rev.dateLabel}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <span className="text-zinc-500">
+                      Cleanliness: <strong className="text-zinc-900 dark:text-zinc-100">{rev.cleanlinessScore}</strong>
+                    </span>
+                    <span className="font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200/60">
+                      {rev.overallScore}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{rev.title}</div>
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-300 leading-relaxed mt-1">
+                  &ldquo;{rev.comment}&rdquo;
+                </p>
+              </div>
+              <div className="pt-2 border-t border-zinc-200/60 dark:border-zinc-800 flex items-center justify-between text-[10px] text-zinc-500">
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">{rev.guest}</span>
+                <span>{rev.suite}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+

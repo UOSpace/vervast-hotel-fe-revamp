@@ -7,7 +7,7 @@ export function ResortChannelStatsWidget({ channelData, channelTable, totalRnigh
   const { openDrawer } = useDashboardDrawer();
   return (
     <div
-      className="rounded-[12px] p-4 flex flex-col justify-between gap-3 bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
+      className="rounded-[12px] p-4 flex flex-col justify-between gap-3 bg-zinc-50/50 cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter h-full"
       style={{ animationDelay: '0.5s' }}
       onClick={() => openDrawer({ type: 'CHANNEL_DISTRIBUTION', title: 'Channel Distribution', data: channelTable })}
     >

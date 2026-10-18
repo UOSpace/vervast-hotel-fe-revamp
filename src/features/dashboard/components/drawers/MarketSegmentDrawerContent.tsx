@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { RoundAltArrowRight, RoundAltArrowDown } from '@solar-icons/react';
 import { useDashboardDrawer } from '../../context/DashboardDrawerContext';
+import { resolvePropertyId } from '@/constants/categories';
 import {
   getMarketSegmentData,
 } from '../../services/propertySimulation';
 import {
   getPortfolioMetrics,
+  getPropertyMetrics,
   PERIOD_DEFS,
   splitByShares,
   fmtPct,
@@ -15,6 +17,10 @@ import {
   fmtSignedPts,
   type PeriodId,
 } from '@/data/portfolio';
+import {
+  getPropertyMarketSegmentDefs,
+  buildRoomMix,
+} from '@/data/portfolio/hospitalitySubMix';
 
 const SEGMENT_OCC_OFFSET: Record<string, number> = {
   leisure: 2.4,
@@ -22,6 +28,11 @@ const SEGMENT_OCC_OFFSET: Record<string, number> = {
   social: -4.2,
   mice: -3.5,
   others: -6.8,
+  Leisure: 2.4,
+  Business: -1.8,
+  Social: -4.2,
+  MICE: -3.5,
+  Others: -6.8,
 };
 
 interface MarketSegmentDrawerContentProps {
@@ -50,12 +61,25 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
   }, [config?.data]);
 
   const periodDef = PERIOD_DEFS[period];
-  const defaultData = getMarketSegmentData(period);
-  const pm = getPortfolioMetrics(undefined, period);
-  const customData = Array.isArray(config?.data) ? config.data : null;
 
-  let totalRevenueDisplay = defaultData.totalRevenue;
-  let totalAdrDisplay = fmtUsd(pm.adr);
+  const rawPropertyId =
+    (config?.data && !Array.isArray(config.data) && config.data.propertyId) || null;
+  const isSingleProperty = Boolean(rawPropertyId);
+  const propertyId = rawPropertyId ? resolvePropertyId(rawPropertyId) : null;
+
+  const defaultData = getMarketSegmentData(period);
+  const pm = propertyId
+    ? getPortfolioMetrics([propertyId], period)
+    : getPortfolioMetrics(undefined, period);
+
+  const customData: any[] | null = Array.isArray(config?.data)
+    ? config.data
+    : Array.isArray(config?.data?.rows)
+    ? config.data.rows
+    : null;
+
+  let totalRevenueDisplay = fmtUsd(pm.roomRevenue);
+  let totalAdrDisplay = fmtUsdFull(pm.adr);
 
   const summaryCards = [
     {
@@ -67,20 +91,20 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
     },
     {
       label: 'ADR',
-      value: fmtUsd(pm.adr),
+      value: fmtUsdFull(pm.adr),
       vsBudget: `${fmtSignedPct(pm.vsBudget.adrPct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.adrPct)} vs Forecast`,
       vsLy: `${fmtSignedPct(pm.vsLy.adrPct)} vs LY`,
     },
     {
       label: 'RevPAR',
-      value: fmtUsd(pm.revpar),
+      value: fmtUsdFull(pm.revpar),
       vsBudget: `${fmtSignedPct(pm.vsBudget.revparPct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.revparPct)} vs Forecast`,
       vsLy: `${fmtSignedPct(pm.vsLy.revparPct)} vs LY`,
     },
     {
-      label: 'Room Revenue',
+      label: 'Revenue',
       value: fmtUsd(pm.roomRevenue),
       vsBudget: `${fmtSignedPct(pm.vsBudget.roomRevenuePct)} vs Budget`,
       vsForecast: `${fmtSignedPct(pm.vsForecast.roomRevenuePct)} vs Forecast`,
@@ -95,6 +119,26 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
   }));
 
   const rowsToRender = (() => {
+    if (propertyId) {
+      const propMetrics = getPropertyMetrics(propertyId, period);
+      const defs = getPropertyMarketSegmentDefs(propertyId, period);
+      const mix = buildRoomMix(defs, propMetrics.roomsSold, propMetrics.roomRevenue);
+      return mix.map((r, idx) => {
+        const occOffset = SEGMENT_OCC_OFFSET[r.name] ?? 0;
+        const occPct = Math.min(98, Math.max(40, propMetrics.occupancyPct + occOffset));
+        const revparUsd = Math.round(r.adr * (occPct / 100));
+        return {
+          id: `prop-seg-${idx}`,
+          segment: r.name,
+          occupancy: fmtPct(occPct, 1),
+          adr: fmtUsdFull(r.adr),
+          revpar: fmtUsdFull(revparUsd),
+          revenue: fmtUsd(r.revenue),
+          children: [] as any[],
+        };
+      });
+    }
+
     if (customData && customData.length > 0) {
       const totalRow = customData.find(
         (r: any) => r.segment?.toLowerCase() === 'total' || r.isTotal
@@ -122,7 +166,6 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
         return {
           id: `custom-seg-${idx}`,
           segment: r.segment,
-          location: 'All 9 Properties',
           occupancy: fmtPct(occPct, 1),
           adr: r.adr || defMatch.adrFormatted,
           revpar: fmtUsdFull(revparUsd),
@@ -133,7 +176,6 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
             return {
               id: p.propertyId,
               name: p.name,
-              location: p.location,
               occupancy: fmtPct(p.occupancyPct, 1),
               adr: fmtUsdFull(childAdr),
               revpar: fmtUsdFull(childRevpar),
@@ -156,7 +198,6 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
       return {
         id: item.id,
         segment: item.segment,
-        location: 'All 9 Properties',
         occupancy: fmtPct(occPct, 1),
         adr: item.adrFormatted,
         revpar: fmtUsdFull(revparUsd),
@@ -167,7 +208,6 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
           return {
             id: p.propertyId,
             name: p.name,
-            location: p.location,
             occupancy: fmtPct(p.occupancyPct, 1),
             adr: fmtUsdFull(childAdr),
             revpar: fmtUsdFull(childRevpar),
@@ -179,41 +219,39 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
   })();
 
   return (
-    <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-10">
+    <div className="space-y-6 animate-fade-in text-xs text-zinc-900 pb-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-zinc-200">
         <div>
-          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800">{periodDef.periodLabel}</span>
+          <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900">{periodDef.periodLabel}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          {!customData && (
-            <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
-              {(['today', 'mtd', 'ytd'] as const).map((h) => {
-                const isActive = period === h;
-                return (
-                  <button
-                    key={h}
-                    type="button"
-                    onClick={() => setPeriod(h)}
-                    className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-zinc-900 text-white shadow-xs'
-                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
-                    }`}
-                  >
-                    {h === 'today' ? 'Yesterday' : h.toUpperCase()}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          <div className="inline-flex items-center p-0.5 bg-zinc-200/70 rounded-lg shrink-0">
+            {(['today', 'mtd', 'ytd'] as const).map((h) => {
+              const isActive = period === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => setPeriod(h)}
+                  className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-xs'
+                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60'
+                  }`}
+                >
+                  {h === 'today' ? 'Yesterday' : h.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Top 4 Summary KPI Cards: Occupancy, ADR, RevPAR, Room Revenue */}
+      {/* Top 4 Summary KPI Cards: Occupancy, ADR, RevPAR, Revenue */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {summaryCards.map((card) => (
           <div
@@ -243,124 +281,112 @@ export function MarketSegmentDrawerContent(props: MarketSegmentDrawerContentProp
         ))}
       </div>
 
-      {/* Market Segment Breakdown Table with Expandable Properties */}
-      <div>
-        <div className="flex justify-between items-center mb-2 px-0.5">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-            Market Segment Performance ({periodDef.label})
-          </h4>
-          <span className="text-[9.5px] text-zinc-400">
-            Click segment row to expand individual properties
-          </span>
-        </div>
-
-        <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-          <table className="w-full text-xs text-zinc-800 border-separate border-spacing-0">
-            <thead className="bg-zinc-50/90">
-              <tr className="text-left text-zinc-400">
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
-                  Market Segment
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
-                  Location
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  Occupancy
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  ADR (USD)
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  RevPAR (USD)
-                </th>
-                <th className="py-2.5 px-3 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
-                  Room Revenue ({periodDef.label})
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rowsToRender.map((row) => {
-                const isExpanded = !!expandedRows[row.id];
-                return (
-                  <React.Fragment key={row.id}>
-                    <tr
-                      className="border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
-                      onClick={() =>
-                        setExpandedRows((prev) => ({ ...prev, [row.id]: !prev[row.id] }))
+      {/* Simple Market Segment Table: Market Segment, Occupancy, ADR, RevPAR, Revenue */}
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+        <table className="w-full text-xs text-zinc-800 border-separate border-spacing-0">
+          <thead className="bg-zinc-50/90">
+            <tr className="text-left text-zinc-400">
+              <th className="py-2.5 px-4 font-medium text-[9.5px] border-b border-zinc-200 whitespace-nowrap">
+                Market Segment
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                Occupancy
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                ADR
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                RevPAR
+              </th>
+              <th className="py-2.5 px-4 font-medium text-[9.5px] text-right border-b border-zinc-200 whitespace-nowrap">
+                Revenue
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rowsToRender.map((row) => {
+              const hasChildren = !isSingleProperty && row.children.length > 0;
+              const isExpanded = !!expandedRows[row.id];
+              return (
+                <React.Fragment key={row.id}>
+                  <tr
+                    className={`border-b border-zinc-100 hover:bg-zinc-50 transition-colors ${
+                      hasChildren ? 'cursor-pointer' : ''
+                    }`}
+                    onClick={() => {
+                      if (hasChildren) {
+                        setExpandedRows((prev) => ({ ...prev, [row.id]: !prev[row.id] }));
                       }
-                    >
-                      <td className="py-3 px-3 font-semibold text-zinc-900 flex items-center gap-1.5 whitespace-nowrap">
-                        {isExpanded ? (
+                    }}
+                  >
+                    <td className="py-3 px-4 font-semibold text-zinc-900 flex items-center gap-1.5 whitespace-nowrap">
+                      {hasChildren &&
+                        (isExpanded ? (
                           <RoundAltArrowDown size={14} className="text-zinc-400 shrink-0" />
                         ) : (
                           <RoundAltArrowRight size={14} className="text-zinc-400 shrink-0" />
-                        )}
-                        {row.segment}
-                      </td>
-                      <td className="py-3 px-3 text-zinc-500 whitespace-nowrap">{row.location}</td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-900 whitespace-nowrap">
-                        {row.occupancy}
-                      </td>
-                      <td className="py-3 px-3 text-right font-medium text-zinc-900 whitespace-nowrap">
-                        {row.adr}
-                      </td>
-                      <td className="py-3 px-3 text-right font-semibold text-zinc-900 whitespace-nowrap">
-                        {row.revpar}
-                      </td>
-                      <td className="py-3 px-3 text-right font-bold text-zinc-900 whitespace-nowrap">
-                        {row.revenue}
-                      </td>
-                    </tr>
-                    {isExpanded &&
-                      row.children.map((child) => (
-                        <tr
-                          key={`${row.id}-${child.id}`}
-                          className="border-b border-zinc-100/60 bg-zinc-50/40 text-zinc-600"
-                        >
-                          <td className="py-2.5 px-3 pl-8 text-[10.5px] font-medium text-zinc-700 whitespace-nowrap">
-                            {child.name}
-                          </td>
-                          <td className="py-2.5 px-3 text-[10px] text-zinc-400 whitespace-nowrap">
-                            {child.location}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.occupancy}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.adr}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] whitespace-nowrap">
-                            {child.revpar}
-                          </td>
-                          <td className="py-2.5 px-3 text-right text-[10.5px] font-medium text-zinc-800 whitespace-nowrap">
-                            {child.revenue}
-                          </td>
-                        </tr>
-                      ))}
-                  </React.Fragment>
-                );
-              })}
+                        ))}
+                      {row.segment}
+                    </td>
+                    <td className="py-3 px-4 text-right font-medium text-zinc-900 whitespace-nowrap">
+                      {row.occupancy}
+                    </td>
+                    <td className="py-3 px-4 text-right font-medium text-zinc-900 whitespace-nowrap">
+                      {row.adr}
+                    </td>
+                    <td className="py-3 px-4 text-right font-semibold text-zinc-900 whitespace-nowrap">
+                      {row.revpar}
+                    </td>
+                    <td className="py-3 px-4 text-right font-bold text-zinc-900 whitespace-nowrap">
+                      {row.revenue}
+                    </td>
+                  </tr>
+                  {hasChildren &&
+                    isExpanded &&
+                    row.children.map((child: any) => (
+                      <tr
+                        key={`${row.id}-${child.id}`}
+                        className="border-b border-zinc-100/60 bg-zinc-50/40 text-zinc-600"
+                      >
+                        <td className="py-2.5 px-4 pl-9 text-[10.5px] font-medium text-zinc-700 whitespace-nowrap">
+                          {child.name}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.occupancy}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.adr}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] whitespace-nowrap">
+                          {child.revpar}
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-[10.5px] font-medium text-zinc-800 whitespace-nowrap">
+                          {child.revenue}
+                        </td>
+                      </tr>
+                    ))}
+                </React.Fragment>
+              );
+            })}
 
-              {/* Total Row */}
-              <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
-                <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">{pm.propertyCount} Properties Worldwide</td>
-                <td className="py-3 px-3 text-right text-emerald-700 font-bold">
-                  {fmtPct(pm.occupancyPct, 1)}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {totalAdrDisplay}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {fmtUsd(pm.revpar)}
-                </td>
-                <td className="py-3 px-3 text-right text-zinc-900 font-bold">
-                  {totalRevenueDisplay}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            {/* Total Row */}
+            <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
+              <td className="py-3 px-4 text-zinc-900">Total</td>
+              <td className="py-3 px-4 text-right text-emerald-700 font-bold">
+                {fmtPct(pm.occupancyPct, 1)}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {totalAdrDisplay}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {fmtUsdFull(pm.revpar)}
+              </td>
+              <td className="py-3 px-4 text-right text-zinc-900 font-bold">
+                {totalRevenueDisplay}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

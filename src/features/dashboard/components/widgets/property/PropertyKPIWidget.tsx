@@ -1,3 +1,4 @@
+import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 
@@ -122,24 +123,13 @@ export function PropertyKPIWidget({
       upLy: m.vsLy.adrPct >= 0,
       change: data.adrVsLy,
     },
-    { 
-      label: 'Av. Length of Stay', 
-      value: `${data.los} Nights`, 
-      vsLy: data.losVsLy,
-      vsBudget: data.losVsBudget,
-      vsBudgetShort: shortBadge(data.losVsBudget),
-      vsForecast: data.losVsForecast,
-      vsForecastShort: shortBadge(data.losVsForecast),
-      upLy: true,
-      change: data.losVsLy,
-    },
   ];
 
   return (
     <div className="grid grid-cols-12 gap-3 sm:gap-4 items-stretch">
       {/* Today's Activity / Operational Summary (3 cols) */}
       <div 
-        className="col-span-12 lg:col-span-3 rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
+        className="col-span-12 lg:col-span-3 rounded-[12px] p-3.5 sm:p-4 flex flex-col justify-between transition-[background-color,box-shadow,transform] duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
         onClick={() => openDrawer({ 
           type: 'PROPERTY_ACTIVITY', 
           title: `Today's Activity — ${activePropName}`, 
@@ -162,6 +152,30 @@ export function PropertyKPIWidget({
               Today's Activity
             </h3>
           </InfoTooltip>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDrawer({
+                type: 'PROPERTY_ACTIVITY',
+                title: `Today's Activity — ${activePropName}`,
+                data: {
+                  propertyId: canonicalId,
+                  propertyName: activePropName,
+                  period,
+                  location: data.location,
+                  category: data.category,
+                  arrivals: data.arrivals,
+                  deps: data.deps,
+                  inhouse: data.inhouse,
+                  vip: data.vip,
+                },
+              });
+            }}
+            className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap"
+          >
+            <span>See details</span> <RoundAltArrowRight size={10} />
+          </button>
         </div>
         
         <div className="flex flex-col gap-2 text-xs text-zinc-900 flex-1 justify-between py-0.5">
@@ -184,76 +198,13 @@ export function PropertyKPIWidget({
         </div>
       </div>
 
-      {/* Occupancy KPI Card (2 cols) — Aligns with Today's Activity to total 5 cols */}
-      <div 
-        className="col-span-12 lg:col-span-2 relative rounded-[12px] p-3 sm:p-3.5 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
-        style={{ animationDelay: '0.1s' }}
-        onClick={() => openDrawer({ 
-          type: 'METRIC', 
-          title: `${kpis[0].label} — ${activePropName}`, 
-          data: {
-            label: kpis[0].label,
-            value: kpis[0].value,
-            change: kpis[0].change,
-            propertyName: activePropName,
-            propertyId: canonicalId,
-            period,
-            occ: data.occ,
-            rev: data.rev,
-            roomRev: data.roomRev,
-            revpar: data.revpar,
-            adr: data.adr,
-            los: data.los,
-          }
-        })}
-      >
-        <div className="flex flex-col justify-between h-full py-0.5">
-          <div className="flex items-center justify-between gap-1 mb-1">
-            <InfoTooltip text={getTooltipText(kpis[0].label)}>
-              <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                {kpis[0].label}
-              </span>
-            </InfoTooltip>
-            <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
-                kpis[0].upLy
-                  ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
-                  : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-              }`}
-            >
-              {kpis[0].vsLy}
-            </span>
-          </div>
-          <div className="text-[20px] sm:text-[22px] font-normal text-zinc-900 leading-tight my-1 sm:my-1.5">
-            {kpis[0].value}
-          </div>
-          {/* Comparison Badges: vs Budget, vs Forecast (Strictly 1 horizontal line) */}
-          <div className="grid grid-cols-2 gap-1 w-full">
-            <span 
-              title={kpis[0].vsBudget}
-              className="inline-flex items-center justify-center min-w-0 text-[7.5px] sm:text-[8px] 2xl:text-[8.5px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
-            >
-              <span className="hidden 2xl:inline truncate">{kpis[0].vsBudget}</span>
-              <span className="2xl:hidden truncate">{shortBadge(kpis[0].vsBudget)}</span>
-            </span>
-            <span 
-              title={kpis[0].vsForecast}
-              className="inline-flex items-center justify-center min-w-0 text-[7.5px] sm:text-[8px] 2xl:text-[8.5px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
-            >
-              <span className="hidden 2xl:inline truncate">{kpis[0].vsForecast}</span>
-              <span className="2xl:hidden truncate">{shortBadge(kpis[0].vsForecast)}</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Remaining 4 Financial & Performance KPI Cards (7 cols, 4 sub-columns) */}
-      <div className="col-span-12 lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-        {kpis.slice(1).map((kpi, idx) => (
+      {/* 4 Financial & Performance KPI Cards (9 cols, 4 equal sub-columns) */}
+      <div className="col-span-12 lg:col-span-9 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {kpis.map((kpi, idx) => (
           <div
             key={kpi.label}
-            className="relative rounded-[12px] p-3 sm:p-3.5 flex flex-col justify-between transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
-            style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
+            className="relative rounded-[12px] p-3 sm:p-3.5 flex flex-col justify-between transition-[background-color,box-shadow,transform] duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter"
+            style={{ animationDelay: `${0.1 + idx * 0.05}s` }}
             onClick={() => openDrawer({ 
               type: 'METRIC', 
               title: `${kpi.label} — ${activePropName}`, 
@@ -297,17 +248,15 @@ export function PropertyKPIWidget({
               <div className="grid grid-cols-2 gap-1 w-full">
                 <span 
                   title={kpi.vsBudget}
-                  className="inline-flex items-center justify-center min-w-0 text-[7.5px] sm:text-[8px] 2xl:text-[8.5px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
+                  className="inline-flex items-center justify-center min-w-0 text-[8px] 2xl:text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
                 >
-                  <span className="hidden 2xl:inline truncate">{kpi.vsBudget}</span>
-                  <span className="2xl:hidden truncate">{shortBadge(kpi.vsBudget)}</span>
+                  <span className="truncate">{kpi.vsBudget}</span>
                 </span>
                 <span 
                   title={kpi.vsForecast}
-                  className="inline-flex items-center justify-center min-w-0 text-[7.5px] sm:text-[8px] 2xl:text-[8.5px] font-medium px-1 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
+                  className="inline-flex items-center justify-center min-w-0 text-[8px] 2xl:text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap"
                 >
-                  <span className="hidden 2xl:inline truncate">{kpi.vsForecast}</span>
-                  <span className="2xl:hidden truncate">{shortBadge(kpi.vsForecast)}</span>
+                  <span className="truncate">{kpi.vsForecast}</span>
                 </span>
               </div>
             </div>

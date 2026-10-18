@@ -2,7 +2,13 @@ import { RoundAltArrowRight } from '@solar-icons/react';
 import { InfoTooltip } from '../../../../common/components/InfoTooltip';
 import { useDashboardDrawer } from '../../../context/DashboardDrawerContext';
 import { resolvePropertyId } from '../../../../../constants/categories';
-import { getPropertyMetrics, type PeriodId } from '@/data/portfolio';
+import {
+  getPropertyMetrics,
+  fmtPct,
+  fmtUsd,
+  fmtUsdFull,
+  type PeriodId,
+} from '@/data/portfolio';
 import { buildRoomTiers } from '@/data/portfolio/hospitalitySubMix';
 
 export function OccupancyByRoomTypeWidget({ 
@@ -19,35 +25,47 @@ export function OccupancyByRoomTypeWidget({
 
   const m = getPropertyMetrics(propertyId, period);
   const tiers = buildRoomTiers(m);
-  const data = tiers.map((t) => ({
-    type: t.name,
-    occ: Math.round(t.occPct),
-    occupied: Math.round(t.occupiedRn / Math.max(1, m.days)),
-    available: t.keys,
-    adr: t.adr,
-    rev: t.revenue,
-  }));
+  const data = tiers.map((t) => {
+    const revpar = t.availableRn > 0 ? t.revenue / t.availableRn : 0;
+    return {
+      type: t.name,
+      occ: t.occPct,
+      occLabel: fmtPct(t.occPct, 1),
+      occupied: Math.round(t.occupiedRn / Math.max(1, m.days)),
+      available: t.keys,
+      adr: t.adr,
+      adrLabel: fmtUsdFull(t.adr),
+      revpar,
+      revparLabel: fmtUsdFull(revpar),
+      rev: t.revenue,
+      revLabel: fmtUsd(t.revenue),
+    };
+  });
   const totals = {
     occ: Math.round(m.occupancyPct),
+    occLabel: fmtPct(m.occupancyPct, 1),
     occupied: data.reduce((sum, r) => sum + r.occupied, 0),
     available: m.rooms,
+    adrLabel: fmtUsdFull(m.adr),
+    revparLabel: fmtUsdFull(m.revpar),
+    revLabel: fmtUsd(m.roomRevenue),
   };
 
   const activePropName = propertyName || m.name;
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
+      className="relative rounded-[12px] p-4 flex flex-col transition-[background-color,box-shadow,transform] duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.2s' }}
       onClick={() => openDrawer({ 
         type: 'ROOM_TIER_OCCUPANCY', 
-        title: `Room Tier Occupancy — ${activePropName}`, 
+        title: `Room Type Performance — ${activePropName}`, 
         data: { propertyId, propertyName: activePropName, period, types: data, totals, data } 
       })}
     >
-      <div className="flex justify-between items-center mb-3 h-4 shrink-0">
-        <InfoTooltip text="Detailed room type occupancy count and percentage breakdown.">
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">Occupancy by Room Type</h3>
+      <div className="flex justify-between items-center pb-2 border-b border-zinc-200/80 mb-2 shrink-0">
+        <InfoTooltip text="Room type revenue, RevPAR, ADR, and occupancy performance breakdown across property inventory.">
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 cursor-help">Room Type Performance</h3>
         </InfoTooltip>
         <div className="flex items-center gap-2">
           <button
@@ -56,7 +74,7 @@ export function OccupancyByRoomTypeWidget({
               e.stopPropagation();
               openDrawer({
                 type: 'ROOM_TIER_OCCUPANCY',
-                title: `Room Tier Occupancy — ${activePropName}`,
+                title: `Room Type Performance — ${activePropName}`,
                 data: { propertyId, propertyName: activePropName, period, types: data, totals, data }
               });
             }}
@@ -67,46 +85,39 @@ export function OccupancyByRoomTypeWidget({
         </div>
       </div>
 
-      <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between pt-0.5 pb-0.5">
-        {/* Header */}
-        <div className="grid grid-cols-[38%_32%_15%_15%] pb-1.5 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400 shrink-0">
-          <div>Room Type</div>
-          <div>Occupancy</div>
-          <div className="text-right">Occupied</div>
-          <div className="text-right">Total</div>
-        </div>
-
-        {/* Rows */}
-        <div className="flex flex-col justify-between flex-1 py-1.5 gap-2">
-          {data.map((row) => (
-            <div key={row.type} className="grid grid-cols-[38%_32%_15%_15%] items-center text-[10px]">
-              <div className="text-zinc-700 font-medium truncate pr-1">{row.type}</div>
-              <div className="flex items-center gap-2 pr-2">
-                <span className="w-6 text-right font-medium text-zinc-900 text-[9.5px]">{row.occ}%</span>
-                <div className="flex-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-zinc-800 rounded-full" style={{ width: `${row.occ}%` }} />
-                </div>
-              </div>
-              <div className="text-right font-medium text-zinc-900">{row.occupied}</div>
-              <div className="text-right text-zinc-400">{row.available}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer / Total */}
-        <div className="grid grid-cols-[38%_32%_15%_15%] items-center pt-1.5 border-t border-zinc-100 text-[10px] shrink-0">
-          <div className="font-bold text-zinc-900">Total</div>
-          <div className="flex items-center gap-2 pr-2">
-            <span className="w-6 text-right font-bold text-zinc-900 text-[9.5px]">{totals.occ}%</span>
-            <div className="flex-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-              <div className="h-full bg-zinc-900 rounded-full" style={{ width: `${totals.occ}%` }} />
-            </div>
-          </div>
-          <div className="text-right font-bold text-zinc-900">{totals.occupied}</div>
-          <div className="text-right text-zinc-400 font-medium">{totals.available}</div>
-        </div>
+      <div className="flex flex-col text-xs text-zinc-900 flex-1 justify-between">
+        <table className="w-full h-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+          <thead>
+            <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">
+              <th className="text-left pb-2 pt-0.5 pr-1 w-[34%] truncate font-medium">Room Type</th>
+              <th className="text-right pb-2 pt-0.5 px-1 w-[16%] truncate font-medium">Occupancy</th>
+              <th className="text-right pb-2 pt-0.5 px-1 w-[16%] truncate font-medium">ADR</th>
+              <th className="text-right pb-2 pt-0.5 px-1 w-[16%] truncate font-medium">RevPAR</th>
+              <th className="text-right pb-2 pt-0.5 pl-1 w-[18%] truncate font-medium text-zinc-700">Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, idx) => (
+              <tr key={idx} className="text-[10px] border-b border-zinc-100 text-zinc-700">
+                <td className="py-2 pr-1 truncate font-medium text-zinc-800">{row.type}</td>
+                <td className="text-right py-2 px-1 truncate text-zinc-700 font-medium">{row.occLabel}</td>
+                <td className="text-right py-2 px-1 truncate text-zinc-700 font-medium">{row.adrLabel}</td>
+                <td className="text-right py-2 px-1 truncate text-zinc-700 font-medium">{row.revparLabel}</td>
+                <td className="text-right py-2 pl-1 truncate text-zinc-900 font-bold">{row.revLabel}</td>
+              </tr>
+            ))}
+            <tr className="text-[10px] font-bold text-zinc-900 border-b-0 pt-2">
+              <td className="py-2 pr-1 truncate">Total</td>
+              <td className="text-right py-2 px-1 truncate">{totals.occLabel}</td>
+              <td className="text-right py-2 px-1 truncate">{totals.adrLabel}</td>
+              <td className="text-right py-2 px-1 truncate">{totals.revparLabel}</td>
+              <td className="text-right py-2 pl-1 truncate font-bold text-zinc-900">{totals.revLabel}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
+
 

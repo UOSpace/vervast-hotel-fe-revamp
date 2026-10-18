@@ -24,7 +24,7 @@ export function UpcomingEventsWidget({
 
   return (
     <div 
-      className="relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
+      className="relative rounded-[12px] p-4 flex flex-col transition-[background-color,box-shadow,transform] duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between" 
       style={{ animationDelay: '0.55s' }}
       onClick={() => openDrawer({ 
         type: 'UPCOMING_EVENTS', 
@@ -55,11 +55,11 @@ export function UpcomingEventsWidget({
       </div>
 
       <div className="flex flex-col justify-between flex-1 pt-0.5 pb-0.5">
-        {events.map((event) => (
+        {events.slice(0, 3).map((event) => (
           <div key={event.title} className="flex justify-between items-baseline border-b border-zinc-100 pb-2.5 last:border-0 last:pb-0">
             <div>
               <div className="text-[10.5px] font-bold text-zinc-900 leading-tight">{event.title}</div>
-              <div className="text-[9px] text-zinc-400 font-normal mt-0.5">{event.category}</div>
+              <div className="text-[9px] text-zinc-400 font-normal mt-0.5">{event.category} · {event.stage}</div>
             </div>
             <span className="text-[9.5px] text-zinc-500 font-medium">{event.date}</span>
           </div>

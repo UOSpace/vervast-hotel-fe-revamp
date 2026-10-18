@@ -78,8 +78,8 @@ export function RevenueDemandMixDrawerContent({
       {/* Header & Subtitle */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-zinc-200">
         <div>
-          <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800">{periodDef.periodLabel}</span>
+          <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900">{periodDef.periodLabel}</span>
           </p>
         </div>
 

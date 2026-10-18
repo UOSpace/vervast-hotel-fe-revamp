@@ -215,7 +215,7 @@ const EXPERIENCE_STATIC_DESCRIPTORS: {
   },
   {
     id: 'sosei-bali',
-    name: 'SOSEI BALI',
+    name: 'SOSEI Bali',
     categoryId: 'wellness',
     categoryName: 'SOSEI Wellness',
     regionId: 'asia-pacific',
@@ -1047,7 +1047,7 @@ export function ExperienceCategoriesView() {
             Experiences Dashboard Property Categories
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -1069,7 +1069,7 @@ export function ExperienceCategoriesView() {
           )}
 
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button
@@ -1140,7 +1140,7 @@ export function ExperienceRegionalView() {
             Experiences Dashboard Regional
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -1162,7 +1162,7 @@ export function ExperienceRegionalView() {
           )}
 
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button
@@ -1386,7 +1386,7 @@ export function ExperiencePropertyDashboardPage() {
             Experiences Dashboard Property View
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -1398,7 +1398,7 @@ export function ExperiencePropertyDashboardPage() {
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button

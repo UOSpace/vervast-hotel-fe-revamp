@@ -17,7 +17,7 @@ const PROPERTY_IMG: Record<string, string> = {
   'SOSEI Tinos': omanImg,
   'SOSEI Barcelona': urbanImg,
   'SOSEI OSA': costaRicaImg,
-  'SOSEI BALI': baliImg,
+  'SOSEI Bali': baliImg,
   'SOSEI Bali': baliImg,
 };
 
@@ -179,13 +179,13 @@ export const individualGuestProfiles: Record<string, IndividualGuestProfile> = {
       leisure: ['Scuba diving & spearfishing', 'Classical music evenings'],
     },
     upcoming: {
-      property: 'SOSEI BALI',
+      property: 'SOSEI Bali',
       place: 'Uluwatu, Bali, Indonesia',
       period: 'Jan 12 – 20, 2027',
       party: '2 Adults',
       accommodation: 'Cliffside Pool Villa',
       service: 'Butler Made',
-      img: PROPERTY_IMG['SOSEI BALI'],
+      img: PROPERTY_IMG['SOSEI Bali'],
       items: [
         { label: 'Airport Transfer', desc: 'Private Car · Ngurah Rai' },
         { label: 'Villa Preference', desc: 'Cliffside Pool Villa · Sunset side' },
@@ -196,7 +196,7 @@ export const individualGuestProfiles: Record<string, IndividualGuestProfile> = {
     journey: [
       { date: 'Sep 2025', name: 'SOSEI AUH', loc: 'UAE', img: PROPERTY_IMG['SOSEI AUH'] },
       { date: 'Apr 2025', name: 'SOSEI Tinos', loc: 'Greece', img: PROPERTY_IMG['SOSEI Tinos'] },
-      { date: 'Nov 2024', name: 'SOSEI BALI', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI BALI'] },
+      { date: 'Nov 2024', name: 'SOSEI Bali', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI Bali'] },
       { date: 'Jun 2023', name: 'SOSEI Andermatt', loc: 'Switzerland', img: PROPERTY_IMG['SOSEI Andermatt'] },
     ],
     moments: [
@@ -339,7 +339,7 @@ export const individualGuestProfiles: Record<string, IndividualGuestProfile> = {
       { date: 'Jun 2026', name: 'SOSEI Tinos', loc: 'Greece', img: PROPERTY_IMG['SOSEI Tinos'] },
       { date: 'Mar 2025', name: 'SOSEI Barcelona', loc: 'Spain', img: PROPERTY_IMG['SOSEI Barcelona'] },
       { date: 'Oct 2024', name: 'SOSEI Barcelona', loc: 'Spain', img: PROPERTY_IMG['SOSEI Barcelona'] },
-      { date: 'Aug 2022', name: 'SOSEI BALI', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI BALI'] },
+      { date: 'Aug 2022', name: 'SOSEI Bali', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI Bali'] },
     ],
     moments: [
       { title: 'Fashion Week Suite', tag: 'Jun 2026', desc: 'Suite converted into a private styling showroom.' },
@@ -410,7 +410,7 @@ export const individualGuestProfiles: Record<string, IndividualGuestProfile> = {
       { date: 'Dec 2025', name: 'SOSEI OSA', loc: 'Costa Rica', img: PROPERTY_IMG['SOSEI OSA'] },
       { date: 'Jul 2025', name: 'SOSEI Barcelona', loc: 'Spain', img: PROPERTY_IMG['SOSEI Barcelona'] },
       { date: 'Dec 2024', name: 'SOSEI Melides', loc: 'Portugal', img: PROPERTY_IMG['SOSEI Melides'] },
-      { date: 'Nov 2022', name: 'SOSEI BALI', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI BALI'] },
+      { date: 'Nov 2022', name: 'SOSEI Bali', loc: 'Indonesia', img: PROPERTY_IMG['SOSEI Bali'] },
     ],
     moments: [
       { title: 'Holiday Tradition', tag: 'Dec', desc: 'Returns each December for a family beach celebration.' },

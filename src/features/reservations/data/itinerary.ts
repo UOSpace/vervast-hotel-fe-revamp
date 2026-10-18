@@ -31,7 +31,7 @@ function getItineraryImages(hotel: string) {
       departure: switzerlandImg,
     };
   }
-  if (hotel === 'SOSEI AUH' || hotel === 'SOSEI BALI' || hotel === 'SOSEI Bali' || hotel === 'SOSEI Melides') {
+  if (hotel === 'SOSEI AUH' || hotel === 'SOSEI Bali' || hotel === 'SOSEI Bali' || hotel === 'SOSEI Melides') {
     return {
       arrival: hotel === 'SOSEI AUH' ? maldivesImg : baliImg,
       activity: oceanImg,

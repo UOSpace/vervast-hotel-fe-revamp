@@ -127,7 +127,7 @@ export const SANCTUARY_HOTELS = [
   'SOSEI Tinos',
   'SOSEI Barcelona',
   'SOSEI OSA',
-  'SOSEI BALI',
+  'SOSEI Bali',
 ] as const;
 
 export const normalizeHotel = (raw?: string): string =>

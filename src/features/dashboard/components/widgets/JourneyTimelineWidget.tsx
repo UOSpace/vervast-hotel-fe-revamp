@@ -19,7 +19,7 @@ export const JourneyTimelineWidget: React.FC<JourneyTimelineWidgetProps> = ({
 }) => {
   return (
     <div
-      className="w-full relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+      className="w-full relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
       onClick={onOpenDetails}
     >
       <div className="flex justify-between mb-1">

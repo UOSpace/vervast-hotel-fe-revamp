@@ -1,23 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, AltArrowDown, Magnifer } from '@solar-icons/react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { AltArrowDown, Magnifer } from '@solar-icons/react';
 import { PeriodTabsWidget } from '../resort-type/PeriodTabsWidget';
-import type { PeriodId } from '@/data/portfolio';
+import { PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
 
 export function PropertyHeaderWidget({
-  startDate, endDate, onDateChange,
-  compStartDate, compEndDate, onCompDateChange,
   selectedProperty, onPropertyChange, propertiesList,
   period = 'mtd',
   onPeriodChange,
 }: {
-  startDate: Date | null;
-  endDate: Date | null;
-  onDateChange: (dates: [Date | null, Date | null]) => void;
-  compStartDate: Date | null;
-  compEndDate: Date | null;
-  onCompDateChange: (dates: [Date | null, Date | null]) => void;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  onDateChange?: (dates: [Date | null, Date | null]) => void;
+  compStartDate?: Date | null;
+  compEndDate?: Date | null;
+  onCompDateChange?: (dates: [Date | null, Date | null]) => void;
   selectedProperty: any;
   onPropertyChange: (prop: any) => void;
   propertiesList: any[];
@@ -53,13 +49,6 @@ export function PropertyHeaderWidget({
     p.location.toLowerCase().includes(search.toLowerCase())
   );
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return 'Ohayō Alfonso!';
-    if (hour >= 12 && hour < 18) return 'Konnichiwa Alfonso!';
-    return 'Konbanwa Alfonso!';
-  };
-
   const getFormattedDateTime = () => {
     const now = new Date();
     const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -72,50 +61,34 @@ export function PropertyHeaderWidget({
 
   return (
     <div className="w-full flex flex-col gap-3.5">
-      {/* Top Row: Greeting & Title (Left) + Date/Time (Right) matching other dashboard levels */}
-      <div
-        className="w-full border-b border-zinc-200/80 pb-3 animate-fade-in bg-transparent flex justify-between items-end"
-        style={{ animationDelay: '0.05s' }}
-      >
-        <div>
-          <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">
-            {getGreeting()}
-          </p>
-          <h2 className="text-2xl font-bold text-zinc-900 tracking-wide flex items-center gap-2">
-            <span>Welcome to SOSEI Hospitality Dashboard</span>
-          </h2>
-        </div>
-        <div className="text-right shrink-0 ml-4 pt-0.5 pb-0.5">
-          <p className="text-[10px] text-zinc-900 font-semibold">{date}</p>
-          <p className="text-[9px] text-zinc-500">{time} · {tz}</p>
-        </div>
-      </div>
-
-      {/* Secondary Controls Bar: Property Dropdown (Left) & Period / Date Pickers (Right) */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-0.5">
+      {/* Row 1: Property Dropdown (Left) & Date/Time (Right) */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-3 border-b border-zinc-200/80 animate-fade-in">
         {/* Left Side: Property Dropdown */}
         <div className="flex items-center gap-3 relative" ref={dropdownRef}>
           <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-200 shadow-xs shrink-0">
             <img src={selectedProperty.img} alt={selectedProperty.name} className="w-full h-full object-cover" />
           </div>
 
-          <button
-            type="button"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity text-left cursor-pointer"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity text-left cursor-pointer"
+                onClick={() => setIsOpen(!isOpen)}
+              >
                 <span className="text-lg font-bold text-zinc-900 tracking-tight leading-none">
                   {selectedProperty.name}
                 </span>
                 <AltArrowDown className={`text-zinc-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} size={16} />
-              </div>
-              <span className="text-zinc-500 text-[10px] font-sans tracking-widest uppercase font-semibold mt-1">
-                {selectedProperty.location}
+              </button>
+              <span className="text-lg font-bold text-zinc-900 tracking-tight leading-none">
+                (Hotel Level Dashboard)
               </span>
             </div>
-          </button>
+            <span className="text-zinc-500 text-[10px] font-sans tracking-widest uppercase font-semibold mt-1">
+              {selectedProperty.location}
+            </span>
+          </div>
 
           {/* Dropdown Menu */}
           {isOpen && (
@@ -172,54 +145,25 @@ export function PropertyHeaderWidget({
           )}
         </div>
 
-        {/* Right Side: Period Tabs & Date Filters (Side-by-side with labels on top) */}
-        <div className="flex flex-wrap items-end gap-4 text-[10px] text-zinc-600">
-          {onPeriodChange && (
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Horizon:</span>
-              <PeriodTabsWidget
-                period={period}
-                setPeriod={onPeriodChange}
-                showLabel={false}
-              />
-            </div>
-          )}
-          {/* Main Date Range */}
-          <div className="flex flex-col gap-1">
-            <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">As of:</span>
-            <div className="relative flex items-center">
-              <DatePicker
-                portalId="datepicker-portal"
-                selectsRange
-                startDate={startDate}
-                endDate={endDate}
-                onChange={(dates) => onDateChange(dates)}
-                className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[190px] sm:w-[205px] shadow-2xs font-medium"
-                dateFormat="MMM d, yyyy"
-                placeholderText="Select main range"
-              />
-              <Calendar size={13} className="absolute right-2.5 text-zinc-400 pointer-events-none" />
-            </div>
-          </div>
+        {/* Top-right: Date/Time */}
+        <span className="text-right shrink-0 leading-tight">
+          <span className="block text-[10px] text-zinc-900 font-semibold">{date}</span>
+          <span className="block text-[9px] text-zinc-500">{time} · {tz}</span>
+        </span>
+      </div>
 
-          {/* Comparison Date Range */}
-          <div className="flex flex-col gap-1">
-            <span className="font-semibold text-zinc-700 uppercase tracking-wider text-[9.5px]">Compare vs:</span>
-            <div className="relative flex items-center">
-              <DatePicker
-                portalId="datepicker-portal"
-                selectsRange
-                startDate={compStartDate}
-                endDate={compEndDate}
-                onChange={(dates) => onCompDateChange(dates)}
-                className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] text-zinc-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-colors w-[190px] sm:w-[205px] shadow-2xs font-medium"
-                dateFormat="MMM d, yyyy"
-                placeholderText="Select comparison range"
-              />
-              <Calendar size={13} className="absolute right-2.5 text-zinc-400 pointer-events-none" />
-            </div>
-          </div>
-        </div>
+      {/* Second row: As of (left) & Period Tabs (right) */}
+      <div className="flex flex-wrap justify-between items-center gap-3 text-[10px] text-zinc-600">
+        <span className="text-[10px] text-zinc-900 font-medium">
+          As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[period].periodLabel}</span>
+        </span>
+        {onPeriodChange && (
+          <PeriodTabsWidget
+            period={period}
+            setPeriod={onPeriodChange}
+            showLabel={false}
+          />
+        )}
       </div>
     </div>
   );

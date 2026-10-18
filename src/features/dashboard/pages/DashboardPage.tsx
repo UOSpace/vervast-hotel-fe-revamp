@@ -70,8 +70,8 @@ export function DashboardPage() {
                       WORLD MAP
                     </h3>
                   </InfoTooltip>
-                  <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-                    Date: <span className="font-semibold text-zinc-800">{PERIOD_DEFS[mapHorizon].periodLabel}</span>
+                  <p className="text-[9.5px] text-zinc-900 font-medium mt-0.5">
+                    As of: <span className="font-semibold text-zinc-900">{PERIOD_DEFS[mapHorizon].periodLabel}</span>
                   </p>
                 </div>
 
@@ -107,7 +107,7 @@ export function DashboardPage() {
                 </div>
               </div>
               <div
-                className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter backdrop-blur-sm transition-all z-20 hover:z-40 min-h-[260px]"
+                className="flex-1 w-full rounded-[12px] p-2 flex flex-col relative animate-card-enter transition-all z-20 hover:z-40 min-h-[260px]"
                 style={{ animationDelay: '0.1s' }}
               >
                 <LiveOverviewMap period={mapHorizon} />
@@ -141,7 +141,7 @@ export function DashboardPage() {
           <div className="col-span-12 grid grid-cols-12 gap-4 items-stretch">
             {/* 1. Booking Pace */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
               style={{ animationDelay: '0.35s' }}
               onClick={() => openDrawer({ type: 'BOOKING_PACE', title: 'Booking Pace (Next 90 Days)' })}
             >
@@ -152,7 +152,7 @@ export function DashboardPage() {
 
             {/* 3. Forward Business */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
               style={{ animationDelay: '0.45s' }}
               onClick={() => openDrawer({ type: 'FORWARD_BUSINESS', title: 'Forward Business (Next 90 Days OTB)' })}
             >
@@ -163,7 +163,7 @@ export function DashboardPage() {
 
             {/* 2. Revenue & Demand Mix */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between animate-card-enter bg-zinc-50/50 cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all h-full"
               style={{ animationDelay: '0.4s' }}
               onClick={() => openDrawer({ type: 'REVENUE_DEMAND_MIX', title: 'Revenue & Demand Mix', data: { horizon: kpiHorizon } })}
             >
@@ -178,7 +178,7 @@ export function DashboardPage() {
           <div className="col-span-12 grid grid-cols-12 gap-4 items-stretch">
             {/* 4. Global Segmen (Geo Market) */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
               style={{ animationDelay: '0.5s' }}
               onClick={() => openDrawer({ type: 'GEO_MARKET', title: 'Geo Market Performance', data: { horizon: kpiHorizon } })}
             >
@@ -190,7 +190,7 @@ export function DashboardPage() {
 
             {/* 5. Market Segmen */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
               style={{ animationDelay: '0.55s' }}
               onClick={() => openDrawer({ type: 'MARKET_SEGMENT', title: 'Market Segment Performance', data: { horizon: kpiHorizon } })}
             >
@@ -202,7 +202,7 @@ export function DashboardPage() {
 
             {/* 6. SOSEI Signals */}
             <div
-              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+              className="col-span-12 lg:col-span-4 relative rounded-[12px] p-4 flex flex-col justify-between cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
               style={{ animationDelay: '0.6s' }}
               onClick={() => openDrawer({ type: 'SOSEI_SIGNALS', title: 'SOSEI Signals', data: { horizon: kpiHorizon } })}
             >

@@ -625,7 +625,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_06',
       name: 'Lord Sterling',
-      property: 'SOSEI BALI',
+      property: 'SOSEI Bali',
       time: '16:00',
       room: 'Sanctuary Pool Villa 204',
       vip: true,

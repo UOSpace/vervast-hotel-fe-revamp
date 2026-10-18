@@ -156,8 +156,8 @@ export function PortfolioKpisWidget({
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 leading-tight">
             Portfolio Performance
           </h3>
-          <p className="text-[9.5px] text-zinc-500 font-medium mt-0.5">
-            As of: <span className="font-semibold text-zinc-800">{data.periodLabel}</span>
+          <p className="text-[9.5px] text-zinc-900 font-medium mt-0.5">
+            As of: <span className="font-semibold text-zinc-900">{data.periodLabel}</span>
           </p>
         </div>
 
@@ -201,7 +201,7 @@ export function PortfolioKpisWidget({
       <div className="flex-1 flex flex-col justify-between gap-2">
         {/* CARD 1 (Hero): TOTAL REVENUE (HOSPITALITY) */}
         <div
-          className="relative rounded-[12px] p-3 flex flex-col justify-between animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+          className="relative rounded-[12px] p-3 flex flex-col justify-between animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
           style={{ animationDelay: '0.15s' }}
           onClick={() => onOpenMetricDrawer?.('Total Revenue (Hospitality)', data.totalRevenue.value, horizon)}
         >
@@ -252,7 +252,7 @@ export function PortfolioKpisWidget({
         <div className="grid grid-cols-2 gap-2 flex-1">
           {/* Card 2: OCCUPANCY */}
           <div
-            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.2s' }}
             onClick={() => onOpenMetricDrawer?.('Occupancy', data.occupancy.value, horizon)}
           >
@@ -288,7 +288,7 @@ export function PortfolioKpisWidget({
 
           {/* Card 3: ADR */}
           <div
-            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.25s' }}
             onClick={() => onOpenMetricDrawer?.('ADR', data.adr.value, horizon)}
           >
@@ -324,7 +324,7 @@ export function PortfolioKpisWidget({
 
           {/* Card 4: REVPAR */}
           <div
-            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.3s' }}
             onClick={() => onOpenMetricDrawer?.('RevPAR', data.revPar.value, horizon)}
           >
@@ -360,7 +360,7 @@ export function PortfolioKpisWidget({
 
           {/* Card 5: ROOM REVENUE */}
           <div
-            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter backdrop-blur-sm cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
+            className="relative rounded-[12px] p-3 flex flex-col justify-between h-full animate-card-enter cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all"
             style={{ animationDelay: '0.35s' }}
             onClick={() => onOpenMetricDrawer?.('Room Revenue', data.roomRevenue.value, horizon)}
           >

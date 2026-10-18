@@ -16,7 +16,7 @@ export function App() {
   return (
     <AppProviders>
       {isDummyData && !isLoginPage && (
-        <div className="fixed top-3 -left-8 w-28 bg-zinc-800/95 text-white text-[7.5px] font-semibold uppercase tracking-wider py-0.5 text-center -rotate-45 z-[9999] shadow-xs pointer-events-none border-y border-zinc-700">
+        <div className="fixed top-3 -right-8 w-28 bg-zinc-800/95 text-white text-[7.5px] font-semibold uppercase tracking-wider py-0.5 text-center rotate-45 z-[9999] shadow-xs pointer-events-none border-y border-zinc-700">
           Dummy Data
         </div>
       )}

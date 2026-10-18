@@ -16,7 +16,7 @@ export const NotesFromYesterdayWidget: React.FC<NotesFromYesterdayWidgetProps> =
 }) => {
   return (
     <div
-      className="group w-full relative rounded-[12px] p-3 grid grid-cols-12 gap-3 items-stretch cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 backdrop-blur-sm h-full"
+      className="group w-full relative rounded-[12px] p-3 grid grid-cols-12 gap-3 items-stretch cursor-pointer hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 transition-all animate-card-enter bg-zinc-50/50 h-full"
       onClick={onOpenDetails}
     >
       <div className="col-span-12 sm:col-span-7 flex flex-col justify-between overflow-hidden">

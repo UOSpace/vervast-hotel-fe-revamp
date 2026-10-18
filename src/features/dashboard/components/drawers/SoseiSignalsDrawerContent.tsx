@@ -22,8 +22,8 @@ export function SOSEISignalsDrawerContent({ config }: SOSEISignalsDrawerContentP
     <div className="space-y-4 animate-fade-in text-xs text-zinc-900 pb-6">
       {/* Header */}
       <div className="pb-3 border-b border-zinc-200">
-        <p className="text-[10px] text-zinc-400 font-medium mt-0.5">
-          As of: <span className="font-semibold text-zinc-800">{periodDef.periodLabel}</span>
+        <p className="text-[10px] text-zinc-900 font-medium mt-0.5">
+          As of: <span className="font-semibold text-zinc-900">{periodDef.periodLabel}</span>
         </p>
       </div>
 

@@ -338,11 +338,11 @@ export const SOSEI_RESTAURANTS: SoseiRestaurant[] = [
     image: costaricaNicoyaImg,
   },
 
-  // 9. SOSEI BALI (Bali, Indonesia)
+  // 9. SOSEI Bali (Bali, Indonesia)
   {
     id: 'rest-bali-wantilan',
     propertyId: 'sosei-bali',
-    propertyName: 'SOSEI BALI',
+    propertyName: 'SOSEI Bali',
     propertyLocation: 'Bali, Indonesia',
     collectionName: 'SOSEI Wellness',
     name: 'Wantilan Agung',
@@ -356,7 +356,7 @@ export const SOSEI_RESTAURANTS: SoseiRestaurant[] = [
   {
     id: 'rest-bali-karang',
     propertyId: 'sosei-bali',
-    propertyName: 'SOSEI BALI',
+    propertyName: 'SOSEI Bali',
     propertyLocation: 'Bali, Indonesia',
     collectionName: 'SOSEI Wellness',
     name: 'Karang Jimbaran Grill',
@@ -373,13 +373,13 @@ export const SOSEI_RESTAURANTS: SoseiRestaurant[] = [
  * IN-HOUSE GUESTS SYNCHRONIZED WITH PMS ACROSS ALL 9 SOSEI PROPERTIES
  */
 export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
-  // SOSEI BALI
+  // SOSEI Bali
   {
     id: 'gst-bali-01',
     name: 'Maya Wulandari',
     room: 'Cliffside Sanctuary Villa 12',
     propertyId: 'sosei-bali',
-    property: 'SOSEI BALI',
+    property: 'SOSEI Bali',
     vipTier: 'Property Patron',
     allergies: ['Peanuts', 'Shellfish'],
     dietaryRestrictions: ['No Pork'],
@@ -394,7 +394,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     name: 'Alexander & Claire Wright',
     room: 'Ocean Pool Villa 04',
     propertyId: 'sosei-bali',
-    property: 'SOSEI BALI',
+    property: 'SOSEI Bali',
     vipTier: 'Platinum VIP',
     allergies: ['Gluten'],
     dietaryRestrictions: ['Celiac Friendly'],
@@ -409,7 +409,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
     name: 'Raden Baskoro',
     room: 'Uluwatu Residence 01',
     propertyId: 'sosei-bali',
-    property: 'SOSEI BALI',
+    property: 'SOSEI Bali',
     vipTier: 'Founding Circle',
     allergies: [],
     dietaryRestrictions: ['None'],
@@ -682,7 +682,7 @@ export const IN_HOUSE_FNB_GUESTS: FnbGuest[] = [
  */
 export const FNB_MENU_ITEMS: FnbMenuItem[] = [
   // ============================================================================
-  // 1. SOSEI BALI — Authentic Balinese & Nusantara Coastal Cuisine (NO SUSHI!)
+  // 1. SOSEI Bali — Authentic Balinese & Nusantara Coastal Cuisine (NO SUSHI!)
   // ============================================================================
   {
     id: 'bali-01',

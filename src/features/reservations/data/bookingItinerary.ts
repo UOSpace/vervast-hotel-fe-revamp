@@ -107,7 +107,7 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   }
 
   // 2. BEACH / LAGOON / WELLNESS RESORT (AUH, Bali, Melides)
-  if (booking.hotel === 'SOSEI AUH' || booking.hotel === 'SOSEI BALI' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Melides') {
+  if (booking.hotel === 'SOSEI AUH' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Melides') {
     const mainImg = booking.hotel === 'SOSEI AUH' ? maldivesImg : baliImg;
     return [
       {

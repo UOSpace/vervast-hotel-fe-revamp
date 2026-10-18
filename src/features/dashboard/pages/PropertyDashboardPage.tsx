@@ -95,54 +95,48 @@ export function PropertyDashboardPage() {
       </header>
 
       {/* Content wrapper matching DashboardPage */}
-      <div key={`${selectedProperty.id}-${period}`} className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
+      <div className="flex-1 flex flex-col gap-4 pb-8 px-4 lg:px-6 text-[10px]">
         {/* Row 1: KPI Metrics (Full Width) */}
-        <div className="-mx-3">
+        <div className="w-full">
           <PropertyKPIWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
         </div>
 
-        {/* Row 2: Property Rhythm (5 cols, aligns with Occupancy) + Market Segment Mix & Guest Satisfaction (7 cols) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
-          <div className="col-span-12 lg:col-span-5 flex flex-col">
+        {/* Row 2: Core Property Rhythm, Room Occupancy & Department Revenue (3 Equal Columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="flex flex-col">
             <PropertyRhythmWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
-          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="flex flex-col">
-              <MarketSegmentMixWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
-            <div className="flex flex-col">
-              <GuestSatisfactionWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
-          </div>
-        </div>
-
-        {/* Row 3: Room Occupancy (5 cols) + Upcoming Events & Alerts (7 cols, matching Row 2 vertical grid) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
-          <div className="col-span-12 lg:col-span-5 flex flex-col">
+          <div className="flex flex-col">
             <OccupancyByRoomTypeWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
-          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="flex flex-col">
-              <UpcomingEventsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
-            <div className="flex flex-col">
-              <AlertsTasksWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
+          <div className="flex flex-col">
+            <RevenueByDepartmentWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
         </div>
 
-        {/* Row 4: Financials & Distributions (5 cols Revenue + 7 cols Channels & Nationality, matching vertical grid) */}
-        <div className="grid grid-cols-12 gap-5 items-stretch -mx-3">
-          <div className="col-span-12 lg:col-span-5 flex flex-col">
-            <RevenueByDepartmentWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
+        {/* Row 3: Market Segment, Channel Distribution & Guest Satisfaction (3 Equal Columns, Same Card Model) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="flex flex-col">
+            <MarketSegmentMixWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
-          <div className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="flex flex-col">
-              <TopBookingChannelsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
-            <div className="flex flex-col">
-              <GuestNationalityWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
-            </div>
+          <div className="flex flex-col">
+            <TopBookingChannelsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
+          </div>
+          <div className="flex flex-col">
+            <GuestSatisfactionWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
+          </div>
+        </div>
+
+        {/* Row 4: Guest Nationality, Upcoming Events & Operational Alerts (3 Equal Columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="flex flex-col">
+            <GuestNationalityWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
+          </div>
+          <div className="flex flex-col">
+            <UpcomingEventsWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
+          </div>
+          <div className="flex flex-col">
+            <AlertsTasksWidget propertyId={selectedProperty.id} propertyName={selectedProperty.name} period={period} />
           </div>
         </div>
       </div>

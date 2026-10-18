@@ -118,15 +118,15 @@ export function SpaDashboardPage() {
         <div>
           <p className="text-[10px] font-sans text-zinc-500 tracking-widest uppercase mb-0.5 font-semibold">Sanctuary Wellness</p>
           <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">Welcome to SOSEI Sanctuary Dashboard</h1>
-          <p className="text-[10px] text-zinc-500 font-normal mt-0.5">
-            As of: <strong className="font-semibold text-zinc-900">{spa.periodLabel}</strong> · Spa {fmtUsd(spa.spaPillarRevenue)} + Wellness {fmtUsd(spa.wellnessRevenue)} = {fmtUsd(spa.revenue)} Total
+          <p className="text-[10px] text-zinc-900 font-normal mt-0.5">
+            As of: <strong className="font-semibold text-zinc-900">{spa.periodLabel}</strong>
           </p>
         </div>
 
         {/* Period Selector & Export */}
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {PERIOD_ORDER.map((id) => {
+            {PERIOD_ORDER.filter((pid) => pid !== 'forward').map((id) => {
               const active = horizon === id;
               return (
                 <button
@@ -234,12 +234,17 @@ export function SpaDashboardPage() {
                       if (v === 4) return 'bg-zinc-600';
                       return 'bg-zinc-900';
                     };
+                    const allCells = spa.heatmap.cells.flat();
+                    const avgShare = allCells.reduce((a, c) => a + c.sharePct, 0) / Math.max(1, allCells.length);
+                    const cellShare = spa.heatmap.cells[dIdx][tIdx].sharePct;
+                    const utilPct = Math.min(99, Math.round(avgShare > 0 ? (spa.utilisationPct * cellShare) / avgShare : 0));
                     return (
                       <div
                         key={tIdx}
-                        className={`h-2.5 rounded-[2px] ${getBg(val)} transition-all`}
-                        title={`${day} ${heatmapTimes[tIdx]}: Intensity ${val}/5`}
-                      />
+                        className={`h-7 rounded-[3px] flex items-center justify-center text-[8.5px] font-medium tabular-nums ${getBg(val)} ${val >= 3 ? 'text-white' : 'text-zinc-700'} transition-colors`}
+                      >
+                        {utilPct}%
+                      </div>
                     );
                   })}
                 </div>
@@ -652,7 +657,7 @@ export function SpaDashboardPage() {
           return (
             <div
               key={idx}
-              className="rounded-xl border border-zinc-200/80 bg-white/60 backdrop-blur-xs p-3 flex items-center gap-2.5 transition-all duration-200 hover:bg-white hover:shadow-sm"
+              className="rounded-xl border border-zinc-200/80 bg-white/60 p-3 flex items-center gap-2.5 transition-all duration-200 hover:bg-white hover:shadow-sm"
             >
               <div className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
                 <Icon size={13} className="text-zinc-600" />

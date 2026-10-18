@@ -1198,7 +1198,7 @@ export function FnbCategoriesView() {
             FNB Dashboard Property Categories
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -1221,7 +1221,7 @@ export function FnbCategoriesView() {
 
           {/* Time Horizon Pill Filter */}
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button
@@ -1296,7 +1296,7 @@ export function FnbRegionalView() {
             FNB Dashboard Regional
           </h1>
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
-            <span>
+            <span className="text-zinc-900 font-medium">
               As of: <strong className="font-semibold text-zinc-900">{analytics.horizonMeta.periodLabel}</strong>
             </span>
             <span>·</span>
@@ -1319,7 +1319,7 @@ export function FnbRegionalView() {
 
           {/* Time Horizon Pill Filter */}
           <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-            {HORIZON_TABS.map((t) => {
+            {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
               const active = horizon === t.id;
               return (
                 <button
