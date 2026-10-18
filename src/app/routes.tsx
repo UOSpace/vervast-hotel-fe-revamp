@@ -121,7 +121,7 @@ export const routes: RouteObject[] = [
         element: <FnbPropertyDashboardPage />,
       },
       {
-        path: '/dashboard/fnb/pos',
+        path: '/dashboard/fnb/pos/:restaurantCode?',
         element: <FnbPosPage />,
       },
       {

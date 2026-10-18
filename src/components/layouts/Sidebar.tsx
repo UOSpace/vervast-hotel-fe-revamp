@@ -31,6 +31,9 @@ export function Sidebar({
   const isChildActive = (child: { name: string; path: string; isDynamicOverview?: boolean }) => {
     // Explicit sub-portal routes for F&B and Experiences
     if (child.path.startsWith('/dashboard/fnb') || child.path.startsWith('/dashboard/experience')) {
+      if (child.path === '/dashboard/fnb/pos') {
+        return location.pathname === '/dashboard/fnb/pos' || location.pathname.startsWith('/dashboard/fnb/pos/');
+      }
       return location.pathname === child.path;
     }
 

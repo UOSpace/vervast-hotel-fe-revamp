@@ -25,6 +25,7 @@ export const ROUTES = {
       FNB_REGIONAL: '/dashboard/fnb/regional',
       FNB_PROPERTY: '/dashboard/fnb/property',
       POS: '/dashboard/fnb/pos',
+      POS_VENUE: (code: string) => `/dashboard/fnb/pos/${code}`,
       ACTIVITIES: '/dashboard/experience',
       ACTIVITIES_CATEGORIES: '/dashboard/experience/categories',
       ACTIVITIES_REGIONAL: '/dashboard/experience/regional',

@@ -241,7 +241,7 @@ export function SpaDashboardPage() {
                     return (
                       <div
                         key={tIdx}
-                        className={`h-7 rounded-[3px] flex items-center justify-center text-[8.5px] font-medium tabular-nums ${getBg(val)} ${val >= 3 ? 'text-white' : 'text-zinc-700'} transition-colors`}
+                        className={`h-4 rounded-[3px] flex items-center justify-center text-[8px] leading-none font-medium tabular-nums ${getBg(val)} ${val >= 3 ? 'text-white' : 'text-zinc-700'} transition-colors`}
                       >
                         {utilPct}%
                       </div>

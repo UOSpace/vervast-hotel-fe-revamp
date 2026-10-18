@@ -18,7 +18,7 @@ const PROPERTY_IMG: Record<string, string> = {
   'SOSEI Barcelona': urbanImg,
   'SOSEI OSA': costaRicaImg,
   'SOSEI Bali': baliImg,
-  'SOSEI Bali': baliImg,
+  'SOSEI Tokyo': urbanImg,
 };
 
 type Pair = [string, string];

@@ -1,17 +1,18 @@
 import { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Magnifer,
   CloseCircle,
   TrashBinTrash,
   CheckCircle,
   ShieldWarning,
+  DangerTriangle,
   UsersGroupTwoRounded,
   ChefHat,
   AltArrowLeft,
   AltArrowRight,
-  Pen,
+  Eye,
 } from '@solar-icons/react';
 import { MASTER_PROPERTIES } from '@/constants/categories';
 import {
@@ -27,48 +28,79 @@ import {
 interface CartItem {
   menuItem: FnbMenuItem;
   quantity: number;
-  notes?: string;
-  hasAllergyWarning?: boolean;
-  conflictingAllergens?: string[];
 }
 
-const QUICK_ALLERGY_NOTES = [
-  'Omit allergen ingredient',
-  'Separate pan & clean utensils',
-  'Sauce & garnish on the side',
-  'For accompanying guest at table',
-  'Guest acknowledged & approved',
-];
+const getRestaurantCode = (restaurant: SoseiRestaurant) =>
+  restaurant.id.replace(/^rest-/, '');
+
+const findRestaurantByCode = (code?: string): SoseiRestaurant | null => {
+  if (!code) return null;
+  const normalized = code.trim().toLowerCase();
+  return (
+    SOSEI_RESTAURANTS.find(
+      (r) =>
+        r.id.toLowerCase() === normalized ||
+        getRestaurantCode(r).toLowerCase() === normalized
+    ) || null
+  );
+};
+
+const getDefaultGuestForRestaurant = (restaurant: SoseiRestaurant | null): FnbGuest | null => {
+  if (!restaurant) return null;
+  const propertyGuests = IN_HOUSE_FNB_GUESTS.filter(
+    (g) => g.propertyId === restaurant.propertyId
+  );
+  const guestWithAllergy = propertyGuests.find((g) => g.allergies.length > 0);
+  return guestWithAllergy || propertyGuests[0] || IN_HOUSE_FNB_GUESTS[0] || null;
+};
 
 export function FnbPosPage() {
   const navigate = useNavigate();
+  const { restaurantCode } = useParams<{ restaurantCode?: string }>();
 
-  // ── FLOW STEP 1: Restaurant Selection State ──────────────────────────────
-  const [selectedRestaurant, setSelectedRestaurant] = useState<SoseiRestaurant | null>(null);
+  // ── FLOW STEP 1: Restaurant Derived Directly from URL :restaurantCode ────
+  const selectedRestaurant = useMemo(
+    () => findRestaurantByCode(restaurantCode),
+    [restaurantCode]
+  );
   const [propertyFilter, setPropertyFilter] = useState<string>('all');
   const [restaurantSearch, setRestaurantSearch] = useState<string>('');
 
   // ── FLOW STEP 2: 3-Column POS Workspace State ────────────────────────────
-  const [selectedGuest, setSelectedGuest] = useState<FnbGuest | null>(null);
+  const [selectedGuest, setSelectedGuest] = useState<FnbGuest | null>(() =>
+    getDefaultGuestForRestaurant(selectedRestaurant)
+  );
   const [guestScope, setGuestScope] = useState<'property' | 'all'>('property');
   const [guestSearchQuery, setGuestSearchQuery] = useState('');
   const [showInHouseGuests, setShowInHouseGuests] = useState<boolean>(true);
+  const [hideConflictingAllergens, setHideConflictingAllergens] = useState<boolean>(false);
+  const [inspectIngredientsItem, setInspectIngredientsItem] = useState<FnbMenuItem | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [menuSearchQuery, setMenuSearchQuery] = useState('');
-  const [selectedTable, setSelectedTable] = useState<string>('');
+  const [selectedTable, setSelectedTable] = useState<string>(
+    () => selectedRestaurant?.tables[0] || 'Table 01'
+  );
 
   // Cart / Order List
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // ── RULE 4: Allergy Confirmation & Notes Modal State ─────────────────────
-  const [pendingAllergyItem, setPendingAllergyItem] = useState<{
-    item: FnbMenuItem;
-    conflictingAllergens: string[];
-    existingNote?: string;
-    isEditingCartItem?: boolean;
-  } | null>(null);
-  const [allergyNoteInput, setAllergyNoteInput] = useState('');
+  // Keep table & default guest synced when URL changes via browser Back/Forward or direct entry
+  const [syncedRestaurantId, setSyncedRestaurantId] = useState<string | null>(
+    () => selectedRestaurant?.id || null
+  );
+  if ((selectedRestaurant?.id || null) !== syncedRestaurantId) {
+    setSyncedRestaurantId(selectedRestaurant?.id || null);
+    if (selectedRestaurant) {
+      setSelectedTable(selectedRestaurant.tables[0] || 'Table 01');
+      setSelectedCategory('all');
+      setMenuSearchQuery('');
+      setGuestSearchQuery('');
+      setGuestScope('property');
+      setCart([]);
+      setSelectedGuest(getDefaultGuestForRestaurant(selectedRestaurant));
+    }
+  }
 
   // Order Confirmation Modal
   const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
@@ -116,19 +148,15 @@ export function FnbPosPage() {
 
   // ── Handle Selecting a Restaurant ────────────────────────────────────────
   const handleSelectRestaurant = (restaurant: SoseiRestaurant) => {
-    setSelectedRestaurant(restaurant);
+    setSyncedRestaurantId(restaurant.id);
     setSelectedTable(restaurant.tables[0] || 'Table 01');
     setSelectedCategory('all');
     setMenuSearchQuery('');
     setGuestSearchQuery('');
     setGuestScope('property');
     setCart([]);
-
-    // Default to the first in-house guest at this SOSEI property
-    const propertyGuests = IN_HOUSE_FNB_GUESTS.filter(
-      (g) => g.propertyId === restaurant.propertyId
-    );
-    setSelectedGuest(propertyGuests[0] || IN_HOUSE_FNB_GUESTS[0] || null);
+    setSelectedGuest(getDefaultGuestForRestaurant(restaurant));
+    navigate(`/dashboard/fnb/pos/${getRestaurantCode(restaurant)}`);
   };
 
   // ── Filtered In-House Guests for Third Sidebar ───────────────────────────
@@ -166,7 +194,7 @@ export function FnbPosPage() {
       }
     });
     return [
-      { id: 'all', label: 'All Menu' },
+      { id: 'all', label: 'All Dishes' },
       ...Array.from(map.entries()).map(([id, label]) => ({ id, label })),
     ];
   }, [propertyMenuItems]);
@@ -175,6 +203,9 @@ export function FnbPosPage() {
     const q = menuSearchQuery.trim().toLowerCase();
     return propertyMenuItems.filter((item) => {
       if (selectedCategory !== 'all' && item.category !== selectedCategory) return false;
+      if (hideConflictingAllergens && checkAllergyConflict(selectedGuest, item).hasConflict) {
+        return false;
+      }
       if (!q) return true;
       return (
         item.name.toLowerCase().includes(q) ||
@@ -182,34 +213,27 @@ export function FnbPosPage() {
         item.ingredients.some((ing) => ing.toLowerCase().includes(q))
       );
     });
-  }, [propertyMenuItems, selectedCategory, menuSearchQuery]);
+  }, [propertyMenuItems, selectedCategory, menuSearchQuery, hideConflictingAllergens, selectedGuest]);
 
   // ── Cart & Order List Calculations ───────────────────────────────────────
   const subtotal = useMemo(
     () => cart.reduce((sum, ci) => sum + ci.menuItem.price * ci.quantity, 0),
     [cart]
   );
-  const serviceAndTax = useMemo(() => Math.round(subtotal * 0.2), [subtotal]);
+  const serviceCharge = useMemo(() => Math.round(subtotal * 0.1), [subtotal]);
+  const luxuryTax = useMemo(() => Math.round(subtotal * 0.1), [subtotal]);
+  const serviceAndTax = serviceCharge + luxuryTax;
   const grandTotal = subtotal + serviceAndTax;
 
-  // ── Handle Selecting / Adding a Menu Item (with Rule 4 Allergy Modal) ────
+  // ── Handle Selecting / Adding a Menu Item (Strict Allergy Lock) ──────────
   const handleSelectMenuItem = (item: FnbMenuItem) => {
-    const { hasConflict, conflictingAllergens } = checkAllergyConflict(selectedGuest, item);
-    const existingCartItem = cart.find((ci) => ci.menuItem.id === item.id);
+    const { hasConflict } = checkAllergyConflict(selectedGuest, item);
 
+    // Strictly lock dishes with allergy conflicts — cannot be selected
     if (hasConflict) {
-      // Rule 4: Item with allergy can still be selected, but opens confirmation modal with notes
-      setAllergyNoteInput(existingCartItem?.notes || '');
-      setPendingAllergyItem({
-        item,
-        conflictingAllergens,
-        existingNote: existingCartItem?.notes,
-        isEditingCartItem: false,
-      });
       return;
     }
 
-    // Safe item: add directly
     setCart((prev) => {
       const existing = prev.find((ci) => ci.menuItem.id === item.id);
       if (existing) {
@@ -222,59 +246,8 @@ export function FnbPosPage() {
         {
           menuItem: item,
           quantity: 1,
-          hasAllergyWarning: false,
-          conflictingAllergens: [],
         },
       ];
-    });
-  };
-
-  // ── Confirm Allergy Item from Modal ──────────────────────────────────────
-  const handleConfirmAllergyModal = () => {
-    if (!pendingAllergyItem) return;
-    const { item, conflictingAllergens, isEditingCartItem } = pendingAllergyItem;
-    const cleanNote = allergyNoteInput.trim() || 'Allergy acknowledged — prepare with caution';
-
-    setCart((prev) => {
-      const existing = prev.find((ci) => ci.menuItem.id === item.id);
-      if (existing) {
-        return prev.map((ci) =>
-          ci.menuItem.id === item.id
-            ? {
-                ...ci,
-                quantity: isEditingCartItem ? ci.quantity : ci.quantity + 1,
-                notes: cleanNote,
-                hasAllergyWarning: conflictingAllergens.length > 0,
-                conflictingAllergens,
-              }
-            : ci
-        );
-      }
-      return [
-        ...prev,
-        {
-          menuItem: item,
-          quantity: 1,
-          notes: cleanNote,
-          hasAllergyWarning: conflictingAllergens.length > 0,
-          conflictingAllergens,
-        },
-      ];
-    });
-
-    setPendingAllergyItem(null);
-    setAllergyNoteInput('');
-  };
-
-  // ── Open Note Editor for an Existing Cart Item ───────────────────────────
-  const handleEditCartItemNote = (cartItem: CartItem) => {
-    const { conflictingAllergens } = checkAllergyConflict(selectedGuest, cartItem.menuItem);
-    setAllergyNoteInput(cartItem.notes || '');
-    setPendingAllergyItem({
-      item: cartItem.menuItem,
-      conflictingAllergens,
-      existingNote: cartItem.notes,
-      isEditingCartItem: true,
     });
   };
 
@@ -296,18 +269,11 @@ export function FnbPosPage() {
     setCart((prev) => prev.filter((ci) => ci.menuItem.id !== itemId));
   };
 
-  // ── When Switching Guest, Re-evaluate Cart Allergy Badges ────────────────
+  // ── When Switching Guest, Automatically Remove Conflicting Items ─────────
   const handleSelectGuest = (guest: FnbGuest) => {
     setSelectedGuest(guest);
     setCart((prev) =>
-      prev.map((ci) => {
-        const { hasConflict, conflictingAllergens } = checkAllergyConflict(guest, ci.menuItem);
-        return {
-          ...ci,
-          hasAllergyWarning: hasConflict,
-          conflictingAllergens,
-        };
-      })
+      prev.filter((ci) => !checkAllergyConflict(guest, ci.menuItem).hasConflict)
     );
   };
 
@@ -343,7 +309,7 @@ export function FnbPosPage() {
               SOSEI F&B Point of Sale
             </p>
             <h1 className="text-xl lg:text-2xl font-normal text-zinc-900 tracking-tight leading-none">
-              Select Dining Vanue
+              Select Dining Venue
             </h1>
             <p className="text-[11px] text-zinc-500 font-normal mt-1.5">
               Choose a restaurant grouped by SOSEI property portfolio to open the in-house dining console.
@@ -400,7 +366,7 @@ export function FnbPosPage() {
 
         {/* Grouped Property Sections */}
         <div className="flex-1 space-y-8 pt-6">
-          {groupedPropertyRestaurants.map(({ property, restaurants, inHouseCount }) => (
+          {groupedPropertyRestaurants.map(({ property, restaurants }) => (
             <section key={property.id} className="space-y-3 animate-card-enter">
               {/* Property Group Header */}
               <div className="flex items-baseline justify-between border-b border-zinc-100 pb-2">
@@ -412,9 +378,6 @@ export function FnbPosPage() {
                     {property.location}
                   </span>
                 </div>
-                <span className="text-[9.5px] text-zinc-400 font-medium">
-                  {inHouseCount} In-House VIP Profiles · {restaurants.length} Venues
-                </span>
               </div>
 
               {/* Restaurants Grid for this Property */}
@@ -455,13 +418,6 @@ export function FnbPosPage() {
                           {rest.concept}
                         </p>
                       </div>
-
-                      <div className="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between text-[10px]">
-                        <span className="text-zinc-400 font-normal">{rest.seating}</span>
-                        <span className="font-medium text-zinc-900 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                          Enter Venue <AltArrowRight size={11} />
-                        </span>
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -477,74 +433,135 @@ export function FnbPosPage() {
   // VIEW 2: 3-COLUMN POS WORKSPACE (In-House Guest Sidebar | Menu | Order List)
   // ============================================================================
   return (
-    <div className="w-full h-full flex flex-col bg-white text-zinc-900 overflow-hidden select-none">
-      {/* Minimalist Top Bar */}
-      <header className="shrink-0 h-14 border-b border-zinc-100 bg-white px-4 lg:px-5 flex items-center justify-between z-20">
+    <div className="w-full h-full flex flex-col bg-white text-zinc-900 overflow-hidden select-none animate-fade-in">
+      {/* Top POS Bar */}
+      <header className="shrink-0 h-14 border-b border-zinc-100 bg-white px-4 lg:px-5 flex items-center justify-between gap-3 z-20">
         <div className="flex items-center gap-3 min-w-0">
           <button
-            onClick={() => setSelectedRestaurant(null)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200/80 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 text-[10.5px] font-medium cursor-pointer transition-colors"
+            onClick={() => navigate('/dashboard/fnb/pos')}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-200/80 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 text-[10.5px] font-medium cursor-pointer transition-colors shrink-0"
           >
             <AltArrowLeft size={12} />
             <span>Venues</span>
           </button>
 
-          <div className="h-4 w-px bg-zinc-200" />
+          <div className="h-4 w-px bg-zinc-200 shrink-0" />
 
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xs sm:text-sm font-semibold text-zinc-900 truncate">
-                {selectedRestaurant.name}
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
+                SOSEI F&B Point of Sale (POS)
               </h1>
-              <span className="text-[9px] uppercase tracking-widest text-zinc-400 font-medium hidden sm:inline">
-                · {selectedRestaurant.propertyName}
-              </span>
             </div>
-            <p className="text-[9.5px] text-zinc-400 truncate">
-              {selectedRestaurant.propertyLocation} · {selectedRestaurant.cuisineTag}
-            </p>
+            {/* <p className="text-[9.5px] text-zinc-500 truncate">
+              {selectedRestaurant.name} · {selectedTable} · {selectedRestaurant.propertyName}
+            </p> */}
           </div>
         </div>
 
-        {/* Right Controls: In-House Guests Toggle & Table Selector */}
-        <div className="flex items-center gap-2.5">
+        {/* Right Controls: Active Guest Pill, In-House Guests Toggle & Back to Dashboard */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          {selectedGuest && (
+            <button
+              type="button"
+              onClick={() => setShowInHouseGuests((prev) => !prev)}
+              className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-xl border text-left transition-all cursor-pointer ${
+                selectedGuest.allergies.length > 0
+                  ? 'border-[#fecdd3] bg-[#fff1f2]/60 hover:bg-[#fff1f2]'
+                  : 'border-zinc-200/80 bg-zinc-50/70 hover:bg-zinc-100'
+              }`}
+              title="Click to toggle In-House Guests panel"
+            >
+              <UsersGroupTwoRounded
+                size={14}
+                className={
+                  selectedGuest.allergies.length > 0 ? 'text-[#800020]' : 'text-zinc-700'
+                }
+              />
+              <div className="leading-tight">
+                <p
+                  className={`text-[10.5px] font-bold ${
+                    selectedGuest.allergies.length > 0 ? 'text-[#800020]' : 'text-zinc-900'
+                  }`}
+                >
+                  {selectedGuest.name}
+                </p>
+                <p
+                  className={`text-[9px] ${
+                    selectedGuest.allergies.length > 0 ? 'text-[#800020]/80' : 'text-zinc-500'
+                  }`}
+                >
+                  {selectedGuest.room}
+                </p>
+              </div>
+            </button>
+          )}
+
           <button
             type="button"
-            onClick={() => setShowInHouseGuests((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10.5px] font-medium cursor-pointer transition-all ${
-              showInHouseGuests
-                ? 'bg-zinc-900 text-white border-zinc-900'
-                : 'bg-zinc-50 text-zinc-700 border-zinc-200/80 hover:bg-zinc-100 hover:text-zinc-900'
-            }`}
-            title={showInHouseGuests ? 'Hide In-House Guests Panel' : 'Show In-House Guests Panel'}
+            onClick={() => navigate('/dashboard/fnb')}
+            className="px-3 py-1.5 rounded-lg border border-zinc-200/80 bg-white hover:bg-zinc-50 text-[10.5px] font-medium text-zinc-700 hover:text-zinc-900 cursor-pointer transition-colors"
           >
-            <UsersGroupTwoRounded size={13} />
-            <span>{showInHouseGuests ? 'Hide In-House Guests' : 'Show In-House Guests'}</span>
-            <span
-              className={`px-1.5 py-0.2 rounded text-[9px] font-semibold ${
-                showInHouseGuests ? 'bg-white/20 text-white' : 'bg-zinc-200/80 text-zinc-700'
-              }`}
-            >
-              {filteredGuests.length}
-            </span>
+            Back to Dashboard
           </button>
-
-          <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/70 rounded-lg px-2.5 py-1">
-            <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Table</span>
-            <select
-              value={selectedTable}
-              onChange={(e) => setSelectedTable(e.target.value)}
-              className="bg-transparent text-[10.5px] font-medium text-zinc-900 outline-none cursor-pointer"
-            >
-              {selectedRestaurant.tables.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
       </header>
+
+      {/* Full-Width Medical Allergies Alert Banner */}
+      {selectedGuest && (
+        <div
+          className={`shrink-0 px-4 lg:px-5 py-2 border-b flex flex-wrap items-center justify-between gap-3 ${
+            selectedGuest.allergies.length > 0
+              ? 'bg-[#fff1f2] border-[#fecdd3]/80'
+              : 'bg-[#ecfdf5]/60 border-[#bbf7d0]/70'
+          }`}
+        >
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            {selectedGuest.allergies.length > 0 ? (
+              <>
+                <ShieldWarning size={15} className="text-[#e11d48] shrink-0" />
+                <span className="text-[11px] font-bold text-[#800020]">
+                  {selectedGuest.name} ({selectedGuest.room})
+                </span>
+                <span className="text-[#fda4af]">|</span>
+                <span className="text-[10.5px] font-medium text-[#800020]">
+                  Medical Allergies:
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {selectedGuest.allergies.map((allergy) => (
+                    <span
+                      key={allergy}
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#e11d48] text-white text-[9px] font-bold uppercase tracking-wider"
+                    >
+                      <DangerTriangle size={10} />
+                      <span>{allergy}</span>
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <CheckCircle size={14} className="text-[#14532d] shrink-0" />
+                <span className="text-[11px] font-semibold text-zinc-900">
+                  {selectedGuest.name} ({selectedGuest.room})
+                </span>
+                <span className="text-zinc-300">|</span>
+                <span className="text-[10.5px] font-medium text-[#14532d]">
+                  Medical Allergies: None Registered — All dishes available
+                </span>
+              </>
+            )}
+          </div>
+
+          {selectedGuest.allergies.length > 0 && (
+            <div className="flex items-center shrink-0">
+              <span className="text-[10px] font-semibold text-[#e11d48] hidden sm:inline">
+                Conflicting dishes are locked automatically
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 3-Column POS Body */}
       <div className="flex-1 flex overflow-hidden min-h-0">
@@ -552,7 +569,7 @@ export function FnbPosPage() {
             COLUMN 1 (THIRD SIDEBAR): IN-HOUSE GUESTS LIST TAB (COLLAPSIBLE HIDE/SHOW)
            ────────────────────────────────────────────────────────────────────── */}
         {showInHouseGuests ? (
-          <aside className="w-[230px] lg:w-[260px] shrink-0 border-r border-zinc-100 bg-zinc-50/40 flex flex-col h-full transition-all duration-300">
+          <aside className="w-[230px] lg:w-[255px] shrink-0 border-r border-zinc-100 bg-zinc-50/40 flex flex-col h-full transition-all duration-300">
             {/* Sidebar Header */}
             <div className="p-3.5 border-b border-zinc-100 space-y-2.5">
               <div className="flex items-center justify-between gap-1">
@@ -575,97 +592,97 @@ export function FnbPosPage() {
                 </button>
               </div>
 
-            {/* Scope Toggle: Current Property vs All SOSEI */}
-            <div className="grid grid-cols-2 gap-1 p-0.5 bg-zinc-100/80 rounded-lg text-[9.5px]">
-              <button
-                onClick={() => setGuestScope('property')}
-                className={`py-1 rounded-md font-medium transition-all cursor-pointer ${
-                  guestScope === 'property'
-                    ? 'bg-white text-zinc-900 shadow-2xs'
-                    : 'text-zinc-500 hover:text-zinc-800'
-                }`}
-              >
-                {selectedRestaurant.propertyName.replace('SOSEI ', '')}
-              </button>
-              <button
-                onClick={() => setGuestScope('all')}
-                className={`py-1 rounded-md font-medium transition-all cursor-pointer ${
-                  guestScope === 'all'
-                    ? 'bg-white text-zinc-900 shadow-2xs'
-                    : 'text-zinc-500 hover:text-zinc-800'
-                }`}
-              >
-                All Portfolio
-              </button>
-            </div>
-
-            {/* Guest Search */}
-            <div className="relative">
-              <Magnifer size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="Filter guest or room..."
-                value={guestSearchQuery}
-                onChange={(e) => setGuestSearchQuery(e.target.value)}
-                className="w-full pl-7 pr-2.5 py-1.5 rounded-lg border border-zinc-200/80 bg-white text-[10.5px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-900 transition-colors"
-              />
-            </div>
-          </div>
-
-          {/* Guest List Tabs */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-2.5 space-y-1.5">
-            {filteredGuests.map((guest) => {
-              const isSelected = selectedGuest?.id === guest.id;
-              const hasAllergies = guest.allergies.length > 0;
-
-              return (
+              {/* Scope Toggle: Current Property vs All SOSEI */}
+              <div className="grid grid-cols-2 gap-1 p-0.5 bg-zinc-100/80 rounded-lg text-[9.5px]">
                 <button
-                  key={guest.id}
-                  onClick={() => handleSelectGuest(guest)}
-                  className={`w-full text-left p-2.5 rounded-[10px] border transition-all cursor-pointer relative overflow-hidden ${
-                    isSelected
-                      ? 'bg-white border-zinc-900 shadow-xs'
-                      : 'bg-transparent border-transparent hover:bg-white/80 hover:border-zinc-200/70'
+                  onClick={() => setGuestScope('property')}
+                  className={`py-1 rounded-md font-medium transition-all cursor-pointer ${
+                    guestScope === 'property'
+                      ? 'bg-white text-zinc-900 shadow-2xs'
+                      : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
-                  {isSelected && (
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-zinc-900" />
-                  )}
-
-                  <div className="flex items-start justify-between gap-1.5">
-                    <span className="text-[11px] font-semibold text-zinc-900 leading-tight truncate">
-                      {guest.name}
-                    </span>
-                    <span className="text-[8.5px] text-zinc-400 font-medium shrink-0">
-                      {guest.partySize} pax
-                    </span>
-                  </div>
-
-                  <p className="text-[9.5px] text-zinc-500 mt-0.5 truncate">
-                    {guest.room}
-                  </p>
-
-                  {/* Minimalist Allergy Indicator */}
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {hasAllergies ? (
-                      guest.allergies.map((allergy) => (
-                        <span
-                          key={allergy}
-                          className="inline-flex items-center px-1.5 py-0.2 rounded text-[8.5px] font-medium bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80"
-                        >
-                          {allergy}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-[8.5px] text-zinc-400 font-normal">
-                        No registered allergies
-                      </span>
-                    )}
-                  </div>
+                  {selectedRestaurant.propertyName.replace('SOSEI ', '')}
                 </button>
-              );
-            })}
-          </div>
+                <button
+                  onClick={() => setGuestScope('all')}
+                  className={`py-1 rounded-md font-medium transition-all cursor-pointer ${
+                    guestScope === 'all'
+                      ? 'bg-white text-zinc-900 shadow-2xs'
+                      : 'text-zinc-500 hover:text-zinc-800'
+                  }`}
+                >
+                  All Portfolio
+                </button>
+              </div>
+
+              {/* Guest Search */}
+              <div className="relative">
+                <Magnifer size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <input
+                  type="text"
+                  placeholder="Filter guest or room..."
+                  value={guestSearchQuery}
+                  onChange={(e) => setGuestSearchQuery(e.target.value)}
+                  className="w-full pl-7 pr-2.5 py-1.5 rounded-lg border border-zinc-200/80 bg-white text-[10.5px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-900 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Guest List Tabs */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2.5 space-y-1.5">
+              {filteredGuests.map((guest) => {
+                const isSelected = selectedGuest?.id === guest.id;
+                const hasAllergies = guest.allergies.length > 0;
+
+                return (
+                  <button
+                    key={guest.id}
+                    onClick={() => handleSelectGuest(guest)}
+                    className={`w-full text-left p-2.5 rounded-[10px] border transition-all cursor-pointer relative overflow-hidden ${
+                      isSelected
+                        ? 'bg-white border-zinc-900 shadow-xs'
+                        : 'bg-transparent border-transparent hover:bg-white/80 hover:border-zinc-200/70'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute left-0 top-0 bottom-0 w-1 bg-zinc-900" />
+                    )}
+
+                    <div className="flex items-start justify-between gap-1.5">
+                      <span className="text-[11px] font-semibold text-zinc-900 leading-tight truncate">
+                        {guest.name}
+                      </span>
+                      <span className="text-[8.5px] text-zinc-400 font-medium shrink-0">
+                        {guest.partySize} pax
+                      </span>
+                    </div>
+
+                    <p className="text-[9.5px] text-zinc-500 mt-0.5 truncate">
+                      {guest.room}
+                    </p>
+
+                    {/* Minimalist Allergy Indicator */}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {hasAllergies ? (
+                        guest.allergies.map((allergy) => (
+                          <span
+                            key={allergy}
+                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[8.5px] font-medium bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80"
+                          >
+                            {allergy}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[8.5px] text-zinc-400 font-normal">
+                          No registered allergies
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </aside>
         ) : (
           <aside className="w-10 shrink-0 border-r border-zinc-100 bg-zinc-50/50 flex flex-col items-center py-3 justify-between h-full">
@@ -688,38 +705,51 @@ export function FnbPosPage() {
         )}
 
         {/* ──────────────────────────────────────────────────────────────────────
-            COLUMN 2 (CENTER): REGIONAL MENU CATALOG (MA & WABI-SABI)
+            COLUMN 2 (CENTER): REGIONAL MENU CATALOG (ALLERGY SAFE KDS)
            ────────────────────────────────────────────────────────────────────── */}
         <main className="flex-1 flex flex-col min-w-0 bg-white h-full overflow-hidden">
-          {/* Category Tabs & Search Bar */}
-          <div className="shrink-0 px-5 py-3 border-b border-zinc-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Search & Category Filter Header */}
+          <div className="shrink-0 px-5 py-3 border-b border-zinc-100 space-y-2.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              {/* Dish Search */}
+              <div className="relative w-full sm:w-80">
+                <Magnifer size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <input
+                  type="text"
+                  placeholder="Search dishes or ingredients (e.g. wagyu, caviar, truffle)..."
+                  value={menuSearchQuery}
+                  onChange={(e) => setMenuSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-zinc-200/80 bg-zinc-50/40 text-[11px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-900 focus:bg-white transition-colors"
+                />
+              </div>
+
+              {/* Hide Conflicting Allergens Checkbox */}
+              <label className="inline-flex items-center gap-2 text-[11px] text-zinc-600 font-medium cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={hideConflictingAllergens}
+                  onChange={(e) => setHideConflictingAllergens(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer"
+                />
+                <span>Hide Conflicting Allergens</span>
+              </label>
+            </div>
+
             {/* Categories */}
-            <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
+            <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pt-0.5">
               {availableCategories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1 rounded-lg text-[10.5px] font-medium whitespace-nowrap transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-lg text-[10.5px] font-medium whitespace-nowrap transition-all cursor-pointer border ${
                     selectedCategory === cat.id
-                      ? 'bg-zinc-900 text-white'
-                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+                      ? 'bg-zinc-900 text-white border-zinc-900'
+                      : 'bg-white text-zinc-600 border-zinc-200/80 hover:text-zinc-900 hover:bg-zinc-50'
                   }`}
                 >
                   {cat.label}
                 </button>
               ))}
-            </div>
-
-            {/* Dish Search */}
-            <div className="relative w-full sm:w-56">
-              <Magnifer size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="Search dish or ingredient..."
-                value={menuSearchQuery}
-                onChange={(e) => setMenuSearchQuery(e.target.value)}
-                className="w-full pl-7 pr-2.5 py-1 rounded-lg border border-zinc-200/80 bg-zinc-50/50 text-[10.5px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-900 focus:bg-white transition-colors"
-              />
             </div>
           </div>
 
@@ -727,7 +757,7 @@ export function FnbPosPage() {
           <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
             <div
               className={`grid grid-cols-1 md:grid-cols-2 ${
-                showInHouseGuests ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'
+                showInHouseGuests ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-3'
               } gap-4`}
             >
               {filteredMenuItems.map((item) => {
@@ -740,70 +770,146 @@ export function FnbPosPage() {
                 return (
                   <div
                     key={item.id}
-                    onClick={() => handleSelectMenuItem(item)}
-                    className={`group rounded-[12px] border p-3.5 flex flex-col justify-between transition-all duration-300 cursor-pointer ${
+                    onClick={() => {
+                      if (!hasConflict) {
+                        handleSelectMenuItem(item);
+                      }
+                    }}
+                    className={`group rounded-[14px] border overflow-hidden flex flex-col justify-between transition-all duration-300 ${
                       hasConflict
-                        ? 'border-[#fecdd3] bg-[#fff1f2]/20 hover:bg-[#fff1f2]/40'
-                        : 'border-zinc-200/70 bg-zinc-50/30 hover:bg-zinc-50/80 hover:border-zinc-300 hover:shadow-sm'
+                        ? 'border-[#fecdd3]/80 bg-zinc-50/70 opacity-60 cursor-not-allowed'
+                        : 'border-zinc-200/80 bg-white hover:border-zinc-300 hover:shadow-md hover:shadow-black/5 cursor-pointer'
                     }`}
                   >
                     <div>
                       {/* Dish Image */}
-                      <div className="relative h-36 w-full rounded-[8px] overflow-hidden bg-zinc-100 mb-3">
+                      <div className="relative h-44 w-full overflow-hidden bg-zinc-100">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className={`w-full h-full object-cover transition-transform duration-500 ${
+                            hasConflict ? 'grayscale-[60%] opacity-65' : 'group-hover:scale-105'
+                          }`}
                           loading="lazy"
                         />
-                        {item.isChefSignature && (
-                          <span className="absolute top-2 left-2 bg-zinc-900/85 text-white text-[8.5px] font-medium uppercase tracking-widest px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
-                            <ChefHat size={10} /> Signature
-                          </span>
-                        )}
-                        {cartEntry && (
-                          <span className="absolute top-2 right-2 bg-zinc-900 text-white text-[9.5px] font-semibold px-2 py-0.5 rounded">
-                            {cartEntry.quantity} in order
-                          </span>
-                        )}
-                      </div>
 
-                      {/* Title & Price */}
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-[11.5px] font-semibold text-zinc-900 leading-snug">
-                          {item.name}
-                        </h3>
-                        <span className="text-[11.5px] font-semibold text-zinc-900 shrink-0">
+                        {/* Top-Left Dietary & Signature Badges */}
+                        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 max-w-[85%]">
+                          {item.isChefSignature && (
+                            <span className="bg-zinc-900/90 text-white text-[8.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <ChefHat size={10} /> SIGNATURE
+                            </span>
+                          )}
+                          {item.dietaryBadges.slice(0, 2).map((badge) => (
+                            <span
+                              key={badge}
+                              className="bg-white/95 text-zinc-800 text-[8.5px] font-semibold px-2 py-0.5 rounded-full shadow-2xs"
+                            >
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Bottom-Right Price Pill */}
+                        <span className="absolute bottom-2.5 right-2.5 bg-zinc-900/90 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-lg">
                           ${item.price}
                         </span>
                       </div>
 
-                      {/* Concise Description */}
-                      <p className="text-[10px] text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
-                        {item.description}
-                      </p>
+                      {/* Card Content Body */}
+                      <div className="p-3.5 pb-2">
+                        {/* Conflict Locked Banner */}
+                        {hasConflict && (
+                          <div className="mb-2.5 px-2.5 py-1 rounded-md bg-[#e11d48] text-white flex items-center justify-between gap-2">
+                            <span className="inline-flex items-center gap-1 text-[9.5px] font-bold truncate">
+                              <ShieldWarning size={12} className="shrink-0" />
+                              <span className="truncate">
+                                CONFLICT: Contains {conflictingAllergens.join(', ')}
+                              </span>
+                            </span>
+                            <span className="text-[8.5px] font-bold uppercase tracking-wider shrink-0">
+                              LOCKED
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Dish Title */}
+                        <h3
+                          className={`text-[13px] font-bold leading-snug ${
+                            hasConflict ? 'text-zinc-500' : 'text-zinc-900'
+                          }`}
+                        >
+                          {item.name}
+                        </h3>
+
+                        {/* Concise Description */}
+                        <p
+                          className={`text-[10.5px] mt-1 line-clamp-2 leading-relaxed ${
+                            hasConflict ? 'text-zinc-400' : 'text-zinc-500'
+                          }`}
+                        >
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Minimalist Footer: Allergen Status & Action */}
-                    <div className="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between gap-2">
-                      {hasConflict ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-medium bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80 truncate">
-                          <ShieldWarning size={11} className="shrink-0" />
-                          <span>Allergen: {conflictingAllergens.join(', ')}</span>
-                        </span>
-                      ) : item.allergens.length > 0 ? (
-                        <span className="text-[9px] text-zinc-400 truncate">
-                          Contains: {item.allergens.join(', ')}
-                        </span>
-                      ) : (
-                        <span className="text-[9px] text-[#14532d] font-medium">
-                          Allergen-Free
-                        </span>
-                      )}
+                    {/* Card Footer: View Ingredients & Action / Locked State */}
+                    <div className="px-3.5 pb-3.5 pt-2 flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInspectIngredientsItem(item);
+                        }}
+                        className="inline-flex items-center gap-1 text-[10px] font-medium text-zinc-500 hover:text-zinc-900 cursor-pointer whitespace-nowrap"
+                      >
+                        <Eye size={12} className="shrink-0" />
+                        <span>View Ingredients</span>
+                      </button>
 
-                      <span className="text-[10px] font-medium text-zinc-900 shrink-0 group-hover:underline">
-                        {hasConflict ? '+ Add with Note' : '+ Add'}
-                      </span>
+                      {hasConflict ? (
+                        <button
+                          type="button"
+                          disabled
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 text-[#800020]/70 border border-[#fecdd3] text-[10px] font-semibold cursor-not-allowed whitespace-nowrap shrink-0"
+                        >
+                          <ShieldWarning size={12} className="text-[#e11d48]/80 shrink-0" />
+                          <span>Locked</span>
+                        </button>
+                      ) : cartEntry ? (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-3 px-3 py-1 rounded-lg bg-zinc-900 text-white text-[11px] font-semibold"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="hover:text-zinc-300 cursor-pointer px-0.5"
+                          >
+                            -
+                          </button>
+                          <span className="min-w-[12px] text-center">{cartEntry.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="hover:text-zinc-300 cursor-pointer px-0.5"
+                          >
+                            +
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectMenuItem(item);
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 text-[10px] font-semibold cursor-pointer transition-colors"
+                        >
+                          + Add
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -813,115 +919,122 @@ export function FnbPosPage() {
         </main>
 
         {/* ──────────────────────────────────────────────────────────────────────
-            COLUMN 3 (RIGHT): ORDER LIST
+            COLUMN 3 (RIGHT): GUEST DINING FOLIO (NO TAKE NOTE)
            ────────────────────────────────────────────────────────────────────── */}
-        <aside className="w-[290px] lg:w-[330px] shrink-0 border-l border-zinc-100 bg-zinc-50/30 flex flex-col justify-between h-full">
-          {/* Order Header & Selected Guest Summary */}
-          <div className="p-4 border-b border-zinc-100 bg-white space-y-2.5">
+        <aside className="w-[295px] lg:w-[340px] shrink-0 border-l border-zinc-100 bg-white flex flex-col justify-between h-full">
+          {/* Folio Header & Venue / Table Selectors */}
+          <div className="p-4 border-b border-zinc-100 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                Order List
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                GUEST DINING FOLIO
               </span>
               {cart.length > 0 && (
                 <button
                   onClick={() => setCart([])}
-                  className="text-[9.5px] text-zinc-400 hover:text-[#800020] flex items-center gap-1 cursor-pointer transition-colors"
+                  className="text-zinc-400 hover:text-[#800020] cursor-pointer transition-colors"
+                  title="Clear Folio"
                 >
-                  <TrashBinTrash size={12} /> Clear
+                  <TrashBinTrash size={14} />
                 </button>
               )}
             </div>
 
             {selectedGuest ? (
-              <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200/60 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-zinc-900">
-                    {selectedGuest.name}
-                  </span>
-                  <span className="text-[9px] text-zinc-400 font-medium">
-                    {selectedGuest.folioNumber}
-                  </span>
-                </div>
-                <p className="text-[9.5px] text-zinc-500">
-                  {selectedGuest.room} · {selectedTable}
+              <div>
+                <h2 className="text-sm font-bold text-zinc-900 leading-tight">
+                  {selectedGuest.name}
+                </h2>
+                <p className="text-[10.5px] text-zinc-500 mt-0.5">
+                  {selectedGuest.room} · {selectedGuest.folioNumber}
                 </p>
-                {selectedGuest.allergies.length > 0 && (
-                  <div className="pt-1 flex items-center gap-1 flex-wrap">
-                    <span className="text-[8.5px] text-[#800020] font-medium">
-                      Allergies: {selectedGuest.allergies.join(', ')}
-                    </span>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200/60 text-[10px] text-zinc-400">
                 Select an in-house guest from the left panel.
               </div>
             )}
+
+            {/* Dining Venue & Table / Delivery Selectors */}
+            <div className="grid grid-cols-2 gap-2 pt-0.5">
+              <div className="p-2 rounded-lg border border-zinc-200/80 bg-zinc-50/40">
+                <span className="block text-[8.5px] text-zinc-400 font-medium">Dining Venue</span>
+                <select
+                  value={selectedRestaurant.id}
+                  onChange={(e) => {
+                    const nextRest = SOSEI_RESTAURANTS.find((r) => r.id === e.target.value);
+                    if (nextRest) handleSelectRestaurant(nextRest);
+                  }}
+                  className="w-full bg-transparent text-[10.5px] font-semibold text-zinc-900 outline-none cursor-pointer truncate mt-0.5"
+                >
+                  {SOSEI_RESTAURANTS.filter(
+                    (r) => r.propertyId === selectedRestaurant.propertyId
+                  ).map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="p-2 rounded-lg border border-zinc-200/80 bg-zinc-50/40">
+                <span className="block text-[8.5px] text-zinc-400 font-medium">
+                  Table / Delivery
+                </span>
+                <select
+                  value={selectedTable}
+                  onChange={(e) => setSelectedTable(e.target.value)}
+                  className="w-full bg-transparent text-[10.5px] font-semibold text-zinc-900 outline-none cursor-pointer truncate mt-0.5"
+                >
+                  {selectedRestaurant.tables.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* Order Items */}
+          {/* Order Items (Clean — No Take Note) */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-2.5">
             {cart.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center px-4 text-zinc-400 space-y-1.5">
                 <UsersGroupTwoRounded size={22} className="opacity-40" />
-                <p className="text-[11px] font-medium text-zinc-600">No items in order</p>
+                <p className="text-[11px] font-medium text-zinc-600">No items in folio</p>
                 <p className="text-[9.5px] text-zinc-400 leading-relaxed">
-                  Select dishes from {selectedRestaurant.name} menu to build the dining order.
+                  Select allergy-safe dishes from {selectedRestaurant.name} menu to build the dining folio.
                 </p>
               </div>
             ) : (
               cart.map((ci) => (
                 <div
                   key={ci.menuItem.id}
-                  className="p-3 rounded-[10px] bg-white border border-zinc-200/70 space-y-2"
+                  className="p-3 rounded-[10px] bg-white border border-zinc-200/80 space-y-2.5"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h4 className="text-[11px] font-semibold text-zinc-900 leading-snug">
+                      <h4 className="text-[11.5px] font-bold text-zinc-900 leading-snug">
                         {ci.menuItem.name}
                       </h4>
                       <span className="text-[9.5px] text-zinc-400">
-                        ${ci.menuItem.price} each
+                        ${ci.menuItem.price} each · {ci.menuItem.categoryLabel}
                       </span>
                     </div>
-                    <span className="text-[11px] font-semibold text-zinc-900 shrink-0">
+                    <span className="text-[11.5px] font-bold text-zinc-900 shrink-0">
                       ${ci.menuItem.price * ci.quantity}
                     </span>
                   </div>
 
-                  {/* Allergy / Kitchen Note Display */}
-                  {ci.notes && (
-                    <div
-                      onClick={() => handleEditCartItemNote(ci)}
-                      className={`p-2 rounded-md text-[9.5px] flex items-start justify-between gap-2 cursor-pointer ${
-                        ci.hasAllergyWarning
-                          ? 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
-                          : 'bg-zinc-50 text-zinc-600 border border-zinc-200/60'
-                      }`}
-                    >
-                      <div className="leading-relaxed">
-                        {ci.hasAllergyWarning && (
-                          <span className="font-semibold block">
-                            Allergy Note ({ci.conflictingAllergens?.join(', ')}):
-                          </span>
-                        )}
-                        <span>{ci.notes}</span>
-                      </div>
-                      <Pen size={11} className="shrink-0 mt-0.5 opacity-70" />
-                    </div>
-                  )}
-
-                  {/* Quantity & Note Controls */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex items-center gap-2 border border-zinc-200 rounded-md px-2 py-0.5 bg-zinc-50/50">
+                  {/* Quantity & Remove Controls */}
+                  <div className="flex items-center justify-between pt-0.5">
+                    <div className="flex items-center gap-2.5 border border-zinc-200 rounded-md px-2.5 py-0.5 bg-zinc-50/50">
                       <button
                         onClick={() => updateQuantity(ci.menuItem.id, -1)}
                         className="text-zinc-600 hover:text-zinc-900 font-semibold text-xs cursor-pointer px-1"
                       >
                         -
                       </button>
-                      <span className="text-[10.5px] font-semibold text-zinc-900 min-w-[14px] text-center">
+                      <span className="text-[10.5px] font-bold text-zinc-900 min-w-[14px] text-center">
                         {ci.quantity}
                       </span>
                       <button
@@ -932,22 +1045,12 @@ export function FnbPosPage() {
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-2.5">
-                      {!ci.notes && (
-                        <button
-                          onClick={() => handleEditCartItemNote(ci)}
-                          className="text-[9.5px] text-zinc-500 hover:text-zinc-900 underline cursor-pointer"
-                        >
-                          + Note
-                        </button>
-                      )}
-                      <button
-                        onClick={() => removeFromCart(ci.menuItem.id)}
-                        className="text-[9.5px] text-zinc-400 hover:text-[#800020] cursor-pointer"
-                      >
-                        Remove
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => removeFromCart(ci.menuItem.id)}
+                      className="text-[10px] font-medium text-[#e11d48] hover:text-[#800020] cursor-pointer"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               ))
@@ -956,47 +1059,50 @@ export function FnbPosPage() {
 
           {/* Order Totals & Submit */}
           <div className="p-4 border-t border-zinc-100 bg-white space-y-3">
-            <div className="space-y-1 text-[10.5px]">
+            <div className="space-y-1.5 text-[11px]">
               <div className="flex justify-between text-zinc-500">
-                <span>Subtotal</span>
-                <span>${subtotal}</span>
+                <span>Food & Beverage Subtotal</span>
+                <span className="text-zinc-800 font-medium">${subtotal}</span>
               </div>
               <div className="flex justify-between text-zinc-500">
-                <span>Service & Tax (20%)</span>
-                <span>${serviceAndTax}</span>
+                <span>Service Charge (10%)</span>
+                <span className="text-zinc-800 font-medium">${serviceCharge}</span>
               </div>
-              <div className="pt-2 border-t border-zinc-100 flex justify-between text-xs font-semibold text-zinc-900">
+              <div className="flex justify-between text-zinc-500">
+                <span>Hospitality Luxury Tax (10%)</span>
+                <span className="text-zinc-800 font-medium">${luxuryTax}</span>
+              </div>
+              <div className="pt-2 border-t border-zinc-100 flex justify-between text-xs font-bold text-zinc-900">
                 <span>Total Folio Charge</span>
-                <span>${grandTotal}</span>
+                <span className="text-sm">${grandTotal}</span>
               </div>
             </div>
 
             <button
               onClick={handleCheckoutOrder}
               disabled={cart.length === 0 || !selectedGuest}
-              className={`w-full py-2.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              className={`w-full py-2.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 cart.length > 0 && selectedGuest
                   ? 'bg-zinc-900 text-white hover:bg-zinc-800'
                   : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
               }`}
             >
               <CheckCircle size={14} />
-              <span>Send Order & Charge Folio</span>
+              <span>Charge to Villa Folio & Send KDS</span>
             </button>
           </div>
         </aside>
       </div>
 
       {/* ========================================================================
-          MODAL 1 (RULE 4): ALLERGY CONFIRMATION & KITCHEN NOTES MODAL
+          MODAL 1: VIEW INGREDIENTS & ALLERGEN BREAKDOWN
          ======================================================================== */}
-      {pendingAllergyItem &&
+      {inspectIngredientsItem &&
         createPortal(
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            {/* Full-viewport Backdrop covering sidebars and all workspace panels */}
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-fade-in"
-              onClick={() => setPendingAllergyItem(null)}
+              className="fixed inset-0 bg-black/50 transition-opacity animate-fade-in"
+              onClick={() => setInspectIngredientsItem(null)}
             />
 
             <div
@@ -1004,111 +1110,78 @@ export function FnbPosPage() {
               aria-modal="true"
               className="relative z-10 bg-white w-full max-w-md rounded-[12px] border border-zinc-200 shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
             >
-              {/* Modal Header */}
               <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {pendingAllergyItem.conflictingAllergens.length > 0 ? (
-                    <ShieldWarning size={16} className="text-[#800020] shrink-0" />
-                  ) : (
-                    <Pen size={15} className="text-zinc-700 shrink-0" />
-                  )}
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-900">
-                    {pendingAllergyItem.conflictingAllergens.length > 0
-                      ? 'Allergy Confirmation & Notes'
-                      : 'Kitchen Instruction Note'}
-                  </h3>
-                </div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-900">
+                  Dish Ingredients & Allergen Profile
+                </h3>
                 <button
-                  onClick={() => setPendingAllergyItem(null)}
+                  onClick={() => setInspectIngredientsItem(null)}
                   className="text-zinc-400 hover:text-zinc-900 cursor-pointer"
                 >
                   <CloseCircle size={18} />
                 </button>
               </div>
 
-              {/* Modal Content */}
               <div className="p-4 space-y-3.5 text-xs">
                 <div>
                   <div className="flex justify-between items-baseline">
-                    <span className="font-semibold text-zinc-900">
-                      {pendingAllergyItem.item.name}
+                    <span className="font-bold text-zinc-900 text-sm">
+                      {inspectIngredientsItem.name}
                     </span>
-                    <span className="text-zinc-500 font-medium">
-                      ${pendingAllergyItem.item.price}
+                    <span className="text-zinc-900 font-bold">
+                      ${inspectIngredientsItem.price}
                     </span>
                   </div>
-                  <p className="text-[10px] text-zinc-400 mt-0.5">
-                    Ingredients: {pendingAllergyItem.item.ingredients.join(', ')}
+                  <p className="text-[10.5px] text-zinc-500 mt-1 leading-relaxed">
+                    {inspectIngredientsItem.description}
                   </p>
                 </div>
 
-                {pendingAllergyItem.conflictingAllergens.length > 0 && selectedGuest && (
-                  <div className="p-3 rounded-lg bg-[#fff1f2] border border-[#fecdd3]/80 text-[#800020] space-y-1">
-                    <p className="text-[10.5px] font-semibold">
-                      Allergen Match: {pendingAllergyItem.conflictingAllergens.join(', ')}
-                    </p>
-                    <p className="text-[10px] leading-relaxed opacity-90">
-                      {selectedGuest.name} ({selectedGuest.room}) has a registered allergy to{' '}
-                      <strong>{selectedGuest.allergies.join(', ')}</strong>. Please add kitchen
-                      preparation or modification notes before confirming.
-                    </p>
-                  </div>
-                )}
-
-                {/* Quick Preset Chips */}
-                <div className="space-y-1.5">
-                  <label className="block text-[9.5px] font-medium text-zinc-400">
-                    Quick Kitchen Instructions
-                  </label>
+                <div>
+                  <p className="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
+                    Complete Ingredients ({inspectIngredientsItem.ingredients.length})
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {QUICK_ALLERGY_NOTES.map((preset) => (
-                      <button
-                        key={preset}
-                        type="button"
-                        onClick={() =>
-                          setAllergyNoteInput((prev) =>
-                            prev ? `${prev}; ${preset}` : preset
-                          )
-                        }
-                        className="px-2 py-1 rounded border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-[9.5px] text-zinc-700 cursor-pointer transition-colors"
+                    {inspectIngredientsItem.ingredients.map((ing) => (
+                      <span
+                        key={ing}
+                        className="px-2 py-1 rounded bg-zinc-100 text-zinc-700 text-[10px] font-medium"
                       >
-                        + {preset}
-                      </button>
+                        {ing}
+                      </span>
                     ))}
                   </div>
                 </div>
 
-                {/* Notes Textarea */}
-                <div className="space-y-1.5">
-                  <label className="block text-[9.5px] font-medium text-zinc-400">
-                    Kitchen / Allergy Modification Notes
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={allergyNoteInput}
-                    onChange={(e) => setAllergyNoteInput(e.target.value)}
-                    placeholder="Add notes for the chef (e.g., omit allergen ingredient, prepare in separate pan)..."
-                    autoFocus
-                    className="w-full p-2.5 rounded-lg border border-zinc-200 bg-white text-[11px] text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-900 resize-none"
-                  />
+                <div>
+                  <p className="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">
+                    Registered Allergens
+                  </p>
+                  {inspectIngredientsItem.allergens.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {inspectIngredientsItem.allergens.map((alg) => (
+                        <span
+                          key={alg}
+                          className="px-2 py-0.5 rounded-full bg-[#fff1f2] text-[#800020] border border-[#fecdd3] text-[10px] font-semibold"
+                        >
+                          {alg}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-[10.5px] text-[#14532d] font-medium">
+                      Allergen-Free
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="p-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-end gap-2">
+              <div className="p-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-end">
                 <button
-                  onClick={() => setPendingAllergyItem(null)}
-                  className="px-3.5 py-1.5 rounded-lg border border-zinc-200 bg-white text-[11px] font-medium text-zinc-600 hover:text-zinc-900 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmAllergyModal}
+                  onClick={() => setInspectIngredientsItem(null)}
                   className="px-4 py-1.5 rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 text-[11px] font-medium cursor-pointer"
                 >
-                  {pendingAllergyItem.isEditingCartItem
-                    ? 'Save Note'
-                    : 'Confirm & Add to Order'}
+                  Close
                 </button>
               </div>
             </div>
