@@ -343,7 +343,7 @@ export function FnbPosPage() {
               SOSEI F&B Point of Sale
             </p>
             <h1 className="text-xl lg:text-2xl font-normal text-zinc-900 tracking-tight leading-none">
-              Select Dining Sanctuary
+              Select Dining Vanue
             </h1>
             <p className="text-[11px] text-zinc-500 font-normal mt-1.5">
               Choose a restaurant grouped by SOSEI property portfolio to open the in-house dining console.

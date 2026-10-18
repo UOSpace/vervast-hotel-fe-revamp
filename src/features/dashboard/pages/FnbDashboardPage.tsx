@@ -106,7 +106,7 @@ export function FnbDashboardPage() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
-              Welcome To SOSEI FNB Dashboard
+              Welcome To SOSEI F&amp;B Dashboard
             </h1>
             <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2 mt-1">
               <span className="text-zinc-900 font-medium">
