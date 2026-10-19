@@ -24,6 +24,7 @@ import {
   fmtInt,
   fmtPct,
   fmtSignedPct,
+  fmtSignedPts,
   fmtSignedUsd,
   fmtUsd,
   fmtUsdFull,
@@ -186,6 +187,8 @@ const CUISINE_META: Record<string, { checkIdx: number; bevIdx: number; marginPct
 export interface FnbCuisineRow extends FnbSplitRow {
   outlets: number;
   bevSharePct: number;
+  foodRevenue: number;
+  bevRevenue: number;
   marginPct: number;
   growthPct: number;
 }
@@ -203,13 +206,20 @@ export function getFnbCuisines(m: MetricsCore): FnbCuisineRow[] {
     FNB_CUISINE_SHARES,
     Object.fromEntries(Object.entries(CUISINE_META).map(([k, v]) => [k, v.growthOffsetPts]))
   );
-  return rows.map((r, i) => ({
-    ...r,
-    outlets: outlets[i].value,
-    bevSharePct: clamp((m.fnb.bevSharePct * CUISINE_META[r.id].bevIdx) / weightedBevIdx, 0, 95),
-    marginPct: CUISINE_META[r.id].marginPct,
-    growthPct: m.vsLy.fnbRevenuePct + (off[r.id] ?? 0),
-  }));
+  return rows.map((r, i) => {
+    const bevSharePct = clamp((m.fnb.bevSharePct * CUISINE_META[r.id].bevIdx) / weightedBevIdx, 0, 95);
+    const bevRevenue = Math.round((r.revenue * bevSharePct) / 100);
+    const foodRevenue = Math.max(0, Math.round(r.revenue) - bevRevenue);
+    return {
+      ...r,
+      outlets: outlets[i].value,
+      bevSharePct,
+      foodRevenue,
+      bevRevenue,
+      marginPct: CUISINE_META[r.id].marginPct,
+      growthPct: m.vsLy.fnbRevenuePct + (off[r.id] ?? 0),
+    };
+  });
 }
 
 /* ───────────────────────── DEMAND SOURCES ───────────────────────── */
@@ -231,15 +241,16 @@ export function getFnbDemandSources(m: MetricsCore): FnbSplitRow[] {
 interface OriginDef extends ShareDef {
   captureIdx: number;
   spendIdx: number;
+  bevIdx: number;
   behaviour: string;
 }
 
 const ORIGIN_DEFS: OriginDef[] = [
-  { id: 'asia-pacific', name: 'Asia Pacific', share: 35, captureIdx: 1.0, spendIdx: 1.08, behaviour: 'Strong Omakase, Tasting Menu & Vintage Wine/Whisky flight conversion (JP, SG, AU)' },
-  { id: 'europe', name: 'Europe', share: 25, captureIdx: 0.94, spendIdx: 0.96, behaviour: 'High Half-Board utilization + Coastal Mediterranean & Wine Cellar uptake (UK, CH, FR)' },
-  { id: 'america', name: 'America', share: 20, captureIdx: 1.04, spendIdx: 1.12, behaviour: 'High Prime Grill, Sunset Cocktails & In-Villa Dining attachment (US, CA, BR)' },
-  { id: 'middle-east', name: 'Middle East', share: 12, captureIdx: 1.16, spendIdx: 1.38, behaviour: 'Highest Private Sandbank Dining, In-Villa BBQ & Zero-Proof Elixir spend (UAE, KSA, QA)' },
-  { id: 'africa', name: 'Africa', share: 8, captureIdx: 0.88, spendIdx: 0.86, behaviour: 'Strong Beach Club, Restorative Wellness Grazing & Chef Table participation (ZA, EG, MA)' },
+  { id: 'asia-pacific', name: 'Asia Pacific', share: 35, captureIdx: 1.0, spendIdx: 1.08, bevIdx: 1.04, behaviour: 'Strong Omakase, Tasting Menu & Vintage Wine/Whisky flight conversion (JP, SG, AU)' },
+  { id: 'europe', name: 'Europe', share: 25, captureIdx: 0.94, spendIdx: 0.96, bevIdx: 1.12, behaviour: 'High Half-Board utilization + Coastal Mediterranean & Wine Cellar uptake (UK, CH, FR)' },
+  { id: 'america', name: 'America', share: 20, captureIdx: 1.04, spendIdx: 1.12, bevIdx: 1.08, behaviour: 'High Prime Grill, Sunset Cocktails & In-Villa Dining attachment (US, CA, BR)' },
+  { id: 'middle-east', name: 'Middle East', share: 12, captureIdx: 1.16, spendIdx: 1.38, bevIdx: 0.78, behaviour: 'Highest Private Sandbank Dining, In-Villa BBQ & Zero-Proof Elixir spend (UAE, KSA, QA)' },
+  { id: 'africa', name: 'Africa', share: 8, captureIdx: 0.88, spendIdx: 0.86, bevIdx: 0.92, behaviour: 'Strong Beach Club, Restorative Wellness Grazing & Chef Table participation (ZA, EG, MA)' },
 ];
 
 export interface FnbOriginRow {
@@ -252,6 +263,8 @@ export interface FnbOriginRow {
   coversSharePct: number;
   avgCheck: number;
   revenue: number;
+  foodRevenue: number;
+  bevRevenue: number;
   spendPerGuestNight: number;
   behaviour: string;
 }
@@ -260,6 +273,7 @@ export function getFnbOrigins(m: MetricsCore): FnbOriginRow[] {
   const gn = splitByShares(m.guestNights, ORIGIN_DEFS);
   const totalShare = ORIGIN_DEFS.reduce((a, d) => a + d.share, 0) || 1;
   const weightedCapIdx = ORIGIN_DEFS.reduce((a, d) => a + (d.share / totalShare) * d.captureIdx, 0) || 1;
+  const weightedBevIdx = ORIGIN_DEFS.reduce((a, d) => a + (d.share / totalShare) * d.bevIdx, 0) || 1;
   const capture = ORIGIN_DEFS.map((d) => clamp((m.fnb.captureRatePct * d.captureIdx) / weightedCapIdx, 0, 98));
   const covers = splitByShares(
     m.fnb.covers,
@@ -269,19 +283,27 @@ export function getFnbOrigins(m: MetricsCore): FnbOriginRow[] {
     m.fnbRevenue,
     ORIGIN_DEFS.map((d, i) => ({ ...d, share: covers[i].value * d.spendIdx }))
   );
-  return ORIGIN_DEFS.map((d, i) => ({
-    id: d.id,
-    name: d.name,
-    guestNights: gn[i].value,
-    guestSharePct: (d.share / totalShare) * 100,
-    capturePct: capture[i],
-    covers: covers[i].value,
-    coversSharePct: ratio(covers[i].value, m.fnb.covers) * 100,
-    avgCheck: ratio(rev[i].value, covers[i].value),
-    revenue: rev[i].value,
-    spendPerGuestNight: ratio(rev[i].value, gn[i].value),
-    behaviour: d.behaviour,
-  }));
+  return ORIGIN_DEFS.map((d, i) => {
+    const revenue = rev[i].value;
+    const bevSharePct = clamp((m.fnb.bevSharePct * d.bevIdx) / weightedBevIdx, 10, 60);
+    const bevRevenue = Math.round((revenue * bevSharePct) / 100);
+    const foodRevenue = Math.max(0, Math.round(revenue) - bevRevenue);
+    return {
+      id: d.id,
+      name: d.name,
+      guestNights: gn[i].value,
+      guestSharePct: (d.share / totalShare) * 100,
+      capturePct: capture[i],
+      covers: covers[i].value,
+      coversSharePct: ratio(covers[i].value, m.fnb.covers) * 100,
+      avgCheck: ratio(revenue, covers[i].value),
+      revenue,
+      foodRevenue,
+      bevRevenue,
+      spendPerGuestNight: ratio(revenue, gn[i].value),
+      behaviour: d.behaviour,
+    };
+  });
 }
 
 /* ───────────────────────── DAYPARTS ───────────────────────── */
@@ -484,6 +506,8 @@ export interface FnbHeadlineKpi {
   value: string;
   vsLy: string;
   vsLyPos: boolean;
+  vsBudget: string;
+  vsForecast: string;
   vsTarget: string;
   vsTargetPos: boolean;
   context: string;
@@ -495,15 +519,26 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
   const m = getPortfolioMetrics(ids, period);
   const forward = period === 'forward';
   const cap = getFnbCapacity(m);
-  const w = getForwardWindowMetrics(ids, 90);
 
   const spendLy = spendPerGuestNightOf(m.ly, m);
   const spendBudget = spendPerGuestNightOf(m.budget, m);
+  const spendForecast = spendPerGuestNightOf(m.forecast, m);
   const spendLyAbs = m.fnb.spendPerGuestNight - spendLy;
-  const spendLyPct = spendLy > 0 ? (spendLyAbs / spendLy) * 100 : 0;
   const spendBudgetAbs = m.fnb.spendPerGuestNight - spendBudget;
+  const spendForecastAbs = m.fnb.spendPerGuestNight - spendForecast;
+
+  const captureLyPts = m.vsLy.occupancyPts * 0.75;
+  const captureBudgetPts = m.vsBudget.occupancyPts * 0.75;
+  const captureForecastPts = m.vsForecast.occupancyPts * 0.75;
+
+  const roomsBase = Math.max(1, m.roomsSold);
+  const loadLyPts = cap.loadPct * (1 - m.ly.roomsSold / roomsBase);
+  const loadBudgetPts = cap.loadPct * (1 - m.budget.roomsSold / roomsBase);
+  const loadForecastPts = cap.loadPct * (1 - m.forecast.roomsSold / roomsBase);
 
   const revenueVsLy = `${fmtSignedPct(m.vsLy.fnbRevenuePct)} ${forward ? 'vs STLY' : 'vs LY'}`;
+  const revenueVsBudget = `${fmtSignedPct(m.vsBudget.fnbRevenuePct)} vs Budget`;
+  const revenueVsForecast = `${fmtSignedPct(m.vsForecast.fnbRevenuePct)} vs Forecast`;
   const dining = diningGuestNights(m);
 
   return [
@@ -513,9 +548,9 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
       value: fmtUsd(m.fnbRevenue),
       vsLy: revenueVsLy,
       vsLyPos: m.vsLy.fnbRevenuePct >= 0,
-      vsTarget: forward
-        ? `${fmtSignedPct(m.vsForecast.fnbRevenuePct)} vs Forecast`
-        : `${fmtSignedPct(m.vsBudget.fnbRevenuePct)} vs Budget`,
+      vsBudget: revenueVsBudget,
+      vsForecast: revenueVsForecast,
+      vsTarget: forward ? revenueVsForecast : revenueVsBudget,
       vsTargetPos: (forward ? m.vsForecast.fnbRevenuePct : m.vsBudget.fnbRevenuePct) >= 0,
       context: `${m.fnb.outlets} Operating Outlets · ${m.propertyCount} ${m.propertyCount === 1 ? 'Resort' : 'Resorts'}`,
       boxLabel: 'F&B REVENUE',
@@ -523,10 +558,12 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
     },
     {
       id: 'spend',
-      label: forward ? 'PROJECTED SPEND / GUEST-NIGHT (OTB)' : 'F&B SPEND / IN-HOUSE GUEST NIGHT',
+      label: forward ? 'PROJECTED SPEND / GUEST-NIGHT' : 'F&B SPEND / IN-HOUSE GUEST NIGHT',
       value: fmtUsdFull(m.fnb.spendPerGuestNight),
-      vsLy: `${fmtSignedUsd(spendLyAbs)} vs ${forward ? 'STLY' : 'LY'} (${fmtSignedPct(spendLyPct)})`,
+      vsLy: `${fmtSignedUsd(spendLyAbs)} vs ${forward ? 'STLY' : 'LY'}`,
       vsLyPos: spendLyAbs >= 0,
+      vsBudget: `${fmtSignedUsd(spendBudgetAbs)} vs Budget`,
+      vsForecast: `${fmtSignedUsd(spendForecastAbs)} vs Forecast`,
       vsTarget: `${fmtSignedUsd(spendBudgetAbs)} vs Budget`,
       vsTargetPos: spendBudgetAbs >= 0,
       context: `${fmtUsdFull(ratio(m.fnbRevenue, m.roomsSold))} F&B / Occupied Room · ${fmtCompactInt(m.guestNights)} Guest Nights`,
@@ -537,10 +574,12 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
       id: 'capture',
       label: forward ? 'EXPECTED GUEST CAPTURE (OTB)' : 'F&B GUEST CAPTURE RATE',
       value: fmtPct(m.fnb.captureRatePct),
-      vsLy: `${ratio(m.fnb.covers, m.guestNights).toFixed(2)} Covers / Guest-Night`,
-      vsLyPos: true,
-      vsTarget: `${fmtUsdFull(m.fnb.avgCheck)} Avg Check`,
-      vsTargetPos: true,
+      vsLy: `${fmtSignedPts(captureLyPts)} vs ${forward ? 'STLY' : 'LY'}`,
+      vsLyPos: captureLyPts >= 0,
+      vsBudget: `${fmtSignedPts(captureBudgetPts)} vs Budget`,
+      vsForecast: `${fmtSignedPts(captureForecastPts)} vs Forecast`,
+      vsTarget: `${fmtSignedPts(captureBudgetPts)} vs Budget`,
+      vsTargetPos: captureBudgetPts >= 0,
       context: `${fmtCompactInt(dining)} Dining Guest-Nights of ${fmtCompactInt(m.guestNights)}`,
       boxLabel: 'GUEST CAPTURE RATE',
       boxSub: `${ratio(m.fnb.covers, m.guestNights).toFixed(2)} Covers / Guest-Night`,
@@ -549,10 +588,12 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
       id: 'forward',
       label: forward ? 'OTB COVERS VS SEAT CAPACITY' : period === 'today' ? 'TODAY COVERS VS CAPACITY' : 'COVERS VS SEAT CAPACITY',
       value: fmtPct(cap.loadPct),
-      vsLy: forward ? `${fmtSignedPct(w.paceVsLyPct)} Room Pace vs LY` : `RevPASH $${m.fnb.revpash.toFixed(2)}`,
-      vsLyPos: forward ? w.paceVsLyPct >= 0 : true,
-      vsTarget: `${m.fnb.seatTurn.toFixed(2)}x Seat Turn`,
-      vsTargetPos: true,
+      vsLy: `${fmtSignedPts(loadLyPts)} vs ${forward ? 'STLY' : 'LY'}`,
+      vsLyPos: loadLyPts >= 0,
+      vsBudget: `${fmtSignedPts(loadBudgetPts)} vs Budget`,
+      vsForecast: `${fmtSignedPts(loadForecastPts)} vs Forecast`,
+      vsTarget: `${fmtSignedPts(loadBudgetPts)} vs Budget`,
+      vsTargetPos: loadBudgetPts >= 0,
       context: `${fmtInt(m.fnb.covers)} Covers vs ${fmtInt(cap.capacityCovers)} Seat Capacity`,
       boxLabel: forward ? 'OTB VS CAPACITY' : 'COVERS VS CAPACITY',
       boxSub: `${fmtCompactInt(m.fnb.covers)} Covers · ${m.fnb.seatTurn.toFixed(2)}x Turn`,
@@ -562,9 +603,11 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
           id: 'experience',
           label: 'VIP & SPECIAL REQUEST READINESS',
           value: fmtPct(m.experiences.readinessPct),
-          vsLy: `${fmtInt(m.stays)} Forward Stays Profiled`,
+          vsLy: '+1.8 pts vs STLY',
           vsLyPos: true,
-          vsTarget: 'On Plan',
+          vsBudget: '+0.9 pts vs Budget',
+          vsForecast: '+0.4 pts vs Forecast',
+          vsTarget: '+0.9 pts vs Budget',
           vsTargetPos: true,
           context: 'Dietary & bespoke profiles synced to kitchens',
           boxLabel: 'GUEST READINESS',
@@ -576,7 +619,9 @@ export function getFnbHeadlineKpis(ids: string[] | undefined, period: PeriodId):
           value: fmtPct(FNB_GUEST_EXPERIENCE.scorePct),
           vsLy: `+${FNB_GUEST_EXPERIENCE.vsLyPts.toFixed(1)} pts vs LY`,
           vsLyPos: true,
-          vsTarget: `+${FNB_GUEST_EXPERIENCE.vsTargetPts.toFixed(1)} pts vs Target`,
+          vsBudget: `+${FNB_GUEST_EXPERIENCE.vsTargetPts.toFixed(1)} pts vs Budget`,
+          vsForecast: '+0.4 pts vs Forecast',
+          vsTarget: `+${FNB_GUEST_EXPERIENCE.vsTargetPts.toFixed(1)} pts vs Budget`,
           vsTargetPos: true,
           context: `${FNB_GUEST_EXPERIENCE.csat.toFixed(2)} / 5.0 CSAT · ${fmtPct(FNB_GUEST_EXPERIENCE.complaintRatePct)} Complaint Rate`,
           boxLabel: 'GUEST EXPERIENCE',
@@ -601,6 +646,9 @@ export interface FnbResortRow {
   categoryName: string;
   status: 'above_plan' | 'on_plan' | 'attention';
   revenue: number;
+  foodRevenue: number;
+  bevRevenue: number;
+  avgCheck: number;
   lflPct: number;
   revpor: number;
   spendPerGuestNight: number;
@@ -611,19 +659,26 @@ export interface FnbResortRow {
 
 export function getFnbResortRanking(ids: string[] | undefined, period: PeriodId): FnbResortRow[] {
   return getPropertyMetricsList(ids, period)
-    .map((p) => ({
-      propertyId: p.propertyId,
-      name: p.name,
-      categoryName: p.categoryName,
-      status: p.status,
-      revenue: p.fnbRevenue,
-      lflPct: p.vsLy.fnbRevenuePct,
-      revpor: ratio(p.fnbRevenue, p.roomsSold),
-      spendPerGuestNight: p.fnb.spendPerGuestNight,
-      capturePct: p.fnb.captureRatePct,
-      seatLoadPct: getFnbCapacity(p).loadPct,
-      csat: (p.experiences.qualityPct / 100) * 5,
-    }))
+    .map((p) => {
+      const bevRevenue = Math.round((p.fnbRevenue * p.fnb.bevSharePct) / 100);
+      const foodRevenue = Math.max(0, Math.round(p.fnbRevenue) - bevRevenue);
+      return {
+        propertyId: p.propertyId,
+        name: p.name,
+        categoryName: p.categoryName,
+        status: p.status,
+        revenue: p.fnbRevenue,
+        foodRevenue,
+        bevRevenue,
+        avgCheck: p.fnb.avgCheck,
+        lflPct: p.vsLy.fnbRevenuePct,
+        revpor: ratio(p.fnbRevenue, p.roomsSold),
+        spendPerGuestNight: p.fnb.spendPerGuestNight,
+        capturePct: p.fnb.captureRatePct,
+        seatLoadPct: getFnbCapacity(p).loadPct,
+        csat: (p.experiences.qualityPct / 100) * 5,
+      };
+    })
     .sort((a, b) => b.revenue - a.revenue);
 }
 
@@ -711,14 +766,17 @@ export function getFnbOperationalSignals(ids: string[] | undefined, period: Peri
   const jpKr = cuisines.filter((c) => c.id === 'japanese' || c.id === 'korean');
   const jpKrRev = jpKr.reduce((a, c) => a + c.revenue, 0);
   const jpKrShare = ratio(jpKrRev, m.fnbRevenue) * 100;
-  const topTurn = [...list].sort((a, b) => b.fnb.seatTurn - a.fnb.seatTurn).slice(0, 3);
+  const topTurn = [...list].sort((a, b) => b.fnb.seatTurn - a.fnb.seatTurn).slice(0, 2);
   const sig2Value = (jpKrRev * FNB_SERVICE_SIGNALS.waitlistUpliftPct) / 100;
 
-  // 3. In-villa delivery SLA
-  const villa = centre('inVilla');
-  const topRev = [...list].sort((a, b) => b.fnbRevenue - a.fnbRevenue).slice(0, 2);
+  // 3. Beverage & Sommelier Pairing Under-Index at lowest beverage share properties
+  const lowBevProps = [...list].sort((a, b) => a.fnb.bevSharePct - b.fnb.bevSharePct).slice(0, 2);
+  const lowBevGapPts = Math.max(2, Math.round(m.fnb.bevSharePct - (lowBevProps[0]?.fnb.bevSharePct ?? m.fnb.bevSharePct)));
+  const lowBevRevSum = lowBevProps.reduce((a, p) => a + p.fnbRevenue, 0);
+  const sig3Value = (lowBevRevSum * lowBevGapPts) / 100;
 
-  // 4. Sunset bar sommelier attach
+  // 4. Sunset bar & private dining upsell at top revenue properties
+  const topRev = [...list].sort((a, b) => b.fnbRevenue - a.fnbRevenue).slice(0, 2);
   const bars = centre('bars');
   const sig4Value = ((bars?.revenue ?? 0) * FNB_SERVICE_SIGNALS.sommelierUpliftPct) / 100;
 
@@ -726,8 +784,8 @@ export function getFnbOperationalSignals(ids: string[] | undefined, period: Peri
     {
       id: 'sig-1',
       type: 'risk',
-      title: `High Occupancy (${fmtPct(lowest.occupancyPct, 0)}), Low Guest Capture (${fmtPct(lowest.fnb.captureRatePct, 0)}) — ${lowest.name}`,
-      detail: `${fmtInt((lowest.guestNights * gap) / 100)} guest-nights dined off-property (${suffix}); family early-dinner seating slot bottleneck detected.`,
+      title: `Dinner Capture Leakage (${fmtPct(lowest.fnb.captureRatePct, 0)} vs ${fmtPct(peerCapture, 0)} Peer Avg) — ${lowest.name}`,
+      detail: `${fmtInt((lowest.guestNights * gap) / 100)} in-house guest-nights dined off-property (${suffix}) at ${lowest.name} despite ${fmtPct(lowest.occupancyPct, 0)} room occupancy.`,
       confidence: `Confirmed · Peer Gap -${gap.toFixed(0)} pts`,
       owner: `Regional F&B Dir (${lowestRegion})`,
       exposure: `${fmtUsd(sig1Value)} ${suffix}`,
@@ -736,9 +794,9 @@ export function getFnbOperationalSignals(ids: string[] | undefined, period: Peri
     {
       id: 'sig-2',
       type: 'opportunity',
-      title: `Japanese & Korean Concepts Lead Cuisine Revenue (${fmtPct(jpKrShare, 0)} of F&B)`,
-      detail: `Waitlist demand at ${topTurn.map((p) => p.name).join(', ')} — seat turn ${topTurn[0].fnb.seatTurn.toFixed(2)}x vs ${m.fnb.seatTurn.toFixed(2)}x portfolio.`,
-      confidence: `High Confidence · ${topTurn.length} ${topTurn.length === 1 ? 'Resort' : 'Resorts'}`,
+      title: `Omakase & Fine Grill Second-Seating Expansion (${fmtPct(jpKrShare, 0)} of F&B) — ${topTurn.map((p) => p.name).join(' & ')}`,
+      detail: `Waitlist spillover at ${topTurn.map((p) => p.name).join(' and ')} — seat turn ${topTurn[0].fnb.seatTurn.toFixed(2)}x vs ${m.fnb.seatTurn.toFixed(2)}x portfolio average.`,
+      confidence: `High Confidence · ${topTurn.length} Resorts`,
       owner: 'Group Concept & Culinary',
       exposure: `+${fmtUsd(sig2Value)} ${suffix}`,
       exposureValue: sig2Value,
@@ -746,20 +804,20 @@ export function getFnbOperationalSignals(ids: string[] | undefined, period: Peri
     {
       id: 'sig-3',
       type: 'risk',
-      title: 'In-Villa Dining Delivery SLA Pressure During 8:00–9:30 PM Peak',
-      detail: `${fmtPct(FNB_SERVICE_SIGNALS.villaSlaBreachPct)} of ${fmtInt(villa?.covers ?? 0)} villa orders (${suffix}) exceeded the 30-min promise at ${topRev.map((p) => p.name).join(' & ')} due to dispatch clustering.`,
-      confidence: 'Confirmed · POS + Butler Log',
-      owner: 'Resort Ops & Room Service',
-      exposure: 'CSAT Risk',
-      exposureValue: 0,
+      title: `Beverage & Sommelier Pairing Under-Index (-${lowBevGapPts} pts vs Portfolio) — ${lowBevProps.map((p) => p.name).join(' & ')}`,
+      detail: `Beverage share at ${lowBevProps.map((p) => `${p.name} (${fmtPct(p.fnb.bevSharePct, 0)})`).join(' & ')} trails the ${fmtPct(m.fnb.bevSharePct, 0)} portfolio benchmark across prime dinner seatings.`,
+      confidence: 'Confirmed · Portfolio POS Audit',
+      owner: 'Group Beverage Director',
+      exposure: `${fmtUsd(sig3Value)} ${suffix}`,
+      exposureValue: sig3Value,
     },
     {
       id: 'sig-4',
       type: 'opportunity',
-      title: `Sunset Bar High Footfall (${fmtCompactInt(bars?.covers ?? 0)} Covers), Low Sommelier Flight Attachment`,
-      detail: `Bars & lounges earn ${fmtUsd(bars?.revenue ?? 0)} (${fmtPct(bars?.sharePct ?? 0, 0)} of F&B) but wine/saké pairing uptake is ${FNB_SERVICE_SIGNALS.pairingGapPct}% below peer benchmark.`,
-      confidence: 'Hypothesis · Menu Test',
-      owner: 'Group Beverage Director',
+      title: `Sunset Aperitif & Wine Flight Attachment Uplift — ${topRev.map((p) => p.name).join(' & ')}`,
+      detail: `${fmtCompactInt(bars?.covers ?? 0)} bar & terrace covers (${fmtUsd(bars?.revenue ?? 0)}) with ${FNB_SERVICE_SIGNALS.pairingGapPct}% untapped sommelier flight conversion at ${topRev.map((p) => p.name).join(' and ')}.`,
+      confidence: 'High Confidence · Menu Engineering',
+      owner: 'VP F&B Operations',
       exposure: `+${fmtUsd(sig4Value)} ${suffix}`,
       exposureValue: sig4Value,
     },
@@ -877,3 +935,210 @@ export function getFnbForwardOutlook(ids: string[] | undefined, windowDays: FnbF
     buckets,
   };
 }
+
+/* ───────────────────────── ALL RESTAURANTS & BARS PORTFOLIO ───────────────────────── */
+
+export type FnbOutletGroupFilter = 'all' | 'restaurant' | 'bar' | 'property';
+
+export interface FnbPortfolioOutletRow {
+  id: string;
+  outletName: string;
+  outletType: 'restaurant' | 'bar';
+  typeLabel: 'Fine Dining' | 'All-Day Brasserie' | 'Bar & Lounge' | 'Pool & Beach';
+  propertyId: string;
+  propertyName: string;
+  covers: number;
+  avgCheck: number;
+  revenue: number;
+  foodRevenue: number;
+  bevRevenue: number;
+  vsLyPct: number;
+}
+
+const PROPERTY_OUTLET_CATALOG: {
+  id: string;
+  propertyId: string;
+  outletName: string;
+  outletType: 'restaurant' | 'bar';
+  typeLabel: 'Fine Dining' | 'All-Day Brasserie' | 'Bar & Lounge' | 'Pool & Beach';
+  centreId: string;
+  vsLyDelta: number;
+}[] = [
+  { id: 'out-bcn-1', propertyId: 'sosei-barcelona', outletName: 'Asador Catalán', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 2.1 },
+  { id: 'out-and-1', propertyId: 'sosei-andermatt', outletName: 'Le Sommet Alpine Gastronomy', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 1.8 },
+  { id: 'out-auh-1', propertyId: 'sosei-auh', outletName: 'Saadiyat Pearl Omakase', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 2.4 },
+  { id: 'out-bal-1', propertyId: 'sosei-bali', outletName: 'Uluwatu Cliff Grill', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 1.5 },
+  { id: 'out-tin-1', propertyId: 'sosei-tinos', outletName: 'Thalassa Aegean Raw Bar', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 1.4 },
+  { id: 'out-mel-1', propertyId: 'sosei-melides', outletName: 'Comporta Woodfire Hearth', outletType: 'restaurant', typeLabel: 'All-Day Brasserie', centreId: 'allday', vsLyDelta: 0.9 },
+  { id: 'out-umb-1', propertyId: 'sosei-umbria', outletName: 'Tartufo Castello Table', outletType: 'restaurant', typeLabel: 'Fine Dining', centreId: 'fine', vsLyDelta: 1.2 },
+  { id: 'out-bcn-2', propertyId: 'sosei-barcelona', outletName: 'El Mirador Tapas & Wine Bar', outletType: 'bar', typeLabel: 'Bar & Lounge', centreId: 'bars', vsLyDelta: 1.6 },
+  { id: 'out-and-2', propertyId: 'sosei-andermatt', outletName: 'Gotthard Glacier Cellar', outletType: 'bar', typeLabel: 'Bar & Lounge', centreId: 'bars', vsLyDelta: 1.1 },
+  { id: 'out-auh-2', propertyId: 'sosei-auh', outletName: 'Al-Bahr Beachfront Club', outletType: 'bar', typeLabel: 'Pool & Beach', centreId: 'pool', vsLyDelta: 1.9 },
+  { id: 'out-elg-1', propertyId: 'sosei-el-gouna', outletName: 'Coral Lagoon Sunset Lounge', outletType: 'bar', typeLabel: 'Bar & Lounge', centreId: 'bars', vsLyDelta: -0.8 },
+  { id: 'out-osa-1', propertyId: 'sosei-osa', outletName: 'Fuego Canopy Grill', outletType: 'restaurant', typeLabel: 'All-Day Brasserie', centreId: 'allday', vsLyDelta: 0.7 },
+];
+
+export function getFnbPortfolioOutlets(ids: string[] | undefined, period: PeriodId): FnbPortfolioOutletRow[] {
+  const props = getPropertyMetricsList(ids, period);
+  const propMap = new Map(props.map((p) => [p.propertyId, p]));
+
+  return PROPERTY_OUTLET_CATALOG.filter((item) => propMap.has(item.propertyId))
+    .map((item) => {
+      const p = propMap.get(item.propertyId)!;
+      const centres = getFnbCentres(p);
+      const c = centres.find((x) => x.id === item.centreId) ?? centres[0];
+      const bevShare = item.outletType === 'bar' ? clamp(p.fnb.bevSharePct * 1.85, 45, 78) : clamp(p.fnb.bevSharePct * 0.88, 18, 42);
+      const bevRevenue = Math.round((c.revenue * bevShare) / 100);
+      const foodRevenue = Math.max(0, Math.round(c.revenue) - bevRevenue);
+      return {
+        id: item.id,
+        outletName: item.outletName,
+        outletType: item.outletType,
+        typeLabel: item.typeLabel,
+        propertyId: p.propertyId,
+        propertyName: p.name,
+        covers: c.covers,
+        avgCheck: c.avgCheck,
+        revenue: c.revenue,
+        foodRevenue,
+        bevRevenue,
+        vsLyPct: p.vsLy.fnbRevenuePct + item.vsLyDelta,
+      };
+    })
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+/* ───────────────────────── BIG GROUP EVENTS & WEDDINGS RADAR ───────────────────────── */
+
+export interface FnbBigGroupEvent {
+  id: string;
+  eventName: string;
+  eventType: 'Wedding' | 'Full Buyout' | 'Gala Dinner' | 'Private Summit';
+  propertyId: string;
+  propertyName: string;
+  dateWindow: string;
+  pax: number;
+  revenue: number;
+  spendPerPax: number;
+  readinessStatus: 'Menu Locked' | 'VIP Prep' | 'Tasting Due' | 'BEO Confirmed';
+  attentionNote: string;
+}
+
+const BIG_GROUP_EVENT_DEFS: (ShareDef & {
+  eventType: FnbBigGroupEvent['eventType'];
+  propertyId: string;
+  propertyName: string;
+  dateWindow: string;
+  paxWeight: number;
+  readinessStatus: FnbBigGroupEvent['readinessStatus'];
+  attentionNote: string;
+})[] = [
+  {
+    id: 'evt-1',
+    name: 'Castello Estate Royal Wedding',
+    share: 24,
+    eventType: 'Wedding',
+    propertyId: 'sosei-umbria',
+    propertyName: 'SOSEI Umbria',
+    dateWindow: 'Oct 24–26',
+    paxWeight: 180,
+    readinessStatus: 'Menu Locked',
+    attentionNote: '7-course white truffle gala & 180-btl vintage Barolo allocation',
+  },
+  {
+    id: 'evt-2',
+    name: 'Saadiyat Beachfront Wedding Buyout',
+    share: 22,
+    eventType: 'Wedding',
+    propertyId: 'sosei-auh',
+    propertyName: 'SOSEI AUH',
+    dateWindow: 'Oct 29–31',
+    paxWeight: 220,
+    readinessStatus: 'VIP Prep',
+    attentionNote: 'Beach club closure 4 PM · Live omakase & caviar raw bar',
+  },
+  {
+    id: 'evt-3',
+    name: 'Global Luxury Summit Gala Dinner',
+    share: 18,
+    eventType: 'Gala Dinner',
+    propertyId: 'sosei-barcelona',
+    propertyName: 'SOSEI Barcelona',
+    dateWindow: 'Nov 2',
+    paxWeight: 240,
+    readinessStatus: 'BEO Confirmed',
+    attentionNote: 'Full ballroom + terrace buyout · 14 bespoke dietary VIP tables',
+  },
+  {
+    id: 'evt-4',
+    name: 'Gotthard Alpine Chalet Wedding',
+    share: 14,
+    eventType: 'Wedding',
+    propertyId: 'sosei-andermatt',
+    propertyName: 'SOSEI Andermatt',
+    dateWindow: 'Nov 7–9',
+    paxWeight: 140,
+    readinessStatus: 'Tasting Due',
+    attentionNote: 'Glacier cellar rare pairing · Late-night fondue & champagne',
+  },
+  {
+    id: 'evt-5',
+    name: 'Uluwatu Cliffside Wedding Reception',
+    share: 12,
+    eventType: 'Wedding',
+    propertyId: 'sosei-bali',
+    propertyName: 'SOSEI Bali',
+    dateWindow: 'Nov 14–16',
+    paxWeight: 160,
+    readinessStatus: 'Menu Locked',
+    attentionNote: 'Botanical tasting menu · Indoor pavilion weather backup ready',
+  },
+  {
+    id: 'evt-6',
+    name: 'Aegean Private Yacht & Villa Buyout',
+    share: 10,
+    eventType: 'Full Buyout',
+    propertyId: 'sosei-tinos',
+    propertyName: 'SOSEI Tinos',
+    dateWindow: 'Nov 20–22',
+    paxWeight: 130,
+    readinessStatus: 'BEO Confirmed',
+    attentionNote: 'Whole-fish woodfire feast & sunset terrace sommelier flight',
+  },
+];
+
+export function getFnbBigGroupEvents(ids: string[] | undefined, period: PeriodId): {
+  events: FnbBigGroupEvent[];
+  totalRevenue: number;
+  totalPax: number;
+} {
+  const m = getPortfolioMetrics(ids, period);
+  // Group events & weddings represent Banqueting & Private Dining + contracted group dining (~18% of F&B revenue)
+  const banquetCentre = getFnbCentres(m).find((c) => c.id === 'banquet');
+  const eventPoolRevenue = Math.round((banquetCentre?.revenue ?? m.fnbRevenue * 0.08) * 1.65);
+  const scalePax = period === 'today' ? 0.25 : period === 'ytd' ? 6.5 : 1;
+
+  const revSplits = splitByShares(eventPoolRevenue, BIG_GROUP_EVENT_DEFS);
+  const events: FnbBigGroupEvent[] = BIG_GROUP_EVENT_DEFS.map((d, i) => {
+    const pax = Math.max(20, Math.round(d.paxWeight * scalePax));
+    const revenue = revSplits[i].value;
+    return {
+      id: d.id,
+      eventName: d.name,
+      eventType: d.eventType,
+      propertyId: d.propertyId,
+      propertyName: d.propertyName,
+      dateWindow: d.dateWindow,
+      pax,
+      revenue,
+      spendPerPax: ratio(revenue, pax),
+      readinessStatus: d.readinessStatus,
+      attentionNote: d.attentionNote,
+    };
+  });
+
+  const totalRevenue = events.reduce((a, e) => a + e.revenue, 0);
+  const totalPax = events.reduce((a, e) => a + e.pax, 0);
+  return { events, totalRevenue, totalPax };
+}
+

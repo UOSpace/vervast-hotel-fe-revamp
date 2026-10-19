@@ -17,6 +17,7 @@ import {
   FNB_SERVICE_SIGNALS,
   diningGuestNights,
   fnbChecks,
+  getFnbBigGroupEvents,
   getFnbCapacity,
   getFnbCentres,
   getFnbCuisines,
@@ -29,6 +30,7 @@ import {
   getFnbOrigins,
   getFnbOutletGroups,
   getFnbPenetrationRows,
+  getFnbPortfolioOutlets,
   getFnbResortRanking,
   getFnbSignatureDishes,
 } from '@/data/portfolio/fnbMix';
@@ -955,6 +957,170 @@ export function FnbDrawerContent({ config }: FnbDrawerContentProps) {
                   <td className="py-2.5 px-3 text-[10px] text-zinc-500">{r.theme}</td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  /* ───────────────────────── 9. ALL RESTAURANTS & BARS PERFORMANCE ───────────────────────── */
+  if (detailKey === 'FNB_PORTFOLIO_OUTLETS') {
+    const outlets = getFnbPortfolioOutlets(ids, horizon);
+    const restaurants = outlets.filter((o) => o.outletType === 'restaurant');
+    const bars = outlets.filter((o) => o.outletType === 'bar');
+    const restRev = restaurants.reduce((a, o) => a + o.revenue, 0);
+    const barRev = bars.reduce((a, o) => a + o.revenue, 0);
+
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
+          <p className="text-xs text-zinc-500">
+            Portfolio restaurant, bar &amp; beach club ranking across {scopeLabel} ·{' '}
+            <strong className="text-zinc-900">{periodMeta.periodLabel}</strong>.
+          </p>
+          <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
+            {outlets.length} Signature Outlets Tracked
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">TOTAL PORTFOLIO F&amp;B</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(m.fnbRevenue)}</div>
+            <div className="text-[10px] text-[#14532d] mt-0.5">{fmtSignedPct(m.vsLy.fnbRevenuePct)} vs LY</div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">SIGNATURE RESTAURANTS</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(restRev)}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">{restaurants.length} Fine &amp; All-Day Dining Venues</div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">BARS, LOUNGES &amp; BEACH CLUBS</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(barRev)}</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">{bars.length} Beverage &amp; Sunset Venues</div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Outlet Name</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Resort Property</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Venue Category</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Covers</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Avg Check</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">F&amp;B Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">vs LY</th>
+              </tr>
+            </thead>
+            <tbody>
+              {outlets.map((o) => {
+                const pos = o.vsLyPct >= 0;
+                return (
+                  <tr key={o.id} className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors">
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900">{o.outletName}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600">{o.propertyName}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">{o.typeLabel}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(o.covers)}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-900 text-right">{fmtUsdFull(o.avgCheck)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{fmtUsd(o.revenue)}</td>
+                    <td
+                      className={`py-2.5 px-3 text-[9.5px] font-medium text-right ${
+                        pos ? 'text-[#14532d]' : 'text-[#800020]'
+                      }`}
+                    >
+                      {fmtSignedPct(o.vsLyPct)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  /* ───────────────────────── 10. BIG GROUP EVENTS & WEDDINGS RADAR ───────────────────────── */
+  if (detailKey === 'FNB_BIG_GROUP_EVENTS') {
+    const groupData = getFnbBigGroupEvents(ids, horizon);
+
+    return (
+      <div className="space-y-6 animate-fade-in text-zinc-900">
+        <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-zinc-200">
+          <p className="text-xs text-zinc-500">
+            High-impact weddings, private resort buyouts &amp; gala dinners requiring executive F&amp;B oversight ·{' '}
+            <strong className="text-zinc-900">{periodMeta.periodLabel}</strong>.
+          </p>
+          <span className="text-[10px] font-medium px-2.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80">
+            {groupData.events.length} Flagship Group Events
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">CONTRACTED EVENT F&amp;B REVENUE</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtUsd(groupData.totalRevenue)}</div>
+            <div className="text-[10px] text-[#14532d] mt-0.5">Banqueting, buyouts &amp; bespoke menus</div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">TOTAL EVENT ATTENDEES</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">{fmtInt(groupData.totalPax)} Pax</div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">Across {groupData.events.length} contracted group events</div>
+          </div>
+          <div className="p-3.5 rounded-xl border border-zinc-200/80 bg-zinc-50/50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">AVG F&amp;B SPEND PER EVENT GUEST</div>
+            <div className="text-base font-bold text-zinc-900 mt-1">
+              {fmtUsdFull(groupData.totalPax > 0 ? groupData.totalRevenue / groupData.totalPax : 0)}
+            </div>
+            <div className="text-[10px] text-zinc-500 mt-0.5">Includes gala tasting &amp; cellar pairing</div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto border border-zinc-200/80 rounded-xl bg-zinc-50/30">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Event Name</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Resort Property</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Type · Date</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Guests</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Spend / Pax</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">F&amp;B Revenue</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400">Operational Attention Note</th>
+                <th className="py-2.5 px-3 text-[9.5px] font-medium text-zinc-400 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {groupData.events.map((evt) => {
+                const needsAction = evt.readinessStatus === 'Tasting Due' || evt.readinessStatus === 'VIP Prep';
+                return (
+                  <tr key={evt.id} className="border-b border-zinc-200/60 last:border-0 hover:bg-zinc-100/50 transition-colors">
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900">{evt.eventName}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600">{evt.propertyName}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-500">
+                      {evt.eventType} · {evt.dateWindow}
+                    </td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtInt(evt.pax)}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-700 text-right">{fmtUsdFull(evt.spendPerPax)}</td>
+                    <td className="py-2.5 px-3 text-[10px] font-medium text-zinc-900 text-right">{fmtUsd(evt.revenue)}</td>
+                    <td className="py-2.5 px-3 text-[10px] text-zinc-600">{evt.attentionNote}</td>
+                    <td className="py-2.5 px-3 text-right">
+                      <span
+                        className={`text-[8.5px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap ${
+                          needsAction
+                            ? 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                            : 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                        }`}
+                      >
+                        {evt.readinessStatus}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -691,10 +691,11 @@ export function getSpaDashboardData(propertyIds: string[] | undefined, period: P
     trend.push({ name: `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`, value: roundedVal, lyValue: roundedLy });
   }
 
-  /* 12-month seasonal utilisation trend (This Year vs Last Year) anchored to current utilisationPct */
-  const MONTH_SEASON_OFFSETS = [-18, -14, -10, -7, -4, -2, +1, +3, +1, 0, -1, +2];
-  const monthlyTrend = MONTHS.map((mName, idx) => {
-    const ty = Math.round(clamp(utilisationPct + MONTH_SEASON_OFFSETS[idx], 32, 92));
+  /* YTD monthly seasonal utilisation trend (Jan–Oct, up to current system month) anchored to current utilisationPct */
+  const currentMonthIdx = new Date(`${SYSTEM_DATE_ISO}T00:00:00Z`).getUTCMonth();
+  const MONTH_SEASON_OFFSETS = [-18, -14, -10, -7, -4, -2, +1, +3, +1, 0];
+  const monthlyTrend = MONTHS.slice(0, currentMonthIdx + 1).map((mName, idx) => {
+    const ty = Math.round(clamp(utilisationPct + (MONTH_SEASON_OFFSETS[idx] ?? 0), 32, 92));
     const ly = Math.round(clamp(ty - Math.max(3, Math.round(vsLyUtilisationPts) + (idx % 3 === 0 ? 2 : 1)), 26, 88));
     return { name: mName, thisYear: ty, lastYear: ly };
   });
