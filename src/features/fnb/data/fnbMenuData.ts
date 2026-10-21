@@ -1,7 +1,6 @@
 // Restaurant Architectural Images (Generated per SOSEI Property)
 import baliWantilanImg from '@/assets/fnb/restaurants/bali_wantilan.jpg';
 import baliKarangImg from '@/assets/fnb/restaurants/bali_karang.jpg';
-import tokyoShinjuImg from '@/assets/fnb/restaurants/tokyo_shinju.jpg';
 import tokyoSumibiImg from '@/assets/fnb/restaurants/tokyo_sumibi.jpg';
 import japanArashiyamaImg from '@/assets/fnb/restaurants/japan_arashiyama.jpg';
 import japanSaryoImg from '@/assets/fnb/restaurants/japan_saryo.jpg';
