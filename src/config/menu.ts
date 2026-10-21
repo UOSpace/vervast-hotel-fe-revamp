@@ -53,8 +53,8 @@ export const fnbSidebarMenu: MenuItem[] = [
     path: '/dashboard/fnb',
     children: [
       { name: 'Global Overview', path: '/dashboard/fnb', isDynamicOverview: true },
-      { name: 'Property Categories', path: '/dashboard/fnb/categories' },
-      { name: 'Regional View', path: '/dashboard/fnb/regional' },
+      // { name: 'Property Categories', path: '/dashboard/fnb/categories' },
+      // { name: 'Regional View', path: '/dashboard/fnb/regional' },
     ],
   },
   { name: 'Property View', icon: City, path: '/dashboard/fnb/property' },
@@ -69,7 +69,7 @@ export const fnbSidebarMenu: MenuItem[] = [
     path: '/dashboard/reservations',
     children: [
       { name: 'Overview', path: '/dashboard/reservations/overview' },
-      { name: 'Front Office', path: '/dashboard/reservations/front-office' },
+      // { name: 'Front Office', path: '/dashboard/reservations/front-office' },
       { name: 'Leads', path: '/dashboard/reservations/leads' },
       { name: 'Bookings', path: '/dashboard/reservations/bookings' },
     ],
@@ -117,6 +117,27 @@ export function getSidebarMenu(portal: string): MenuItem[] {
   if (portal === 'fnb-experience') {
     return fnbSidebarMenu;
   }
+  if (portal === 'sanctuary') {
+    // Sanctuary has no Property Categories / Regional View (Hospitality-only views),
+    // and its Property View points to /dashboard/sanctuary/property.
+    return sidebarMenu.map((item) => {
+      if (item.name === 'Group View') {
+        return {
+          ...item,
+          children: item.children?.filter(
+            (c) => c.path !== '/dashboard/categories' && c.path !== '/dashboard/regional',
+          ),
+        };
+      }
+      if (item.name === 'Property View') {
+        return {
+          ...item,
+          path: '/dashboard/sanctuary/property',
+        };
+      }
+      return item;
+    });
+  }
   return sidebarMenu;
 }
 
@@ -143,8 +164,8 @@ export function getPortalSections(portal: string): MenuSection[] {
             path: '/dashboard/experience',
             children: [
               { name: 'Global Overview', path: '/dashboard/experience', isDynamicOverview: true },
-              { name: 'Property Categories', path: '/dashboard/experience/categories' },
-              { name: 'Regional View', path: '/dashboard/experience/regional' },
+              // { name: 'Property Categories', path: '/dashboard/experience/categories' },
+              // { name: 'Regional View', path: '/dashboard/experience/regional' },
             ],
           },
           { name: 'Property View', icon: City, path: '/dashboard/experience/property' },

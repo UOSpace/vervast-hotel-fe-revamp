@@ -4,103 +4,43 @@ import {
   AltArrowDown,
   Magnifer,
   ChefHat,
-  UsersGroupTwoRounded,
+  RoundAltArrowRight,
 } from '@solar-icons/react';
 import { MASTER_PROPERTIES, resolvePropertyId } from '@/constants/categories';
 import {
   SOSEI_RESTAURANTS,
   FNB_MENU_ITEMS,
-  IN_HOUSE_FNB_GUESTS,
 } from '@/features/fnb/data/fnbMenuData';
-import { MASTER_FNB_PROPERTIES } from './FnbCategoryRegionalViews';
 import { useDashboardDrawer } from '../context/DashboardDrawerContext';
-import { InfoTooltip } from '../../common/components/InfoTooltip';
 import { UnderDevelopmentModal } from '../../../components/ui/UnderDevelopmentModal';
 import { HeaderClockDisplay } from '../components/widgets/DashboardHeaderWidget';
-import { getPropertyMetrics, splitByShares, PERIOD_DEFS, type PeriodId } from '@/data/portfolio';
 import {
-  getFnbOutletGroups,
-  getFnbDayparts,
+  PERIOD_DEFS,
+  PERIOD_ORDER,
+  fmtInt,
+  fmtPct,
+  fmtUsd,
+  fmtUsdFull,
+  getPropertyMetrics,
+  type PeriodId,
+} from '@/data/portfolio';
+import {
   FNB_PERIOD_SUFFIX,
+  getFnbBigGroupEvents,
+  getFnbCentres,
+  getFnbDayparts,
+  getFnbForwardOutlook,
+  getFnbHeadlineKpis,
+  getFnbOrigins,
+  getFnbOutletGroups,
+  getFnbPropertyRecord,
+  type FnbForwardWindow,
 } from '@/data/portfolio/fnbMix';
 
-type TimeHorizon = PeriodId;
-
-const HORIZON_TABS: { id: TimeHorizon; label: string; factor: number; periodLabel: string }[] = [
-  { id: 'today', label: 'Today', factor: 1, periodLabel: PERIOD_DEFS.today.periodLabel },
-  { id: 'mtd', label: 'MTD', factor: 1, periodLabel: PERIOD_DEFS.mtd.periodLabel },
-  { id: 'ytd', label: 'YTD', factor: 1, periodLabel: PERIOD_DEFS.ytd.periodLabel },
-  { id: 'forward', label: 'Forward Business', factor: 1, periodLabel: PERIOD_DEFS.forward.periodLabel },
-];
+/* ───────────────────────── DESIGN SYSTEM CONSTANTS ───────────────────────── */
 
 const CARD_CLASS =
   'relative rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 hover:-translate-y-0.5 hover:z-20 cursor-pointer animate-card-enter h-full justify-between';
-
-function fmtMoney(val: number): string {
-  if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(2)}M`;
-  if (val >= 1_000) return `$${Math.round(val / 1_000).toLocaleString()}K`;
-  return `$${Math.round(val).toLocaleString()}`;
-}
-
-function fmtCount(val: number): string {
-  if (val >= 1_000_000) return `${(val / 1_000_000).toFixed(2)}M`;
-  if (val >= 10_000) return `${(val / 1_000).toFixed(1)}K`;
-  return Math.round(val).toLocaleString();
-}
-
-function PureSvgFnbDonut({
-  data,
-  centerValue,
-  centerLabel,
-}: {
-  data: { name: string; value: number; color: string }[];
-  centerValue: string;
-  centerLabel: string;
-}) {
-  const size = 110;
-  const strokeWidth = 14;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = cx - strokeWidth / 2 - 4;
-  const circumference = 2 * Math.PI * r;
-  const total = data.reduce((acc, d) => acc + d.value, 0) || 1;
-  let accumulatedAngle = 0;
-
-  return (
-    <div className="relative w-[110px] h-[110px] shrink-0 flex items-center justify-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f4f4f5" strokeWidth={strokeWidth} />
-        {data.map((slice) => {
-          const pct = slice.value / total;
-          const dashLength = Math.max(0, pct * circumference - 1.5);
-          const dashOffset = -(accumulatedAngle * circumference);
-          accumulatedAngle += pct;
-          return (
-            <circle
-              key={slice.name}
-              cx={cx}
-              cy={cy}
-              r={r}
-              fill="none"
-              stroke={slice.color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={`${dashLength} ${circumference}`}
-              strokeDashoffset={dashOffset}
-              strokeLinecap="butt"
-              className="transition-all duration-500 ease-out"
-            />
-          );
-        })}
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none text-center">
-        <span className="text-[11px] font-bold text-zinc-900 leading-none">{centerValue}</span>
-        <span className="text-[7.5px] font-semibold uppercase tracking-widest text-zinc-400 mt-1">
-          {centerLabel}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 export function FnbPropertyDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -119,10 +59,14 @@ export function FnbPropertyDashboardPage() {
   };
 
   const [selectedProperty, setSelectedProperty] = useState(getInitialProperty);
-  const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
+  const [horizon, setHorizon] = useState<PeriodId>('mtd');
+  const [forwardWindow, setForwardWindow] = useState<FnbForwardWindow>(30);
+  const [outletFilter, setOutletFilter] = useState<'all' | 'restaurant' | 'bar_villa'>('all');
+  const [menuFilter, setMenuFilter] = useState<'all' | 'food' | 'beverages'>('all');
+  const [guestPanelTab, setGuestPanelTab] = useState<'origins' | 'events'>('origins');
+  const [hoveredCentre, setHoveredCentre] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showInHouseGuests, setShowInHouseGuests] = useState<boolean>(true);
   const [showDevModal, setShowDevModal] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -136,7 +80,7 @@ export function FnbPropertyDashboardPage() {
         setSelectedProperty(found);
       }
     }
-  }, [propIdParam]);
+  }, [propIdParam, selectedProperty.id]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -157,7 +101,7 @@ export function FnbPropertyDashboardPage() {
     }
   }, [isDropdownOpen]);
 
-  const handlePropertyChange = (prop: typeof MASTER_PROPERTIES[0]) => {
+  const handlePropertyChange = (prop: (typeof MASTER_PROPERTIES)[0]) => {
     setSelectedProperty(prop);
     setSearchParams({ id: prop.id }, { replace: true });
     setIsDropdownOpen(false);
@@ -174,222 +118,254 @@ export function FnbPropertyDashboardPage() {
     [searchQuery]
   );
 
-  // Synchronized Property Metrics & F&B Record for active horizon
+  // Property Metrics & F&B Engines (100% aligned with Global F&B View)
+  const propIds = useMemo(() => [selectedProperty.id], [selectedProperty.id]);
   const propMetrics = useMemo(
     () => getPropertyMetrics(selectedProperty.id, horizon),
     [selectedProperty.id, horizon]
   );
+  const fnbStatic = useMemo(
+    () => getFnbPropertyRecord(selectedProperty.id, horizon),
+    [selectedProperty.id, horizon]
+  );
+  const activeHeadlineKpis = useMemo(
+    () => getFnbHeadlineKpis(propIds, horizon),
+    [propIds, horizon]
+  );
+  const centres = useMemo(() => getFnbCentres(propMetrics), [propMetrics]);
+  const origins = useMemo(() => getFnbOrigins(propMetrics), [propMetrics]);
+  const forwardOutlook = useMemo(
+    () => getFnbForwardOutlook(propIds, forwardWindow),
+    [propIds, forwardWindow]
+  );
+  const propertyGroupEvents = useMemo(
+    () => getFnbBigGroupEvents(propIds, horizon),
+    [propIds, horizon]
+  );
 
-  const fnbRecord = useMemo(() => {
-    const base =
-      MASTER_FNB_PROPERTIES.find((p) => p.id === selectedProperty.id) || MASTER_FNB_PROPERTIES[0];
-    return {
-      ...base,
-      rooms: propMetrics.rooms,
-      outletsCount: propMetrics.fnb.outlets,
-      mtdFnbRev: propMetrics.fnbRevenue,
-      mtdCovers: propMetrics.fnb.covers,
-      captureRate: Number(propMetrics.fnb.captureRatePct.toFixed(1)),
-      avgCheck: Math.round(propMetrics.fnb.avgCheck),
-      spendPerGuest: Math.round(propMetrics.fnb.spendPerGuestNight),
-      revpash: Number(propMetrics.fnb.revpash.toFixed(2)),
-      seatTurn: Number(propMetrics.fnb.seatTurn.toFixed(2)),
-      bevShare: Number(propMetrics.fnb.bevSharePct.toFixed(1)),
-      lflGrowth: Number(propMetrics.vsLy.fnbRevenuePct.toFixed(1)),
-    };
-  }, [selectedProperty.id, propMetrics]);
+  // Pure SVG Donut Geometry (size=110, strokeWidth=14 per AGENTS.md)
+  const donutSize = 110;
+  const donutStroke = 14;
+  const donutRadius = (donutSize - donutStroke) / 2;
+  const donutCircumference = 2 * Math.PI * donutRadius;
 
-  const horizonMeta = HORIZON_TABS.find((t) => t.id === horizon) || HORIZON_TABS[1];
-  const factor = horizonMeta.factor;
+  let cumulativePct = 0;
+  const donutSegments = centres.map((c) => {
+    const dash = (c.sharePct / 100) * donutCircumference;
+    const offset = -(cumulativePct / 100) * donutCircumference;
+    cumulativePct += c.sharePct;
+    return { ...c, dash, offset };
+  });
 
-  const totalFnbRev = fnbRecord.mtdFnbRev * factor;
-  const totalCovers = Math.round(fnbRecord.mtdCovers * factor);
-  const bevRev = propMetrics.fnb.bevRevenue;
-
-  // Property Restaurants from SOSEI_RESTAURANTS + Private Dining & In-Villa Dining
+  // Property Restaurants & Bars Performance (aligned with Global View columns: F&B Rev, Food, Bev, Avg Check)
   const propertyRestaurants = useMemo(
     () => SOSEI_RESTAURANTS.filter((r) => r.propertyId === selectedProperty.id),
     [selectedProperty.id]
   );
 
-  const outletTradingRows = useMemo(() => {
+  const propertyOutlets = useMemo(() => {
     const rest1 = propertyRestaurants[0];
     const rest2 = propertyRestaurants[1];
     const groups = getFnbOutletGroups(propMetrics);
+    const bevRatio = propMetrics.fnb.bevSharePct / 100;
 
-    return [
+    const rawRows = [
       {
         id: rest1?.id || `${selectedProperty.id}-out-1`,
-        name: rest1?.name || fnbRecord.signatureOutlets.split('·')[0].trim(),
-        concept: rest1?.concept || fnbRecord.cuisineLead,
-        cuisineTag: rest1?.cuisineTag || 'Signature Dining',
-        hours: rest1?.hours || '17:30 – 23:00',
-        seating: rest1?.seating || '44 Covers · Signature Room',
-        image: rest1?.image || selectedProperty.img,
+        outletName: rest1?.name || fnbStatic.signatureOutlets.split('·')[0].trim(),
+        concept: rest1?.concept || fnbStatic.cuisineLead,
+        typeLabel: 'Fine Dining',
+        filterGroup: 'restaurant' as const,
         covers: groups[0].covers,
         avgCheck: Math.round(groups[0].avgCheck),
-        revpash: groups[0].revpash,
         revenue: groups[0].revenue,
-        sharePct: Math.round(groups[0].sharePct),
-        status: groups[0].status,
+        bevShare: Math.min(0.42, bevRatio * 1.15),
       },
       {
         id: rest2?.id || `${selectedProperty.id}-out-2`,
-        name: rest2?.name || (fnbRecord.signatureOutlets.split('·')[1]?.trim() ?? 'All-Day Terrace'),
-        concept: rest2?.concept || 'All-Day Culinary & Sunset Lounge',
-        cuisineTag: rest2?.cuisineTag || 'All-Day & Lounge',
-        hours: rest2?.hours || '07:00 – 23:00',
-        seating: rest2?.seating || '52 Covers · Terrace & Bar',
-        image: rest2?.image || selectedProperty.img,
+        outletName: rest2?.name || (fnbStatic.signatureOutlets.split('·')[1]?.trim() ?? 'All-Day Terrace & Bar'),
+        concept: rest2?.concept || 'All-Day Brasserie & Sunset Lounge',
+        typeLabel: 'All-Day & Bar',
+        filterGroup: 'restaurant' as const,
         covers: groups[1].covers,
         avgCheck: Math.round(groups[1].avgCheck),
-        revpash: groups[1].revpash,
         revenue: groups[1].revenue,
-        sharePct: Math.round(groups[1].sharePct),
-        status: groups[1].status,
+        bevShare: Math.min(0.48, bevRatio * 1.3),
       },
       {
         id: `${selectedProperty.id}-ivd`,
-        name: 'In-Villa & Suite Private Dining',
-        concept: '24-Hour Butler Service, Private Terrace Breakfast & Chef Table',
-        cuisineTag: 'In-Room & Villa Service',
-        hours: '24 Hours · On-Demand',
-        seating: `${fnbRecord.rooms} Suites & Villas`,
-        image: selectedProperty.img,
+        outletName: 'In-Villa & Suite Dining',
+        concept: 'Private Terrace Breakfast & 24-Hour Suite Service',
+        typeLabel: 'In-Villa Dining',
+        filterGroup: 'bar_villa' as const,
         covers: groups[2].covers,
         avgCheck: Math.round(groups[2].avgCheck),
-        revpash: groups[2].revpash,
         revenue: groups[2].revenue,
-        sharePct: Math.round(groups[2].sharePct),
-        status: groups[2].status,
+        bevShare: Math.max(0.18, bevRatio * 0.75),
       },
       {
         id: `${selectedProperty.id}-banquet`,
-        name: 'Private Cellar & Bespoke Events',
-        concept: 'Sommelier Wine Dinners, Celebration Buyouts & Executive Retreats',
-        cuisineTag: 'Private Events & Cellar',
-        hours: 'By Reservation',
-        seating: 'Up to 36 Pax · Private Salon',
-        image: rest1?.image || selectedProperty.img,
+        outletName: 'Private Dining & Events',
+        concept: 'Sommelier Cellar Dinners, Buyouts & Celebrations',
+        typeLabel: 'Banquet & Events',
+        filterGroup: 'bar_villa' as const,
         covers: groups[3].covers,
         avgCheck: Math.round(groups[3].avgCheck),
-        revpash: groups[3].revpash,
         revenue: groups[3].revenue,
-        sharePct: Math.round(groups[3].sharePct),
-        status: groups[3].status,
+        bevShare: Math.min(0.45, bevRatio * 1.2),
       },
     ];
-  }, [propertyRestaurants, selectedProperty, fnbRecord, propMetrics]);
 
-  // Daypart Service Rhythm for this property (sums to propMetrics.fnb.covers and propMetrics.fnbRevenue)
-  const daypartRows = useMemo(() => {
-    return getFnbDayparts(propMetrics, fnbRecord.categoryId).map((d) => ({
-      daypart: d.name,
-      window: d.window,
-      covers: d.covers,
-      share: d.sharePct,
-      rev: d.revenue,
-      revpash: d.revpash.toFixed(2),
-      sla: d.sla,
-    }));
-  }, [propMetrics, fnbRecord.categoryId]);
-
-  // Property Revenue Centre Mix Donut
-  const centreMix = useMemo(() => {
-    const shares = [
-      { id: 'sig', name: 'Signature Dining', share: 44, color: '#0f172a', avgCheck: Math.round(fnbRecord.avgCheck * 1.18) },
-      { id: 'all', name: 'All-Day & Terrace', share: 21, color: '#334155', avgCheck: Math.round(fnbRecord.avgCheck * 0.88) },
-      { id: 'bar', name: 'Bar & Sommelier Cellar', share: 14, color: '#64748b', avgCheck: Math.round(fnbRecord.avgCheck * 0.76) },
-      { id: 'ivd', name: 'In-Villa Dining', share: 11, color: '#94a3b8', avgCheck: Math.round(fnbRecord.avgCheck * 0.85) },
-      { id: 'evt', name: 'Private Events', share: 10, color: '#cbd5e1', avgCheck: Math.round(fnbRecord.avgCheck * 1.45) },
-    ];
-    const revs = splitByShares(
-      totalFnbRev,
-      shares.map((s) => ({ id: s.id, name: s.name, share: s.share }))
-    );
-    return shares.map((s, idx) => ({
-      ...s,
-      revenue: fmtMoney(revs[idx].value),
-    }));
-  }, [fnbRecord, totalFnbRev]);
-
-  // Property Signature Menu Leaders from FNB_MENU_ITEMS
-  const propertyMenuLeaders = useMemo(() => {
-    const items = FNB_MENU_ITEMS.filter((item) => item.propertyId === selectedProperty.id);
-    const list = items.length > 0 ? items : FNB_MENU_ITEMS.slice(0, 5);
-    return list.slice(0, 5).map((item, idx) => {
-      const baseOrders = Math.max(12, Math.round((totalCovers / 18) * (1 - idx * 0.14)));
-      const itemRev = baseOrders * item.price;
+    return rawRows.map((r) => {
+      const bevRevenue = Math.round(r.revenue * r.bevShare);
+      const foodRevenue = Math.max(0, Math.round(r.revenue) - bevRevenue);
       return {
-        ...item,
-        orders: baseOrders,
-        itemRev,
-        marginPct: item.category === 'beverages' ? 78 : 71 - idx * 2,
+        ...r,
+        foodRevenue,
+        bevRevenue,
       };
     });
-  }, [selectedProperty.id, totalCovers]);
+  }, [propertyRestaurants, selectedProperty.id, fnbStatic, propMetrics]);
 
-  // Property In-House Guests
-  const propertyGuests = useMemo(
-    () => IN_HOUSE_FNB_GUESTS.filter((g) => g.propertyId === selectedProperty.id),
-    [selectedProperty.id]
-  );
+  const filteredOutlets = useMemo(() => {
+    if (outletFilter === 'all') return propertyOutlets;
+    return propertyOutlets.filter((o) => o.filterGroup === outletFilter);
+  }, [propertyOutlets, outletFilter]);
 
-  // Property F&B Signals & Operational Metrics
+  // Outlet Daypart Performance (Property Level — simple, clear columns matching Global View)
+  const daypartRows = useMemo(() => {
+    const bevRatio = propMetrics.fnb.bevSharePct / 100;
+    return getFnbDayparts(propMetrics, fnbStatic.categoryId).map((d) => {
+      const daypartBevFactor =
+        d.id === 'breakfast'
+          ? 0.35
+          : d.id === 'lunch'
+            ? 0.75
+            : d.id === 'sunset'
+              ? 1.65
+              : d.id === 'dinner'
+                ? 1.15
+                : 0.85;
+      const effectiveBevShare = Math.min(0.68, Math.max(0.08, bevRatio * daypartBevFactor));
+      const bevRevenue = Math.round(d.revenue * effectiveBevShare);
+      const foodRevenue = Math.max(0, Math.round(d.revenue) - bevRevenue);
+      const avgCheck = d.covers > 0 ? Math.round(d.revenue / d.covers) : 0;
+
+      return {
+        id: d.id,
+        name: d.name,
+        window: d.window,
+        covers: d.covers,
+        sharePct: d.sharePct,
+        revenue: d.revenue,
+        foodRevenue,
+        bevRevenue,
+        avgCheck,
+      };
+    });
+  }, [propMetrics, fnbStatic.categoryId]);
+
+  // Property Operational Signals (clean executive language matching Global F&B View)
   const propertySignals = useMemo(() => {
-    const foodCostPct = fnbRecord.status === 'attention' ? 30.2 : 26.8;
-    const bevCostPct = fnbRecord.status === 'attention' ? 23.4 : 20.6;
-    const sentimentScore = fnbRecord.status === 'above_plan' ? 96.2 : fnbRecord.status === 'on_plan' ? 94.1 : 89.8;
-    const allergyGuestsCount = propertyGuests.filter((g) => g.allergies.length > 0).length;
+    const suffix = FNB_PERIOD_SUFFIX[horizon];
+    const leadOutlet = propertyOutlets[0]?.outletName || 'Signature Dining';
+    const secondOutlet = propertyOutlets[1]?.outletName || 'Sunset Bar & Lounge';
+    const captureGap = Math.max(2, Math.round(78 - propMetrics.fnb.captureRatePct));
+    const captureOpportunity = Math.round(propMetrics.fnbRevenue * 0.065);
+    const dinnerUpsell = Math.round(propMetrics.fnbRevenue * 0.048);
+    const bevGap = Math.round(propMetrics.fnbRevenue * 0.035);
+    const eventPipeline = Math.round(propMetrics.fnbRevenue * 0.052);
+
+    const signals = [
+      {
+        id: 'prop-sig-1',
+        type: (propMetrics.fnb.captureRatePct < 70 ? 'risk' : 'opportunity') as 'risk' | 'opportunity',
+        title:
+          propMetrics.fnb.captureRatePct < 70
+            ? `In-House Dinner Capture Below Target (${fmtPct(propMetrics.fnb.captureRatePct, 0)})`
+            : `Strong In-House Dining Capture (${fmtPct(propMetrics.fnb.captureRatePct, 0)} of Guests)`,
+        sub: `${leadOutlet} · Concierge pre-arrival dining reservations`,
+        exposure:
+          propMetrics.fnb.captureRatePct < 70
+            ? `-${captureGap} pts vs Target`
+            : `+${fmtUsd(captureOpportunity)} ${suffix}`,
+      },
+      {
+        id: 'prop-sig-2',
+        type: 'opportunity' as const,
+        title: `Peak Dinner Seating Demand at ${leadOutlet}`,
+        sub: `19:30–21:30 window at ${fmtPct(Math.min(96, propMetrics.occupancyPct + 14), 0)} table fill · Second seating uplift`,
+        exposure: `+${fmtUsd(dinnerUpsell)} ${suffix}`,
+      },
+      {
+        id: 'prop-sig-3',
+        type: (propMetrics.fnb.bevSharePct < 27 ? 'risk' : 'opportunity') as 'risk' | 'opportunity',
+        title: `Wine Pairing & Beverage Share (${fmtPct(propMetrics.fnb.bevSharePct, 0)} of F&B Revenue)`,
+        sub: `${secondOutlet} · Sommelier flight & sunset aperitif attachment`,
+        exposure:
+          propMetrics.fnb.bevSharePct < 27
+            ? `${fmtUsd(bevGap)} ${suffix}`
+            : `+${fmtUsd(bevGap)} ${suffix}`,
+      },
+      {
+        id: 'prop-sig-4',
+        type: 'opportunity' as const,
+        title: `Private Dining & In-Villa Experience Demand`,
+        sub: `${fmtInt(propertyOutlets[2]?.covers ?? 0)} In-Villa covers & ${propertyGroupEvents.events.length} contracted group events`,
+        exposure: `+${fmtUsd(eventPipeline)} ${suffix}`,
+      },
+    ];
 
     return {
-      foodCostPct,
-      bevCostPct,
-      primeCostPct: (foodCostPct + 29.4).toFixed(1),
-      sentimentScore,
-      allergyGuestsCount,
-      items: [
-        {
-          title: `${propertyRestaurants[0]?.name || 'Signature Outlet'} — Prime Seating Yield`,
-          detail: `8:00 PM prime window operating at 96% table occupancy with $${Math.round(fnbRecord.avgCheck * 1.24)} avg check.`,
-          badge: fnbRecord.lflGrowth >= 0 ? `+${fnbRecord.lflGrowth}% YoY` : `${fnbRecord.lflGrowth}% YoY`,
-          tone: fnbRecord.lflGrowth >= 0 ? 'positive' : 'negative',
-        },
-        {
-          title: 'Food & Beverage Cost Discipline',
-          detail: `Blended F&B COGS at ${foodCostPct}% (Food) and ${bevCostPct}% (Beverage & Cellar) vs 28.0% property budget.`,
-          badge: foodCostPct <= 28 ? 'On Target' : 'Watchlist',
-          tone: foodCostPct <= 28 ? 'positive' : 'negative',
-        },
-        {
-          title: 'In-House VIP Dietary & Allergen Protocol',
-          detail: `${propertyGuests.length} active VIP suites in-house (${allergyGuestsCount} suites with registered kitchen allergen alerts).`,
-          badge: '100% Briefed',
-          tone: 'neutral',
-        },
-      ],
+      signals,
+      pipelineValue: captureOpportunity + dinnerUpsell + eventPipeline,
     };
-  }, [fnbRecord, propertyGuests, propertyRestaurants]);
+  }, [horizon, propertyOutlets, propMetrics, propertyGroupEvents.events.length]);
 
-  const heroRevs = splitByShares(totalFnbRev, [
-    { id: 'rest', name: 'Restaurants', share: 65 },
-    { id: 'bar', name: 'Bars & Cellar', share: 14 },
-    { id: 'ivd', name: 'In-Villa', share: 11 },
-    { id: 'evt', name: 'Events', share: 10 },
-  ]);
-  const heroBreakdown = [
-    { label: 'Restaurants', val: fmtMoney(heroRevs[0].value), pct: '65%' },
-    { label: 'Bars & Cellar', val: fmtMoney(heroRevs[1].value), pct: '14%' },
-    { label: 'In-Villa', val: fmtMoney(heroRevs[2].value), pct: '11%' },
-    { label: 'Events', val: fmtMoney(heroRevs[3].value), pct: '10%' },
-  ];
+  // Top Menu & Beverage Leaders at this Property / Venue
+  const propertyMenuLeaders = useMemo(() => {
+    const propItems = FNB_MENU_ITEMS.filter((item) => item.propertyId === selectedProperty.id);
+    const basePool = propItems.length >= 6 ? propItems : [...propItems, ...FNB_MENU_ITEMS.slice(0, 8)];
+    const filtered =
+      menuFilter === 'all'
+        ? basePool
+        : menuFilter === 'beverages'
+          ? basePool.filter((i) => i.category === 'beverages')
+          : basePool.filter((i) => i.category !== 'beverages');
 
-  const isNegGrowth = fnbRecord.lflGrowth < 0;
+    const list = (filtered.length > 0 ? filtered : basePool).slice(0, 6);
+    const leadVenue = propertyOutlets[0]?.outletName || 'Signature Dining';
+    const barVenue = propertyOutlets[1]?.outletName || 'Sunset Lounge';
+
+    return list.map((item, idx) => {
+      const orders = Math.max(14, Math.round((propMetrics.fnb.covers / 16) * (1 - idx * 0.12)));
+      const revenue = orders * item.price;
+      const venueName = item.category === 'beverages' ? barVenue : leadVenue;
+      const catLabel =
+        item.category === 'mains'
+          ? 'Signature Main'
+          : item.category === 'starters'
+            ? 'Appetizer & Crudo'
+            : item.category === 'desserts'
+              ? 'Pastry & Dessert'
+              : 'Wine & Craft Beverage';
+
+      return {
+        id: `${item.id}-${idx}`,
+        name: item.name,
+        venueName,
+        catLabel,
+        price: item.price,
+        orders,
+        revenue,
+      };
+    });
+  }, [selectedProperty.id, menuFilter, propMetrics.fnb.covers, propertyOutlets]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
-      {/* ───────────────── TOP EXECUTIVE HEADER ───────────────── */}
-      <div className="w-full flex flex-col gap-3 animate-fade-in">
+    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 bg-white text-[10px]">
+      {/* ───────────────────────── TOP EXECUTIVE HEADER ───────────────────────── */}
+      <div className="shrink-0 flex flex-col gap-3 pt-4 lg:pt-6 animate-card-enter">
         <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
@@ -402,26 +378,29 @@ export function FnbPropertyDashboardPage() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
             <span className="text-zinc-900 font-medium">
-              As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
+              As of: <strong className="font-semibold text-zinc-900">{PERIOD_DEFS[horizon].periodLabel}</strong>
             </span>
             <span>·</span>
             <span>
-              Active Resort: <strong className="font-semibold text-zinc-900">{selectedProperty.name}</strong> ({selectedProperty.location} · {fnbRecord.rooms} Keys · {fnbRecord.outletsCount} F&amp;B Outlets)
+              Active Resort: <strong className="font-semibold text-zinc-900">{selectedProperty.name}</strong> ({selectedProperty.location} · {propMetrics.rooms} Keys · {propMetrics.fnb.outlets} Operating Outlets)
             </span>
           </div>
 
+          {/* Right Controls: Time Horizon (Yesterday | MTD | YTD) + POS + Export */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {/* Time Horizon Pill Filter */}
             <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-              {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
-                const active = horizon === t.id;
+              {PERIOD_ORDER.filter((pid) => pid !== 'forward').map((id) => {
+                const t = PERIOD_DEFS[id];
+                const active = horizon === id;
                 return (
                   <button
-                    key={t.id}
+                    key={id}
                     type="button"
-                    onClick={() => setHorizon(t.id)}
+                    onClick={() => setHorizon(id)}
                     className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                      active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
+                      active
+                        ? 'bg-zinc-900 text-white shadow-2xs'
+                        : 'text-zinc-600 hover:text-zinc-900'
                     }`}
                   >
                     {t.label}
@@ -451,9 +430,8 @@ export function FnbPropertyDashboardPage() {
         </div>
       </div>
 
-      {/* ───────────────── PROPERTY SELECTOR BAR (DROPDOWN + QUICK RESORT PILLS) ───────────────── */}
+      {/* ───────────────────────── PROPERTY SELECTOR BAR ───────────────────────── */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 pb-1">
-        {/* Left: Searchable Property Selector Dropdown */}
         <div className="flex items-center gap-3 relative shrink-0" ref={dropdownRef}>
           <div className="w-9 h-9 rounded-full overflow-hidden border border-zinc-200 shadow-2xs shrink-0">
             <img
@@ -474,7 +452,7 @@ export function FnbPropertyDashboardPage() {
                   {selectedProperty.name}
                 </span>
                 <span className="text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200/80">
-                  {fnbRecord.categoryName}
+                  {fnbStatic.categoryName}
                 </span>
                 <AltArrowDown
                   size={15}
@@ -484,7 +462,7 @@ export function FnbPropertyDashboardPage() {
                 />
               </div>
               <span className="text-zinc-500 text-[9.5px] tracking-wider uppercase font-semibold mt-1">
-                {selectedProperty.location} · {fnbRecord.cuisineLead}
+                {selectedProperty.location} · {fnbStatic.cuisineLead}
               </span>
             </div>
           </button>
@@ -534,7 +512,7 @@ export function FnbPropertyDashboardPage() {
                             {prop.name}
                           </div>
                           <div className="text-[9px] text-zinc-500 mt-0.5 truncate">
-                            {prop.location} · {fmtMoney(pM.fnbRevenue)} {FNB_PERIOD_SUFFIX[horizon]}
+                            {prop.location} · {fmtUsd(pM.fnbRevenue)} {FNB_PERIOD_SUFFIX[horizon]}
                           </div>
                         </div>
                         {isSelected && (
@@ -567,706 +545,865 @@ export function FnbPropertyDashboardPage() {
                 <span className="text-[9px] text-zinc-400 font-medium">
                   {filteredDropdownProps.length} of {MASTER_PROPERTIES.length} SOSEI properties
                 </span>
-                <span className="text-[9px] text-zinc-500 font-semibold">F&amp;B Command</span>
+                <span className="text-[9px] text-zinc-500 font-semibold">Property View</span>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ───────────────── ROW 1: 5 PROPERTY F&B HEADLINE KPI CARDS ───────────────── */}
-      <div className="-mx-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-stretch">
-        {/* Hero Card (2 Cols): TOTAL PROPERTY F&B REVENUE */}
-        <div
-          className={`${CARD_CLASS} sm:col-span-2 lg:col-span-2`}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — Total F&B Revenue Breakdown`,
-              data: {
-                key: 'FNB_HEADLINE_KPI',
-                kpiId: 'total_fnb_rev',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between gap-1">
-            <InfoTooltip text="Total Property F&B Revenue across restaurants, bars, in-villa dining, and private events.">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 truncate cursor-help">
-                PROPERTY F&amp;B REVENUE
-              </span>
-            </InfoTooltip>
-            <span
-              className={`inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
-                isNegGrowth ? 'bg-[#fff1f2] text-[#800020]' : 'bg-[#ecfdf5] text-[#14532d]'
-              }`}
+      {/* ───────────────────────── MAIN CONTENT GRID ───────────────────────── */}
+      <div className="flex flex-col gap-4">
+        {/* 5 HEADLINE METRICS (Identical to Global F&B View, scoped to Selected Property) */}
+        <div className="-mx-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {activeHeadlineKpis.map((kpi) => (
+            <div
+              key={kpi.id}
+              onClick={() =>
+                openDrawer({
+                  type: 'FNB_DETAIL',
+                  title: `${selectedProperty.name} — ${kpi.label}`,
+                  data: {
+                    key: 'FNB_HEADLINE_KPI',
+                    kpiId: kpi.id,
+                    horizon,
+                    propertyId: selectedProperty.id,
+                    propertyIds: propIds,
+                  },
+                })
+              }
+              className={CARD_CLASS}
             >
-              {isNegGrowth ? '' : '+'}
-              {fnbRecord.lflGrowth}% vs LY
-            </span>
-          </div>
-
-          <div className="flex items-baseline justify-between gap-2 my-1">
-            <div className="text-[22px] font-normal text-zinc-900 leading-tight">
-              {fmtMoney(totalFnbRev)}
-            </div>
-            <div className="text-[9.5px] font-medium text-zinc-500">
-              {fmtCount(totalCovers)} Covers · {fnbRecord.outletsCount} Venues
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 gap-1 pt-1.5 border-t border-zinc-200/60">
-            {heroBreakdown.map((p) => (
-              <div key={p.label} className="text-left">
-                <div className="text-[8px] text-zinc-400 uppercase tracking-wider truncate">{p.label}</div>
-                <div className="text-[9.5px] font-semibold text-zinc-900 leading-tight mt-0.5">{p.val}</div>
-                <div className="text-[8px] text-zinc-400">{p.pct}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Card 2: GUEST CAPTURE RATE */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — In-House Guest Dining Capture`,
-              data: {
-                key: 'FNB_HEADLINE_KPI',
-                kpiId: 'capture_rate',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between gap-1">
-            <InfoTooltip text="Percentage of in-house resort guests dining at on-property F&B venues daily.">
-              <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                GUEST CAPTURE
-              </span>
-            </InfoTooltip>
-            <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 bg-[#ecfdf5] text-[#14532d]">
-              +3.4 pts vs LY
-            </span>
-          </div>
-          <div>
-            <div className="text-[22px] font-normal text-zinc-900 leading-tight my-1">
-              {fnbRecord.captureRate}%
-            </div>
-            <div className="text-[9px] text-zinc-400 font-normal">
-              In-House Guests ({fnbRecord.rooms} Keys)
-            </div>
-          </div>
-          <div className="flex items-center gap-1 flex-wrap pt-1">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              Bfast {Math.min(96, Math.round(fnbRecord.captureRate + 16))}%
-            </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              Dinner {Math.round(fnbRecord.captureRate - 4)}%
-            </span>
-          </div>
-        </div>
-
-        {/* Card 3: AVG CHECK & SPEND / GUEST */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — Average Check & Spend per Guest`,
-              data: {
-                key: 'FNB_HEADLINE_KPI',
-                kpiId: 'avg_check',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between gap-1">
-            <InfoTooltip text="Average POS transaction check and daily culinary spend per unique dining guest.">
-              <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                AVG CHECK
-              </span>
-            </InfoTooltip>
-            <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 bg-[#ecfdf5] text-[#14532d]">
-              +6.8% vs LY
-            </span>
-          </div>
-          <div>
-            <div className="text-[22px] font-normal text-zinc-900 leading-tight my-1">
-              ${fnbRecord.avgCheck}
-            </div>
-            <div className="text-[9px] text-zinc-400 font-normal">
-              ${fnbRecord.spendPerGuest} Spend / Unique Guest
-            </div>
-          </div>
-          <div className="flex items-center gap-1 flex-wrap pt-1">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              +${Math.round(fnbRecord.avgCheck * 0.05)} vs Plan
-            </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              ${Math.round(totalFnbRev / Math.max(1, totalCovers))} / Cover
-            </span>
-          </div>
-        </div>
-
-        {/* Card 4: REVPASH & TABLE TURN */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — RevPASH & Seat Turnover`,
-              data: {
-                key: 'FNB_HEADLINE_KPI',
-                kpiId: 'revpash',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between gap-1">
-            <InfoTooltip text="Revenue Per Available Seat Hour (RevPASH) and average dining table turnover.">
-              <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                REVPASH &amp; TURN
-              </span>
-            </InfoTooltip>
-            <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 bg-[#ecfdf5] text-[#14532d]">
-              +8.4% vs LY
-            </span>
-          </div>
-          <div>
-            <div className="text-[22px] font-normal text-zinc-900 leading-tight my-1">
-              ${fnbRecord.revpash.toFixed(2)}
-            </div>
-            <div className="text-[9px] text-zinc-400 font-normal">
-              {fnbRecord.seatTurn}x Avg Table Turn
-            </div>
-          </div>
-          <div className="flex items-center gap-1 flex-wrap pt-1">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              +$3.20 vs Plan
-            </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              IVD 22.8m SLA
-            </span>
-          </div>
-        </div>
-
-        {/* Card 5: BEVERAGE & WINE SHARE */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — Beverage, Wine & Mixology Share`,
-              data: {
-                key: 'FNB_HEADLINE_KPI',
-                kpiId: 'beverage',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between gap-1">
-            <InfoTooltip text="Beverage, wine cellar, and mixology share of total property F&B revenue.">
-              <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate cursor-help">
-                BEVERAGE SHARE
-              </span>
-            </InfoTooltip>
-            <span className="inline-flex items-center text-[8.5px] font-semibold px-1.5 py-0.5 rounded shrink-0 bg-[#ecfdf5] text-[#14532d]">
-              +2.4 pts vs LY
-            </span>
-          </div>
-          <div>
-            <div className="text-[22px] font-normal text-zinc-900 leading-tight my-1">
-              {fnbRecord.bevShare}%
-            </div>
-            <div className="text-[9px] text-zinc-400 font-normal">
-              {fmtMoney(bevRev)} Bev &amp; Cellar Rev
-            </div>
-          </div>
-          <div className="flex items-center gap-1 flex-wrap pt-1">
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              +1.2 pts vs Plan
-            </span>
-            <span className="inline-flex items-center text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              44.2% Pairing
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ───────────────── ROW 2: PROPERTY OUTLETS TRADING BOARD (7 COLS) + DAYPART SERVICE RHYTHM (5 COLS) ───────────────── */}
-      <div className="-mx-4 grid grid-cols-12 gap-4 items-stretch">
-        {/* Left 7 Cols: Operating Outlets & Culinary Venues */}
-        <div className="col-span-12 lg:col-span-7 flex flex-col">
-          <div className={CARD_CLASS}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-200/80 mb-3">
-              <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                  OPERATING OUTLETS &amp; VENUE PERFORMANCE ({selectedProperty.name})
-                </h3>
-                <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-                  On-property restaurants, bars, in-villa dining &amp; private cellar performance ({horizonMeta.label})
-                </p>
-              </div>
-              <span className="text-[8.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 self-start sm:self-auto">
-                {fnbRecord.outletsCount} Active Venues · {fnbRecord.cuisineLead}
-              </span>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-between gap-2.5">
-              {outletTradingRows.map((venue) => (
-                <div
-                  key={venue.id}
-                  onClick={() =>
-                    openDrawer({
-                      type: 'FNB_DETAIL',
-                      title: `${venue.name} — ${selectedProperty.name}`,
-                      data: {
-                        key: 'FNB_OUTLET_DAYPART',
-                        horizon,
-                        propertyId: selectedProperty.id,
-                        propertyIds: [selectedProperty.id],
-                      },
-                    })
-                  }
-                  className="p-2.5 rounded-[10px] border border-zinc-200/70 bg-zinc-50/40 hover:bg-zinc-100/70 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate">
+                  {kpi.label}
+                </span>
+                <span
+                  className={`inline-flex items-center text-[8px] font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap ${
+                    kpi.vsLyPos
+                      ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                      : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={venue.image}
-                      alt={venue.name}
-                      className="w-11 h-11 rounded-lg object-cover border border-zinc-200 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-zinc-900 truncate">{venue.name}</span>
-                        <span className="text-[8px] font-medium px-1.5 py-0.2 rounded bg-zinc-200/70 text-zinc-700 shrink-0">
-                          {venue.cuisineTag}
-                        </span>
-                      </div>
-                      <div className="text-[9px] text-zinc-500 truncate mt-0.5">{venue.concept}</div>
-                      <div className="text-[8.5px] text-zinc-400 mt-0.5">
-                        {venue.hours} · {venue.seating}
-                      </div>
-                    </div>
-                  </div>
+                  {kpi.vsLy}
+                </span>
+              </div>
 
-                  <div className="grid grid-cols-4 sm:flex sm:items-center gap-3 sm:gap-4 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-zinc-200/60">
-                    <div className="text-left sm:text-right">
-                      <div className="text-[8px] text-zinc-400">Covers</div>
-                      <div className="text-[10px] font-semibold text-zinc-900">
-                        {venue.covers.toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="text-left sm:text-right">
-                      <div className="text-[8px] text-zinc-400">Avg Check</div>
-                      <div className="text-[10px] font-semibold text-zinc-900">${venue.avgCheck}</div>
-                    </div>
-                    <div className="text-left sm:text-right">
-                      <div className="text-[8px] text-zinc-400">RevPASH</div>
-                      <div className="text-[10px] font-semibold text-zinc-900">
-                        ${venue.revpash.toFixed(2)}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[8px] text-zinc-400">Revenue ({venue.sharePct}%)</div>
-                      <div className="text-[10.5px] font-bold text-zinc-900">
-                        {fmtMoney(venue.revenue)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              <div className="text-[20px] xl:text-[22px] font-normal text-zinc-900 leading-tight my-1.5 tabular-nums">
+                {kpi.value}
+              </div>
+
+              <div className="flex items-center gap-1 flex-nowrap">
+                <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
+                  {kpi.vsBudget}
+                </span>
+                <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
+                  {kpi.vsForecast}
+                </span>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* Right 5 Cols: Daypart Service Rhythm & Kitchen SLA */}
-        <div className="col-span-12 lg:col-span-5 flex flex-col">
+        {/* ROW 1 (4-4-4): F&B Revenue by Revenue Centre | Outlet Daypart Performance | Operational Signals & Opportunities */}
+        <div className="-mx-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* 1. F&B REVENUE BY REVENUE CENTRE */}
           <div
-            className={CARD_CLASS}
             onClick={() =>
               openDrawer({
                 type: 'FNB_DETAIL',
-                title: `${selectedProperty.name} — Daypart Productivity & Kitchen SLA`,
+                title: `${selectedProperty.name} — F&B Revenue by Revenue Centre`,
                 data: {
-                  key: 'FNB_OUTLET_DAYPART',
+                  key: 'FNB_REVENUE_CENTRE_SCORECARD',
+                  centre: 'Fine & Specialty Dining',
                   horizon,
                   propertyId: selectedProperty.id,
-                  propertyIds: [selectedProperty.id],
+                  propertyIds: propIds,
                 },
               })
             }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
           >
-            <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200/80 mb-3">
+            <div className="flex items-start justify-between gap-2 mb-3">
               <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                  DAYPART SERVICE RHYTHM &amp; KITCHEN SLA
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  F&amp;B REVENUE BY REVENUE CENTRE
                 </h3>
-                <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-                  Covers, RevPASH &amp; kitchen ticket speed across 5 daily service windows
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  {selectedProperty.name} F&amp;B revenue split across 6 operating centres
                 </p>
               </div>
-              <span className="text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d]">
-                95.2% On-Time SLA
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
               </span>
+            </div>
+
+            <div className="flex items-center gap-3.5 flex-1">
+              {/* Pure SVG Vector Donut */}
+              <div className="relative w-[110px] h-[110px] shrink-0 flex items-center justify-center">
+                <svg
+                  width={donutSize}
+                  height={donutSize}
+                  viewBox={`0 0 ${donutSize} ${donutSize}`}
+                  className="transform -rotate-90"
+                >
+                  <circle
+                    cx={donutSize / 2}
+                    cy={donutSize / 2}
+                    r={donutRadius}
+                    fill="none"
+                    stroke="#f4f4f5"
+                    strokeWidth={donutStroke}
+                  />
+                  {donutSegments.map((seg) => {
+                    const isHovered = hoveredCentre === seg.id;
+                    const isDimmed = hoveredCentre !== null && !isHovered;
+                    return (
+                      <circle
+                        key={seg.id}
+                        cx={donutSize / 2}
+                        cy={donutSize / 2}
+                        r={donutRadius}
+                        fill="none"
+                        stroke={seg.color}
+                        strokeWidth={isHovered ? donutStroke + 2 : donutStroke}
+                        strokeDasharray={`${Math.max(0, seg.dash - 1.5)} ${donutCircumference}`}
+                        strokeDashoffset={seg.offset}
+                        className="transition-all duration-300"
+                        style={{ opacity: isDimmed ? 0.35 : 1 }}
+                      />
+                    );
+                  })}
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span className="text-xs font-bold text-zinc-900 leading-none">
+                    {fmtUsd(propMetrics.fnbRevenue)}
+                  </span>
+                  <span className="text-[7.5px] text-zinc-400 font-medium mt-0.5">Property F&amp;B</span>
+                </div>
+              </div>
+
+              {/* Right Table */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between gap-1">
+                <div className="flex items-center justify-between gap-1.5 pb-1 px-1 border-b border-zinc-100 text-[9.5px] font-medium text-zinc-400">
+                  <span>Revenue Centre</span>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <span>Share %</span>
+                    <span className="w-16 text-right">F&amp;B Revenue</span>
+                  </div>
+                </div>
+                {centres.map((c) => (
+                  <div
+                    key={c.id}
+                    onMouseEnter={() => setHoveredCentre(c.id)}
+                    onMouseLeave={() => setHoveredCentre(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDrawer({
+                        type: 'FNB_DETAIL',
+                        title: `${selectedProperty.name} — ${c.name}`,
+                        data: {
+                          key: 'FNB_REVENUE_CENTRE_SCORECARD',
+                          centre: c.name,
+                          horizon,
+                          propertyId: selectedProperty.id,
+                          propertyIds: propIds,
+                        },
+                      });
+                    }}
+                    className="flex items-center justify-between gap-1.5 py-0.5 px-1 rounded hover:bg-zinc-200/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                      <span className="text-[10px] font-medium text-zinc-700 truncate">{c.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <span className="text-[9.5px] text-zinc-400 tabular-nums">{fmtPct(c.sharePct, 0)}</span>
+                      <span className="text-[10px] font-medium text-zinc-900 w-16 text-right tabular-nums">
+                        {fmtUsd(c.revenue)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 2. OUTLET & DAYPART PERFORMANCE (Property Level from Screenshot) */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title: `${selectedProperty.name} — Service Daypart Performance`,
+                data: {
+                  key: 'FNB_DAYPART_RHYTHM',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  OUTLET PERFORMANCE BY DAYPART
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Service hours revenue, food vs beverage split &amp; avg. check
+                </p>
+              </div>
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
+              </span>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between gap-1.5">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-4">Service Daypart</span>
+                <span className="col-span-2 text-right">F&amp;B Rev.</span>
+                <span className="col-span-2 text-right">Food</span>
+                <span className="col-span-2 text-right">Bev</span>
+                <span className="col-span-2 text-right">Avg. Check</span>
+              </div>
+
+              {daypartRows.map((d) => (
+                <div key={d.id} className="flex flex-col gap-1">
+                  <div className="grid grid-cols-12 items-center tabular-nums">
+                    <div className="col-span-4 min-w-0 pr-1">
+                      <span className="text-[10px] font-medium text-zinc-700 truncate block">
+                        {d.name}
+                      </span>
+                    </div>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsd(d.revenue)}
+                    </span>
+                    <span className="col-span-2 text-[10px] text-zinc-600 text-right">
+                      {fmtUsd(d.foodRevenue)}
+                    </span>
+                    <span className="col-span-2 text-[10px] text-zinc-600 text-right">
+                      {fmtUsd(d.bevRevenue)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(d.avgCheck)}
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-zinc-800 rounded-full"
+                      style={{ width: `${Math.min(100, d.sharePct * 1.9)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. OPERATIONAL SIGNALS & OPPORTUNITIES */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title: `${selectedProperty.name} — Operational Signals & Opportunities`,
+                data: {
+                  key: 'FNB_HEADLINE_KPI',
+                  kpiId: 'capture',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-2.5">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  OPERATIONAL SIGNALS &amp; OPPORTUNITIES
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Property highlights &amp; +{fmtUsd(propertySignals.pipelineValue)} revenue opportunity
+                </p>
+              </div>
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
+              </span>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between gap-1.5">
+              {propertySignals.signals.map((sig) => {
+                const isRisk = sig.type === 'risk';
+                return (
+                  <div
+                    key={sig.id}
+                    className="py-1.5 px-1 rounded-lg hover:bg-zinc-200/40 transition-colors flex items-start justify-between gap-2"
+                  >
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span
+                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 font-bold text-[9px] mt-0.5 ${
+                          isRisk
+                            ? 'bg-[#fff1f2] text-[#800020]'
+                            : 'bg-[#ecfdf5] text-[#14532d]'
+                        }`}
+                      >
+                        {isRisk ? '!' : '↑'}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-[9.5px] font-bold text-zinc-900 truncate">{sig.title}</div>
+                        <div className="text-[8.5px] text-zinc-500 truncate">{sig.sub}</div>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[8px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                        isRisk
+                          ? 'bg-[#fff1f2] text-[#800020]'
+                          : 'bg-[#ecfdf5] text-[#14532d]'
+                      }`}
+                    >
+                      {sig.exposure}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2 (6-6): Property Restaurants & Bars Performance | Forward Demand & Outlook */}
+        <div className="-mx-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* 4. PROPERTY RESTAURANTS & BARS PERFORMANCE */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title: `${selectedProperty.name} — Restaurants & Bars Performance`,
+                data: {
+                  key: 'FNB_OUTLET_LEADERBOARD',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-6 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  PROPERTY RESTAURANTS &amp; BARS PERFORMANCE
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  On-property dining venues, food &amp; beverage split, covers &amp; avg. check
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center bg-zinc-100 p-0.5 rounded-lg"
+                >
+                  {(
+                    [
+                      { id: 'all', label: 'All Venues' },
+                      { id: 'restaurant', label: 'Restaurants' },
+                      { id: 'bar_villa', label: 'In-Villa & Events' },
+                    ] as const
+                  ).map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setOutletFilter(tab.id)}
+                      className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                        outletFilter === tab.id
+                          ? 'bg-zinc-900 text-white shadow-2xs'
+                          : 'text-zinc-500 hover:text-zinc-900'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span>See details</span> <RoundAltArrowRight size={10} />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-4">Outlet &amp; Concept</span>
+                <span className="col-span-2">Category</span>
+                <span className="col-span-1 text-right">Covers</span>
+                <span className="col-span-2 text-right">F&amp;B Rev.</span>
+                <span className="col-span-1 text-right">Food</span>
+                <span className="col-span-1 text-right">Bev</span>
+                <span className="col-span-1 text-right">Check</span>
+              </div>
+
+              {filteredOutlets.map((out) => (
+                <div
+                  key={out.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDrawer({
+                      type: 'FNB_DETAIL',
+                      title: `${out.outletName} — ${selectedProperty.name}`,
+                      data: {
+                        key: 'FNB_OUTLET_LEADERBOARD',
+                        outletId: out.id,
+                        horizon,
+                        propertyId: selectedProperty.id,
+                        propertyIds: propIds,
+                      },
+                    });
+                  }}
+                  className="grid grid-cols-12 items-center py-2 border-b border-zinc-100/60 last:border-b-0 hover:bg-zinc-200/40 rounded px-1 -mx-1 transition-colors tabular-nums"
+                >
+                  <div className="col-span-4 min-w-0 pr-1">
+                    <div className="text-[10px] font-medium text-zinc-800 truncate">{out.outletName}</div>
+                    <div className="text-[8px] text-zinc-400 truncate">{out.concept}</div>
+                  </div>
+                  <span className="col-span-2 text-[9px] text-zinc-500 truncate pr-1">{out.typeLabel}</span>
+                  <span className="col-span-1 text-[10px] text-zinc-600 text-right">{fmtInt(out.covers)}</span>
+                  <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                    {fmtUsd(out.revenue)}
+                  </span>
+                  <span className="col-span-1 text-[10px] text-zinc-600 text-right">
+                    {fmtUsd(out.foodRevenue)}
+                  </span>
+                  <span className="col-span-1 text-[10px] text-zinc-600 text-right">
+                    {fmtUsd(out.bevRevenue)}
+                  </span>
+                  <span className="col-span-1 text-[10px] font-medium text-zinc-900 text-right">
+                    {fmtUsdFull(out.avgCheck)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 5. FORWARD DEMAND & OUTLOOK (Property Level from Screenshot) */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title: `${selectedProperty.name} — Forward F&B Demand & OTB Outlook (${forwardWindow}D)`,
+                data: {
+                  key: 'FNB_HEADLINE_KPI',
+                  kpiId: 'forward',
+                  horizon: 'forward',
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-6 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  FORWARD DEMAND &amp; OUTLOOK
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Upcoming dining reservations OTB, expected covers &amp; seat capacity load
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center bg-zinc-100 p-0.5 rounded-lg"
+                >
+                  {([7, 30, 90] as FnbForwardWindow[]).map((w) => (
+                    <button
+                      key={w}
+                      type="button"
+                      onClick={() => setForwardWindow(w)}
+                      className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                        forwardWindow === w
+                          ? 'bg-zinc-900 text-white shadow-2xs'
+                          : 'text-zinc-500 hover:text-zinc-900'
+                      }`}
+                    >
+                      {w}D
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span>See details</span> <RoundAltArrowRight size={10} />
+                </span>
+              </div>
             </div>
 
             <div className="flex-1 flex flex-col justify-between gap-2.5">
-              {daypartRows.map((d) => (
-                <div
-                  key={d.daypart}
-                  className="p-2.5 rounded-lg bg-zinc-50/70 border border-zinc-100 flex flex-col gap-1.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <span className="text-[10px] font-bold text-zinc-900">{d.daypart}</span>
-                      <span className="text-[8.5px] text-zinc-400 ml-2">{d.window}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[8.5px] font-medium px-1.5 py-0.2 rounded bg-zinc-200/70 text-zinc-700">
-                        {d.sla}
-                      </span>
-                      <span className="text-[10px] font-bold text-zinc-900">{fmtMoney(d.rev)}</span>
-                    </div>
+              {/* Top 4-KPI Summary Strip */}
+              <div className="grid grid-cols-4 gap-2 pb-2 border-b border-zinc-100 tabular-nums">
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Expected F&amp;B Covers</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtInt(forwardOutlook.expectedCovers)}
                   </div>
-
-                  <div className="w-full h-1.5 bg-zinc-200/70 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-zinc-900 rounded-full"
-                      style={{ width: `${Math.min(100, d.share * 1.8)}%` }}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between text-[8.5px] text-zinc-500">
-                    <span>{d.covers.toLocaleString()} Covers ({d.share}% Rev Share)</span>
-                    <span className="font-medium text-zinc-700">RevPASH ${d.revpash}</span>
+                  <div className="text-[8px] text-zinc-400">
+                    {fmtPct(forwardOutlook.forecastCapPct, 0)} of Seat Cap
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ───────────────── ROW 3: 3-COLUMN PROPERTY CULINARY INTELLIGENCE ───────────────── */}
-      <div className="-mx-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-        {/* Column 1: Property Revenue Centre Mix */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — Revenue Centre Mix`,
-              data: {
-                key: 'FNB_REVENUE_CENTRE_SCORECARD',
-                centre: 'Fine & Specialty Dining',
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Property Revenue Centre Mix
-              </span>
-              <InfoTooltip text="Contribution of Signature Dining, All-Day Terrace, Bar & Cellar, In-Villa Dining, and Private Events." />
-            </div>
-            <span className="text-[9.5px] font-medium text-zinc-400">5 Centres</span>
-          </div>
-
-          <div className="flex items-center gap-5 px-1 py-2">
-            <PureSvgFnbDonut
-              data={centreMix.map((c) => ({ name: c.name, value: c.share, color: c.color }))}
-              centerValue={fmtMoney(totalFnbRev)}
-              centerLabel="F&B Rev"
-            />
-            <div className="space-y-1.5 flex-1 min-w-0">
-              {centreMix.map((c) => (
-                <div key={c.name} className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: c.color }} />
-                    <span className="text-[9.5px] text-zinc-700 font-medium truncate">{c.name}</span>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Confirmed OTB Covers</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtInt(forwardOutlook.otbCovers)}
                   </div>
-                  <span className="text-[9.5px] text-zinc-900 font-semibold shrink-0">{c.share}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-auto pt-2">
-            <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-              <thead>
-                <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">
-                  <th className="text-left pb-2 pt-1 pr-1 w-[42%] truncate font-medium">Revenue Centre</th>
-                  <th className="text-right pb-2 pt-1 px-1 w-[18%] truncate font-medium">% Share</th>
-                  <th className="text-right pb-2 pt-1 px-1 w-[18%] truncate font-medium">Avg Check</th>
-                  <th className="text-right pb-2 pt-1 pl-1 w-[22%] truncate font-medium">Revenue</th>
-                </tr>
-              </thead>
-              <tbody>
-                {centreMix.map((row) => (
-                  <tr key={row.name} className="text-[10px] border-b border-zinc-100 text-zinc-700">
-                    <td className="py-2 pr-1 truncate font-medium">{row.name}</td>
-                    <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">{row.share}%</td>
-                    <td className="text-right py-2 px-1 truncate text-zinc-900 font-medium">${row.avgCheck}</td>
-                    <td className="text-right py-2 pl-1 truncate text-zinc-900 font-semibold">{row.revenue}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Column 2: Top Signature Dishes & Beverage Leaders */}
-        <div
-          className={CARD_CLASS}
-          onClick={() => navigate('/dashboard/fnb/pos')}
-        >
-          <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Signature Menu &amp; Dish Leaders
-              </span>
-              <InfoTooltip text="Top-selling property-bound dishes and beverage pairings ordered during the selected period." />
-            </div>
-            <span className="text-[9.5px] font-medium text-zinc-400 hover:text-zinc-900">
-              Open POS Menu →
-            </span>
-          </div>
-
-          <div className="flex-1 flex flex-col justify-between gap-2 py-1">
-            {propertyMenuLeaders.map((dish) => (
-              <div
-                key={dish.id}
-                className="flex items-center justify-between gap-2.5 p-2 rounded-lg bg-zinc-50/60 border border-zinc-100"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    className="w-9 h-9 rounded-lg object-cover border border-zinc-200 shrink-0"
-                  />
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-bold text-zinc-900 truncate">{dish.name}</div>
-                    <div className="text-[8.5px] text-zinc-400 truncate">
-                      {dish.categoryLabel} · ${dish.price} · {dish.marginPct}% Gross Margin
-                    </div>
+                  <div className="text-[8px] text-[#14532d] font-medium">
+                    +{forwardOutlook.paceVsLyPct.toFixed(1)}% Pace vs LY
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <div className="text-[10px] font-bold text-zinc-900">{fmtMoney(dish.itemRev)}</div>
-                  <div className="text-[8.5px] text-[#14532d] font-medium">{dish.orders} Orders</div>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Confirmed OTB F&amp;B Rev.</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtUsd(forwardOutlook.otbFnbRevenue)}
+                  </div>
+                  <div className="text-[8px] text-zinc-400">
+                    Est. {fmtUsd(forwardOutlook.forecastFnbRevenue)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">In-Villa Orders Est.</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtInt(forwardOutlook.villaOrders)}
+                  </div>
+                  <div className="text-[8px] text-zinc-400">
+                    {fmtPct(forwardOutlook.villaSharePct, 0)} of Total Covers
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Column 3: Property Culinary Signals, COGS & Guest Sentiment */}
-        <div
-          className={CARD_CLASS}
-          onClick={() =>
-            openDrawer({
-              type: 'FNB_DETAIL',
-              title: `${selectedProperty.name} — Culinary Cost, Cellar & Guest Sentiment`,
-              data: {
-                key: 'FNB_ACTION_SIGNAL',
-                idx: 0,
-                horizon,
-                propertyId: selectedProperty.id,
-                propertyIds: [selectedProperty.id],
-              },
-            })
-          }
-        >
-          <div className="flex items-center justify-between pb-2 border-b border-zinc-200/80 mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="uppercase tracking-widest text-[10px] font-bold text-zinc-900">
-                Kitchen Cost &amp; Service Signals
-              </span>
-              <InfoTooltip text="Property F&B COGS discipline, prime cost ratio, guest dining satisfaction, and operational alerts." />
-            </div>
-            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800">
-              Sentiment {propertySignals.sentimentScore}/100
-            </span>
-          </div>
+              {/* Forward Horizon Buckets */}
+              <div className="flex-1 flex flex-col justify-between gap-1.5">
+                <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                  <span className="col-span-3">Horizon Window</span>
+                  <span className="col-span-3">Capacity Load</span>
+                  <span className="col-span-2 text-right">Confirmed OTB</span>
+                  <span className="col-span-2 text-right">Expected Covers</span>
+                  <span className="col-span-2 text-right">Seat Load</span>
+                </div>
 
-          {/* 3 Mini Metric Boxes */}
-          <div className="grid grid-cols-3 gap-2 my-1">
-            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200/60">
-              <div className="text-[8px] uppercase tracking-wider text-zinc-400">Food Cost %</div>
-              <div className="text-[13px] font-bold text-zinc-900 mt-0.5">
-                {propertySignals.foodCostPct}%
-              </div>
-              <div className="text-[8px] text-[#14532d] font-medium">Target 28.0%</div>
-            </div>
-            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200/60">
-              <div className="text-[8px] uppercase tracking-wider text-zinc-400">Bev Cost %</div>
-              <div className="text-[13px] font-bold text-zinc-900 mt-0.5">
-                {propertySignals.bevCostPct}%
-              </div>
-              <div className="text-[8px] text-[#14532d] font-medium">Target 22.0%</div>
-            </div>
-            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200/60">
-              <div className="text-[8px] uppercase tracking-wider text-zinc-400">Prime Cost</div>
-              <div className="text-[13px] font-bold text-zinc-900 mt-0.5">
-                {propertySignals.primeCostPct}%
-              </div>
-              <div className="text-[8px] text-zinc-500 font-medium">COGS + Labor</div>
-            </div>
-          </div>
-
-          <div className="flex-1 flex flex-col justify-between gap-2 pt-1">
-            {propertySignals.items.map((sig) => (
-              <div
-                key={sig.title}
-                className="p-2.5 rounded-lg bg-zinc-50/70 border border-zinc-100 flex flex-col gap-1"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[9.5px] font-bold text-zinc-900 truncate">{sig.title}</span>
-                  <span
-                    className={`text-[8px] font-semibold px-1.5 py-0.2 rounded shrink-0 ${
-                      sig.tone === 'positive'
-                        ? 'bg-[#ecfdf5] text-[#14532d]'
-                        : sig.tone === 'negative'
-                          ? 'bg-[#fff1f2] text-[#800020]'
-                          : 'bg-zinc-200/70 text-zinc-700'
-                    }`}
+                {forwardOutlook.buckets.map((b) => (
+                  <div
+                    key={b.label}
+                    className="grid grid-cols-12 items-center py-1 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
                   >
-                    {sig.badge}
-                  </span>
-                </div>
-                <p className="text-[8.5px] text-zinc-500 leading-relaxed">{sig.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ───────────────── ROW 4: COLLAPSIBLE IN-HOUSE GUESTS DINING & DIETARY DIRECTORY ───────────────── */}
-      <div className="-mx-4 rounded-[12px] p-4 flex flex-col transition-all duration-300 animate-card-enter">
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-zinc-200/80">
-          <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-              IN-HOUSE GUESTS DINING &amp; DIETARY DIRECTORY ({selectedProperty.name})
-            </h3>
-            <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-              Registered in-house VIP guests at {selectedProperty.name}, suite/villa numbers, party size &amp; kitchen allergen alerts
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowInHouseGuests((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9.5px] font-medium cursor-pointer transition-all ${
-              showInHouseGuests
-                ? 'bg-zinc-900 text-white border-zinc-900'
-                : 'bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100'
-            }`}
-          >
-            <UsersGroupTwoRounded size={12} />
-            <span>{showInHouseGuests ? 'Hide In-House Guests' : 'Show In-House Guests'}</span>
-            <span
-              className={`px-1.5 py-0.2 rounded text-[8.5px] font-semibold ${
-                showInHouseGuests ? 'bg-white/20 text-white' : 'bg-zinc-200/80 text-zinc-700'
-              }`}
-            >
-              {propertyGuests.length}
-            </span>
-            <AltArrowDown
-              size={11}
-              className={`transition-transform duration-200 ${showInHouseGuests ? 'rotate-180' : ''}`}
-            />
-          </button>
-        </div>
-
-        {showInHouseGuests && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 animate-fade-in">
-            {propertyGuests.map((guest) => {
-              const hasAllergies = guest.allergies.length > 0;
-              return (
-                <div
-                  key={guest.id}
-                  className="p-3 rounded-[10px] border border-zinc-200/70 bg-zinc-50/40 hover:bg-zinc-100/60 transition-colors flex flex-col justify-between gap-2"
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-1.5">
-                      <div>
-                        <span className="text-[11px] font-bold text-zinc-900">{guest.name}</span>
-                        <div className="text-[9px] text-zinc-500 mt-0.5">
-                          {guest.room} · Folio {guest.folioNumber}
-                        </div>
+                    <div className="col-span-3 min-w-0 pr-1">
+                      <span className="text-[10px] font-medium text-zinc-800">{b.label}</span>
+                      <span className="text-[8px] text-zinc-400 ml-1.5">({b.days}d)</span>
+                    </div>
+                    <div className="col-span-3 pr-2">
+                      <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden flex">
+                        <div
+                          className="h-full bg-zinc-900"
+                          style={{ width: `${Math.min(100, b.otbPct)}%` }}
+                        />
+                        <div
+                          className="h-full bg-zinc-300"
+                          style={{ width: `${Math.min(100 - b.otbPct, b.walkPct)}%` }}
+                        />
                       </div>
-                      <span className="text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-200/70 text-zinc-700 shrink-0">
-                        {guest.partySize} Pax · {guest.vipTier}
-                      </span>
                     </div>
-
-                    {guest.notes && (
-                      <p className="text-[8.5px] text-zinc-500 italic mt-1.5 line-clamp-2">
-                        "{guest.notes}"
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-between gap-1 pt-2 border-t border-zinc-100">
-                    <div className="flex flex-wrap items-center gap-1">
-                      {hasAllergies ? (
-                        guest.allergies.map((allergy) => (
-                          <span
-                            key={allergy}
-                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-medium bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80"
-                          >
-                            Allergy: {allergy}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[8px] text-[#14532d] font-medium">
-                          No registered allergies
-                        </span>
-                      )}
-                      {guest.dietaryRestrictions.map((diet) => (
-                        <span
-                          key={diet}
-                          className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200/80"
-                        >
-                          {diet}
-                        </span>
-                      ))}
-                    </div>
-
-                    <span className="text-[8px] text-zinc-400">
-                      {guest.checkIn} → {guest.checkOut}
+                    <span className="col-span-2 text-[10px] text-zinc-700 text-right">
+                      {fmtInt(b.otbCovers)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtInt(b.forecastCovers)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-[#14532d] text-right">
+                      {fmtPct(b.loadPct, 0)}
                     </span>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* ROW 3 (6-6): Top Menu & Beverage Leaders (Property/Venue) | Guest Spend & Origin Market / Group Events */}
+        <div className="-mx-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* 6. TOP MENU & BEVERAGE LEADERS (Property / Venue Level from Screenshot) */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title: `${selectedProperty.name} — Signature Menu & Beverage Leaders`,
+                data: {
+                  key: 'FNB_MENU_ENGINEERING',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-6 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  TOP MENU &amp; BEVERAGE LEADERS
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Best-selling signature dishes &amp; sommelier selections at {selectedProperty.name}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center bg-zinc-100 p-0.5 rounded-lg"
+                >
+                  {(
+                    [
+                      { id: 'all', label: 'All Items' },
+                      { id: 'food', label: 'Signature Dishes' },
+                      { id: 'beverages', label: 'Wine & Beverage' },
+                    ] as const
+                  ).map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setMenuFilter(tab.id)}
+                      className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                        menuFilter === tab.id
+                          ? 'bg-zinc-900 text-white shadow-2xs'
+                          : 'text-zinc-500 hover:text-zinc-900'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span>See details</span> <RoundAltArrowRight size={10} />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-5">Item &amp; Venue</span>
+                <span className="col-span-2">Category</span>
+                <span className="col-span-1 text-right">Price</span>
+                <span className="col-span-2 text-right">Orders</span>
+                <span className="col-span-2 text-right">F&amp;B Rev.</span>
+              </div>
+
+              {propertyMenuLeaders.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-12 items-center py-1.5 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                >
+                  <div className="col-span-5 min-w-0 pr-1.5">
+                    <div className="text-[10px] font-medium text-zinc-800 truncate">{item.name}</div>
+                    <div className="text-[8px] text-zinc-400 truncate">{item.venueName}</div>
+                  </div>
+                  <span className="col-span-2 text-[9px] text-zinc-500 truncate pr-1">{item.catLabel}</span>
+                  <span className="col-span-1 text-[10px] text-zinc-600 text-right">
+                    {fmtUsdFull(item.price)}
+                  </span>
+                  <span className="col-span-2 text-[10px] text-zinc-700 text-right">
+                    {fmtInt(item.orders)}
+                  </span>
+                  <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                    {fmtUsd(item.revenue)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 7. GUEST SPEND & ORIGIN MARKET MIX / PRIVATE EVENTS (Matches Global View 100%) */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'FNB_DETAIL',
+                title:
+                  guestPanelTab === 'origins'
+                    ? `${selectedProperty.name} — Guest Spend & Origin Market Mix`
+                    : `${selectedProperty.name} — Private Dining, Weddings & Buyouts`,
+                data: {
+                  key: guestPanelTab === 'origins' ? 'FNB_DEMAND_CAPTURE' : 'FNB_BIG_GROUP_EVENTS',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-6 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  {guestPanelTab === 'origins'
+                    ? 'GUEST SPEND & ORIGIN MARKET MIX'
+                    : 'BIG GROUP EVENTS & WEDDINGS'}
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  {guestPanelTab === 'origins'
+                    ? 'Origin market F&B revenue, food & beverage split, spend / GN, capture & avg. check'
+                    : 'Contracted weddings, private buyouts & gala dinners at this resort'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center bg-zinc-100 p-0.5 rounded-lg"
+                >
+                  {(
+                    [
+                      { id: 'origins', label: 'Origin Market Mix' },
+                      { id: 'events', label: 'Events & Weddings' },
+                    ] as const
+                  ).map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setGuestPanelTab(tab.id)}
+                      className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                        guestPanelTab === tab.id
+                          ? 'bg-zinc-900 text-white shadow-2xs'
+                          : 'text-zinc-500 hover:text-zinc-900'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span>See details</span> <RoundAltArrowRight size={10} />
+                </span>
+              </div>
+            </div>
+
+            {guestPanelTab === 'origins' ? (
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                  <span className="col-span-3">Origin Market</span>
+                  <span className="col-span-2 text-right">F&amp;B Rev.</span>
+                  <span className="col-span-1 text-right">Food</span>
+                  <span className="col-span-1 text-right">Bev</span>
+                  <span className="col-span-2 text-right">Spend / GN</span>
+                  <span className="col-span-1 text-right">Capture</span>
+                  <span className="col-span-2 text-right">Avg. Check</span>
+                </div>
+                {origins.map((r) => (
+                  <div
+                    key={r.id}
+                    className="grid grid-cols-12 items-center py-1.5 text-[10px] border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                  >
+                    <div className="col-span-3 min-w-0 pr-1">
+                      <div className="font-medium text-zinc-800 truncate">{r.name}</div>
+                      <div className="text-[8px] text-zinc-400 truncate">
+                        {fmtPct(r.guestSharePct, 0)} of Guest Nights
+                      </div>
+                    </div>
+                    <span className="col-span-2 text-right font-medium text-zinc-900">
+                      {fmtUsd(r.revenue)}
+                    </span>
+                    <span className="col-span-1 text-right text-zinc-600">{fmtUsd(r.foodRevenue)}</span>
+                    <span className="col-span-1 text-right text-zinc-600">{fmtUsd(r.bevRevenue)}</span>
+                    <span className="col-span-2 text-right font-medium text-zinc-900">
+                      {fmtUsdFull(r.spendPerGuestNight)}
+                    </span>
+                    <span className="col-span-1 text-right text-[#14532d] font-medium">
+                      {fmtPct(r.capturePct, 0)}
+                    </span>
+                    <span className="col-span-2 text-right font-medium text-zinc-900">
+                      {fmtUsdFull(r.avgCheck)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col justify-between gap-2">
+                <div className="grid grid-cols-3 gap-2 pb-2 border-b border-zinc-100 tabular-nums">
+                  <div>
+                    <div className="text-[8.5px] text-zinc-400">Scheduled Events</div>
+                    <div className="text-xs font-bold text-zinc-900">
+                      {propertyGroupEvents.events.length} Events
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[8.5px] text-zinc-400">Total Event Guests</div>
+                    <div className="text-xs font-bold text-zinc-900">
+                      {fmtInt(propertyGroupEvents.totalPax)} Pax
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[8.5px] text-zinc-400">Contracted Event F&amp;B</div>
+                    <div className="text-xs font-bold text-[#14532d]">
+                      {fmtUsd(propertyGroupEvents.totalRevenue)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                    <span className="col-span-5">Event &amp; Dining Note</span>
+                    <span className="col-span-2">Type · Date</span>
+                    <span className="col-span-1 text-right">Pax</span>
+                    <span className="col-span-2 text-right">F&amp;B Rev.</span>
+                    <span className="col-span-2 text-right">Status</span>
+                  </div>
+
+                  {propertyGroupEvents.events.slice(0, 5).map((evt) => {
+                    const needsAction =
+                      evt.readinessStatus === 'Tasting Due' || evt.readinessStatus === 'VIP Prep';
+                    return (
+                      <div
+                        key={evt.id}
+                        className="grid grid-cols-12 items-center py-1.5 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                      >
+                        <div className="col-span-5 min-w-0 pr-1.5">
+                          <div className="text-[10px] font-medium text-zinc-800 truncate">
+                            {evt.eventName}
+                          </div>
+                          <div className="text-[8px] text-zinc-400 truncate">{evt.attentionNote}</div>
+                        </div>
+                        <div className="col-span-2 min-w-0 pr-1">
+                          <div className="text-[9px] font-medium text-zinc-700 truncate">
+                            {evt.eventType}
+                          </div>
+                          <div className="text-[8px] text-zinc-400">{evt.dateWindow}</div>
+                        </div>
+                        <span className="col-span-1 text-[10px] text-zinc-700 text-right">
+                          {evt.pax}
+                        </span>
+                        <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                          {fmtUsd(evt.revenue)}
+                        </span>
+                        <div className="col-span-2 flex justify-end">
+                          <span
+                            className={`text-[8px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap ${
+                              needsAction
+                                ? 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                                : 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                            }`}
+                          >
+                            {evt.readinessStatus}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <UnderDevelopmentModal open={showDevModal} onClose={() => setShowDevModal(false)} featureName="Export Report" />
+      <UnderDevelopmentModal
+        open={showDevModal}
+        onClose={() => setShowDevModal(false)}
+        featureName="Export Report"
+      />
     </div>
   );
 }

@@ -34,13 +34,22 @@ import {
   getPropertyMetrics,
   splitByShares,
   PERIOD_DEFS,
+  PERIOD_ORDER,
+  fmtInt,
+  fmtPct,
+  fmtUsd,
+  fmtUsdFull,
   type PeriodId,
 } from '@/data/portfolio';
 import {
   buildExperienceKpis,
   getExperienceCategoryRows,
+  getExperienceForwardWindow,
+  getExperienceHeadlineKpis,
   getExperienceModelRows,
-  getPropertySessionMatrix,
+  getExperiencePeakLoadWindows,
+  getUncapturedRevenue,
+  PROPERTY_EXPERIENCE_DESCRIPTORS,
 } from '@/data/portfolio/experienceMix';
 
 const geoUrl = 'https://unpkg.com/world-atlas@2.0.2/countries-110m.json';
@@ -1276,6 +1285,56 @@ export function ExperienceRegionalView() {
 
 /* ───────────────────────── 3. /dashboard/experience/property ───────────────────────── */
 
+interface PropertyScheduleTemplate {
+  time: string;
+  title: string;
+  pillar: string;
+  format: 'Private Charter' | 'Paid Guided' | 'Complimentary';
+  isPeakSlot: boolean;
+  revShare: number;
+  attShare: number;
+  loadBoost: number;
+  price: number;
+}
+
+const CATEGORY_SCHEDULE_TEMPLATES: Record<HotelCategoryId, PropertyScheduleTemplate[]> = {
+  ski: [
+    { time: '07:30 – 08:30', title: 'Alpine Breathwork & Ski Mobility', pillar: 'Après-Ski & Recovery', format: 'Complimentary', isPeakSlot: false, revShare: 0, attShare: 16, loadBoost: -4, price: 0 },
+    { time: '08:45 – 12:30', title: 'First-Tracks Private UIAGM Ski Guiding', pillar: 'Private Ski Guiding', format: 'Paid Guided', isPeakSlot: true, revShare: 32, attShare: 28, loadBoost: 11.4, price: 680 },
+    { time: '09:30 – 13:30', title: 'Glacier Heli-Ski & Backcountry Cat-Ski', pillar: 'Heli-Ski & Cat-Ski', format: 'Private Charter', isPeakSlot: true, revShare: 44, attShare: 18, loadBoost: 12.8, price: 1450 },
+    { time: '14:00 – 16:30', title: 'Glacier Ice Walk & Snowmobile Trek', pillar: 'Glacier & Snow Adventure', format: 'Paid Guided', isPeakSlot: false, revShare: 16, attShare: 22, loadBoost: 3.5, price: 420 },
+    { time: '17:00 – 19:00', title: 'Thermal Onsen & Cryo Recovery Session', pillar: 'Après-Ski & Recovery', format: 'Paid Guided', isPeakSlot: true, revShare: 8, attShare: 16, loadBoost: 8.2, price: 260 },
+  ],
+  'beach-resort': [
+    { time: '07:00 – 08:15', title: 'Oceanfront Sunrise Cliff Yoga', pillar: 'Sunrise Cliff Yoga', format: 'Complimentary', isPeakSlot: false, revShare: 0, attShare: 16, loadBoost: -3, price: 0 },
+    { time: '08:30 – 12:00', title: 'Two-Tank Reef Scuba Dive & Snorkel Sail', pillar: 'Diving & Reef Snorkeling', format: 'Paid Guided', isPeakSlot: true, revShare: 28, attShare: 28, loadBoost: 10.6, price: 480 },
+    { time: '10:00 – 14:30', title: 'Outer Reef Surf Safari & Sea Kayak', pillar: 'Surf & Ocean Sports', format: 'Paid Guided', isPeakSlot: false, revShare: 18, attShare: 22, loadBoost: 4.2, price: 390 },
+    { time: '15:30 – 18:30', title: 'Private Riva Yacht / Sunset Dhow Charter', pillar: 'Private Yacht Charter', format: 'Private Charter', isPeakSlot: true, revShare: 42, attShare: 18, loadBoost: 12.5, price: 1350 },
+    { time: '16:30 – 18:30', title: 'Sunset Beach Horseback & Coastal Walk', pillar: 'Coastal Expeditions', format: 'Paid Guided', isPeakSlot: true, revShare: 12, attShare: 16, loadBoost: 9.1, price: 340 },
+  ],
+  nature: [
+    { time: '06:00 – 09:30', title: 'Dawn Hot-Air Balloon & Big-Five Drive', pillar: 'Aerial & Wildlife Safari', format: 'Private Charter', isPeakSlot: true, revShare: 44, attShare: 24, loadBoost: 12.6, price: 1150 },
+    { time: '07:00 – 11:30', title: 'Puma Tracking & Wilderness Ridge Trek', pillar: 'Wilderness Trekking', format: 'Paid Guided', isPeakSlot: true, revShare: 28, attShare: 28, loadBoost: 10.4, price: 620 },
+    { time: '13:30 – 16:30', title: 'Glacier Fjord Kayak & Conservation Lab', pillar: 'Glacier & Conservation', format: 'Paid Guided', isPeakSlot: false, revShare: 16, attShare: 20, loadBoost: 3.2, price: 440 },
+    { time: '16:30 – 18:30', title: 'Kopje Sundowner & Bush Walk', pillar: 'Wildlife Safari', format: 'Complimentary', isPeakSlot: true, revShare: 0, attShare: 16, loadBoost: 8.5, price: 0 },
+    { time: '20:00 – 21:30', title: 'Southern Cross Stargazing & Telemetry', pillar: 'Night Astronomy', format: 'Paid Guided', isPeakSlot: false, revShare: 12, attShare: 12, loadBoost: 2.1, price: 310 },
+  ],
+  urban: [
+    { time: '07:30 – 08:30', title: 'Rooftop Mobility & Courtyard Meditation', pillar: 'Rooftop Mindful Studio', format: 'Complimentary', isPeakSlot: false, revShare: 0, attShare: 16, loadBoost: -4, price: 0 },
+    { time: '09:30 – 12:30', title: 'Private Historian Heritage & Palace Walk', pillar: 'Heritage & Art Walks', format: 'Paid Guided', isPeakSlot: true, revShare: 20, attShare: 26, loadBoost: 8.8, price: 420 },
+    { time: '13:30 – 16:30', title: 'Closed-Door Haute Horlogerie Atelier Tour', pillar: 'Private Atelier Tours', format: 'Private Charter', isPeakSlot: true, revShare: 42, attShare: 20, loadBoost: 11.8, price: 1120 },
+    { time: '15:00 – 17:30', title: 'Chocolatier & Perfumery Masterclass', pillar: 'Artisan Masterclasses', format: 'Paid Guided', isPeakSlot: false, revShare: 14, attShare: 22, loadBoost: 3.4, price: 360 },
+    { time: '17:00 – 19:30', title: 'Lake Riva Sunset Cruise / Atlas Heli-Flight', pillar: 'Lake & Aviation Charter', format: 'Private Charter', isPeakSlot: true, revShare: 24, attShare: 16, loadBoost: 10.2, price: 980 },
+  ],
+  wellness: [
+    { time: '06:30 – 08:30', title: 'Dawn Zen Temple Meditation & Bamboo Walk', pillar: 'Zen & Nature Walk', format: 'Complimentary', isPeakSlot: true, revShare: 0, attShare: 24, loadBoost: 9.4, price: 0 },
+    { time: '09:30 – 12:00', title: 'Private Uji Tea Master & Sanctuary Ritual', pillar: 'Tea & Heritage Rituals', format: 'Private Charter', isPeakSlot: true, revShare: 38, attShare: 20, loadBoost: 11.2, price: 680 },
+    { time: '14:00 – 16:30', title: 'Kintsugi, Ikebana & Botanical Alchemy Lab', pillar: 'Botanical & Artisan', format: 'Paid Guided', isPeakSlot: false, revShare: 22, attShare: 20, loadBoost: 3.8, price: 380 },
+    { time: '17:00 – 18:30', title: 'Twilight Canyon Acoustic Sound Bath', pillar: 'Zen & Sound Healing', format: 'Paid Guided', isPeakSlot: true, revShare: 16, attShare: 20, loadBoost: 8.9, price: 320 },
+    { time: '19:30 – 21:30', title: 'Private Astronomer Stargazing Deck', pillar: 'Astronomy & Night Walk', format: 'Private Charter', isPeakSlot: true, revShare: 24, attShare: 16, loadBoost: 10.5, price: 740 },
+  ],
+};
+
 export function ExperiencePropertyDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { openDrawer } = useDashboardDrawer();
@@ -1293,6 +1352,9 @@ export function ExperiencePropertyDashboardPage() {
 
   const [selectedProperty, setSelectedProperty] = useState(getInitialProperty);
   const [horizon, setHorizon] = useState<TimeHorizon>('mtd');
+  const [forwardWindow, setForwardWindow] = useState<7 | 30 | 90>(30);
+  const [scheduleFilter, setScheduleFilter] = useState<'all' | 'peak' | 'private'>('all');
+  const [programFilter, setProgramFilter] = useState<'all' | 'private' | 'guided'>('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDevModal, setShowDevModal] = useState(false);
@@ -1308,7 +1370,7 @@ export function ExperiencePropertyDashboardPage() {
         setSelectedProperty(found);
       }
     }
-  }, [propIdParam]);
+  }, [propIdParam, selectedProperty.id]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -1329,7 +1391,7 @@ export function ExperiencePropertyDashboardPage() {
     }
   }, [isDropdownOpen]);
 
-  const handlePropertyChange = (prop: typeof MASTER_PROPERTIES[0]) => {
+  const handlePropertyChange = (prop: (typeof MASTER_PROPERTIES)[0]) => {
     setSelectedProperty(prop);
     setSearchParams({ id: prop.id }, { replace: true });
     setIsDropdownOpen(false);
@@ -1346,114 +1408,234 @@ export function ExperiencePropertyDashboardPage() {
     [searchQuery]
   );
 
+  const propIds = useMemo(() => [selectedProperty.id], [selectedProperty.id]);
   const propMetrics = useMemo(
     () => getPropertyMetrics(selectedProperty.id, horizon),
     [selectedProperty.id, horizon]
   );
-
-  const expRecord = useMemo(() => {
-    const desc =
-      EXPERIENCE_STATIC_DESCRIPTORS.find((p) => p.id === selectedProperty.id) ||
-      EXPERIENCE_STATIC_DESCRIPTORS[0];
-    return buildExperiencePropertyRecord(desc, horizon);
-  }, [selectedProperty.id, horizon]);
-
-  const baseHorizonMeta = HORIZON_TABS.find((t) => t.id === horizon) || HORIZON_TABS[1];
-  const horizonMeta = { ...baseHorizonMeta, factor: 1 };
-
-  const sessionMatrix = useMemo(
-    () => getPropertySessionMatrix(selectedProperty.id, horizon),
-    [selectedProperty.id, horizon]
+  const propDesc = useMemo(
+    () =>
+      PROPERTY_EXPERIENCE_DESCRIPTORS[selectedProperty.id] ?? {
+        signatureFocus: 'Signature Guided Experiences',
+        peakSlotLabel: '09:00 Morning Peak',
+      },
+    [selectedProperty.id]
   );
 
-  const staffCapacityMatrix = useMemo(() => {
-    const sigFirst = expRecord.signatureExperiences.split('·')[0].trim();
-    return sessionMatrix.rows.map((r) => {
-      if (r.id === 'yoga') {
-        return {
-          activity: `${r.time} · Morning Movement & Breathwork`,
-          category: 'Wellness & Movement',
-          commercial: 'Complimentary',
-          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
-          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
-          reqStaff: `${r.staffRequired.toLocaleString()} Certified Guides`,
-          availStaff: `${r.staffAssigned.toLocaleString()} On Roster`,
-          state: 'Ready / Full',
-          diagnosis: 'Fully staffed · Venue & audio pre-checked',
-          tone: 'pos' as const,
-        };
-      }
-      if (r.id === 'expedition') {
-        return {
-          activity: `${r.time} · ${sigFirst}`,
-          category: expRecord.leadPillar,
-          commercial: `Paid ($${Math.round(sessionMatrix.revenuePerPaid * 1.15)}/pax)`,
-          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
-          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
-          reqStaff: `${r.staffRequired.toLocaleString()} Certified Specialists`,
-          availStaff: `${r.staffAssigned.toLocaleString()} On Roster`,
-          state: 'Capacity Constrained',
-          diagnosis:
-            r.staffAssigned < r.staffRequired
-              ? 'Specialist shortage — deploy standby guide to clear waitlist'
-              : 'High demand — add afternoon relief departure',
-          tone: 'warn' as const,
-        };
-      }
-      if (r.id === 'kids') {
-        return {
-          activity: `${r.time} · Young Explorers Discovery`,
-          category: "Kids' Club & Family",
-          commercial: 'Package Included',
-          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
-          capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
-          reqStaff: `${r.staffRequired.toLocaleString()} Childcare (1:4 Ratio)`,
-          availStaff: `${r.staffAssigned.toLocaleString()} Verified (1:${sessionMatrix.kids.effectiveRatio.toFixed(1)})`,
-          state: 'Ready / Compliant',
-          diagnosis: `Guardian PIN & allergy flags verified (${sessionMatrix.kids.careFlags} care alerts)`,
-          tone: 'pos' as const,
-        };
-      }
-      if (r.id === 'private') {
-        return {
-          activity: `${r.time} · Private Bespoke Charter / Immersion`,
-          category: 'Signature & Bespoke',
-          commercial: `Private Buyout ($${Math.round(sessionMatrix.revenuePerPaid * 3.8)})`,
-          demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
-          capacity: `${r.capacity.toLocaleString()} Charters (${r.fillPct}%)`,
-          reqStaff: `${r.staffRequired.toLocaleString()} Master Guides + Crew`,
-          availStaff: `${r.staffAssigned.toLocaleString()} Assigned`,
-          state: r.state === 'at_risk' ? 'Operationally At Risk' : 'Capacity Constrained',
-          diagnosis:
-            r.state === 'at_risk'
-              ? 'Guide relief required at 15:30 — cross-utilize senior facilitator'
-              : 'Convert waitlisted couples to sunset private slot',
-          tone: (r.state === 'at_risk' ? 'neg' : 'warn') as 'neg' | 'warn',
-        };
-      }
+  // 5 Headline Summary Statistics (shared KPI summary structure)
+  const activeHeadlineKpis = useMemo(
+    () => getExperienceHeadlineKpis(propIds, horizon),
+    [propIds, horizon]
+  );
+
+  // Property Peak Load Windows (exclusive to Property View)
+  const peakWindows = useMemo(() => getExperiencePeakLoadWindows(propMetrics), [propMetrics]);
+
+  // Property Daily Schedule & Peak Load Roster (tailored to selectedProperty.categoryId)
+  const scheduleRows = useMemo(() => {
+    const templates =
+      CATEGORY_SCHEDULE_TEMPLATES[selectedProperty.categoryId] ?? CATEGORY_SCHEDULE_TEMPLATES['beach-resort'];
+    const revSplits = splitByShares(
+      propMetrics.experienceRevenue,
+      templates.map((t, idx) => ({ id: String(idx), name: t.title, share: Math.max(1, t.revShare) }))
+    );
+    const attSplits = splitByShares(
+      propMetrics.experiences.attendances,
+      templates.map((t, idx) => ({ id: String(idx), name: t.title, share: t.attShare }))
+    );
+
+    return templates.map((t, idx) => {
+      const revenue = t.format === 'Complimentary' ? 0 : revSplits[idx].value;
+      const booked = attSplits[idx].value;
+      const peakLoadPct = Math.min(99, Math.max(68, propMetrics.experiences.capacityUtilPct + t.loadBoost));
+      const capacity = Math.max(booked, Math.round(booked / (peakLoadPct / 100)));
+      const statusLabel =
+        peakLoadPct >= 92 ? 'Peak Full' : peakLoadPct >= 84 ? 'High Load' : 'Open Slots';
       return {
-        activity: `${r.time} · Twilight Sound Healing & Ritual`,
-        category: 'Mindfulness & Holistic',
-        commercial: 'Complimentary / Tiered',
-        demand: `${r.demand.toLocaleString()} Booked / ${r.waitlist.toLocaleString()} Waitlist`,
-        capacity: `${r.capacity.toLocaleString()} Slots (${r.fillPct}%)`,
-        reqStaff: `${r.staffRequired.toLocaleString()} Sound Practitioner`,
-        availStaff: `${r.staffAssigned.toLocaleString()} Assigned`,
-        state: 'Low Demand',
-        diagnosis: 'Surplus capacity — trigger 15:00 Butler pre-dinner push',
-        tone: 'neutral' as const,
+        id: `${selectedProperty.id}-sched-${idx}`,
+        time: t.time,
+        title: t.title,
+        pillar: t.pillar,
+        format: t.format,
+        isPeakSlot: t.isPeakSlot,
+        booked,
+        capacity,
+        peakLoadPct,
+        revenue,
+        price: t.price,
+        statusLabel,
       };
     });
-  }, [sessionMatrix, expRecord]);
-  const kpis = useMemo(
-    () => buildExperienceKpis(propMetrics, horizon),
-    [propMetrics, horizon]
-  );
+  }, [selectedProperty.id, selectedProperty.categoryId, propMetrics]);
+
+  const filteredScheduleRows = useMemo(() => {
+    if (scheduleFilter === 'peak') return scheduleRows.filter((r) => r.isPeakSlot);
+    if (scheduleFilter === 'private') return scheduleRows.filter((r) => r.format !== 'Complimentary');
+    return scheduleRows;
+  }, [scheduleRows, scheduleFilter]);
+
+  // Forward Scheduling & Demand Outlook (7D / 30D / 90D)
+  const forwardOutlook = useMemo(() => {
+    const fw = getExperienceForwardWindow(propIds, forwardWindow);
+    const bucketDefs =
+      forwardWindow === 7
+        ? [
+            { label: 'D1–D2', days: 2, share: 32, otbBoost: 6 },
+            { label: 'D3–D5', days: 3, share: 42, otbBoost: 1 },
+            { label: 'D6–D7', days: 2, share: 26, otbBoost: -4 },
+          ]
+        : forwardWindow === 30
+          ? [
+              { label: 'Wk 1–2', days: 14, share: 48, otbBoost: 8 },
+              { label: 'Wk 3', days: 7, share: 26, otbBoost: 0 },
+              { label: 'Wk 4+', days: 9, share: 26, otbBoost: -6 },
+            ]
+          : [
+              { label: 'D1–D30', days: 30, share: 42, otbBoost: 9 },
+              { label: 'D31–D60', days: 30, share: 33, otbBoost: 0 },
+              { label: 'D61–D90', days: 30, share: 25, otbBoost: -7 },
+            ];
+
+    const otbSplits = splitByShares(
+      fw.otbAttendances,
+      bucketDefs.map((b) => ({ id: b.label, name: b.label, share: b.share }))
+    );
+    const expSplits = splitByShares(
+      fw.expectedAttendances,
+      bucketDefs.map((b) => ({ id: b.label, name: b.label, share: b.share }))
+    );
+    const capSplits = splitByShares(
+      fw.forecastCapacity,
+      bucketDefs.map((b) => ({ id: b.label, name: b.label, share: b.share }))
+    );
+
+    const buckets = bucketDefs.map((b, i) => {
+      const otb = otbSplits[i].value;
+      const expected = expSplits[i].value;
+      const cap = Math.max(1, capSplits[i].value);
+      const otbPct = Math.min(100, (otb / cap) * 100);
+      const loadPct = Math.min(99, Math.max(otbPct, (expected / cap) * 100));
+      return {
+        label: b.label,
+        days: b.days,
+        otbAttendances: otb,
+        expectedAttendances: expected,
+        otbPct,
+        walkInPct: Math.max(0, loadPct - otbPct),
+        loadPct,
+      };
+    });
+
+    return {
+      ...fw,
+      waitlist: propMetrics.experiences.unmetDemand,
+      uncapturedRev: getUncapturedRevenue(propMetrics),
+      buckets,
+    };
+  }, [propIds, forwardWindow, propMetrics]);
+
+  // Property Operational Signals (Revenue, Peak Load & Scheduling Focus)
+  const propertySignals = useMemo(() => {
+    const suffix = horizon === 'today' ? 'Yesterday' : horizon.toUpperCase();
+    const uncaptured = getUncapturedRevenue(propMetrics);
+    const s1Rev = Math.round(uncaptured * 0.42);
+    const s2Rev = Math.round(uncaptured * 0.31);
+    const s3Rev = Math.round(uncaptured * 0.27);
+    const topSlot = scheduleRows.find((r) => r.isPeakSlot && r.format === 'Private Charter') ?? scheduleRows[1];
+    const secondSlot = scheduleRows.find((r) => r.isPeakSlot && r !== topSlot) ?? scheduleRows[2];
+
+    return {
+      pipelineValue: s1Rev + s2Rev + s3Rev,
+      signals: [
+        {
+          id: 'psig-1',
+          type: 'risk' as const,
+          title: `Peak Slot At ${fmtPct(topSlot.peakLoadPct, 0)} Load — ${topSlot.title}`,
+          sub: `${topSlot.time} window · ${fmtInt(propMetrics.experiences.unmetDemand)} guests waitlisted for peak departure`,
+          exposure: `${fmtUsd(s1Rev)} ${suffix}`,
+        },
+        {
+          id: 'psig-2',
+          type: 'opportunity' as const,
+          title: `Add Relief Departure — ${secondSlot.title}`,
+          sub: `Staggering second guide/charter slot at ${secondSlot.time.split('–')[0].trim()} captures overflow demand`,
+          exposure: `+${fmtUsd(s2Rev)} ${suffix}`,
+        },
+        {
+          id: 'psig-3',
+          type: 'opportunity' as const,
+          title: `Pre-Arrival Concierge Itinerary Conversion (${fmtPct(propMetrics.experiences.participationRatePct, 0)})`,
+          sub: `Bundling ${propDesc.signatureFocus.split('&')[0].trim()} at 14-day pre-arrival touchpoint`,
+          exposure: `+${fmtUsd(s3Rev)} ${suffix}`,
+        },
+        {
+          id: 'psig-4',
+          type: (propMetrics.experiences.readinessPct < 95 ? 'risk' : 'opportunity') as 'risk' | 'opportunity',
+          title: `Guide & Charter Schedule Readiness (${fmtPct(propMetrics.experiences.readinessPct, 1)})`,
+          sub: `${fmtInt(propMetrics.experiences.sessions)} scheduled sessions · Certified specialists & equipment verified`,
+          exposure: propMetrics.experiences.readinessPct < 95 ? 'Watchlist' : '100% Ready',
+        },
+      ],
+    };
+  }, [horizon, propMetrics, scheduleRows, propDesc]);
+
+  // Property Signature Activities & Pricing Table
+  const propertyPrograms = useMemo(() => {
+    const base = scheduleRows.map((r, i) => ({
+      id: `prog-${i}`,
+      name: r.title,
+      window: r.time,
+      pillar: r.pillar,
+      format: r.format,
+      price: r.price,
+      attendances: r.booked,
+      peakLoadPct: r.peakLoadPct,
+      revenue: r.revenue,
+    }));
+    if (programFilter === 'private') return base.filter((p) => p.format === 'Private Charter');
+    if (programFilter === 'guided') return base.filter((p) => p.format !== 'Private Charter');
+    return base;
+  }, [scheduleRows, programFilter]);
+
+  // Property Scheduled Private Charters & VIP Group Bookings
+  const propertyCharters = useMemo(() => {
+    const privateRows = scheduleRows.filter((r) => r.format !== 'Complimentary');
+    const scalePax = horizon === 'today' ? 0.3 : horizon === 'ytd' ? 6 : 1;
+    const totalPoolRev = Math.round(propMetrics.experienceRevenue * 0.42);
+    const shares = [34, 26, 22, 18];
+    const revSplits = splitByShares(
+      totalPoolRev,
+      shares.map((s, idx) => ({ id: String(idx), name: String(idx), share: s }))
+    );
+
+    const dateWindows = ['Oct 23 · 09:00', 'Oct 25 · 16:00', 'Oct 28 · 09:30', 'Nov 1 · 15:30'];
+    const statuses = ['Peak Slot Locked', 'Guide Assigned', 'Charter Confirmed', 'Waitlist Priority'] as const;
+
+    const list = shares.map((_, idx) => {
+      const src = privateRows[idx % privateRows.length] ?? scheduleRows[0];
+      const pax = Math.max(2, Math.round((6 + idx * 2) * scalePax));
+      return {
+        id: `${selectedProperty.id}-chr-${idx}`,
+        title: src.title,
+        pillar: src.pillar,
+        dateWindow: dateWindows[idx],
+        pax,
+        revenue: revSplits[idx].value,
+        status: statuses[idx],
+      };
+    });
+
+    return {
+      list,
+      totalRev: list.reduce((a, c) => a + c.revenue, 0),
+      totalPax: list.reduce((a, c) => a + c.pax, 0),
+    };
+  }, [scheduleRows, horizon, propMetrics.experienceRevenue, selectedProperty.id]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 pt-4 lg:pt-6 bg-white text-[10px]">
-      {/* Top Executive Header */}
-      <div className="w-full flex flex-col gap-3 animate-fade-in">
+    <div className="w-full h-full flex flex-col gap-4 overflow-y-auto overflow-x-hidden custom-scrollbar px-4 lg:px-6 pb-8 bg-white text-[10px]">
+      {/* ───────────────────────── TOP EXECUTIVE HEADER ───────────────────────── */}
+      <div className="shrink-0 flex flex-col gap-3 pt-4 lg:pt-6 animate-card-enter">
         <div className="w-full border-b border-zinc-200/80 pb-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 tracking-wide">
@@ -1466,25 +1648,29 @@ export function ExperiencePropertyDashboardPage() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
           <div className="text-[9.5px] text-zinc-500 font-normal flex flex-wrap items-center gap-2">
             <span className="text-zinc-900 font-medium">
-              As of: <strong className="font-semibold text-zinc-900">{horizonMeta.periodLabel}</strong>
+              As of: <strong className="font-semibold text-zinc-900">{PERIOD_DEFS[horizon].periodLabel}</strong>
             </span>
             <span>·</span>
             <span>
-              Active Resort: <strong className="font-semibold text-zinc-900">{selectedProperty.name}</strong> ({selectedProperty.location} · {expRecord.programsCount} Programs)
+              Active Resort: <strong className="font-semibold text-zinc-900">{selectedProperty.name}</strong> ({selectedProperty.location} · {propMetrics.rooms} Keys · {propMetrics.experiences.programs} Active Programs)
             </span>
           </div>
 
+          {/* Right Controls: Time Horizon (Yesterday | MTD | YTD) + Export */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg">
-              {HORIZON_TABS.filter((ht) => ht.id !== 'forward').map((t) => {
-                const active = horizon === t.id;
+              {PERIOD_ORDER.filter((pid) => pid !== 'forward').map((id) => {
+                const t = PERIOD_DEFS[id];
+                const active = horizon === id;
                 return (
                   <button
-                    key={t.id}
+                    key={id}
                     type="button"
-                    onClick={() => setHorizon(t.id)}
+                    onClick={() => setHorizon(id)}
                     className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                      active ? 'bg-zinc-900 text-white shadow-2xs' : 'text-zinc-600 hover:text-zinc-900'
+                      active
+                        ? 'bg-zinc-900 text-white shadow-2xs'
+                        : 'text-zinc-600 hover:text-zinc-900'
                     }`}
                   >
                     {t.label}
@@ -1505,7 +1691,7 @@ export function ExperiencePropertyDashboardPage() {
         </div>
       </div>
 
-      {/* Property Selector Dropdown */}
+      {/* ───────────────────────── PROPERTY SELECTOR BAR ───────────────────────── */}
       <div className="flex items-center gap-3 relative shrink-0 pb-1" ref={dropdownRef}>
         <div className="w-9 h-9 rounded-full overflow-hidden border border-zinc-200 shadow-2xs shrink-0">
           <img
@@ -1526,7 +1712,7 @@ export function ExperiencePropertyDashboardPage() {
                 {selectedProperty.name}
               </span>
               <span className="text-[8.5px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 border border-zinc-200/80">
-                {expRecord.categoryName}
+                {selectedProperty.categoryName}
               </span>
               <AltArrowDown
                 size={15}
@@ -1536,7 +1722,7 @@ export function ExperiencePropertyDashboardPage() {
               />
             </div>
             <span className="text-zinc-500 text-[9.5px] tracking-wider uppercase font-semibold mt-1">
-              {selectedProperty.location} · {expRecord.signatureExperiences}
+              {selectedProperty.location} · {propDesc.signatureFocus}
             </span>
           </div>
         </button>
@@ -1585,225 +1771,635 @@ export function ExperiencePropertyDashboardPage() {
                         {prop.name}
                       </div>
                       <div className="text-[9px] text-zinc-500 mt-0.5 truncate">
-                        {prop.location} · {pM.experiences.participationRatePct.toFixed(1)}% Part. · {fmtMoney(pM.experienceRevenue)}
+                        {prop.location} · {fmtUsd(pM.experienceRevenue)} Exp. Rev.
                       </div>
                     </div>
+                    {isSelected && (
+                      <span className="ml-auto shrink-0 w-4 h-4 rounded-full bg-[#ecfdf5] border border-[#bbf7d0] flex items-center justify-center">
+                        <svg
+                          width="8"
+                          height="8"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#14532d"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </span>
+                    )}
                   </button>
                 );
               })}
+            </div>
+
+            <div className="px-3.5 py-2 border-t border-zinc-100 bg-zinc-50/50 shrink-0 flex items-center justify-between">
+              <span className="text-[9px] text-zinc-400 font-medium">
+                {filteredDropdownProps.length} of {MASTER_PROPERTIES.length} SOSEI properties
+              </span>
+              <span className="text-[9px] text-zinc-500 font-semibold">Property View</span>
             </div>
           </div>
         )}
       </div>
 
-      <ExperienceKpiRow
-        kpis={kpis}
-        drawerTitleSuffix={selectedProperty.name}
-        period={horizon}
-        propertyIds={[selectedProperty.id]}
-      />
+      {/* ───────────────────────── MAIN CONTENT GRID ───────────────────────── */}
+      <div className="flex flex-col gap-4">
+        {/* 5 HEADLINE SUMMARY STATISTICS (Shared KPI Structure) */}
+        <div className="-mx-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {activeHeadlineKpis.map((kpi) => (
+            <div
+              key={kpi.id}
+              onClick={() =>
+                openDrawer({
+                  type: 'EXPERIENCE_DETAIL',
+                  title: `${selectedProperty.name} — ${kpi.label}`,
+                  data: {
+                    key: 'EXP_HEADLINE_KPI',
+                    kpiId: kpi.id,
+                    horizon,
+                    propertyId: selectedProperty.id,
+                    propertyIds: propIds,
+                  },
+                })
+              }
+              className={CARD_CLASS}
+            >
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[10px] font-normal tracking-wider uppercase text-zinc-900 truncate">
+                  {kpi.label}
+                </span>
+                <span
+                  className={`inline-flex items-center text-[8px] font-semibold px-1.5 py-0.5 rounded shrink-0 whitespace-nowrap ${
+                    kpi.vsLyPos
+                      ? 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                      : 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                  }`}
+                >
+                  {kpi.vsLy}
+                </span>
+              </div>
 
-      {/* Section 3A: Staff Availability & Capacity Matrix */}
-      <div className="-mx-4 rounded-[12px] p-4 flex flex-col transition-all duration-300 hover:bg-gray-100/70 hover:shadow-lg hover:shadow-black/5 animate-card-enter">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-200/80 mb-3">
-          <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-              SECTION 3A — DAILY STAFF AVAILABILITY, QUALIFICATION &amp; CAPACITY MATRIX ({selectedProperty.name})
-            </h3>
-            <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-              Distinguishing Ready/Full vs Low Demand vs Capacity Constrained vs Operationally At Risk
-            </p>
-          </div>
-          <span className="text-[8.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700">
-            {expRecord.programsCount} Active Programs · {sessionMatrix.attendances.toLocaleString()} Booked / {sessionMatrix.capacity.toLocaleString()} Cap
-          </span>
+              <div className="text-[20px] xl:text-[22px] font-normal text-zinc-900 leading-tight my-1.5 tabular-nums">
+                {kpi.value}
+              </div>
+
+              <div className="flex items-center gap-1 flex-nowrap">
+                <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
+                  {kpi.vsBudget}
+                </span>
+                <span className="inline-flex items-center text-[7.5px] xl:text-[8px] font-medium px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 whitespace-nowrap">
+                  {kpi.vsForecast}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px]" style={{ borderCollapse: 'collapse' }}>
-            <thead>
-              <tr className="text-[9.5px] font-medium text-zinc-400 border-b border-zinc-200/80">
-                <th className="text-left py-2 pr-2 font-medium">Scheduled Session &amp; Category</th>
-                <th className="text-left py-2 px-2 font-medium">Model</th>
-                <th className="text-left py-2 px-2 font-medium">Demand vs Capacity</th>
-                <th className="text-left py-2 px-2 font-medium">Required Staffing</th>
-                <th className="text-left py-2 px-2 font-medium">Available Qualified Staff</th>
-                <th className="text-left py-2 px-2 font-medium">Operational Status</th>
-                <th className="text-left py-2 pl-2 font-medium">Management Action / Diagnosis</th>
-              </tr>
-            </thead>
-            <tbody>
-              {staffCapacityMatrix.map((row) => (
-                <tr key={row.activity} className="text-[9.5px] border-b border-zinc-100 text-zinc-700">
-                  <td className="py-2.5 pr-2">
-                    <div className="font-bold text-zinc-900">{row.activity}</div>
-                    <div className="text-[8px] text-zinc-400">{row.category}</div>
-                  </td>
-                  <td className="py-2.5 px-2 font-medium">{row.commercial}</td>
-                  <td className="py-2.5 px-2">
-                    <div className="font-bold text-zinc-900">{row.demand}</div>
-                    <div className="text-[8px] text-zinc-400">Cap: {row.capacity}</div>
-                  </td>
-                  <td className="py-2.5 px-2">{row.reqStaff}</td>
-                  <td className="py-2.5 px-2 font-medium text-zinc-900">{row.availStaff}</td>
-                  <td className="py-2.5 px-2">
-                    <span
-                      className={`inline-flex items-center text-[8px] font-semibold px-1.5 py-0.5 rounded ${
-                        row.tone === 'pos'
-                          ? 'bg-[#ecfdf5] text-[#14532d]'
-                          : row.tone === 'neg' || row.tone === 'warn'
-                            ? 'bg-[#fff1f2] text-[#800020]'
-                            : 'bg-zinc-100 text-zinc-700'
-                      }`}
-                    >
-                      {row.state}
-                    </span>
-                  </td>
-                  <td className="py-2.5 pl-2 text-[9px] text-zinc-600">{row.diagnosis}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Section 4C: Kids' Club Daily Control View + Session Readiness */}
-      <div className="-mx-4 grid grid-cols-12 gap-4 items-stretch">
-        <div className="col-span-12 lg:col-span-7 flex flex-col">
+        {/* ROW 1 (4-4-4 — EXCLUSIVE PROPERTY LEVEL): Peak Load by Time Window | Daily Session Schedule Roster | Peak Load & Scheduling Signals */}
+        <div className="-mx-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* 1. PEAK LOAD & REVENUE BY TIME WINDOW */}
           <div
-            className={CARD_CLASS}
             onClick={() =>
               openDrawer({
                 type: 'EXPERIENCE_DETAIL',
-                title: `Kids' Club — Daily Control View (${selectedProperty.name})`,
+                title: `${selectedProperty.name} — Peak Load & Revenue by Time Window`,
                 data: {
-                  key: 'EXP_KIDS_CLUB_CONTROL',
+                  key: 'EXP_UNMET_DEMAND',
                   horizon,
                   propertyId: selectedProperty.id,
-                  propertyIds: [selectedProperty.id],
+                  propertyIds: propIds,
                 },
               })
             }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
           >
-            <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200/80 mb-3">
+            <div className="flex items-start justify-between gap-2 mb-3">
               <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                  SECTION 4C — KIDS&apos; CLUB DAILY CONTROL VIEW ({selectedProperty.name})
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  PEAK LOAD &amp; REVENUE BY TIME WINDOW
                 </h3>
-                <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-                  Aggregate child safety &amp; supervision controls; individual child PII restricted to authorized staff
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Operating schedule windows, revenue yield, peak load &amp; avg. spend
                 </p>
               </div>
-              <span className="text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#14532d]">
-                5 / 5 Controls Verified
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
               </span>
             </div>
 
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {[
-                { label: 'Registered', val: sessionMatrix.kids.registered.toLocaleString(), sub: 'Age Verified' },
-                { label: 'Checked In', val: sessionMatrix.kids.checkedIn.toLocaleString(), sub: 'On-Site Active' },
-                {
-                  label: 'Staff Assigned',
-                  val: sessionMatrix.kids.staffAssigned.toLocaleString(),
-                  sub: `1:${sessionMatrix.kids.effectiveRatio.toFixed(1)} Ratio`,
-                },
-                { label: 'Collection Pending', val: sessionMatrix.kids.collectionPending.toLocaleString(), sub: 'PIN Locked' },
-              ].map((k) => (
-                <div key={k.label} className="p-2 rounded-lg bg-zinc-50 border border-zinc-200/60">
-                  <div className="text-[8px] uppercase tracking-wider text-zinc-400">{k.label}</div>
-                  <div className="text-[15px] font-bold text-zinc-900 mt-0.5">{k.val}</div>
-                  <div className="text-[8px] text-[#14532d] font-medium">{k.sub}</div>
+            <div className="flex-1 flex flex-col justify-between gap-1.5">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-5">Schedule Window</span>
+                <span className="col-span-2 text-right">Exp. Rev.</span>
+                <span className="col-span-2 text-right">Pax</span>
+                <span className="col-span-1 text-right">Load</span>
+                <span className="col-span-2 text-right">Avg. Spend</span>
+              </div>
+
+              {peakWindows.map((w) => (
+                <div key={w.id} className="flex flex-col gap-1">
+                  <div className="grid grid-cols-12 items-center tabular-nums">
+                    <div className="col-span-5 min-w-0 pr-1">
+                      <span className="text-[10px] font-medium text-zinc-800 truncate block">
+                        {w.windowLabel}
+                      </span>
+                    </div>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsd(w.revenue)}
+                    </span>
+                    <span className="col-span-2 text-[10px] text-zinc-600 text-right">
+                      {fmtInt(w.attendances)}
+                    </span>
+                    <span className="col-span-1 text-[9.5px] font-medium text-[#14532d] text-right">
+                      {fmtPct(w.peakLoadPct, 0)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {fmtUsdFull(w.avgSpend)}
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-zinc-800 rounded-full"
+                      style={{ width: `${Math.min(100, w.peakLoadPct)}%` }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
 
-            <div className="space-y-1.5">
-              {[
-                '1. Registration & Age Eligibility (0–3, 4–7, 8–12) Confirmed',
-                '2. Authorized Guardian Drop-Off & Collection PIN Recorded',
-                '3. Staff-to-Child Supervision Ratios & First-Aid Verified',
-                '4. Transition & Session-Close Attendance Reconciled',
-                '5. Restricted-Access Allergy & Care Protocol Active',
-              ].map((pt) => (
-                <div key={pt} className="p-2 rounded-lg bg-zinc-50/70 border border-zinc-100 flex items-center justify-between">
-                  <span className="text-[9.5px] font-medium text-zinc-800">{pt}</span>
-                  <span className="text-[8px] font-semibold px-1.5 py-0.2 rounded bg-[#ecfdf5] text-[#14532d]">
-                    Verified
+          {/* 2. DAILY SESSION SCHEDULE & PEAK LOAD ROSTER */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'EXPERIENCE_DETAIL',
+                title: `${selectedProperty.name} — Daily Session Schedule & Peak Load Roster`,
+                data: {
+                  key: 'EXP_READINESS_SAFETY',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  DAILY SESSION SCHEDULE &amp; ROSTER
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Scheduled time slots, booked vs capacity &amp; peak load %
+                </p>
+              </div>
+
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center bg-zinc-100 p-0.5 rounded-lg shrink-0"
+              >
+                {(
+                  [
+                    { id: 'all', label: 'All' },
+                    { id: 'peak', label: 'Peak' },
+                    { id: 'private', label: 'Paid' },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setScheduleFilter(tab.id)}
+                    className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                      scheduleFilter === tab.id
+                        ? 'bg-zinc-900 text-white shadow-2xs'
+                        : 'text-zinc-500 hover:text-zinc-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-6">Time Slot &amp; Activity</span>
+                <span className="col-span-2 text-right">Booked</span>
+                <span className="col-span-2 text-right">Load</span>
+                <span className="col-span-2 text-right">Exp. Rev.</span>
+              </div>
+
+              {filteredScheduleRows.slice(0, 5).map((row) => {
+                const isPeakFull = row.peakLoadPct >= 90;
+                return (
+                  <div
+                    key={row.id}
+                    className="grid grid-cols-12 items-center py-1 border-b border-zinc-100/60 last:border-b-0 hover:bg-zinc-200/40 rounded px-1 -mx-1 transition-colors tabular-nums"
+                  >
+                    <div className="col-span-6 min-w-0 pr-1">
+                      <div className="text-[10px] font-medium text-zinc-800 truncate">{row.title}</div>
+                      <div className="text-[8px] text-zinc-400 truncate">
+                        {row.time} · {row.format}
+                      </div>
+                    </div>
+                    <span className="col-span-2 text-[9.5px] text-zinc-700 text-right">
+                      {fmtInt(row.booked)}/{fmtInt(row.capacity)}
+                    </span>
+                    <span
+                      className={`col-span-2 text-[9.5px] font-medium text-right ${
+                        isPeakFull ? 'text-[#800020]' : 'text-[#14532d]'
+                      }`}
+                    >
+                      {fmtPct(row.peakLoadPct, 0)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                      {row.revenue > 0 ? fmtUsd(row.revenue) : 'Comp'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 3. PEAK LOAD & SCHEDULING SIGNALS */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'EXPERIENCE_DETAIL',
+                title: `${selectedProperty.name} — Peak Load & Scheduling Signals`,
+                data: {
+                  key: 'EXP_UNMET_DEMAND',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-2.5">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  PEAK LOAD &amp; SCHEDULING SIGNALS
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Schedule bottlenecks &amp; +{fmtUsd(propertySignals.pipelineValue)} revenue opportunity
+                </p>
+              </div>
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
+              </span>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between gap-1.5">
+              {propertySignals.signals.map((sig) => {
+                const isRisk = sig.type === 'risk';
+                return (
+                  <div
+                    key={sig.id}
+                    className="py-1.5 px-1 rounded-lg hover:bg-zinc-200/40 transition-colors flex items-start justify-between gap-2"
+                  >
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span
+                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 font-bold text-[9px] mt-0.5 ${
+                          isRisk
+                            ? 'bg-[#fff1f2] text-[#800020]'
+                            : 'bg-[#ecfdf5] text-[#14532d]'
+                        }`}
+                      >
+                        {isRisk ? '!' : '↑'}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-[9.5px] font-bold text-zinc-900 truncate">{sig.title}</div>
+                        <div className="text-[8.5px] text-zinc-500 truncate">{sig.sub}</div>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[8px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${
+                        isRisk
+                          ? 'bg-[#fff1f2] text-[#800020]'
+                          : 'bg-[#ecfdf5] text-[#14532d]'
+                      }`}
+                    >
+                      {sig.exposure}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2 (4-4-4 — EXCLUSIVE PROPERTY LEVEL): Property Signature Activities & Pricing | Forward Scheduling & Demand Outlook | Scheduled Private Charters & Buyouts */}
+        <div className="-mx-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* 4. PROPERTY SIGNATURE ACTIVITIES & PRICING */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'EXPERIENCE_DETAIL',
+                title: `${selectedProperty.name} — Signature Activities & Commercial Mix`,
+                data: {
+                  key: 'EXP_COMMERCIAL_MIX',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  PROPERTY SIGNATURE ACTIVITIES &amp; PRICING
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Destination-specific activities at {selectedProperty.name}
+                </p>
+              </div>
+
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center bg-zinc-100 p-0.5 rounded-lg shrink-0"
+              >
+                {(
+                  [
+                    { id: 'all', label: 'All' },
+                    { id: 'private', label: 'Private' },
+                    { id: 'guided', label: 'Guided' },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setProgramFilter(tab.id)}
+                    className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                      programFilter === tab.id
+                        ? 'bg-zinc-900 text-white shadow-2xs'
+                        : 'text-zinc-500 hover:text-zinc-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                <span className="col-span-6">Activity &amp; Pillar</span>
+                <span className="col-span-2 text-right">Price</span>
+                <span className="col-span-2 text-right">Load</span>
+                <span className="col-span-2 text-right">Exp. Rev.</span>
+              </div>
+
+              {propertyPrograms.slice(0, 5).map((prog) => (
+                <div
+                  key={prog.id}
+                  className="grid grid-cols-12 items-center py-1 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                >
+                  <div className="col-span-6 min-w-0 pr-1">
+                    <div className="text-[10px] font-medium text-zinc-800 truncate">{prog.name}</div>
+                    <div className="text-[8px] text-zinc-400 truncate">
+                      {prog.pillar} · {fmtInt(prog.attendances)} pax
+                    </div>
+                  </div>
+                  <span className="col-span-2 text-[9.5px] text-zinc-600 text-right">
+                    {prog.price > 0 ? fmtUsdFull(prog.price) : 'Comp'}
+                  </span>
+                  <span className="col-span-2 text-[9.5px] font-medium text-[#14532d] text-right">
+                    {fmtPct(prog.peakLoadPct, 0)}
+                  </span>
+                  <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                    {prog.revenue > 0 ? fmtUsd(prog.revenue) : 'Included'}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="col-span-12 lg:col-span-5 flex flex-col">
+          {/* 5. FORWARD SCHEDULING & DEMAND OUTLOOK (7D / 30D / 90D) */}
           <div
-            className={CARD_CLASS}
             onClick={() =>
               openDrawer({
                 type: 'EXPERIENCE_DETAIL',
-                title: `Equipment, Safety & Tomorrow Handover (${selectedProperty.name})`,
+                title: `${selectedProperty.name} — Forward Scheduling & Demand Outlook (${forwardWindow}D)`,
                 data: {
-                  key: 'EXP_READINESS_SAFETY',
+                  key: 'EXP_FORWARD_STAY',
                   horizon,
                   propertyId: selectedProperty.id,
-                  propertyIds: [selectedProperty.id],
+                  propertyIds: propIds,
                 },
               })
             }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
           >
-            <div className="flex items-center justify-between pb-2.5 border-b border-zinc-200/80 mb-3">
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
               <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
-                  EQUIPMENT, GO/NO-GO &amp; TOMORROW HANDOVER
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  FORWARD SCHEDULING &amp; OUTLOOK
                 </h3>
-                <p className="text-[9px] text-zinc-400 font-normal mt-0.5">
-                  Physical asset checklist, weather/sea status &amp; next-day shift prep
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Pre-booked itineraries OTB &amp; schedule capacity load
                 </p>
               </div>
-              <span className="text-[8.5px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-800">
-                Go/No-Go: Clear
+
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center bg-zinc-100 p-0.5 rounded-lg shrink-0"
+              >
+                {([7, 30, 90] as const).map((w) => (
+                  <button
+                    key={w}
+                    type="button"
+                    onClick={() => setForwardWindow(w)}
+                    className={`px-2 py-0.5 rounded-md text-[8.5px] font-medium transition-all cursor-pointer ${
+                      forwardWindow === w
+                        ? 'bg-zinc-900 text-white shadow-2xs'
+                        : 'text-zinc-500 hover:text-zinc-900'
+                    }`}
+                  >
+                    {w}D
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between gap-2">
+              <div className="grid grid-cols-3 gap-2 pb-2 border-b border-zinc-100 tabular-nums">
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Pre-Booked OTB</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtInt(forwardOutlook.otbAttendances)} Pax
+                  </div>
+                  <div className="text-[8px] text-[#14532d] font-medium">
+                    {fmtPct(forwardOutlook.preBookedPct, 0)} Reserved
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">OTB Exp. Rev.</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtUsd(forwardOutlook.otbRevenue)}
+                  </div>
+                  <div className="text-[8px] text-zinc-400">
+                    {fmtPct(forwardOutlook.capacityCommittedPct, 0)} Committed
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Peak Waitlist</div>
+                  <div className="text-xs font-bold text-[#800020]">
+                    {fmtInt(forwardOutlook.waitlist)} Guests
+                  </div>
+                  <div className="text-[8px] text-[#14532d] font-medium">
+                    +{fmtUsd(forwardOutlook.uncapturedRev)} Opp.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 flex flex-col justify-between gap-1.5">
+                <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                  <span className="col-span-4">Horizon</span>
+                  <span className="col-span-4">Schedule Load</span>
+                  <span className="col-span-2 text-right">OTB Pax</span>
+                  <span className="col-span-2 text-right">Load</span>
+                </div>
+
+                {forwardOutlook.buckets.map((b) => (
+                  <div
+                    key={b.label}
+                    className="grid grid-cols-12 items-center py-1 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                  >
+                    <div className="col-span-4 min-w-0 pr-1">
+                      <span className="text-[10px] font-medium text-zinc-800">{b.label}</span>
+                      <span className="text-[8px] text-zinc-400 ml-1">({b.days}d)</span>
+                    </div>
+                    <div className="col-span-4 pr-2">
+                      <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden flex">
+                        <div
+                          className="h-full bg-zinc-900"
+                          style={{ width: `${Math.min(100, b.otbPct)}%` }}
+                        />
+                        <div
+                          className="h-full bg-zinc-300"
+                          style={{ width: `${Math.min(100 - b.otbPct, b.walkInPct)}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="col-span-2 text-[10px] text-zinc-700 text-right">
+                      {fmtInt(b.otbAttendances)}
+                    </span>
+                    <span className="col-span-2 text-[10px] font-medium text-[#14532d] text-right">
+                      {fmtPct(b.loadPct, 0)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 6. SCHEDULED PRIVATE CHARTERS & BUYOUTS */}
+          <div
+            onClick={() =>
+              openDrawer({
+                type: 'EXPERIENCE_DETAIL',
+                title: `${selectedProperty.name} — Scheduled Private Charters & Bespoke Bookings`,
+                data: {
+                  key: 'EXP_FORWARD_STAY',
+                  horizon,
+                  propertyId: selectedProperty.id,
+                  propertyIds: propIds,
+                },
+              })
+            }
+            className={`lg:col-span-4 ${CARD_CLASS}`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-3">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 h-4">
+                  SCHEDULED PRIVATE CHARTERS &amp; BUYOUTS
+                </h3>
+                <p className="text-[9px] text-zinc-400 font-normal">
+                  Upcoming high-ticket private charters &amp; specialist bookings
+                </p>
+              </div>
+              <span className="text-[9.5px] font-medium text-zinc-500 hover:text-zinc-900 hover:underline transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap">
+                <span>See details</span> <RoundAltArrowRight size={10} />
               </span>
             </div>
 
             <div className="flex-1 flex flex-col justify-between gap-2">
-              {[
-                {
-                  title: 'Equipment & Venue Inspection',
-                  desc: `${sessionMatrix.readinessPct.toFixed(1)}% equipment ready; O2 kit, VHF radio, mats, and marine gear pre-checked.`,
-                  badge: `${sessionMatrix.readinessPct.toFixed(1)}% Ready`,
-                },
-                {
-                  title: 'Weather & Sea-State Authority',
-                  desc: 'Outdoor & marine sessions cleared; indoor cultural studio pre-staged as backup.',
-                  badge: 'All Clear',
-                },
-                {
-                  title: 'Tomorrow Arrival & Commercial Handover',
-                  desc: `${sessionMatrix.familiesArriving} arriving families pre-booked; ${sessionMatrix.waitlistedCouples} waitlisted couples flagged for private charter upgrade.`,
-                  badge: `+${fmtMoney(sessionMatrix.upsellOpportunity)} Opp`,
-                },
-              ].map((item) => (
-                <div key={item.title} className="p-2.5 rounded-lg bg-zinc-50/70 border border-zinc-100">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9.5px] font-bold text-zinc-900">{item.title}</span>
-                    <span className="text-[8px] font-semibold px-1.5 py-0.2 rounded bg-[#ecfdf5] text-[#14532d]">
-                      {item.badge}
-                    </span>
+              <div className="grid grid-cols-3 gap-2 pb-2 border-b border-zinc-100 tabular-nums">
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Charters</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {propertyCharters.list.length} Bookings
                   </div>
-                  <p className="text-[8.5px] text-zinc-500 mt-1">{item.desc}</p>
                 </div>
-              ))}
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Charter Guests</div>
+                  <div className="text-xs font-bold text-zinc-900">
+                    {fmtInt(propertyCharters.totalPax)} Pax
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[8.5px] text-zinc-400">Charter Rev.</div>
+                  <div className="text-xs font-bold text-[#14532d]">
+                    {fmtUsd(propertyCharters.totalRev)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="grid grid-cols-12 text-[9.5px] font-medium text-zinc-400 pb-1 border-b border-zinc-100">
+                  <span className="col-span-5">Charter &amp; Slot</span>
+                  <span className="col-span-2 text-right">Pax</span>
+                  <span className="col-span-2 text-right">Rev.</span>
+                  <span className="col-span-3 text-right">Status</span>
+                </div>
+
+                {propertyCharters.list.map((chr) => {
+                  const isWait = chr.status === 'Waitlist Priority';
+                  return (
+                    <div
+                      key={chr.id}
+                      className="grid grid-cols-12 items-center py-1 border-b border-zinc-100/60 last:border-b-0 tabular-nums"
+                    >
+                      <div className="col-span-5 min-w-0 pr-1">
+                        <div className="text-[10px] font-medium text-zinc-800 truncate">{chr.title}</div>
+                        <div className="text-[8px] text-zinc-400 truncate">{chr.dateWindow}</div>
+                      </div>
+                      <span className="col-span-2 text-[10px] text-zinc-700 text-right">{chr.pax}</span>
+                      <span className="col-span-2 text-[10px] font-medium text-zinc-900 text-right">
+                        {fmtUsd(chr.revenue)}
+                      </span>
+                      <div className="col-span-3 flex justify-end">
+                        <span
+                          className={`text-[7.5px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap ${
+                            isWait
+                              ? 'bg-[#fff1f2] text-[#800020] border border-[#fecdd3]/80'
+                              : 'bg-[#ecfdf5] text-[#14532d] border border-[#bbf7d0]/80'
+                          }`}
+                        >
+                          {chr.status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Collapsible In-House Guests for Selected Property */}
-      <CollapsibleExperienceGuests activePropertyIds={[selectedProperty.id]} selectionTitle={selectedProperty.name} />
-
-      <UnderDevelopmentModal open={showDevModal} onClose={() => setShowDevModal(false)} featureName="Export Report" />
+      <UnderDevelopmentModal
+        open={showDevModal}
+        onClose={() => setShowDevModal(false)}
+        featureName="Export Report"
+      />
     </div>
   );
 }

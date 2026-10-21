@@ -1,3 +1,4 @@
+import { MASTER_CATEGORIES, type HotelCategoryId } from '@/constants/categories';
 import { MASTER_REGIONS } from '@/constants/regions';
 import type { RegionId } from '@/constants/regions';
 import {
@@ -8,7 +9,7 @@ import {
   getPropertyProfile,
 } from './engine';
 import type { PortfolioMetrics, PropertyMetrics } from './engine';
-import { fmtInt, fmtPct, fmtSignedPct, fmtSignedPts, fmtUsd, fmtUsdFull } from './format';
+import { fmtInt, fmtPct, fmtSignedPct, fmtSignedPts, fmtSignedUsd, fmtUsd, fmtUsdFull } from './format';
 import { EXPERIENCE_CATEGORY_REVENUE_SHARES, EXPERIENCE_CATEGORY_SHARES, EXPERIENCE_PAID_MODEL_REVENUE_SHARES, splitByShares } from './mix';
 import type { ShareDef } from './mix';
 import { FORWARD_DEFAULT_DAYS } from './periods';
@@ -157,11 +158,97 @@ export interface ExperienceCategoryRow {
   utilPct: number;
 }
 
+interface CategorySpecificDef {
+  id: string;
+  name: string;
+  attShare: number;
+  revShare: number;
+  color: string;
+  examples: string;
+  audience: string;
+  model: string;
+  utilIdx: number;
+}
+
+const CATEGORY_SPECIFIC_TAXONOMY: Record<HotelCategoryId, CategorySpecificDef[]> = {
+  ski: [
+    { id: 'heli_cat', name: 'Heli-Ski & Backcountry Cat-Ski', attShare: 18, revShare: 38, color: '#0f172a', examples: 'Glacier heli-skiing, Mt. Yotei cat-ski, backcountry powder', audience: 'Advanced Skiers, Private Groups', model: 'High-Ticket Paid Charter', utilIdx: 1.12 },
+    { id: 'alpine_guide', name: 'Private Ski & Alpine Guiding', attShare: 32, revShare: 28, color: '#334155', examples: 'Private UIAGM ski instructor, off-piste carving, first-tracks', audience: 'Adults, Families, All Levels', model: 'Paid Private / Half & Full Day', utilIdx: 1.06 },
+    { id: 'glacier_ice', name: 'Glacier Trek & Snow Adventure', attShare: 16, revShare: 14, color: '#475569', examples: 'Glacier ice walk, snowmobile expedition, snowshoeing', audience: 'All Ages, Families, Couples', model: 'Paid Guided / Comp Gear', utilIdx: 1.0 },
+    { id: 'apres_recovery', name: 'Après-Ski & Thermal Recovery', attShare: 14, revShare: 8, color: '#64748b', examples: 'Alpine breathwork, volcanic onsen bath, chalet stretch', audience: 'Adults, Skiers', model: 'Complimentary / Paid Private', utilIdx: 0.98 },
+    { id: 'kids', name: 'Junior Ski & Mountain Academy', attShare: 12, revShare: 7, color: '#94a3b8', examples: 'Children ski school, snow craft camp, junior avalanche lab', audience: 'Children (Ages 4–12)', model: 'Paid Academy / Comp Club', utilIdx: 0.96 },
+    { id: 'mountain_culture', name: 'Alpine Heritage & Cellar Tours', attShare: 8, revShare: 5, color: '#cbd5e1', examples: 'Savoyard cheese farm visit, saké brewery tour, stargazing', audience: 'Adults, Families', model: 'Paid / Package-Included', utilIdx: 0.9 },
+  ],
+  'beach-resort': [
+    { id: 'yacht_charter', name: 'Private Yacht & Boat Charters', attShare: 16, revShare: 38, color: '#0f172a', examples: 'Riva coastal yacht, sunset catamaran, private dhow cruise', audience: 'Couples, Families, VIP Groups', model: 'High-Ticket Paid Charter', utilIdx: 1.12 },
+    { id: 'diving_reef', name: 'Scuba Diving & Reef Snorkeling', attShare: 28, revShare: 26, color: '#334155', examples: 'PADI boat dive, coral reef snorkeling, whale shark swim', audience: 'Adults, Certified Divers, Families', model: 'Paid Dive / Comp Snorkel Gear', utilIdx: 1.06 },
+    { id: 'surf_ocean', name: 'Surf, Sailing & Ocean Sports', attShare: 20, revShare: 16, color: '#475569', examples: 'Reef surf safari, Hobie cat sailing, sea kayaking, foil board', audience: 'Adults, Teens, Active Guests', model: 'Paid Coaching / Comp Non-Motor', utilIdx: 1.02 },
+    { id: 'coastal_island', name: 'Coastal & Island Expeditions', attShare: 14, revShare: 11, color: '#64748b', examples: 'Beach horseback ride, lemon grove walk, giant tortoise walk', audience: 'All Ages, Couples, Families', model: 'Paid Guided Excursion', utilIdx: 0.96 },
+    { id: 'kids', name: 'Junior Marine & Coral Club', attShare: 12, revShare: 5, color: '#94a3b8', examples: 'Junior marine biologist, coral reef planting, tidepool explore', audience: 'Children (Ages 4–12)', model: 'Complimentary / Paid Camp', utilIdx: 0.95 },
+    { id: 'cliff_mindful', name: 'Sunrise Cliff Yoga & Sound', attShare: 10, revShare: 4, color: '#cbd5e1', examples: 'Oceanfront sunrise yoga, beach pranayama, sunset meditation', audience: 'Adults, Couples', model: 'Complimentary / Paid Private', utilIdx: 0.92 },
+  ],
+  nature: [
+    { id: 'safari_wildlife', name: 'Wildlife Safari & Game Drives', attShare: 30, revShare: 36, color: '#0f172a', examples: 'Big-Five 4x4 game drive, puma tracking, migration tracking', audience: 'All Ages, Couples, Families', model: 'Paid Private Vehicle / Guided', utilIdx: 1.1 },
+    { id: 'aerial_expedition', name: 'Balloon & Heli Wilderness Safari', attShare: 14, revShare: 32, color: '#334155', examples: 'Dawn hot-air balloon safari, glacier & fjord helicopter tour', audience: 'Couples, VIP Groups', model: 'High-Ticket Paid Expedition', utilIdx: 1.12 },
+    { id: 'trek_glacier', name: 'Glacier & Wilderness Trekking', attShare: 24, revShare: 16, color: '#475569', examples: 'Torres del Paine trek, Grey Glacier kayak, guided bush walk', audience: 'Adults, Active Teens', model: 'Complimentary / Paid Private Guide', utilIdx: 1.02 },
+    { id: 'conservation', name: 'Conservation & Night Astronomy', attShare: 12, revShare: 8, color: '#64748b', examples: 'Predator collar telemetry, Southern Cross stargazing', audience: 'Adults, Families', model: 'Paid Philanthropy / Comp Talk', utilIdx: 0.95 },
+    { id: 'kids', name: 'Junior Wildlife Ranger Camp', attShare: 10, revShare: 4, color: '#94a3b8', examples: 'Spoor tracking, bushcraft skills, junior naturalist logbook', audience: 'Children (Ages 5–12)', model: 'Complimentary / Paid Camp', utilIdx: 0.94 },
+    { id: 'bush_mindful', name: 'Savanna & Steppe Mindful Yoga', attShare: 10, revShare: 4, color: '#cbd5e1', examples: 'Kopje sunrise stretch, Patagonian wind breathwork', audience: 'Adults', model: 'Complimentary / Paid Private', utilIdx: 0.9 },
+  ],
+  urban: [
+    { id: 'private_atelier', name: 'Private Atelier & Horology Tours', attShare: 24, revShare: 36, color: '#0f172a', examples: 'Haute Horlogerie master watchmaker, private riad & museum', audience: 'Adults, Collectors, VIPs', model: 'High-Ticket Paid Bespoke', utilIdx: 1.1 },
+    { id: 'lake_aviation', name: 'Lake Riva, Heli & Vintage Drive', attShare: 18, revShare: 32, color: '#334155', examples: 'Lake Geneva Riva cruise, Atlas Mountains heli-tour, classic car', audience: 'Couples, Private Groups', model: 'High-Ticket Paid Charter', utilIdx: 1.08 },
+    { id: 'artisan_master', name: 'Culinary & Artisan Masterclasses', attShare: 22, revShare: 16, color: '#475569', examples: 'Swiss chocolatier lab, Moroccan perfumery & ceramic studio', audience: 'Adults, Families', model: 'Paid Masterclass', utilIdx: 1.0 },
+    { id: 'heritage_curator', name: 'Curated Heritage & Art Walks', attShare: 16, revShare: 10, color: '#64748b', examples: 'Old Town historian walk, Majorelle & souk curator tour', audience: 'Adults, Families', model: 'Paid Private / Comp Morning Walk', utilIdx: 0.95 },
+    { id: 'rooftop_mindful', name: 'Rooftop Yoga & Mindful Studio', attShare: 12, revShare: 4, color: '#94a3b8', examples: 'Lakeview morning yoga, courtyard sound meditation', audience: 'Adults', model: 'Complimentary / Paid Private', utilIdx: 0.92 },
+    { id: 'kids', name: 'Junior Cultural Explorer', attShare: 8, revShare: 2, color: '#cbd5e1', examples: 'Junior watchmaker workshop, storytelling & calligraphy', audience: 'Children (Ages 4–12)', model: 'Complimentary / Paid Workshop', utilIdx: 0.9 },
+  ],
+  wellness: [
+    { id: 'zen_sound', name: 'Zen Meditation & Canyon Sound', attShare: 28, revShare: 28, color: '#0f172a', examples: 'Arashiyama dawn Zen temple meditation, canyon acoustic bath', audience: 'Adults, Longevity Seekers', model: 'Complimentary / Paid Private Master', utilIdx: 1.08 },
+    { id: 'heritage_ritual', name: 'Tea Master & Ancient Sanctuary', attShare: 22, revShare: 30, color: '#334155', examples: 'Private Uji chashitsu tea ceremony, Hegra Nabataean private tour', audience: 'Adults, Couples, Families', model: 'High-Ticket Paid Bespoke', utilIdx: 1.06 },
+    { id: 'stargazing_desert', name: 'Astronomy & Desert / Forest Walk', attShare: 20, revShare: 20, color: '#475569', examples: 'Hegra desert stargazing, Arashiyama bamboo grove dawn walk', audience: 'All Ages, Couples', model: 'Paid Guided / Comp Dawn Walk', utilIdx: 1.02 },
+    { id: 'botanical_craft', name: 'Botanical, Ikebana & Kintsugi', attShare: 14, revShare: 14, color: '#64748b', examples: 'Kintsugi gold-joinery, Ikebana floral art, desert oil alchemy', audience: 'Adults, Teens', model: 'Paid Studio Workshop', utilIdx: 0.96 },
+    { id: 'breath_movement', name: 'Longevity Breathwork & Qigong', attShare: 10, revShare: 5, color: '#94a3b8', examples: 'Pranayama, forest bathing (Shinrin-yoku), somatic movement', audience: 'Adults', model: 'Complimentary / Paid Private', utilIdx: 0.94 },
+    { id: 'kids', name: 'Junior Nature & Craft Studio', attShare: 6, revShare: 3, color: '#cbd5e1', examples: 'Origami & bamboo craft, junior desert astronomer', audience: 'Children (Ages 5–12)', model: 'Complimentary / Paid Studio', utilIdx: 0.9 },
+  ],
+};
+
 /**
- * Activity categories. Attendances sum to experiences.attendances, revenue sums to experienceRevenue (paid revenue),
- * capacity sums to experiences.capacityOffered, so the aggregate utilisation equals the engine value.
+ * Activity categories. When scoped to a single resort category (e.g. Ski or Beach Resort),
+ * returns logical category-specific activities (no diving in Ski, no snow ski in Beach Resort).
+ * Attendances sum to experiences.attendances, revenue sums to experienceRevenue.
  */
 export function getExperienceCategoryRows(m: ExperienceScope): ExperienceCategoryRow[] {
+  const props = propertyList(m);
+  const uniqueCats = Array.from(new Set(props.map((p) => p.categoryId)));
+  const singleCategory = uniqueCats.length === 1 ? uniqueCats[0] : null;
+
+  if (singleCategory && CATEGORY_SPECIFIC_TAXONOMY[singleCategory]) {
+    const defs = CATEGORY_SPECIFIC_TAXONOMY[singleCategory];
+    const attShares: ShareDef[] = defs.map((d) => ({ id: d.id, name: d.name, share: d.attShare }));
+    const revShares: ShareDef[] = defs.map((d) => ({ id: d.id, name: d.name, share: d.revShare }));
+    const capShares: ShareDef[] = defs.map((d) => ({ id: d.id, name: d.name, share: d.attShare / d.utilIdx }));
+
+    const att = splitByShares(m.experiences.attendances, attShares);
+    const rev = splitByShares(m.experienceRevenue, revShares);
+    const cap = splitByShares(m.experiences.capacityOffered, capShares);
+
+    return defs.map((d, i) => ({
+      id: d.id,
+      name: d.name,
+      color: d.color,
+      examples: d.examples,
+      audience: d.audience,
+      model: d.model,
+      sharePct: d.attShare,
+      attendances: att[i].value,
+      revenue: rev[i].value,
+      revenueSharePct: ratio(rev[i].value, m.experienceRevenue),
+      capacity: cap[i].value,
+      utilPct: clamp(ratio(att[i].value, cap[i].value), 0, 100),
+    }));
+  }
+
   const att = splitByShares(m.experiences.attendances, EXPERIENCE_CATEGORY_SHARES);
   const rev = splitByShares(m.experienceRevenue, EXPERIENCE_CATEGORY_REVENUE_SHARES);
   const capShares: ShareDef[] = EXPERIENCE_CATEGORY_SHARES.map((d) => ({ ...d, share: d.share / CATEGORY_META[d.id].utilIdx }));
@@ -974,3 +1061,749 @@ export function getPropertySessionMatrix(propertyId: string, period: PeriodId = 
     upsellOpportunity: Math.round(waitlistedCouples * e.revenuePerPaidParticipant),
   };
 }
+
+/* ───────────────────────── GLOBAL OVERVIEW REVAMP HELPERS (REVENUE & PEAK LOAD FOCUS) ───────────────────────── */
+
+export interface ExperienceHeadlineKpi {
+  id: string;
+  label: string;
+  value: string;
+  vsLy: string;
+  vsLyPos: boolean;
+  vsBudget: string;
+  vsForecast: string;
+}
+
+/**
+ * 5 Uniform Headline KPIs for Global & Property Experience Views (aligned with FnbDashboardPage.tsx).
+ * Focused on Experience Revenue, Spend per Paid Guest, Guest Participation, Peak Load Utilization, and Experience Score.
+ */
+export function getExperienceHeadlineKpis(
+  ids: readonly string[] | undefined,
+  period: PeriodId
+): ExperienceHeadlineKpi[] {
+  const m = getPortfolioMetrics(ids ? [...ids] : undefined, period);
+  const e = m.experiences;
+  const revLyPct = m.vsLy.experienceRevenuePct;
+  const revBudgetPct = m.vsBudget.experienceRevenuePct;
+  const revForecastPct = m.vsForecast.experienceRevenuePct;
+
+  const spendPerPaid = e.revenuePerPaidParticipant;
+  const spendLyDelta = Math.round(spendPerPaid * (revLyPct / 100) * 0.55);
+  const spendBudgetDelta = Math.round(spendPerPaid * (revBudgetPct / 100) * 0.55);
+  const spendForecastDelta = Math.round(spendPerPaid * (revForecastPct / 100) * 0.55);
+
+  const partLyPts = yoyPts(m, YOY_PTS_FACTOR.participation);
+  const partBudgetPts = partLyPts * 0.48;
+  const partForecastPts = partLyPts * 0.22;
+
+  const peakLoadPct = Math.min(98.4, e.capacityUtilPct + 6.2);
+  const loadLyPts = yoyPts(m, YOY_PTS_FACTOR.utilization) * 1.15;
+  const loadBudgetPts = loadLyPts * 0.45;
+  const loadForecastPts = loadLyPts * 0.2;
+
+  const qualLyPts = yoyPts(m, YOY_PTS_FACTOR.quality);
+
+  return [
+    {
+      id: 'contribution',
+      label: 'EXPERIENCE REVENUE',
+      value: fmtUsd(m.experienceRevenue),
+      vsLy: `${fmtSignedPct(revLyPct)} vs LY`,
+      vsLyPos: revLyPct >= 0,
+      vsBudget: `${fmtSignedPct(revBudgetPct)} vs Budget`,
+      vsForecast: `${fmtSignedPct(revForecastPct)} vs Forecast`,
+    },
+    {
+      id: 'spend',
+      label: 'AVG SPEND / PAID PARTICIPANT',
+      value: fmtUsdFull(spendPerPaid),
+      vsLy: `${fmtSignedUsd(spendLyDelta)} vs LY`,
+      vsLyPos: spendLyDelta >= 0,
+      vsBudget: `${fmtSignedUsd(spendBudgetDelta)} vs Budget`,
+      vsForecast: `${fmtSignedUsd(spendForecastDelta)} vs Forecast`,
+    },
+    {
+      id: 'participation',
+      label: 'GUEST PARTICIPATION RATE',
+      value: fmtPct(e.participationRatePct),
+      vsLy: `${fmtSignedPts(partLyPts)} vs LY`,
+      vsLyPos: partLyPts >= 0,
+      vsBudget: `${fmtSignedPts(partBudgetPts)} vs Budget`,
+      vsForecast: `${fmtSignedPts(partForecastPts)} vs Forecast`,
+    },
+    {
+      id: 'utilization',
+      label: 'PEAK LOAD & CAPACITY UTIL.',
+      value: fmtPct(peakLoadPct),
+      vsLy: `${fmtSignedPts(loadLyPts)} vs LY`,
+      vsLyPos: loadLyPts >= 0,
+      vsBudget: `${fmtSignedPts(loadBudgetPts)} vs Budget`,
+      vsForecast: `${fmtSignedPts(loadForecastPts)} vs Forecast`,
+    },
+    {
+      id: 'quality',
+      label: 'GUEST EXPERIENCE SCORE',
+      value: fmtPct(e.qualityPct),
+      vsLy: `${fmtSignedPts(qualLyPts)} vs LY`,
+      vsLyPos: qualLyPts >= 0,
+      vsBudget: '+0.8 pts vs Budget',
+      vsForecast: '+0.4 pts vs Forecast',
+    },
+  ];
+}
+
+/** Logical property-specific signature activity descriptors (Ski has snow/glacier, Beach has ocean/yacht, etc.). */
+export const PROPERTY_EXPERIENCE_DESCRIPTORS: Record<
+  string,
+  { signatureFocus: string; peakSlotLabel: string }
+> = {
+  'sosei-courchevel': {
+    signatureFocus: 'Glacier Heli-Ski & Private Alpine Guide',
+    peakSlotLabel: '09:00 First-Tracks Peak',
+  },
+  'sosei-niseko': {
+    signatureFocus: 'Mt. Yotei Cat-Ski & Backcountry Powder',
+    peakSlotLabel: '08:30 Powder Peak',
+  },
+  'sosei-aspen': {
+    signatureFocus: 'Continental Divide Heli-Powder & Snowmobile',
+    peakSlotLabel: '09:00 Alpine Peak',
+  },
+  'sosei-amalfi': {
+    signatureFocus: 'Capri Riva Yacht Charter & Cliff Grove Walk',
+    peakSlotLabel: '16:30 Sunset Yacht Peak',
+  },
+  'sosei-sumba': {
+    signatureFocus: 'Occy’s Reef Surf Safari & Beach Stallion Ride',
+    peakSlotLabel: '17:00 Sunset Stallion Peak',
+  },
+  'sosei-los-cabos': {
+    signatureFocus: 'Sea of Cortez Catamaran & Whale Shark Dive',
+    peakSlotLabel: '09:30 Marine Peak',
+  },
+  'sosei-muscat': {
+    signatureFocus: 'Dimaniyat Private Dhow Dive & Canyon Ferrata',
+    peakSlotLabel: '08:30 Dhow Dive Peak',
+  },
+  'sosei-seychelles': {
+    signatureFocus: 'Félicité Island Heli-Hop & Granite Reef Sail',
+    peakSlotLabel: '10:00 Island Charter Peak',
+  },
+  'sosei-geneva': {
+    signatureFocus: 'Haute Horlogerie Atelier & Lake Riva Cruise',
+    peakSlotLabel: '14:00 Private Atelier Peak',
+  },
+  'sosei-marrakech': {
+    signatureFocus: 'Atlas Heli-Trek & Private Medina Curator',
+    peakSlotLabel: '09:30 Atlas & Souk Peak',
+  },
+  'sosei-patagonia': {
+    signatureFocus: 'Puma Tracking Safari & Grey Glacier Kayak',
+    peakSlotLabel: '06:30 Dawn Tracker Peak',
+  },
+  'sosei-serengeti': {
+    signatureFocus: 'Migration Balloon Safari & Big-Five Drive',
+    peakSlotLabel: '06:00 Dawn Balloon Peak',
+  },
+  'sosei-kyoto': {
+    signatureFocus: 'Arashiyama Dawn Zen Temple & Uji Tea Master',
+    peakSlotLabel: '07:00 Zen & Tea Peak',
+  },
+  'sosei-alula': {
+    signatureFocus: 'Hegra Nabataean Stargazing & Canyon Sound',
+    peakSlotLabel: '19:30 Stargazing Peak',
+  },
+};
+
+export interface ExperienceCollectionRow {
+  categoryId: HotelCategoryId;
+  name: string;
+  signatureActivities: string;
+  propertyCount: number;
+  revenue: number;
+  sharePct: number;
+  paidAttendances: number;
+  peakLoadPct: number;
+  avgSpend: number;
+}
+
+const COLLECTION_ACTIVITY_LABELS: Record<HotelCategoryId, string> = {
+  'beach-resort': 'Private Yachts, Scuba Diving, Surf & Reef Sailing',
+  ski: 'Glacier Heli-Ski, Cat-Ski, Private Ski Guide & Ice Trek',
+  nature: 'Big-Five Safari, Dawn Balloon, Puma Track & Glacier Kayak',
+  urban: 'Horology Ateliers, Lake Riva Cruise, Atlas Heli & Curators',
+  wellness: 'Dawn Zen Meditation, Uji Tea Master, Stargazing & Sound',
+};
+
+/**
+ * Aggregates Experience Revenue & Peak Load across the 5 SOSEI Resort Collections
+ * so each collection displays its own logical domain of activities.
+ */
+export function getExperienceCollectionSummary(period: PeriodId): ExperienceCollectionRow[] {
+  const allPortfolio = getPortfolioMetrics(undefined, period);
+  return MASTER_CATEGORIES.map((cat) => {
+    const m = getPortfolioMetrics(cat.propertyIds, period);
+    const e = m.experiences;
+    const peakLoadPct = clamp(e.capacityUtilPct + 6.5, 72, 98.5);
+    return {
+      categoryId: cat.id,
+      name: cat.name,
+      signatureActivities: COLLECTION_ACTIVITY_LABELS[cat.id],
+      propertyCount: cat.propertyIds.length,
+      revenue: m.experienceRevenue,
+      sharePct: ratio(m.experienceRevenue, allPortfolio.experienceRevenue),
+      paidAttendances: e.paidAttendances,
+      peakLoadPct,
+      avgSpend: e.revenuePerPaidParticipant,
+    };
+  }).sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface ExperienceResortRow {
+  propertyId: string;
+  name: string;
+  categoryId: HotelCategoryId;
+  categoryName: string;
+  status: PropertyMetrics['status'];
+  signatureFocus: string;
+  peakSlotLabel: string;
+  revenue: number;
+  paidAttendances: number;
+  attendances: number;
+  participationPct: number;
+  peakLoadPct: number;
+  avgSpend: number;
+  waitlist: number;
+}
+
+export function getExperienceResortRanking(
+  ids: readonly string[] | undefined,
+  period: PeriodId
+): ExperienceResortRow[] {
+  return getPropertyMetricsList(ids ? [...ids] : undefined, period)
+    .map((p) => {
+      const desc = PROPERTY_EXPERIENCE_DESCRIPTORS[p.propertyId] ?? {
+        signatureFocus: 'Signature Guided Experiences',
+        peakSlotLabel: '09:00 Morning Peak',
+      };
+      const peakLoadPct = clamp(p.experiences.capacityUtilPct + 6.8, 70, 98.8);
+      return {
+        propertyId: p.propertyId,
+        name: p.name,
+        categoryId: p.categoryId,
+        categoryName: p.categoryName,
+        status: p.status,
+        signatureFocus: desc.signatureFocus,
+        peakSlotLabel: desc.peakSlotLabel,
+        revenue: p.experienceRevenue,
+        paidAttendances: p.experiences.paidAttendances,
+        attendances: p.experiences.attendances,
+        participationPct: p.experiences.participationRatePct,
+        peakLoadPct,
+        avgSpend: p.experiences.revenuePerPaidParticipant,
+        waitlist: p.experiences.unmetDemand,
+      };
+    })
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface ExperiencePeakWindowRow {
+  id: string;
+  windowLabel: string;
+  timeRange: string;
+  focusExamples: string;
+  sessions: number;
+  attendances: number;
+  revenue: number;
+  sharePct: number;
+  peakLoadPct: number;
+  waitlist: number;
+  avgSpend: number;
+}
+
+const PEAK_WINDOW_DEFS = [
+  {
+    id: 'morning_prime',
+    windowLabel: 'Morning Prime Peak',
+    timeRange: '09:00 – 12:30',
+    focusExamples: 'Heli-Ski, First-Tracks, Boat Dives & Island Charters',
+    revShare: 38,
+    attShare: 32,
+    waitShare: 44,
+    loadBoost: 11.5,
+  },
+  {
+    id: 'sunset_golden',
+    windowLabel: 'Sunset & Golden Hour Peak',
+    timeRange: '16:00 – 19:00',
+    focusExamples: 'Riva Sunset Yacht, Beach Stallion Ride & Sundowner Sail',
+    revShare: 26,
+    attShare: 22,
+    waitShare: 28,
+    loadBoost: 9.2,
+  },
+  {
+    id: 'afternoon_atelier',
+    windowLabel: 'Afternoon Excursion & Atelier',
+    timeRange: '13:00 – 16:00',
+    focusExamples: 'Horology Atelier, Glacier Kayak, Surf & Tea Ceremony',
+    revShare: 18,
+    attShare: 20,
+    waitShare: 14,
+    loadBoost: 2.4,
+  },
+  {
+    id: 'dawn_expedition',
+    windowLabel: 'Dawn Safari & Sunrise Mindful',
+    timeRange: '06:00 – 09:00',
+    focusExamples: 'Balloon Safari, Puma Tracking, Zen Temple & Cliff Yoga',
+    revShare: 12,
+    attShare: 18,
+    waitShare: 10,
+    loadBoost: 5.8,
+  },
+  {
+    id: 'night_astronomy',
+    windowLabel: 'Evening & Stargazing',
+    timeRange: '19:30 – 22:00',
+    focusExamples: 'Hegra Telescope Astronomy, Night Reef Dive & Sound Bath',
+    revShare: 6,
+    attShare: 8,
+    waitShare: 4,
+    loadBoost: -1.5,
+  },
+] as const;
+
+/**
+ * Breaks down Experience Revenue & Peak Load across the 5 operating time windows of the day.
+ */
+export function getExperiencePeakLoadWindows(m: ExperienceScope): ExperiencePeakWindowRow[] {
+  const e = m.experiences;
+  const revSplits = splitByShares(
+    m.experienceRevenue,
+    PEAK_WINDOW_DEFS.map((d) => ({ id: d.id, name: d.windowLabel, share: d.revShare }))
+  );
+  const attSplits = splitByShares(
+    e.attendances,
+    PEAK_WINDOW_DEFS.map((d) => ({ id: d.id, name: d.windowLabel, share: d.attShare }))
+  );
+  const sesSplits = splitByShares(
+    e.sessions,
+    PEAK_WINDOW_DEFS.map((d) => ({ id: d.id, name: d.windowLabel, share: d.attShare }))
+  );
+  const waitSplits = splitByShares(
+    e.unmetDemand,
+    PEAK_WINDOW_DEFS.map((d) => ({ id: d.id, name: d.windowLabel, share: d.waitShare }))
+  );
+
+  return PEAK_WINDOW_DEFS.map((d, i) => {
+    const rev = revSplits[i].value;
+    const att = attSplits[i].value;
+    const paidAtt = Math.max(1, Math.round(att * (1 - e.compSharePct / 100)));
+    return {
+      id: d.id,
+      windowLabel: d.windowLabel,
+      timeRange: d.timeRange,
+      focusExamples: d.focusExamples,
+      sessions: sesSplits[i].value,
+      attendances: att,
+      revenue: rev,
+      sharePct: d.revShare,
+      peakLoadPct: clamp(e.capacityUtilPct + d.loadBoost, 68, 98.6),
+      waitlist: waitSplits[i].value,
+      avgSpend: rev / paidAtt,
+    };
+  });
+}
+
+export type ExperienceCategoryFilter = 'all' | 'ski' | 'beach-resort' | 'nature' | 'urban_wellness';
+
+export interface ExperienceSignatureActivityRow {
+  id: string;
+  activityName: string;
+  propertyId: string;
+  propertyName: string;
+  categoryId: HotelCategoryId;
+  categoryLabel: 'Ski & Alpine' | 'Beach & Marine' | 'Nature & Safari' | 'Urban Atelier' | 'Wellness & Heritage';
+  peakWindow: string;
+  attendances: number;
+  revenue: number;
+  peakLoadPct: number;
+  pricePerGuest: number;
+}
+
+const SIGNATURE_ACTIVITY_CATALOG: {
+  id: string;
+  propertyId: string;
+  activityName: string;
+  categoryLabel: ExperienceSignatureActivityRow['categoryLabel'];
+  peakWindow: string;
+  revShareOfProp: number;
+  pricePerGuest: number;
+  loadBoost: number;
+}[] = [
+  // Ski Collection (Snow, Heli-Ski, Cat-Ski, Glacier ONLY)
+  {
+    id: 'act-cou-1',
+    propertyId: 'sosei-courchevel',
+    activityName: 'Trois Vallées Glacier Heli-Ski & Private Guide',
+    categoryLabel: 'Ski & Alpine',
+    peakWindow: '09:00 Morning Peak',
+    revShareOfProp: 0.36,
+    pricePerGuest: 1450,
+    loadBoost: 11.2,
+  },
+  {
+    id: 'act-nis-1',
+    propertyId: 'sosei-niseko',
+    activityName: 'Mt. Yotei Backcountry Cat-Ski Expedition',
+    categoryLabel: 'Ski & Alpine',
+    peakWindow: '08:30 Powder Peak',
+    revShareOfProp: 0.34,
+    pricePerGuest: 980,
+    loadBoost: 10.4,
+  },
+  {
+    id: 'act-asp-1',
+    propertyId: 'sosei-aspen',
+    activityName: 'Continental Divide Heli-Powder & Snowmobile',
+    categoryLabel: 'Ski & Alpine',
+    peakWindow: '09:00 Alpine Peak',
+    revShareOfProp: 0.33,
+    pricePerGuest: 1280,
+    loadBoost: 9.8,
+  },
+  // Beach Resort Collection (Yacht, Diving, Surf, Ocean ONLY)
+  {
+    id: 'act-ama-1',
+    propertyId: 'sosei-amalfi',
+    activityName: 'Capri & Positano Private Riva Yacht Charter',
+    categoryLabel: 'Beach & Marine',
+    peakWindow: '16:00 Sunset Peak',
+    revShareOfProp: 0.38,
+    pricePerGuest: 1350,
+    loadBoost: 11.6,
+  },
+  {
+    id: 'act-sey-1',
+    propertyId: 'sosei-seychelles',
+    activityName: 'Félicité & La Digue Helicopter & Reef Yacht',
+    categoryLabel: 'Beach & Marine',
+    peakWindow: '10:00 Island Peak',
+    revShareOfProp: 0.36,
+    pricePerGuest: 1190,
+    loadBoost: 10.2,
+  },
+  {
+    id: 'act-sum-1',
+    propertyId: 'sosei-sumba',
+    activityName: 'Occy’s Left Reef Surf Safari & Stallion Ride',
+    categoryLabel: 'Beach & Marine',
+    peakWindow: '16:30 Sunset Peak',
+    revShareOfProp: 0.35,
+    pricePerGuest: 640,
+    loadBoost: 9.5,
+  },
+  {
+    id: 'act-mct-1',
+    propertyId: 'sosei-muscat',
+    activityName: 'Dimaniyat Islands Private Dhow Scuba Dive',
+    categoryLabel: 'Beach & Marine',
+    peakWindow: '08:30 Marine Peak',
+    revShareOfProp: 0.34,
+    pricePerGuest: 720,
+    loadBoost: 8.9,
+  },
+  {
+    id: 'act-cab-1',
+    propertyId: 'sosei-los-cabos',
+    activityName: 'Sea of Cortez Private Catamaran & Whale Shark',
+    categoryLabel: 'Beach & Marine',
+    peakWindow: '09:30 Ocean Peak',
+    revShareOfProp: 0.34,
+    pricePerGuest: 860,
+    loadBoost: 9.1,
+  },
+  // Nature Collection (Safari, Balloon, Puma Tracking, Glacier Trek ONLY)
+  {
+    id: 'act-ser-1',
+    propertyId: 'sosei-serengeti',
+    activityName: 'Great Migration Dawn Balloon & Big-Five Drive',
+    categoryLabel: 'Nature & Safari',
+    peakWindow: '06:00 Dawn Peak',
+    revShareOfProp: 0.4,
+    pricePerGuest: 1150,
+    loadBoost: 11.8,
+  },
+  {
+    id: 'act-pat-1',
+    propertyId: 'sosei-patagonia',
+    activityName: 'Torres del Paine Puma Tracking & Glacier Kayak',
+    categoryLabel: 'Nature & Safari',
+    peakWindow: '06:30 Dawn Peak',
+    revShareOfProp: 0.37,
+    pricePerGuest: 890,
+    loadBoost: 10.1,
+  },
+  // Urban & Wellness Collections (Horology, Tea Ceremony, Stargazing, Atlas Heli)
+  {
+    id: 'act-gva-1',
+    propertyId: 'sosei-geneva',
+    activityName: 'Private Haute Horlogerie Master Watchmaker Tour',
+    categoryLabel: 'Urban Atelier',
+    peakWindow: '14:00 Atelier Peak',
+    revShareOfProp: 0.38,
+    pricePerGuest: 1120,
+    loadBoost: 9.6,
+  },
+  {
+    id: 'act-mar-1',
+    propertyId: 'sosei-marrakech',
+    activityName: 'Atlas Mountains Private Heli-Trek & Palace Curator',
+    categoryLabel: 'Urban Atelier',
+    peakWindow: '09:30 Morning Peak',
+    revShareOfProp: 0.35,
+    pricePerGuest: 780,
+    loadBoost: 7.4,
+  },
+  {
+    id: 'act-kyo-1',
+    propertyId: 'sosei-kyoto',
+    activityName: 'Arashiyama Dawn Zen Temple & Uji Tea Master',
+    categoryLabel: 'Wellness & Heritage',
+    peakWindow: '07:00 Dawn Peak',
+    revShareOfProp: 0.36,
+    pricePerGuest: 680,
+    loadBoost: 9.9,
+  },
+  {
+    id: 'act-alu-1',
+    propertyId: 'sosei-alula',
+    activityName: 'Hegra Private Stargazing & Canyon Sound Bath',
+    categoryLabel: 'Wellness & Heritage',
+    peakWindow: '19:30 Evening Peak',
+    revShareOfProp: 0.37,
+    pricePerGuest: 740,
+    loadBoost: 10.3,
+  },
+];
+
+export function getExperienceSignatureActivities(
+  ids: readonly string[] | undefined,
+  period: PeriodId
+): ExperienceSignatureActivityRow[] {
+  const props = getPropertyMetricsList(ids ? [...ids] : undefined, period);
+  const propMap = new Map(props.map((p) => [p.propertyId, p]));
+
+  return SIGNATURE_ACTIVITY_CATALOG.filter((item) => propMap.has(item.propertyId))
+    .map((item) => {
+      const p = propMap.get(item.propertyId)!;
+      const revenue = Math.round(p.experienceRevenue * item.revShareOfProp);
+      const attendances = Math.max(8, Math.round(revenue / item.pricePerGuest));
+      return {
+        id: item.id,
+        activityName: item.activityName,
+        propertyId: p.propertyId,
+        propertyName: p.name,
+        categoryId: p.categoryId,
+        categoryLabel: item.categoryLabel,
+        peakWindow: item.peakWindow,
+        attendances,
+        revenue,
+        peakLoadPct: clamp(p.experiences.capacityUtilPct + item.loadBoost, 75, 99.2),
+        pricePerGuest: item.pricePerGuest,
+      };
+    })
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+/* ───────────────────────── HIGH-VALUE PRIVATE CHARTERS & EXPEDITIONS ───────────────────────── */
+
+export interface ExperiencePrivateCharterRow {
+  id: string;
+  charterName: string;
+  categoryLabel: string;
+  propertyId: string;
+  propertyName: string;
+  dateWindow: string;
+  pax: number;
+  revenue: number;
+  statusLabel: 'Peak Slot Locked' | 'Heli Confirmed' | 'Yacht Assigned' | 'Waitlist Priority';
+  detailNote: string;
+}
+
+const PRIVATE_CHARTER_DEFS: (ShareDef & {
+  categoryLabel: string;
+  propertyId: string;
+  propertyName: string;
+  dateWindow: string;
+  paxWeight: number;
+  statusLabel: ExperiencePrivateCharterRow['statusLabel'];
+  detailNote: string;
+})[] = [
+  {
+    id: 'chr-1',
+    name: 'Trois Vallées Twin-Heli Glacier Powder Buyout',
+    share: 24,
+    categoryLabel: 'Ski · Heli-Charter',
+    propertyId: 'sosei-courchevel',
+    propertyName: 'SOSEI Courchevel',
+    dateWindow: 'Oct 24–26',
+    paxWeight: 16,
+    statusLabel: 'Heli Confirmed',
+    detailNote: '2 private helicopters · UIAGM mountain guides & glacier mountain lunch',
+  },
+  {
+    id: 'chr-2',
+    name: 'Amalfi to Capri Riva Aquarama Fleet Charter',
+    share: 22,
+    categoryLabel: 'Beach · Yacht Charter',
+    propertyId: 'sosei-amalfi',
+    propertyName: 'SOSEI Amalfi',
+    dateWindow: 'Oct 27–29',
+    paxWeight: 24,
+    statusLabel: 'Yacht Assigned',
+    detailNote: '3 private Riva yachts · Blue Grotto morning entry & coastal sunset cruise',
+  },
+  {
+    id: 'chr-3',
+    name: 'Serengeti Kopje Private Balloon & Safari Expedition',
+    share: 20,
+    categoryLabel: 'Nature · Aerial Safari',
+    propertyId: 'sosei-serengeti',
+    propertyName: 'SOSEI Serengeti',
+    dateWindow: 'Nov 1–3',
+    paxWeight: 18,
+    statusLabel: 'Peak Slot Locked',
+    detailNote: 'Exclusive dawn balloon basket · 3 private Land Cruisers & bush breakfast',
+  },
+  {
+    id: 'chr-4',
+    name: 'Geneva Master Watchmaker & Lake Riva Private Tour',
+    share: 18,
+    categoryLabel: 'Urban · Private Atelier',
+    propertyId: 'sosei-geneva',
+    propertyName: 'SOSEI Geneva',
+    dateWindow: 'Nov 5–6',
+    paxWeight: 14,
+    statusLabel: 'Peak Slot Locked',
+    detailNote: 'Closed-door Grande Complication atelier access & private lake transfer',
+  },
+  {
+    id: 'chr-5',
+    name: 'Hegra Ancient Tomb & Private Astronomer Buyout',
+    share: 16,
+    categoryLabel: 'Wellness · Heritage',
+    propertyId: 'sosei-alula',
+    propertyName: 'SOSEI AlUla',
+    dateWindow: 'Nov 10–12',
+    paxWeight: 20,
+    statusLabel: 'Waitlist Priority',
+    detailNote: 'Private twilight canyon access · Deep-sky telescope deck & acoustic bath',
+  },
+];
+
+export function getExperiencePrivateCharters(
+  ids: readonly string[] | undefined,
+  period: PeriodId
+): {
+  charters: ExperiencePrivateCharterRow[];
+  totalRevenue: number;
+  totalPax: number;
+} {
+  const m = getPortfolioMetrics(ids ? [...ids] : undefined, period);
+  const privateModel = getExperienceModelRows(m).find((r) => r.id === 'private');
+  const poolRev = Math.round(privateModel?.revenue ?? m.experienceRevenue * 0.38);
+  const scalePax = period === 'today' ? 0.35 : period === 'ytd' ? 6.2 : 1;
+
+  const revSplits = splitByShares(poolRev, PRIVATE_CHARTER_DEFS);
+  const charters: ExperiencePrivateCharterRow[] = PRIVATE_CHARTER_DEFS.map((d, i) => {
+    const pax = Math.max(4, Math.round(d.paxWeight * scalePax));
+    const revenue = revSplits[i].value;
+    return {
+      id: d.id,
+      charterName: d.name,
+      categoryLabel: d.categoryLabel,
+      propertyId: d.propertyId,
+      propertyName: d.propertyName,
+      dateWindow: d.dateWindow,
+      pax,
+      revenue,
+      statusLabel: d.statusLabel,
+      detailNote: d.detailNote,
+    };
+  });
+
+  return {
+    charters,
+    totalRevenue: charters.reduce((a, c) => a + c.revenue, 0),
+    totalPax: charters.reduce((a, c) => a + c.pax, 0),
+  };
+}
+
+/* ───────────────────────── PEAK LOAD SIGNALS & COMMERCIAL OPPORTUNITIES ───────────────────────── */
+
+export interface ExperienceSignalRow {
+  id: string;
+  type: 'risk' | 'opportunity';
+  title: string;
+  sub: string;
+  exposure: string;
+  exposureValue: number;
+}
+
+export function getExperienceOperationalSignals(
+  ids: readonly string[] | undefined,
+  period: PeriodId
+): { signals: ExperienceSignalRow[]; pipelineValue: number } {
+  const m = getPortfolioMetrics(ids ? [...ids] : undefined, period);
+  const uncaptured = getUncapturedRevenue(m);
+  const suffix = period === 'today' ? 'Yesterday' : period.toUpperCase();
+
+  const skiRev = Math.round(uncaptured * 0.36);
+  const beachRev = Math.round(uncaptured * 0.32);
+  const safariRev = Math.round(uncaptured * 0.2);
+  const atelierRev = Math.round(uncaptured * 0.18);
+
+  const signals: ExperienceSignalRow[] = [
+    {
+      id: 'exp-sig-1',
+      type: 'risk',
+      title: '09:00 Morning Peak Load At 96% — Ski Heli & Cat-Ski Waitlist',
+      sub: 'SOSEI Courchevel & SOSEI Niseko · Second helicopter & snowcat slot requested',
+      exposure: `${fmtUsd(skiRev)} ${suffix}`,
+      exposureValue: skiRev,
+    },
+    {
+      id: 'exp-sig-2',
+      type: 'opportunity',
+      title: '16:30 Sunset Yacht & Dhow Peak Load Expansion — Beach Resorts',
+      sub: 'SOSEI Amalfi, Seychelles & Muscat · High conversion on private coastal charters',
+      exposure: `+${fmtUsd(beachRev)} ${suffix}`,
+      exposureValue: beachRev,
+    },
+    {
+      id: 'exp-sig-3',
+      type: 'risk',
+      title: '06:00 Dawn Safari & Puma Tracker Capacity Bottleneck',
+      sub: 'SOSEI Serengeti & SOSEI Patagonia · Morning expedition slots 95% booked',
+      exposure: `${fmtUsd(safariRev)} ${suffix}`,
+      exposureValue: safariRev,
+    },
+    {
+      id: 'exp-sig-4',
+      type: 'opportunity',
+      title: 'Private Atelier, Horology & Tea Master Pre-Arrival Upsell',
+      sub: 'SOSEI Geneva, Kyoto & AlUla · +18% pre-arrival concierge package attachment',
+      exposure: `+${fmtUsd(atelierRev)} ${suffix}`,
+      exposureValue: atelierRev,
+    },
+  ];
+
+  return {
+    signals,
+    pipelineValue: skiRev + beachRev + safariRev + atelierRev,
+  };
+}
+

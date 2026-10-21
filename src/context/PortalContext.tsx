@@ -38,7 +38,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   // Automatically sync active portal if user directly visits specific portal URLs
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/dashboard/spa')) {
+    if (path.startsWith('/dashboard/spa') || path.startsWith('/dashboard/sanctuary')) {
       setActivePortal('sanctuary');
     } else if (path.startsWith('/dashboard/experience') || path.startsWith('/dashboard/fnb')) {
       setActivePortal('fnb-experience');

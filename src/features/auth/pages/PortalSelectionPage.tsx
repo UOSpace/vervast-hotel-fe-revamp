@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
+import { PORTAL_OVERVIEW_PATHS, type PortalId } from '@/context/PortalContext';
 import hospitalityPortalImg from '@/assets/portal/hospitality.png';
 import sanctuaryPortalImg from '@/assets/portal/sanctuary.png';
 import designPortalImg from '@/assets/portal/design.jpg';
@@ -53,7 +54,10 @@ export function PortalSelectionPage() {
           {portals.map((portal, idx) => (
             <div
               key={portal.id}
-              onClick={() => navigate(portal.path)}
+              onClick={() => {
+                localStorage.setItem('sosei_active_portal', portal.id);
+                navigate(PORTAL_OVERVIEW_PATHS[portal.id as PortalId] ?? portal.path);
+              }}
               className="relative aspect-[3/4] max-h-[350px] w-full max-w-[230px] rounded-2xl overflow-hidden cursor-pointer group transition-all duration-500 border border-border/60 bg-card shadow-xs hover:shadow-xl hover:-translate-y-1.5"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >

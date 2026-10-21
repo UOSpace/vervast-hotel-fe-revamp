@@ -12,6 +12,7 @@ import {
   ExperienceRegionalView,
   ExperiencePropertyDashboardPage,
   SpaDashboardPage,
+  SanctuaryPropertyDashboardPage,
 } from '@/features/dashboard';
 import { PropertyDashboardPage } from '@/features/dashboard/pages/PropertyDashboardPage';
 import { MasterLayout } from '@/components/layouts/MasterLayout';
@@ -206,6 +207,18 @@ export const routes: RouteObject[] = [
       {
         path: '/dashboard/spa',
         element: <SpaDashboardPage />,
+      },
+      {
+        path: '/dashboard/sanctuary',
+        element: <Navigate to="/dashboard/spa" replace />,
+      },
+      {
+        path: '/dashboard/sanctuary/property',
+        element: <SanctuaryPropertyDashboardPage />,
+      },
+      {
+        path: '/dashboard/spa/property',
+        element: <SanctuaryPropertyDashboardPage />,
       },
       {
         // Redirect old wellness path to new /spa route

@@ -5,6 +5,7 @@ export * from './pages/FnbPropertyDashboardPage';
 export * from './pages/ExperienceDashboardPage';
 export * from './pages/ExperienceSubPages';
 export * from './pages/SpaDashboardPage';
+export * from './pages/SanctuaryPropertyDashboardPage';
 export * from './pages/PropertyDashboardPage';
 export * from './pages/ResortTypeDashboard';
 
