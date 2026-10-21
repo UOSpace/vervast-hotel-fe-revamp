@@ -126,50 +126,84 @@ interface PropertyMeta {
 
 /** Non-financial property metadata (identity, geography, the live VIP guest). */
 const PROPERTY_META: PropertyMeta[] = [
+  // ── Ski Collection (Courchevel, Niseko, Aspen) ───────────────────────────
   {
-    id: 'sosei-andermatt', name: 'SOSEI Andermatt', city: 'Andermatt, Switzerland', country: 'Switzerland', grouping: 'Ski',
-    coordinates: [8.5939, 46.6356],
-    guest: { guestId: 'gst_ind_001', guestName: 'Sal Zanjabila', guestTitle: 'Ms.', vipTier: 'Platinum VIP', nationality: 'British', roomType: 'Gotthard Glacier Penthouse Chalet', roomNumber: 'Chalet 401', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Helipad Ski Concierge & Thermal Spa', bookingStatus: 'in_house' },
+    id: 'sosei-courchevel', name: 'SOSEI Courchevel', city: 'Courchevel, France', country: 'France', grouping: 'Ski',
+    coordinates: [6.6347, 45.4153],
+    guest: { guestId: 'gst_ind_001', guestName: 'Sal Zanjabila', guestTitle: 'Ms.', vipTier: 'Platinum VIP', nationality: 'British', roomType: 'Trois Vallées Glacier Penthouse Chalet', roomNumber: 'Chalet 401', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Helipad Ski Concierge & Thermal Spa', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-el-gouna', name: 'SOSEI El Gouna', city: 'El Gouna, Egypt', country: 'Egypt', grouping: 'Beach Resort',
-    coordinates: [33.6782, 27.3942],
-    guest: { guestId: 'gst_ind_022', guestName: 'Sheikh Tariq Al-Mansoor', guestTitle: 'H.E.', vipTier: 'Royal Patron', nationality: 'Emirati', roomType: 'Red Sea Lagoon Royal Villa', roomNumber: 'Villa 01', checkInDate: 'Oct 11', checkOutDate: 'Oct 14', nights: 3, specialRequest: 'Private yacht charter & coral reef diving', bookingStatus: 'in_house' },
+    id: 'sosei-niseko', name: 'SOSEI Niseko', city: 'Niseko, Japan', country: 'Japan', grouping: 'Ski',
+    coordinates: [140.6874, 42.8048],
+    guest: { guestId: 'gst_ind_012', guestName: 'Kenjiro Takahashi', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'Japanese', roomType: 'Mount Yotei Onsen Chalet', roomNumber: 'Chalet 202', checkInDate: 'Oct 11', checkOutDate: 'Oct 16', nights: 5, specialRequest: 'Private volcanic onsen & backcountry powder guide', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-auh', name: 'SOSEI AUH', city: 'Abu Dhabi, UAE', country: 'United Arab Emirates', grouping: 'Beach Resort',
-    coordinates: [54.3773, 24.4539],
-    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Saadiyat Beachfront Grand Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private Louvre Abu Dhabi after-hours curator tour', bookingStatus: 'in_house' },
+    id: 'sosei-aspen', name: 'SOSEI Aspen', city: 'Aspen, United States', country: 'United States', grouping: 'Ski',
+    coordinates: [-106.8175, 39.1911],
+    guest: { guestId: 'gst_ind_014', guestName: 'Victoria Sterling-Vance', guestTitle: 'Mrs.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Ajax Mountain Summit Residence', roomNumber: 'Lodge 305', checkInDate: 'Oct 10', checkOutDate: 'Oct 15', nights: 5, specialRequest: 'Private Aspen Mountain first-tracks & sommelier cellar dinner', bookingStatus: 'in_house' },
+  },
+
+  // ── Beach Resort Collection (Amalfi, Sumba, Los Cabos, Muscat, Seychelles) ─
+  {
+    id: 'sosei-amalfi', name: 'SOSEI Amalfi', city: 'Amalfi, Italy', country: 'Italy', grouping: 'Beach Resort',
+    coordinates: [14.6029, 40.6340],
+    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Tyrrhenian Cliffside Palazzo Suite', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private Riva yacht along Amalfi coast & lemon grove tasting', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-melides', name: 'SOSEI Melides', city: 'Melides, Portugal', country: 'Portugal', grouping: 'Beach Resort',
-    coordinates: [-8.7297, 38.1469],
-    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Property Elite', nationality: 'Swedish', roomType: 'Alentejo Atlantic Dune Villa', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private horseback riding along Melides lagoon', bookingStatus: 'in_house' },
+    id: 'sosei-sumba', name: 'SOSEI Sumba', city: 'Sumba, Indonesia', country: 'Indonesia', grouping: 'Beach Resort',
+    coordinates: [119.4068, -9.7547],
+    guest: { guestId: 'gst_ind_015', guestName: 'Alexander Von Berg', guestTitle: 'Count', vipTier: 'Founding Circle', nationality: 'German', roomType: 'Nihiwatu Oceanfront Cliff Villa', roomNumber: 'Villa 04', checkInDate: 'Oct 09', checkOutDate: 'Oct 15', nights: 6, specialRequest: 'Private Sumbanese equestrian beach ride & surf safari', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-umbria', name: 'SOSEI Umbria', city: 'Umbria, Italy', country: 'Italy', grouping: 'Beach Resort',
-    coordinates: [12.6216, 42.9380],
-    guest: { guestId: 'gst_ind_025', guestName: 'David Rothschild', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'Swiss', roomType: 'Castello Vineyard Palazzo Suite', roomNumber: 'Villa 09', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private white truffle foraging & cellar tasting', bookingStatus: 'in_house' },
+    id: 'sosei-los-cabos', name: 'SOSEI Los Cabos', city: 'Los Cabos, Mexico', country: 'Mexico', grouping: 'Beach Resort',
+    coordinates: [-109.9167, 22.8905],
+    guest: { guestId: 'gst_ind_007', guestName: 'Henrik Lindqvist', guestTitle: 'Mr.', vipTier: 'Property Elite', nationality: 'Swedish', roomType: 'Sea of Cortez Oceanfront Hacienda', roomNumber: 'Estate 104', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private desert-to-ocean yacht charter & mezcal cellar tasting', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-tinos', name: 'SOSEI Tinos', city: 'Tinos, Greece', country: 'Greece', grouping: 'Beach Resort',
-    coordinates: [25.1634, 37.5376],
-    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Aegean Cliffside Cycladic Villa', roomNumber: 'Villa 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private marble sculpting studio visit & Aegean sail', bookingStatus: 'in_house' },
+    id: 'sosei-muscat', name: 'SOSEI Muscat', city: 'Muscat, Oman', country: 'Oman', grouping: 'Beach Resort',
+    coordinates: [58.4059, 23.5880],
+    guest: { guestId: 'gst_ind_011', guestName: 'Julian Vance', guestTitle: 'Mr.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Al Hajar Cove Royal Villa', roomNumber: 'Villa 310', checkInDate: 'Oct 10', checkOutDate: 'Oct 14', nights: 4, specialRequest: 'Private dhow sunset cruise & frankincense spa ritual', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-barcelona', name: 'SOSEI Barcelona', city: 'Barcelona, Spain', country: 'Spain', grouping: 'Urban',
-    coordinates: [2.1734, 41.3851],
-    guest: { guestId: 'gst_ind_003', guestName: 'Dr. Elizabeth Hall', guestTitle: 'Dr.', vipTier: 'Gold VIP', nationality: 'British', roomType: 'Paseo de Gracia Grand Suite', roomNumber: 'Suite 402', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private architectural tour with Gaudi historian', bookingStatus: 'in_house' },
+    id: 'sosei-seychelles', name: 'SOSEI Seychelles', city: 'Mahé, Seychelles', country: 'Seychelles', grouping: 'Beach Resort',
+    coordinates: [55.4920, -4.6796],
+    guest: { guestId: 'gst_ind_016', guestName: 'Lady Camilla Harrington', guestTitle: 'Lady', vipTier: 'Royal Patron', nationality: 'British', roomType: 'Granite Boulder Ocean Sanctuary Villa', roomNumber: 'Villa 02', checkInDate: 'Oct 10', checkOutDate: 'Oct 16', nights: 6, specialRequest: 'Private helicopter island hopping & tortoise conservation tour', bookingStatus: 'in_house' },
+  },
+
+  // ── Urban Collection (Geneva, Marrakech) ─────────────────────────────────
+  {
+    id: 'sosei-geneva', name: 'SOSEI Geneva', city: 'Geneva, Switzerland', country: 'Switzerland', grouping: 'Urban',
+    coordinates: [6.1432, 46.2044],
+    guest: { guestId: 'gst_ind_003', guestName: 'Dr. Elizabeth Hall', guestTitle: 'Dr.', vipTier: 'Gold VIP', nationality: 'British', roomType: 'Lac Léman Diplomatic Grand Suite', roomNumber: 'Suite 402', checkInDate: 'Oct 11', checkOutDate: 'Oct 15', nights: 4, specialRequest: 'Private haute horlogerie atelier visit & lakefront limousine', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-osa', name: 'SOSEI OSA', city: 'Osa, Costa Rica', country: 'Costa Rica', grouping: 'Nature',
-    coordinates: [-83.5042, 8.5380],
-    guest: { guestId: 'gst_ind_008', guestName: 'Lord Sterling', guestTitle: 'Lord', vipTier: 'Founding Circle', nationality: 'British', roomType: 'Corcovado Rainforest Canopy Villa', roomNumber: 'Villa 14', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private naturalist wildlife expedition in Osa Peninsula', bookingStatus: 'in_house' },
+    id: 'sosei-marrakech', name: 'SOSEI Marrakech', city: 'Marrakech, Morocco', country: 'Morocco', grouping: 'Urban',
+    coordinates: [-7.9811, 31.6295],
+    guest: { guestId: 'gst_ind_022', guestName: 'Sheikh Tariq Al-Mansoor', guestTitle: 'H.E.', vipTier: 'Royal Patron', nationality: 'Emirati', roomType: 'Palmeraie Royal Riad Palace', roomNumber: 'Riad 01', checkInDate: 'Oct 11', checkOutDate: 'Oct 14', nights: 3, specialRequest: 'Private Atlas Mountains helicopter & Majorelle after-hours tour', bookingStatus: 'in_house' },
+  },
+
+  // ── Nature Collection (Patagonia, Serengeti) ─────────────────────────────
+  {
+    id: 'sosei-patagonia', name: 'SOSEI Patagonia', city: 'Torres del Paine, Chile', country: 'Chile', grouping: 'Nature',
+    coordinates: [-72.9750, -51.2532],
+    guest: { guestId: 'gst_ind_008', guestName: 'Lord Sterling', guestTitle: 'Lord', vipTier: 'Founding Circle', nationality: 'British', roomType: 'Paine Massif Glacier Estancia Lodge', roomNumber: 'Villa 14', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private gaucho horse trek & puma tracking expedition', bookingStatus: 'in_house' },
   },
   {
-    id: 'sosei-bali', name: 'SOSEI Bali', city: 'Bali, Indonesia', country: 'Indonesia', grouping: 'Wellness',
-    coordinates: [115.1889, -8.4095],
-    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Holistic Sanctuary Cliffside Villa', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Holistic Balinese purification & longevity ritual', bookingStatus: 'in_house' },
+    id: 'sosei-serengeti', name: 'SOSEI Serengeti', city: 'Serengeti, Tanzania', country: 'Tanzania', grouping: 'Nature',
+    coordinates: [34.8333, -2.3333],
+    guest: { guestId: 'gst_ind_018', guestName: 'Marcus & Elena Thorne', guestTitle: 'Mr. & Mrs.', vipTier: 'Platinum VIP', nationality: 'American', roomType: 'Kopje Savannah Horizon Pavilion', roomNumber: 'Pavilion 07', checkInDate: 'Oct 11', checkOutDate: 'Oct 16', nights: 5, specialRequest: 'Dawn hot-air balloon safari & private bush dining', bookingStatus: 'in_house' },
+  },
+
+  // ── Wellness Collection (Kyoto, AlUla) ───────────────────────────────────
+  {
+    id: 'sosei-kyoto', name: 'SOSEI Kyoto', city: 'Kyoto, Japan', country: 'Japan', grouping: 'Wellness',
+    coordinates: [135.7681, 35.0116],
+    guest: { guestId: 'gst_ind_009', guestName: 'Maya Wulandari', guestTitle: 'Mrs.', vipTier: 'Property Patron', nationality: 'Indonesian', roomType: 'Arashiyama Bamboo Ryokan Pavilion', roomNumber: 'Villa 12', checkInDate: 'Oct 12', checkOutDate: 'Oct 16', nights: 4, specialRequest: 'Private Zen temple meditation & Kaiseki tea ceremony', bookingStatus: 'in_house' },
+  },
+  {
+    id: 'sosei-alula', name: 'SOSEI AlUla', city: 'AlUla, Saudi Arabia', country: 'Saudi Arabia', grouping: 'Wellness',
+    coordinates: [37.9219, 26.6085],
+    guest: { guestId: 'gst_ind_002', guestName: 'Martin Fuentes', guestTitle: 'Mr.', vipTier: 'Founding Circle', nationality: 'American', roomType: 'Ashar Valley Sandstone Canyon Villa', roomNumber: 'Villa 108', checkInDate: 'Oct 09', checkOutDate: 'Oct 16', nights: 7, specialRequest: 'Private Hegra stargazing astronomer & desert sound bath', bookingStatus: 'in_house' },
   },
 ];
 

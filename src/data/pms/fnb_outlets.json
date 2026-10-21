@@ -1,7 +1,7 @@
 [
   {
     "id": "fnb_alp_001",
-    "property_id": "sosei-nocturne",
+    "property_id": "sosei-courchevel",
     "name": "Alpine Grill",
     "category": "Fine Dining & Open Fire",
     "cuisine": "Contemporary Alpine & Dry-Aged Game",
@@ -14,7 +14,7 @@
   },
   {
     "id": "fnb_alp_002",
-    "property_id": "sosei-nocturne",
+    "property_id": "sosei-courchevel",
     "name": "Terra Pavilion",
     "category": "All-Day Artisanal Dining",
     "cuisine": "Farm-to-Table Swiss Botanical",
@@ -27,7 +27,7 @@
   },
   {
     "id": "fnb_ocn_001",
-    "property_id": "sosei-marea",
+    "property_id": "sosei-alula",
     "name": "Pelagia Coral Reef & Cellar",
     "category": "Overwater Underwater Fine Dining",
     "cuisine": "Fresh Coastal Seafood & Vintage Cellar",
@@ -40,7 +40,7 @@
   },
   {
     "id": "fnb_cty_001",
-    "property_id": "sosei-verper",
+    "property_id": "sosei-geneva",
     "name": "Vesper Observatory Lounge",
     "category": "Rooftop Mixology & Small Plates",
     "cuisine": "Modern Japanese Omakase & Cocktails",
@@ -53,7 +53,7 @@
   },
   {
     "id": "fnb_for_001",
-    "property_id": "sosei-sylvan",
+    "property_id": "sosei-patagonia",
     "name": "Sylvan Arashiyama Kaiseki",
     "category": "Traditional Kaiseki",
     "cuisine": "Seasonal Kyoto Kaiseki & Match Rituals",
@@ -66,7 +66,7 @@
   },
   {
     "id": "fnb_cou_001",
-    "property_id": "sosei-hearth",
+    "property_id": "sosei-courchevel",
     "name": "Hearth Osteria & Enoteca",
     "category": "Estate Tuscan Dining",
     "cuisine": "Farm Biodynamic Tuscan Pasta & Chianti Wine",
@@ -79,7 +79,7 @@
   },
   {
     "id": "fnb_des_001",
-    "property_id": "sosei-mirage",
+    "property_id": "sosei-muscat",
     "name": "Mirage Bedouin Fireside Lounge",
     "category": "Desert Open-Fire Gastronomy",
     "cuisine": "Slow-Roasted Lamb & Middle Eastern Spices",

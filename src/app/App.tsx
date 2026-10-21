@@ -7,7 +7,10 @@ import { AppProviders } from './providers';
 const router = createBrowserRouter(routes);
 
 function findScrollContainer(): HTMLElement {
-  const el = document.querySelector<HTMLElement>('main .overflow-y-auto, main .overflow-auto');
+  const pageRoot = document.querySelector<HTMLElement>(
+    'main > div:last-of-type > :first-child',
+  );
+  const el = pageRoot || document.querySelector<HTMLElement>('main');
   if (el) {
     if (window.getComputedStyle(el).position === 'static') {
       el.style.position = 'relative';

@@ -11,7 +11,7 @@ import { fmtTrendArrow } from '@/data/portfolio/hospitalitySubMix';
 import { getRevenueDemandMixData } from '../../../services/propertySimulation';
 
 export function RevenueByDepartmentWidget({ 
-  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
   propertyName,
   period = 'mtd',
 }: { 

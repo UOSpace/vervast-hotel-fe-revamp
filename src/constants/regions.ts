@@ -7,41 +7,45 @@ import {
   getPortfolioMetrics,
   getPropertyIdsByRegion,
   fmtUsd,
-  fmtPct,
 } from '@/data/portfolio';
 
 export type RegionId = 'asia-pacific' | 'europe' | 'america' | 'middle-east' | 'africa';
 
-export interface RegionalMasterItem {
+export interface GlobalRegion {
+  id: RegionId;
+  name: string;           // e.g. "Asia Pacific", "Europe"
+  displayName: string;    // e.g. "Asia Pacific"
+  shortName: string;      // e.g. "APAC", "EUROPE"
+  description: string;
+  img: string;
+  share: number;          // % share of portfolio room nights (MTD)
+  adr: number;            // Average Daily Rate (USD, MTD)
+  revenue: number;        // Room Revenue in Millions (e.g. 5.18 = $5.18M, MTD)
+  revenueDisplay: string; // Formatted revenue string (MTD)
+  roomNights: number;     // Occupied room nights (MTD)
+  baseOcc: number;        // Occupancy % (MTD)
+  countries: string[];
+}
+
+interface RegionSeed {
   id: RegionId;
   name: string;
   displayName: string;
   shortName: string;
-  img: string;
-  share: number;        // in %
-  adr: number;          // in USD
-  revenue: number;      // raw in USD
-  revenueDisplay: string; // e.g. "$1.88M"
-  roomNights: number;
-  baseOcc: number;      // in %
   description: string;
+  img: string;
   countries: string[];
 }
 
-type RegionalSeedItem = Omit<
-  RegionalMasterItem,
-  'share' | 'adr' | 'revenue' | 'revenueDisplay' | 'roomNights' | 'baseOcc'
->;
-
-const REGION_SEEDS: RegionalSeedItem[] = [
+const REGION_SEEDS: RegionSeed[] = [
   {
     id: 'asia-pacific',
     name: 'Asia Pacific',
     displayName: 'Asia Pacific Region',
     shortName: 'ASIA PACIFIC',
     img: asiaPacificImg,
-    description: 'Premier archipelagos, holistic wellness retreats, and dramatic coastlines across Bali and the Pacific.',
-    countries: ['Indonesia', 'Singapore', 'Australia', 'Thailand'],
+    description: 'Sacred Kyoto sanctuaries, Hokkaido powder peaks, and untouched Sumba island coastlines.',
+    countries: ['Japan', 'Indonesia', 'Singapore', 'Australia'],
   },
   {
     id: 'europe',
@@ -49,8 +53,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Europe & Mediterranean',
     shortName: 'EUROPE',
     img: europeImg,
-    description: 'Iconic continental landmarks, alpine glacier summits, and Mediterranean & Atlantic coastal properties.',
-    countries: ['Switzerland', 'Portugal', 'Italy', 'Greece', 'Spain'],
+    description: 'French Alps glacier chalets, Lake Geneva landmarks, and Tyrrhenian cliffside palazzos.',
+  countries: ['France', 'Italy', 'Switzerland', 'United Kingdom'],
   },
   {
     id: 'america',
@@ -58,8 +62,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'The Americas',
     shortName: 'AMERICA',
     img: americaImg,
-    description: 'Biodiverse Pacific rainforests, eco-wilderness sanctuaries, and vibrant continental hubs.',
-    countries: ['Costa Rica', 'United States', 'Mexico', 'Brazil'],
+    description: 'Colorado Rocky Mountain summits, Baja California desert shores, and Patagonian granite peaks.',
+    countries: ['United States', 'Chile', 'Mexico', 'Brazil'],
   },
   {
     id: 'middle-east',
@@ -67,8 +71,8 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'Middle East & Arabian Gulf',
     shortName: 'MIDDLE EAST',
     img: middleEastImg,
-    description: 'Private Arabian Gulf island resorts, coastal sanctuaries, and luxury waterfront architecture.',
-    countries: ['United Arab Emirates', 'Saudi Arabia', 'Oman', 'Qatar'],
+    description: 'Ancient Nabataean sandstone canyons in AlUla and dramatic Gulf of Oman cliffside coves.',
+    countries: ['Saudi Arabia', 'Oman', 'United Arab Emirates', 'Qatar'],
   },
   {
     id: 'africa',
@@ -76,77 +80,105 @@ const REGION_SEEDS: RegionalSeedItem[] = [
     displayName: 'African Continent',
     shortName: 'AFRICA',
     img: africaImg,
-    description: 'Red Sea coral lagoons, coastal desert retreats, and pristine conservation wilderness.',
-    countries: ['Egypt', 'Morocco', 'South Africa', 'Kenya', 'Tanzania'],
+    description: 'Royal Marrakech palmeraie riads, Serengeti migration plains, and Seychelles granite islands.',
+    countries: ['Morocco', 'Tanzania', 'Seychelles', 'South Africa'],
   },
 ];
 
-const _mtdPortfolio = getPortfolioMetrics(undefined, 'mtd');
+const portfolioMtd = getPortfolioMetrics(undefined, 'mtd');
+const totalPortfolioRn = portfolioMtd.roomsSold || 1;
 
-export const MASTER_REGIONS: RegionalMasterItem[] = REGION_SEEDS.map((seed) => {
-  const m = getPortfolioMetrics(getPropertyIdsByRegion([seed.id]), 'mtd');
-  const share = _mtdPortfolio.roomsSold > 0
-    ? Number(((m.roomsSold / _mtdPortfolio.roomsSold) * 100).toFixed(1))
-    : 0;
+/**
+ * MASTER GLOBAL REGIONS
+ * Derived 100% from the unified portfolio engine (MTD)
+ */
+export const MASTER_REGIONS: GlobalRegion[] = REGION_SEEDS.map((seed) => {
+  const propIds = getPropertyIdsByRegion([seed.id]);
+  const m = getPortfolioMetrics(propIds, 'mtd');
+  const sharePct = Math.round((m.roomsSold / totalPortfolioRn) * 100);
+  const revMillions = Number((m.roomRevenue / 1_000_000).toFixed(2));
   return {
     ...seed,
-    share,
+    share: sharePct,
     adr: Math.round(m.adr),
-    revenue: m.roomRevenue,
+    revenue: revMillions,
     revenueDisplay: fmtUsd(m.roomRevenue),
     roomNights: m.roomsSold,
     baseOcc: Number(m.occupancyPct.toFixed(1)),
   };
 });
 
-const _totHotelRev = _mtdPortfolio.totalRevenue || 1;
-
-export const REGIONAL_TOTALS = {
-  totalRevenue: _mtdPortfolio.roomRevenue,
-  totalRevenueDisplay: fmtUsd(_mtdPortfolio.roomRevenue),
-  totalRoomNights: _mtdPortfolio.roomsSold,
-  avgAdr: Math.round(_mtdPortfolio.adr),
-  avgOcc: Number(_mtdPortfolio.occupancyPct.toFixed(1)),
-  avgRevpar: Math.round(_mtdPortfolio.revpar),
-  totalHotelRevenue: _mtdPortfolio.totalRevenue,
-  totalHotelRevenueDisplay: fmtUsd(_mtdPortfolio.totalRevenue),
-  pillars: {
-    rooms: {
-      val: fmtUsd(_mtdPortfolio.roomRevenue),
-      pct: fmtPct((_mtdPortfolio.roomRevenue / _totHotelRev) * 100),
-    },
-    fnb: {
-      val: fmtUsd(_mtdPortfolio.fnbRevenue),
-      pct: fmtPct((_mtdPortfolio.fnbRevenue / _totHotelRev) * 100),
-    },
-    spa: {
-      val: fmtUsd(_mtdPortfolio.spaRevenue),
-      pct: fmtPct((_mtdPortfolio.spaRevenue / _totHotelRev) * 100),
-    },
-    activities: {
-      val: fmtUsd(_mtdPortfolio.experienceRevenue),
-      pct: fmtPct((_mtdPortfolio.experienceRevenue / _totHotelRev) * 100),
-    },
-  },
+/**
+ * Backward compatibility alias map for legacy or varied region names
+ */
+export const LEGACY_REGION_MAP: Record<string, RegionId> = {
+  'asia-pacific': 'asia-pacific',
+  'asia pacific': 'asia-pacific',
+  apac: 'asia-pacific',
+  asia: 'asia-pacific',
+  europe: 'europe',
+  eu: 'europe',
+  america: 'america',
+  americas: 'america',
+  us: 'america',
+  'north-america': 'america',
+  'middle-east': 'middle-east',
+  'middle east': 'middle-east',
+  mea: 'middle-east',
+  'middle east & africa': 'middle-east',
+  africa: 'africa',
 };
 
-export function resolveRegionId(id: string): RegionId {
-  const norm = id.toLowerCase().replace(/[\s_]+/g, '-');
-  if (norm.includes('asia') || norm.includes('pacific')) return 'asia-pacific';
-  if (norm.includes('euro')) return 'europe';
-  if (norm.includes('americ')) return 'america';
-  if (norm.includes('middle') || norm.includes('east')) return 'middle-east';
-  if (norm.includes('afri')) return 'africa';
-  return 'asia-pacific';
+/**
+ * Region lookup map indexed by RegionId
+ */
+export const REGION_MAP: Record<RegionId, GlobalRegion> = MASTER_REGIONS.reduce(
+  (acc, reg) => {
+    acc[reg.id] = reg;
+    return acc;
+  },
+  {} as Record<RegionId, GlobalRegion>
+);
+
+/**
+ * Resolves any region string/ID to a canonical RegionId
+ */
+export function resolveRegionId(rawId?: string): RegionId {
+  if (!rawId) return 'europe';
+  const clean = rawId.toLowerCase().trim();
+  return LEGACY_REGION_MAP[clean] || 'europe';
 }
 
-export function formatRegionSelectionTitle(ids: string[]): string {
-  if (!ids || ids.length === 0 || ids.length === MASTER_REGIONS.length) {
-    return 'All Global Regions Combined';
-  }
-  const names = ids.map(id => {
-    const reg = MASTER_REGIONS.find(r => r.id === resolveRegionId(id));
-    return reg ? reg.name : id;
-  });
-  return names.join(' & ');
+/**
+ * Gets region details by ID
+ */
+export function getRegionById(id?: string): GlobalRegion {
+  const canonicalId = resolveRegionId(id);
+  return REGION_MAP[canonicalId] || MASTER_REGIONS[0];
 }
+
+/**
+ * Formats display title when 1 or multiple regions are selected
+ */
+export function formatRegionSelectionTitle(activeRegionIds: string[]): string {
+  if (!activeRegionIds || activeRegionIds.length === 0) return 'All Global Regions';
+  const canonicalIds = Array.from(new Set(activeRegionIds.map(resolveRegionId)));
+  if (canonicalIds.length === MASTER_REGIONS.length) return 'All Global Regions';
+  if (canonicalIds.length === 1) {
+    const reg = REGION_MAP[canonicalIds[0]];
+    return reg ? reg.name : 'Selected Region';
+  }
+  return `${canonicalIds.length} Regions Selected`;
+}
+
+/**
+ * Global portfolio totals across all 5 regions (derived from engine MTD)
+ */
+export const REGIONAL_TOTALS = {
+  share: 100,
+  totalRoomNights: portfolioMtd.roomsSold,
+  totalRevenue: Number((portfolioMtd.roomRevenue / 1_000_000).toFixed(2)),
+  totalRevenueDisplay: fmtUsd(portfolioMtd.roomRevenue),
+  weightedAdr: Math.round(portfolioMtd.adr),
+  weightedOcc: Number(portfolioMtd.occupancyPct.toFixed(1)),
+};

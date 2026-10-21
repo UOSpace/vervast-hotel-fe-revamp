@@ -22,7 +22,7 @@ import type { ItineraryItem, LeadRecord } from './leads';
 
 /** Select authentic varied imagery matching the activity and destination context */
 function getItineraryImages(hotel: string) {
-  if (hotel === 'SOSEI Andermatt') {
+  if (hotel === 'SOSEI Courchevel') {
     return {
       arrival: switzerlandImg,
       activity: alpineImg,
@@ -31,25 +31,25 @@ function getItineraryImages(hotel: string) {
       departure: switzerlandImg,
     };
   }
-  if (hotel === 'SOSEI AUH' || hotel === 'SOSEI Bali' || hotel === 'SOSEI Bali' || hotel === 'SOSEI Melides') {
+  if (hotel === 'SOSEI AlUla' || hotel === 'SOSEI Kyoto' || hotel === 'SOSEI Kyoto' || hotel === 'SOSEI Los Cabos') {
     return {
-      arrival: hotel === 'SOSEI AUH' ? maldivesImg : baliImg,
+      arrival: hotel === 'SOSEI AlUla' ? maldivesImg : baliImg,
       activity: oceanImg,
       wellness: wellnessRetreatImg,
       dining: sunsetCruiseImg,
       departure: oceanImg,
     };
   }
-  if (hotel === 'SOSEI Tinos' || hotel === 'SOSEI El Gouna') {
+  if (hotel === 'SOSEI Muscat' || hotel === 'SOSEI Marrakech') {
     return {
-      arrival: hotel === 'SOSEI Tinos' ? omanImg : egyptImg,
+      arrival: hotel === 'SOSEI Muscat' ? omanImg : egyptImg,
       activity: desertImg,
       wellness: wellnessRetreatImg,
       dining: privateDinnerImg,
       departure: desertImg,
     };
   }
-  if (hotel === 'SOSEI OSA') {
+  if (hotel === 'SOSEI Patagonia') {
     return {
       arrival: costaRicaImg,
       activity: forestImg,
@@ -60,7 +60,7 @@ function getItineraryImages(hotel: string) {
   }
   // Urban / Estate: Barcelona, Umbria
   return {
-    arrival: hotel === 'SOSEI Umbria' ? japanImg : urbanImg,
+    arrival: hotel === 'SOSEI Amalfi' ? japanImg : urbanImg,
     activity: productWorkshopImg,
     wellness: wellnessRetreatImg,
     dining: privateDinnerImg,

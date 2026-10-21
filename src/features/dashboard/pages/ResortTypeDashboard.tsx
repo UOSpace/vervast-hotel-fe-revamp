@@ -55,7 +55,7 @@ export interface PropertyTableTotals {
   totalRevenue: number;
 }
 
-// Room counts per category across all 10 properties (total 780 rooms from Master Data)
+// Room counts per category across all 14 (total 780 rooms from Master Data)
 export const categoryRooms: Record<string, number> = CATEGORY_ROOM_COUNTS;
 
 // Master category-level hotel properties configuration (100% synchronized with Master Data)

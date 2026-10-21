@@ -283,7 +283,7 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
         </div>
       </div>
 
-      {/* Property Categories Status Breakdown (5 Categories expandable to 10 Properties) */}
+      {/* Property Categories Status Breakdown (5 Categories expandable to 14) */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <h5 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
@@ -414,7 +414,7 @@ export function ForwardBusinessDrawerContent({ config }: ForwardBusinessDrawerCo
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">9 Properties · 5 Categories</td>
+                <td className="py-3 px-3 text-zinc-500">14 · 5 Categories</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.definiteRevenue}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.verbalDefiniteRevenue}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{data.tentativeRevenue}</td>

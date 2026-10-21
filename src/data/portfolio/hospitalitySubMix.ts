@@ -59,15 +59,20 @@ export const MARKET_SEGMENT_MIX: RoomMixDef[] = [
 ];
 
 const PROPERTY_SEGMENT_SHARES: Record<string, [number, number, number, number, number]> = {
-  'sosei-barcelona': [42, 34, 9, 11, 4],
-  'sosei-andermatt': [64, 16, 11, 6, 3],
-  'sosei-el-gouna': [68, 14, 10, 5, 3],
-  'sosei-auh': [48, 28, 11, 9, 4],
-  'sosei-melides': [70, 12, 11, 4, 3],
-  'sosei-umbria': [62, 15, 14, 6, 3],
-  'sosei-tinos': [72, 10, 11, 4, 3],
-  'sosei-osa': [74, 10, 9, 4, 3],
-  'sosei-bali': [66, 14, 12, 5, 3],
+  'sosei-geneva': [42, 34, 9, 11, 4],
+  'sosei-courchevel': [64, 16, 11, 6, 3],
+  'sosei-niseko': [66, 15, 10, 6, 3],
+  'sosei-aspen': [62, 18, 11, 6, 3],
+  'sosei-marrakech': [68, 14, 10, 5, 3],
+  'sosei-alula': [48, 28, 11, 9, 4],
+  'sosei-los-cabos': [70, 12, 11, 4, 3],
+  'sosei-sumba': [73, 10, 10, 4, 3],
+  'sosei-amalfi': [62, 15, 14, 6, 3],
+  'sosei-muscat': [72, 10, 11, 4, 3],
+  'sosei-seychelles': [75, 9, 10, 3, 3],
+  'sosei-patagonia': [74, 10, 9, 4, 3],
+  'sosei-serengeti': [76, 9, 9, 3, 3],
+  'sosei-kyoto': [66, 14, 12, 5, 3],
 };
 
 const PERIOD_SEGMENT_SHIFT: Record<PeriodId, [number, number, number, number, number]> = {
@@ -95,15 +100,20 @@ export const BOOKING_CHANNEL_MIX: RoomMixDef[] = [
 ];
 
 const PROPERTY_CHANNEL_SHARES: Record<string, [number, number, number, number, number]> = {
-  'sosei-barcelona': [34, 27, 15, 12, 12],
-  'sosei-andermatt': [38, 22, 18, 12, 10],
-  'sosei-el-gouna': [30, 32, 14, 11, 13],
-  'sosei-auh': [36, 24, 17, 12, 11],
-  'sosei-melides': [40, 21, 16, 13, 10],
-  'sosei-umbria': [37, 23, 18, 12, 10],
-  'sosei-tinos': [32, 29, 15, 12, 12],
-  'sosei-osa': [42, 19, 18, 12, 9],
-  'sosei-bali': [35, 26, 16, 13, 10],
+  'sosei-geneva': [34, 27, 15, 12, 12],
+  'sosei-courchevel': [38, 22, 18, 12, 10],
+  'sosei-niseko': [37, 23, 17, 13, 10],
+  'sosei-aspen': [39, 21, 18, 12, 10],
+  'sosei-marrakech': [30, 32, 14, 11, 13],
+  'sosei-alula': [36, 24, 17, 12, 11],
+  'sosei-los-cabos': [40, 21, 16, 13, 10],
+  'sosei-sumba': [41, 20, 17, 12, 10],
+  'sosei-amalfi': [37, 23, 18, 12, 10],
+  'sosei-muscat': [32, 29, 15, 12, 12],
+  'sosei-seychelles': [38, 22, 17, 13, 10],
+  'sosei-patagonia': [42, 19, 18, 12, 9],
+  'sosei-serengeti': [43, 18, 19, 11, 9],
+  'sosei-kyoto': [35, 26, 16, 13, 10],
 };
 
 const PERIOD_CHANNEL_SHIFT: Record<PeriodId, [number, number, number, number, number]> = {
@@ -222,59 +232,89 @@ export interface RoomTierDef {
 const ROOM_TIER_ADR_INDEX = [1.18, 1.04, 0.92, 0.82];
 
 export const PROPERTY_ROOM_TIERS: Record<string, RoomTierDef[]> = {
-  'sosei-andermatt': [
-    { name: 'Gotthard Chalet Suite', keyShare: 22, occDelta: 6 },
-    { name: 'Alpine Signature Suite', keyShare: 20, occDelta: 1 },
+  'sosei-courchevel': [
+    { name: 'Trois Vallées Chalet Suite', keyShare: 22, occDelta: 6 },
+    { name: 'Savoie Alpine Signature Suite', keyShare: 20, occDelta: 1 },
     { name: 'Panorama Glacial Room', keyShare: 16, occDelta: -2 },
     { name: 'Thermal Spa Cabin', keyShare: 14, occDelta: -6 },
   ],
-  'sosei-el-gouna': [
-    { name: 'Red Sea Lagoon Villa', keyShare: 24, occDelta: 6 },
-    { name: 'Coral Reef Pool Suite', keyShare: 22, occDelta: 2 },
-    { name: 'Desert Coast Pavilion', keyShare: 18, occDelta: -2 },
-    { name: 'Marina Sanctuary Suite', keyShare: 16, occDelta: -8 },
+  'sosei-niseko': [
+    { name: 'Mount Yotei Onsen Chalet', keyShare: 24, occDelta: 6 },
+    { name: 'Hokkaido Powder Panorama Suite', keyShare: 22, occDelta: 1 },
+    { name: 'Shirakaba Forest Pavilion', keyShare: 18, occDelta: -2 },
+    { name: 'Tatami Thermal Studio', keyShare: 16, occDelta: -6 },
   ],
-  'sosei-auh': [
-    { name: 'Saadiyat Beachfront Villa', keyShare: 26, occDelta: 6 },
-    { name: 'Arabian Gulf Pool Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Oceanfront Dune Pavilion', keyShare: 20, occDelta: -2 },
-    { name: 'Private Island Residence', keyShare: 15, occDelta: -7 },
+  'sosei-aspen': [
+    { name: 'Ajax Mountain Summit Residence', keyShare: 24, occDelta: 6 },
+    { name: 'Continental Divide Chalet Suite', keyShare: 22, occDelta: 1 },
+    { name: 'Roaring Fork Alpine Room', keyShare: 20, occDelta: -2 },
+    { name: 'Timberline Fireside Cabin', keyShare: 14, occDelta: -6 },
   ],
-  'sosei-melides': [
-    { name: 'Alentejo Atlantic Dune Villa', keyShare: 26, occDelta: 6 },
-    { name: 'Lagoon Terrace Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Cork Forest Pavilion', keyShare: 20, occDelta: -2 },
-    { name: 'Coastal Sanctuary Studio', keyShare: 15, occDelta: -7 },
+  'sosei-marrakech': [
+    { name: 'Palmeraie Royal Riad Palace', keyShare: 24, occDelta: 6 },
+    { name: 'Atlas Garden Pool Suite', keyShare: 22, occDelta: 2 },
+    { name: 'Medina Courtyard Pavilion', keyShare: 18, occDelta: -2 },
+    { name: 'Oasis Hammam Sanctuary Suite', keyShare: 16, occDelta: -8 },
   ],
-  'sosei-umbria': [
-    { name: 'Castello Vineyard Palazzo Suite', keyShare: 25, occDelta: 6 },
-    { name: 'Umbrian Hillside Villa', keyShare: 25, occDelta: 2 },
-    { name: 'Olive Grove Terrace Suite', keyShare: 20, occDelta: -2 },
-    { name: 'Heritage Stone Residence', keyShare: 15, occDelta: -7 },
+  'sosei-alula': [
+    { name: 'Ashar Valley Sandstone Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Hegra Stargazing Pool Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Nabataean Canyon Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Oasis Palm Residence', keyShare: 15, occDelta: -7 },
   ],
-  'sosei-tinos': [
-    { name: 'Aegean Cliffside Cycladic Villa', keyShare: 26, occDelta: 6 },
-    { name: 'Marble Terrace Pool Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Aegean Sea View Pavilion', keyShare: 20, occDelta: -2 },
-    { name: 'Island Sanctuary Residence', keyShare: 15, occDelta: -7 },
+  'sosei-los-cabos': [
+    { name: 'Sea of Cortez Oceanfront Hacienda', keyShare: 26, occDelta: 6 },
+    { name: 'Baja Cliffside Pool Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Desert Arroyo Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Agave Sanctuary Studio', keyShare: 15, occDelta: -7 },
   ],
-  'sosei-barcelona': [
-    { name: 'Catalan Penthouse Suite', keyShare: 25, occDelta: 6 },
-    { name: 'Passeig Deluxe Room', keyShare: 35, occDelta: 1 },
-    { name: 'Mediterranean Terrace Suite', keyShare: 30, occDelta: -2 },
-    { name: 'Gothic Quarter Studio', keyShare: 20, occDelta: -6 },
+  'sosei-sumba': [
+    { name: 'Nihiwatu Oceanfront Cliff Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Marapu Surf View Pool Suite', keyShare: 24, occDelta: 2 },
+    { name: 'Sandalwood Jungle Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Archipelago Beach House', keyShare: 15, occDelta: -7 },
   ],
-  'sosei-osa': [
-    { name: 'Corcovado Canopy Suite', keyShare: 26, occDelta: 6 },
-    { name: 'Golfo Dulce Ocean Villa', keyShare: 24, occDelta: 2 },
-    { name: 'Rainforest Treehouse Haven', keyShare: 20, occDelta: -2 },
-    { name: 'Pacific Wilderness Pavilion', keyShare: 15, occDelta: -8 },
+  'sosei-amalfi': [
+    { name: 'Tyrrhenian Cliffside Palazzo Suite', keyShare: 25, occDelta: 6 },
+    { name: 'Ravello Lemon Grove Villa', keyShare: 25, occDelta: 2 },
+    { name: 'Coastal Sea View Terrace Suite', keyShare: 20, occDelta: -2 },
+    { name: 'Heritage Cloister Residence', keyShare: 15, occDelta: -7 },
   ],
-  'sosei-bali': [
-    { name: 'Holistic Cliffside Ocean Villa', keyShare: 28, occDelta: 5 },
-    { name: 'Ayung River Wellness Suite', keyShare: 24, occDelta: 1 },
-    { name: 'Sacred Jungle Pavilion', keyShare: 18, occDelta: -2 },
-    { name: 'Longevity Pool Residence', keyShare: 12, occDelta: -7 },
+  'sosei-muscat': [
+    { name: 'Al Hajar Cove Royal Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Gulf of Oman Pool Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Frankincense Cliff Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Lagoon Sanctuary Residence', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-seychelles': [
+    { name: 'Granite Boulder Ocean Villa', keyShare: 26, occDelta: 6 },
+    { name: 'Mahé Coral Lagoon Pool Suite', keyShare: 24, occDelta: 2 },
+    { name: 'Takamaka Canopy Pavilion', keyShare: 20, occDelta: -2 },
+    { name: 'Island Cove Residence', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-geneva': [
+    { name: 'Lac Léman Diplomatic Penthouse', keyShare: 25, occDelta: 6 },
+    { name: 'Rue du Rhône Deluxe Room', keyShare: 35, occDelta: 1 },
+    { name: 'Mont-Blanc View Terrace Suite', keyShare: 30, occDelta: -2 },
+    { name: 'Vieille-Ville Heritage Studio', keyShare: 20, occDelta: -6 },
+  ],
+  'sosei-patagonia': [
+    { name: 'Paine Massif Glacier Estancia', keyShare: 26, occDelta: 6 },
+    { name: 'Lake Sarmiento Horizon Villa', keyShare: 24, occDelta: 2 },
+    { name: 'Lenga Forest Refuge Suite', keyShare: 20, occDelta: -2 },
+    { name: 'Austral Pampa Pavilion', keyShare: 15, occDelta: -8 },
+  ],
+  'sosei-serengeti': [
+    { name: 'Kopje Savannah Horizon Pavilion', keyShare: 26, occDelta: 6 },
+    { name: 'Migration Plains Pool Villa', keyShare: 24, occDelta: 2 },
+    { name: 'Acacia Wilderness Tent Suite', keyShare: 20, occDelta: -2 },
+    { name: 'Riverbed Bush Sanctuary', keyShare: 15, occDelta: -7 },
+  ],
+  'sosei-kyoto': [
+    { name: 'Arashiyama Bamboo Ryokan Villa', keyShare: 28, occDelta: 5 },
+    { name: 'Katsura River Onsen Suite', keyShare: 24, occDelta: 1 },
+    { name: 'Zen Moss Garden Pavilion', keyShare: 18, occDelta: -2 },
+    { name: 'Longevity Tea House Residence', keyShare: 12, occDelta: -7 },
   ],
 };
 
@@ -428,82 +468,122 @@ const PROPERTY_SIGNATURE_RHYTHM: Record<
     spaDept: string;
   }
 > = {
-  'sosei-andermatt': {
+  'sosei-courchevel': {
     activityDept: 'Alpine Ski & Heli-Pass',
     activityPeak: '8:30 AM – 3:30 PM',
     activityWindow: '08:30 – 15:30',
     activityProfile: [48, 96, 92, 86, 42, 22],
     fnbDept: 'F&B & Chalet Dining',
-    spaDept: 'Thermal Spa & Onsen',
+    spaDept: 'Thermal Spa & Cryo',
   },
-  'sosei-el-gouna': {
-    activityDept: 'Red Sea Diving & Yacht',
+  'sosei-niseko': {
+    activityDept: 'Hokkaido Powder & Cat-Ski',
+    activityPeak: '8:00 AM – 3:00 PM',
+    activityWindow: '08:00 – 15:00',
+    activityProfile: [54, 96, 90, 82, 46, 24],
+    fnbDept: 'F&B & Robata Dining',
+    spaDept: 'Volcanic Onsen & Spa',
+  },
+  'sosei-aspen': {
+    activityDept: 'Rocky Mountain Ski & Heli',
+    activityPeak: '8:30 AM – 3:30 PM',
+    activityWindow: '08:30 – 15:30',
+    activityProfile: [46, 95, 91, 85, 44, 24],
+    fnbDept: 'F&B & Alpine Chophouse',
+    spaDept: 'High-Altitude Recovery Spa',
+  },
+  'sosei-marrakech': {
+    activityDept: 'Atlas Heli & Medina Curators',
     activityPeak: '9:00 AM – 4:00 PM',
     activityWindow: '09:00 – 16:00',
     activityProfile: [44, 92, 95, 84, 52, 26],
-    fnbDept: 'F&B & Marina Dining',
-    spaDept: 'Thalasso Spa & Wellness',
+    fnbDept: 'F&B & Royal Riad Dining',
+    spaDept: 'Imperial Hammam & Spa',
   },
-  'sosei-auh': {
-    activityDept: 'Desert Safari & Beach Club',
-    activityPeak: '3:00 PM – 7:00 PM',
-    activityWindow: '15:00 – 19:00',
+  'sosei-alula': {
+    activityDept: 'Canyon Safari & Stargazing',
+    activityPeak: '3:00 PM – 8:00 PM',
+    activityWindow: '15:00 – 20:00',
     activityProfile: [32, 68, 74, 94, 90, 46],
-    fnbDept: 'F&B & Fine Dining',
-    spaDept: 'Hammam & Longevity Spa',
+    fnbDept: 'F&B & Canyon Hearth',
+    spaDept: 'Sandstone Sanctuary Spa',
   },
-  'sosei-melides': {
-    activityDept: 'Atlantic Surf & Equestrian',
+  'sosei-los-cabos': {
+    activityDept: 'Cortez Yacht & Desert Trek',
     activityPeak: '9:00 AM – 1:00 PM',
     activityWindow: '09:00 – 13:00',
     activityProfile: [52, 94, 88, 76, 48, 24],
-    fnbDept: 'F&B & Coastal Dining',
-    spaDept: 'Cork Forest Spa & Wellness',
+    fnbDept: 'F&B & Baja Woodfire',
+    spaDept: 'Agave Desert Thalasso Spa',
   },
-  'sosei-umbria': {
-    activityDept: 'Vineyard & Truffle Estates',
+  'sosei-sumba': {
+    activityDept: 'Surf Safari & Equestrian',
+    activityPeak: '7:30 AM – 1:30 PM',
+    activityWindow: '07:30 – 13:30',
+    activityProfile: [68, 95, 89, 78, 50, 24],
+    fnbDept: 'F&B & Cliffside Grill',
+    spaDept: 'Jungle Cliff Wellness Spa',
+  },
+  'sosei-amalfi': {
+    activityDept: 'Riva Yacht & Lemon Estates',
     activityPeak: '10:00 AM – 4:00 PM',
     activityWindow: '10:00 – 16:00',
     activityProfile: [28, 84, 92, 88, 64, 30],
-    fnbDept: 'F&B & Osteria Dining',
-    spaDept: 'Roman Thermal Spa',
+    fnbDept: 'F&B & Terrazza Dining',
+    spaDept: 'Roman Thermal Cliff Spa',
   },
-  'sosei-tinos': {
-    activityDept: 'Aegean Sailing & Beach Club',
-    activityPeak: '11:00 AM – 5:00 PM',
-    activityWindow: '11:00 – 17:00',
+  'sosei-muscat': {
+    activityDept: 'Omani Dhow & Canyon Trek',
+    activityPeak: '10:00 AM – 5:00 PM',
+    activityWindow: '10:00 – 17:00',
     activityProfile: [34, 76, 94, 92, 68, 32],
-    fnbDept: 'F&B & Cycladic Dining',
-    spaDept: 'Marble Sanctuary Spa',
+    fnbDept: 'F&B & Cove Seafood',
+    spaDept: 'Frankincense Sanctuary Spa',
   },
-  'sosei-barcelona': {
-    activityDept: 'Private Yacht & Art Tours',
+  'sosei-seychelles': {
+    activityDept: 'Island Heli & Reef Diving',
+    activityPeak: '9:30 AM – 4:30 PM',
+    activityWindow: '09:30 – 16:30',
+    activityProfile: [42, 88, 94, 88, 60, 28],
+    fnbDept: 'F&B & Granite Cove Grill',
+    spaDept: 'Ocean Boulder Sanctuary Spa',
+  },
+  'sosei-geneva': {
+    activityDept: 'Horlogerie Ateliers & Riva',
     activityPeak: '10:00 AM – 4:00 PM',
     activityWindow: '10:00 – 16:00',
     activityProfile: [26, 78, 90, 88, 72, 44],
-    fnbDept: 'F&B & Tapas Gastronomy',
-    spaDept: 'Urban Rooftop Spa',
+    fnbDept: 'F&B & Haute Gastronomy',
+    spaDept: 'Lac Léman Longevity Spa',
   },
-  'sosei-osa': {
-    activityDept: 'Rainforest & Whale Expeditions',
+  'sosei-patagonia': {
+    activityDept: 'Glacier Trek & Puma Safari',
     activityPeak: '6:30 AM – 1:00 PM',
     activityWindow: '06:30 – 13:00',
     activityProfile: [92, 96, 86, 68, 38, 20],
-    fnbDept: 'F&B & Canopy Dining',
-    spaDept: 'Botanical Healing Spa',
+    fnbDept: 'F&B & Austral Asador',
+    spaDept: 'Glacial Botanical Spa',
   },
-  'sosei-bali': {
-    activityDept: 'Ayung Rafting & Sacred Rituals',
+  'sosei-serengeti': {
+    activityDept: 'Balloon & Migration Safari',
+    activityPeak: '6:00 AM – 12:30 PM',
+    activityWindow: '06:00 – 12:30',
+    activityProfile: [94, 96, 82, 70, 48, 22],
+    fnbDept: 'F&B & Savannah Boma',
+    spaDept: 'Kopje Bush Healing Spa',
+  },
+  'sosei-kyoto': {
+    activityDept: 'Zen Temple & Tea Ceremony',
     activityPeak: '8:00 AM – 2:00 PM',
     activityWindow: '08:00 – 14:00',
     activityProfile: [78, 94, 90, 74, 52, 28],
-    fnbDept: 'F&B & Cliffside Dining',
-    spaDept: 'Holistic Sanctuary Spa',
+    fnbDept: 'F&B & Kaiseki Ryokan',
+    spaDept: 'Arashiyama Onsen & Longevity',
   },
 };
 
 function getRhythmDefsForProperty(propertyId: string): RhythmDef[] {
-  const sig = PROPERTY_SIGNATURE_RHYTHM[propertyId] ?? PROPERTY_SIGNATURE_RHYTHM['sosei-barcelona'];
+  const sig = PROPERTY_SIGNATURE_RHYTHM[propertyId] ?? PROPERTY_SIGNATURE_RHYTHM['sosei-geneva'];
   return [
     {
       key: 'arrivals',
@@ -701,66 +781,66 @@ const DEFAULT_EVENT_DEFS: EventDef[] = [
 ];
 
 const PROPERTY_EVENT_DEFS: Record<string, EventDef[]> = {
-  'sosei-barcelona': [
-    { title: 'Catalan Architecture & Medical Forum', date: 'Oct 18 – Oct 21, 2026', category: 'Executive Forum', revenueSharePct: 1.4, attendeeSharePct: 1.2, targetType: 'booking', targetId: 'BK-003', stage: 'Confirmed OTB', client: 'Oxford Medical Congress', keysBlocked: 16, venue: 'Passeig Grand Salon & Terrace' },
-    { title: 'Gothic Quarter Private Rooftop Buyout', date: 'Oct 24 – Oct 29, 2026', category: 'Wedding Buyout', revenueSharePct: 2.4, attendeeSharePct: 1.7, targetType: 'lead', targetId: 'LD-015', stage: 'Verbal Definite', client: 'Bella Union Weddings', keysBlocked: 28, venue: 'Courtyard & Rooftop Mirador' },
-    { title: 'Iberian Gastronomy & Sommelier Summit', date: 'Nov 03 – Nov 07, 2026', category: 'Culinary Gala', revenueSharePct: 1.2, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-022', stage: 'Tentative', client: 'Iberian Epicure Guild', keysBlocked: 14, venue: 'Culinary Lab & Wine Cellar' },
-    { title: 'Global Finance Executive Board Retreat', date: 'Nov 11 – Nov 15, 2026', category: 'Corporate Offsite', revenueSharePct: 0.9, attendeeSharePct: 0.8, targetType: 'lead', targetId: 'LD-005', stage: 'Prospect', client: 'Global Finance Inc.', keysBlocked: 12, venue: 'Encrypted Penthouse Boardroom' },
-    { title: 'Contemporary Art & Biodynamic Cellar Salon', date: 'Nov 20 – Nov 24, 2026', category: 'Private Showcase', revenueSharePct: 0.8, attendeeSharePct: 0.9, targetType: 'booking', targetId: 'BK-JA-03', stage: 'Confirmed OTB', client: 'Amex Fine Hotels & Resorts', keysBlocked: 10, venue: 'Passeig de Gràcia Grand Suite Wing' },
-    { title: 'Mediterranean Collectors Winter Gala', date: 'Dec 04 – Dec 08, 2026', category: 'Private Buyout', revenueSharePct: 1.7, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-021', stage: 'Definite', client: 'Contemporary Art Foundation', keysBlocked: 22, venue: 'Full Heritage Floor & Gallery' },
+  'sosei-geneva': [
+    { title: 'Swiss Diplomatic & Longevity Forum', date: 'Oct 18 – Oct 21, 2026', category: 'Executive Forum', revenueSharePct: 1.4, attendeeSharePct: 1.2, targetType: 'booking', targetId: 'BK-003', stage: 'Confirmed OTB', client: 'Oxford Medical Congress', keysBlocked: 16, venue: 'Lac Léman Grand Salon & Terrace' },
+    { title: 'Rive Droite Lakefront Rooftop Buyout', date: 'Oct 24 – Oct 29, 2026', category: 'Wedding Buyout', revenueSharePct: 2.4, attendeeSharePct: 1.7, targetType: 'lead', targetId: 'LD-015', stage: 'Verbal Definite', client: 'Bella Union Weddings', keysBlocked: 28, venue: 'Courtyard & Mont-Blanc Mirador' },
+    { title: 'Haute Horlogerie & Sommelier Summit', date: 'Nov 03 – Nov 07, 2026', category: 'Culinary Gala', revenueSharePct: 1.2, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-022', stage: 'Tentative', client: 'European Epicure Guild', keysBlocked: 14, venue: 'L’Horloge Culinary Lab & Cellar' },
+    { title: 'Global Private Banking Board Retreat', date: 'Nov 11 – Nov 15, 2026', category: 'Corporate Offsite', revenueSharePct: 0.9, attendeeSharePct: 0.8, targetType: 'lead', targetId: 'LD-005', stage: 'Prospect', client: 'Global Finance Inc.', keysBlocked: 12, venue: 'Encrypted Penthouse Boardroom' },
+    { title: 'Contemporary Art & Biodynamic Cellar Salon', date: 'Nov 20 – Nov 24, 2026', category: 'Private Showcase', revenueSharePct: 0.8, attendeeSharePct: 0.9, targetType: 'booking', targetId: 'BK-JA-03', stage: 'Confirmed OTB', client: 'Amex Fine Hotels & Resorts', keysBlocked: 10, venue: 'Rue du Rhône Grand Suite Wing' },
+    { title: 'Lake Geneva Collectors Winter Gala', date: 'Dec 04 – Dec 08, 2026', category: 'Private Buyout', revenueSharePct: 1.7, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-021', stage: 'Definite', client: 'Contemporary Art Foundation', keysBlocked: 22, venue: 'Full Heritage Floor & Gallery' },
   ],
-  'sosei-andermatt': [
-    { title: 'Alpine Glacier Chalet & Ski Syndicate', date: 'Oct 19 – Oct 25, 2026', category: 'Corporate Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-024', stage: 'Definite', client: 'Alpine Capital Partners', keysBlocked: 18, venue: 'Gotthard Chalet Wing & Heli-Pad' },
+  'sosei-courchevel': [
+    { title: 'Trois Vallées Glacier Chalet Syndicate', date: 'Oct 19 – Oct 25, 2026', category: 'Corporate Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-024', stage: 'Definite', client: 'Alpine Capital Partners', keysBlocked: 18, venue: 'Trois Vallées Chalet Wing & Heli-Pad' },
     { title: 'Helvetica Haute Horlogerie Exhibition', date: 'Oct 26 – Oct 31, 2026', category: 'Brand Launch', revenueSharePct: 2.5, attendeeSharePct: 1.8, targetType: 'lead', targetId: 'LD-013', stage: 'Tentative', client: 'Helvetica Watches AG', keysBlocked: 32, venue: 'Summit Penthouse & Private Atrium' },
-    { title: 'Gemsstock Private Ski & Thermal Retreat', date: 'Nov 02 – Nov 08, 2026', category: 'Alpine Retreat', revenueSharePct: 1.1, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-002', stage: 'Confirmed OTB', client: 'Skyline Tours Switzerland', keysBlocked: 12, venue: 'Thermal Onsen & Chalet Suites' },
+    { title: 'Savoie Private Ski & Thermal Retreat', date: 'Nov 02 – Nov 08, 2026', category: 'Alpine Retreat', revenueSharePct: 1.1, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-002', stage: 'Confirmed OTB', client: 'Skyline Tours Europe', keysBlocked: 12, venue: 'Thermal Spa & Chalet Suites' },
     { title: 'Smith Family Office Chalet Block', date: 'Nov 14 – Nov 19, 2026', category: 'Family Buyout', revenueSharePct: 0.9, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-002', stage: 'Verbal Definite', client: 'Smith Family Office', keysBlocked: 10, venue: 'Private Alpine Chalet Cluster' },
-    { title: 'Gotthard Sommeliers & Glacier Fondue', date: 'Nov 25 – Nov 29, 2026', category: 'Culinary Gala', revenueSharePct: 0.7, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-JA-02', stage: 'Confirmed OTB', client: 'Virtuoso Luxury Travel', keysBlocked: 8, venue: 'High-Altitude Glass Cellar' },
-    { title: 'Zurich Private Banking Winter Forum', date: 'Dec 06 – Dec 11, 2026', category: 'Executive Forum', revenueSharePct: 1.9, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-007', stage: 'Prospect', client: 'Northwind Capital', keysBlocked: 24, venue: 'Full Alpine Wing Buyout' },
+    { title: 'Courchevel 1850 Sommeliers & Truffle Fondue', date: 'Nov 25 – Nov 29, 2026', category: 'Culinary Gala', revenueSharePct: 0.7, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-JA-02', stage: 'Confirmed OTB', client: 'Virtuoso Luxury Travel', keysBlocked: 8, venue: 'High-Altitude Glass Cellar' },
+    { title: 'European Private Equity Winter Forum', date: 'Dec 06 – Dec 11, 2026', category: 'Executive Forum', revenueSharePct: 1.9, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-007', stage: 'Prospect', client: 'Northwind Capital', keysBlocked: 24, venue: 'Full Alpine Wing Buyout' },
   ],
-  'sosei-auh': [
-    { title: 'TechCorp Private Lagoon Villa Buyout', date: 'Oct 19 – Oct 25, 2026', category: 'Corporate Buyout', revenueSharePct: 2.2, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-001', stage: 'Tentative', client: 'TechCorp Headquarters', keysBlocked: 25, venue: 'Overwater Lagoon Wing' },
-    { title: 'Saadiyat Sunset Yacht & Omakase Gathering', date: 'Oct 28 – Nov 03, 2026', category: 'VIP Sanctuary', revenueSharePct: 1.4, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-JA-01', stage: 'Confirmed OTB', client: 'Virtuoso / Amex FHR', keysBlocked: 12, venue: 'Sunset Water Villas & Marina' },
-    { title: 'Arabian Gulf Overwater Honeymoon Showcase', date: 'Nov 08 – Nov 14, 2026', category: 'Partner Showcase', revenueSharePct: 1.1, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-011', stage: 'Prospect', client: 'Booking.com Luxury Desk', keysBlocked: 10, venue: 'Private Island Residences' },
-    { title: 'Coral Restoration & Hammam Longevity Retreat', date: 'Nov 18 – Nov 24, 2026', category: 'Wellness Retreat', revenueSharePct: 1.3, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-001', stage: 'Confirmed OTB', client: 'Virtuoso Luxury Travel', keysBlocked: 14, venue: 'Hammam Sanctuary & Reef Deck' },
-    { title: 'Gulf Sovereign Wealth Executive Dialogue', date: 'Dec 01 – Dec 05, 2026', category: 'Diplomatic Forum', revenueSharePct: 2.6, attendeeSharePct: 1.7, targetType: 'lead', targetId: 'LD-017', stage: 'Verbal Definite', client: 'Gulf Luxury Travel Desk', keysBlocked: 30, venue: 'Royal Dune Pavilion Estate' },
+  'sosei-alula': [
+    { title: 'TechCorp Ashar Canyon Villa Buyout', date: 'Oct 19 – Oct 25, 2026', category: 'Corporate Buyout', revenueSharePct: 2.2, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-001', stage: 'Tentative', client: 'TechCorp Headquarters', keysBlocked: 25, venue: 'Sandstone Canyon Wing' },
+    { title: 'Hegra Stargazing & Canyon Hearth Gathering', date: 'Oct 28 – Nov 03, 2026', category: 'VIP Sanctuary', revenueSharePct: 1.4, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-JA-01', stage: 'Confirmed OTB', client: 'Virtuoso / Amex FHR', keysBlocked: 12, venue: 'Hegra Oasis Villas & Terrace' },
+    { title: 'Nabataean Oasis Luxury Partner Showcase', date: 'Nov 08 – Nov 14, 2026', category: 'Partner Showcase', revenueSharePct: 1.1, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-011', stage: 'Prospect', client: 'Booking.com Luxury Desk', keysBlocked: 10, venue: 'Private Oasis Residences' },
+    { title: 'Desert Sound Bath & Longevity Retreat', date: 'Nov 18 – Nov 24, 2026', category: 'Wellness Retreat', revenueSharePct: 1.3, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-001', stage: 'Confirmed OTB', client: 'Virtuoso Luxury Travel', keysBlocked: 14, venue: 'Sandstone Sanctuary & Acoustic Dome' },
+    { title: 'Gulf Sovereign Wealth Executive Dialogue', date: 'Dec 01 – Dec 05, 2026', category: 'Diplomatic Forum', revenueSharePct: 2.6, attendeeSharePct: 1.7, targetType: 'lead', targetId: 'LD-017', stage: 'Verbal Definite', client: 'Gulf Luxury Travel Desk', keysBlocked: 30, venue: 'Royal Canyon Pavilion Estate' },
   ],
-  'sosei-bali': [
-    { title: 'Virtuoso Cliffside Sanctuary Full Buyout', date: 'Oct 20 – Oct 26, 2026', category: 'Private Buyout', revenueSharePct: 2.6, attendeeSharePct: 1.8, targetType: 'lead', targetId: 'LD-003', stage: 'Definite', client: 'Virtuoso Travel Consortium', keysBlocked: 34, venue: 'Full Cliffside Ocean Wing' },
-    { title: 'Sacred River Ayurvedic & Panchakarma Week', date: 'Oct 23 – Oct 29, 2026', category: 'Wellness Retreat', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-006', stage: 'Confirmed OTB', client: 'Holistic Journeys International', keysBlocked: 14, venue: 'Sacred River Pool Residences' },
-    { title: 'Sanctuary Sunset Sound Bath & Meditation', date: 'Nov 05 – Nov 11, 2026', category: 'Mindfulness', revenueSharePct: 1.2, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-023', stage: 'Verbal Definite', client: 'Sanctuary Mindfulness Collective', keysBlocked: 16, venue: 'Cliffside Sound Dome & Jungle Deck' },
-    { title: 'Lotus Alliance Bamboo Pavilion Retreat', date: 'Nov 16 – Nov 21, 2026', category: 'Yoga & Healing', revenueSharePct: 0.9, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-012', stage: 'Prospect', client: 'Lotus Yoga Alliance', keysBlocked: 10, venue: 'Bamboo Pavilions & Holistic Spa' },
-    { title: 'Uluwatu Longevity & Botanical Immersion', date: 'Nov 28 – Dec 04, 2026', category: 'Wellness Retreat', revenueSharePct: 1.5, attendeeSharePct: 1.3, targetType: 'lead', targetId: 'LD-006', stage: 'Tentative', client: 'Serenity Wellness Collective', keysBlocked: 18, venue: 'Ayung River Wellness Suites' },
+  'sosei-kyoto': [
+    { title: 'Virtuoso Arashiyama Ryokan Full Buyout', date: 'Oct 20 – Oct 26, 2026', category: 'Private Buyout', revenueSharePct: 2.6, attendeeSharePct: 1.8, targetType: 'lead', targetId: 'LD-003', stage: 'Definite', client: 'Virtuoso Travel Consortium', keysBlocked: 34, venue: 'Full Bamboo Sanctuary Wing' },
+    { title: 'Katsura River Kampo & Longevity Week', date: 'Oct 23 – Oct 29, 2026', category: 'Wellness Retreat', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-006', stage: 'Confirmed OTB', client: 'Holistic Journeys International', keysBlocked: 14, venue: 'Katsura River Onsen Suites' },
+    { title: 'Kyoto Zen Temple Sound & Tea Immersion', date: 'Nov 05 – Nov 11, 2026', category: 'Mindfulness', revenueSharePct: 1.2, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-023', stage: 'Verbal Definite', client: 'Sanctuary Mindfulness Collective', keysBlocked: 16, venue: 'Zen Moss Garden & Chashitsu' },
+    { title: 'Lotus Alliance Hinoki Pavilion Retreat', date: 'Nov 16 – Nov 21, 2026', category: 'Yoga & Healing', revenueSharePct: 0.9, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-012', stage: 'Prospect', client: 'Lotus Yoga Alliance', keysBlocked: 10, venue: 'Bamboo Pavilions & Onsen Spa' },
+    { title: 'Autumn Momiji Kaiseki & Botanical Retreat', date: 'Nov 28 – Dec 04, 2026', category: 'Wellness Retreat', revenueSharePct: 1.5, attendeeSharePct: 1.3, targetType: 'lead', targetId: 'LD-006', stage: 'Tentative', client: 'Serenity Wellness Collective', keysBlocked: 18, venue: 'Arashiyama Ryokan Villas' },
   ],
-  'sosei-tinos': [
-    { title: 'Royal Aegean Cliffside Pavilion Charter', date: 'Oct 26 – Oct 31, 2026', category: 'Royal Delegation', revenueSharePct: 2.3, attendeeSharePct: 1.5, targetType: 'booking', targetId: 'BK-008', stage: 'Confirmed OTB', client: 'Gulf Royal Consular Office', keysBlocked: 22, venue: 'Royal Aegean Reserve Wing' },
-    { title: 'Maison Aoki Cycladic Design Residency', date: 'Nov 03 – Nov 09, 2026', category: 'Fashion & Art', revenueSharePct: 1.9, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-014', stage: 'Definite', client: 'Maison Aoki Group', keysBlocked: 20, venue: 'Marble Terrace Pool Suites' },
-    { title: 'Al Mansoori Private Island Sanctuary', date: 'Nov 14 – Nov 20, 2026', category: 'Private Buyout', revenueSharePct: 1.4, attendeeSharePct: 1.0, targetType: 'lead', targetId: 'LD-008', stage: 'Verbal Definite', client: 'Al Mansoori Family Office', keysBlocked: 14, venue: 'Aegean Sea View Pavilions' },
-    { title: 'Diplomatic Security Wing Reserve Inquiry', date: 'Nov 25 – Nov 30, 2026', category: 'Diplomatic Buyout', revenueSharePct: 2.5, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-017', stage: 'Prospect', client: 'Gulf Luxury Travel', keysBlocked: 28, venue: 'Entire Island Sanctuary Wing' },
-    { title: 'Pyrgos Marble Sculpting & Astronomy Salon', date: 'Dec 03 – Dec 09, 2026', category: 'Cultural Salon', revenueSharePct: 1.1, attendeeSharePct: 0.9, targetType: 'booking', targetId: 'BK-JA-04', stage: 'Confirmed OTB', client: 'Virtuoso Advisor', keysBlocked: 10, venue: 'Cycladic Sanctuary Penthouse' },
+  'sosei-muscat': [
+    { title: 'Royal Al Hajar Cove Pavilion Charter', date: 'Oct 26 – Oct 31, 2026', category: 'Royal Delegation', revenueSharePct: 2.3, attendeeSharePct: 1.5, targetType: 'booking', targetId: 'BK-008', stage: 'Confirmed OTB', client: 'Gulf Royal Consular Office', keysBlocked: 22, venue: 'Royal Al Hajar Reserve Wing' },
+    { title: 'Maison Aoki Arabian Gulf Design Residency', date: 'Nov 03 – Nov 09, 2026', category: 'Fashion & Art', revenueSharePct: 1.9, attendeeSharePct: 1.4, targetType: 'lead', targetId: 'LD-014', stage: 'Definite', client: 'Maison Aoki Group', keysBlocked: 20, venue: 'Gulf of Oman Pool Suites' },
+    { title: 'Al Mansoori Private Cove Sanctuary', date: 'Nov 14 – Nov 20, 2026', category: 'Private Buyout', revenueSharePct: 1.4, attendeeSharePct: 1.0, targetType: 'lead', targetId: 'LD-008', stage: 'Verbal Definite', client: 'Al Mansoori Family Office', keysBlocked: 14, venue: 'Frankincense Cliff Pavilions' },
+    { title: 'Diplomatic Security Wing Reserve Inquiry', date: 'Nov 25 – Nov 30, 2026', category: 'Diplomatic Buyout', revenueSharePct: 2.5, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-017', stage: 'Prospect', client: 'Gulf Luxury Travel', keysBlocked: 28, venue: 'Entire Cove Sanctuary Wing' },
+    { title: 'Omani Dhow & Frankincense Astronomy Salon', date: 'Dec 03 – Dec 09, 2026', category: 'Cultural Salon', revenueSharePct: 1.1, attendeeSharePct: 0.9, targetType: 'booking', targetId: 'BK-JA-04', stage: 'Confirmed OTB', client: 'Virtuoso Advisor', keysBlocked: 10, venue: 'Al Hajar Sanctuary Penthouse' },
   ],
-  'sosei-el-gouna': [
-    { title: 'Abercrombie & Kent Red Sea Heritage Group', date: 'Oct 27 – Nov 02, 2026', category: 'Expedition Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-009', stage: 'Tentative', client: 'Abercrombie & Kent', keysBlocked: 22, venue: 'Lagoon Villas & Private Marina' },
-    { title: 'Twilight Desert & Lagoon Gala Buyout', date: 'Nov 06 – Nov 11, 2026', category: 'Private Gala', revenueSharePct: 1.3, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-018', stage: 'Verbal Definite', client: 'Expedia Luxury Events', keysBlocked: 16, venue: 'Desert Coast Pavilion & Terrace' },
-    { title: 'Mayfair Red Sea Yacht & Astronomy Charter', date: 'Jan 14 – Jan 21, 2027', category: 'Private Charter', revenueSharePct: 1.8, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-009', stage: 'Confirmed OTB', client: 'Abercrombie & Kent UK', keysBlocked: 12, venue: 'Red Sea Royal Suites' },
-    { title: 'Coral Reef Conservation & Thalasso Forum', date: 'Nov 19 – Nov 24, 2026', category: 'Marine Forum', revenueSharePct: 1.0, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-025', stage: 'Prospect', client: 'Vanguard Biome Research', keysBlocked: 12, venue: 'Marina Sanctuary Wing' },
+  'sosei-marrakech': [
+    { title: 'Abercrombie & Kent Atlas Heritage Group', date: 'Oct 27 – Nov 02, 2026', category: 'Expedition Buyout', revenueSharePct: 2.1, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-009', stage: 'Tentative', client: 'Abercrombie & Kent', keysBlocked: 22, venue: 'Palmeraie Royal Riads' },
+    { title: 'Twilight Palmeraie & Medina Gala Buyout', date: 'Nov 06 – Nov 11, 2026', category: 'Private Gala', revenueSharePct: 1.3, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-018', stage: 'Verbal Definite', client: 'Expedia Luxury Events', keysBlocked: 16, venue: 'Medina Courtyard Pavilion & Terrace' },
+    { title: 'Mayfair Imperial Riad & Atlas Heli Charter', date: 'Jan 14 – Jan 21, 2027', category: 'Private Charter', revenueSharePct: 1.8, attendeeSharePct: 1.1, targetType: 'booking', targetId: 'BK-009', stage: 'Confirmed OTB', client: 'Abercrombie & Kent UK', keysBlocked: 12, venue: 'Royal Riad Palace Suites' },
+    { title: 'Moroccan Botanical & Hammam Longevity Forum', date: 'Nov 19 – Nov 24, 2026', category: 'Wellness Forum', revenueSharePct: 1.0, attendeeSharePct: 0.9, targetType: 'lead', targetId: 'LD-025', stage: 'Prospect', client: 'Vanguard Biome Research', keysBlocked: 12, venue: 'Oasis Hammam Sanctuary Wing' },
   ],
-  'sosei-melides': [
-    { title: 'Atlantic Coastal Equestrian & Surf Buyout', date: 'Oct 20 – Oct 26, 2026', category: 'Coastal Buyout', revenueSharePct: 1.9, attendeeSharePct: 1.4, targetType: 'booking', targetId: 'BK-007', stage: 'Confirmed OTB', client: 'Atlantic Coastal Club', keysBlocked: 18, venue: 'Alentejo Atlantic Dune Villas' },
-    { title: 'Northwind Capital Partners Retreat', date: 'Oct 28 – Nov 02, 2026', category: 'Corporate Buyout', revenueSharePct: 2.3, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-007', stage: 'Tentative', client: 'Northwind Capital', keysBlocked: 24, venue: 'Cork Forest Pavilions & Estate' },
-    { title: 'Whitaker Family Office Coastal Gathering', date: 'Nov 09 – Nov 15, 2026', category: 'Family Buyout', revenueSharePct: 1.2, attendeeSharePct: 1.0, targetType: 'lead', targetId: 'LD-019', stage: 'Definite', client: 'Whitaker Family Office', keysBlocked: 12, venue: 'Lagoon Terrace Suites' },
-    { title: 'Alentejo Reserve Wine & Olive Harvest', date: 'Nov 21 – Nov 26, 2026', category: 'Culinary Gala', revenueSharePct: 1.0, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-022', stage: 'Verbal Definite', client: 'Iberian Epicure Guild', keysBlocked: 14, venue: 'Estate Cellar & Coastal Pavilion' },
+  'sosei-los-cabos': [
+    { title: 'Sea of Cortez Yacht & Equestrian Buyout', date: 'Oct 20 – Oct 26, 2026', category: 'Coastal Buyout', revenueSharePct: 1.9, attendeeSharePct: 1.4, targetType: 'booking', targetId: 'BK-007', stage: 'Confirmed OTB', client: 'Pacific Coastal Club', keysBlocked: 18, venue: 'Sea of Cortez Oceanfront Haciendas' },
+    { title: 'Northwind Capital Partners Baja Retreat', date: 'Oct 28 – Nov 02, 2026', category: 'Corporate Buyout', revenueSharePct: 2.3, attendeeSharePct: 1.6, targetType: 'lead', targetId: 'LD-007', stage: 'Tentative', client: 'Northwind Capital', keysBlocked: 24, venue: 'Desert Arroyo Pavilions & Estate' },
+    { title: 'Whitaker Family Office Hacienda Gathering', date: 'Nov 09 – Nov 15, 2026', category: 'Family Buyout', revenueSharePct: 1.2, attendeeSharePct: 1.0, targetType: 'lead', targetId: 'LD-019', stage: 'Definite', client: 'Whitaker Family Office', keysBlocked: 12, venue: 'Baja Cliffside Pool Suites' },
+    { title: 'Baja Reserve Agave & Mezcal Harvest', date: 'Nov 21 – Nov 26, 2026', category: 'Culinary Gala', revenueSharePct: 1.0, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-022', stage: 'Verbal Definite', client: 'Americas Epicure Guild', keysBlocked: 14, venue: 'Agave Cellar & Cliffside Pavilion' },
   ],
-  'sosei-umbria': [
-    { title: 'Castello Truffle Foraging & Cellar Buyout', date: 'Oct 28 – Nov 03, 2026', category: 'Culinary Buyout', revenueSharePct: 2.0, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-010', stage: 'Definite', client: 'Virtuoso Consortium Circle', keysBlocked: 20, venue: 'Castello Vineyard Palazzo Wing' },
-    { title: 'Tokyo Capital Olive Grove Sanctuary', date: 'Apr 04 – Apr 09, 2027', category: 'VIP Sanctuary', revenueSharePct: 1.3, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-004', stage: 'Confirmed OTB', client: 'Virtuoso Italy', keysBlocked: 10, venue: 'Umbrian Hillside Villas' },
-    { title: 'Roman Thermal & Holistic Autumn Retreat', date: 'Nov 12 – Nov 17, 2026', category: 'Wellness Retreat', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-020', stage: 'Prospect', client: 'Zen Journeys', keysBlocked: 15, venue: 'Roman Thermal Spa & Stone Villas' },
-    { title: 'Heritage Palazzo Architecture Symposium', date: 'Nov 24 – Nov 29, 2026', category: 'Cultural Salon', revenueSharePct: 1.6, attendeeSharePct: 1.3, targetType: 'lead', targetId: 'LD-021', stage: 'Verbal Definite', client: 'Mori Art Foundation', keysBlocked: 16, venue: 'Heritage Stone Residences' },
+  'sosei-amalfi': [
+    { title: 'Ravello Cliffside Crudo & Cellar Buyout', date: 'Oct 28 – Nov 03, 2026', category: 'Culinary Buyout', revenueSharePct: 2.0, attendeeSharePct: 1.5, targetType: 'lead', targetId: 'LD-010', stage: 'Definite', client: 'Virtuoso Consortium Circle', keysBlocked: 20, venue: 'Tyrrhenian Cliffside Palazzo Wing' },
+    { title: 'Tokyo Capital Lemon Grove Sanctuary', date: 'Apr 04 – Apr 09, 2027', category: 'VIP Sanctuary', revenueSharePct: 1.3, attendeeSharePct: 1.0, targetType: 'booking', targetId: 'BK-004', stage: 'Confirmed OTB', client: 'Virtuoso Italy', keysBlocked: 10, venue: 'Ravello Lemon Grove Villas' },
+    { title: 'Roman Thermal & Tyrrhenian Autumn Retreat', date: 'Nov 12 – Nov 17, 2026', category: 'Wellness Retreat', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-020', stage: 'Prospect', client: 'Zen Journeys', keysBlocked: 15, venue: 'Roman Thermal Cliff Spa & Villas' },
+    { title: 'Heritage Cloister Architecture Symposium', date: 'Nov 24 – Nov 29, 2026', category: 'Cultural Salon', revenueSharePct: 1.6, attendeeSharePct: 1.3, targetType: 'lead', targetId: 'LD-021', stage: 'Verbal Definite', client: 'Mori Art Foundation', keysBlocked: 16, venue: 'Heritage Cloister Residences' },
   ],
-  'sosei-osa': [
-    { title: 'Corcovado Canopy & Rainforest Expedition', date: 'Oct 16 – Oct 22, 2026', category: 'Eco Buyout', revenueSharePct: 1.6, attendeeSharePct: 1.3, targetType: 'booking', targetId: 'BK-005', stage: 'Confirmed OTB', client: 'Discovery Expeditions', keysBlocked: 14, venue: 'Corcovado Canopy Suites' },
-    { title: 'Serenity Collective Rainforest Sound Retreat', date: 'Oct 25 – Oct 30, 2026', category: 'Wellness Retreat', revenueSharePct: 1.5, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-006', stage: 'Verbal Definite', client: 'Serenity Wellness Collective', keysBlocked: 12, venue: 'Botanical Healing Pavilion' },
-    { title: 'Vanguard Biome Cloud Forest Symposium', date: 'Nov 06 – Nov 11, 2026', category: 'Research Forum', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-025', stage: 'Prospect', client: 'Vanguard Biome Research', keysBlocked: 14, venue: 'Rainforest Treehouse Haven' },
-    { title: 'Golfo Dulce Private Yacht & Cacao Immersion', date: 'Nov 18 – Nov 24, 2026', category: 'Private Charter', revenueSharePct: 1.8, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-009', stage: 'Tentative', client: 'Abercrombie & Kent', keysBlocked: 16, venue: 'Golfo Dulce Ocean Villas' },
+  'sosei-patagonia': [
+    { title: 'Torres del Paine Glacier & Puma Expedition', date: 'Oct 16 – Oct 22, 2026', category: 'Eco Buyout', revenueSharePct: 1.6, attendeeSharePct: 1.3, targetType: 'booking', targetId: 'BK-005', stage: 'Confirmed OTB', client: 'Discovery Expeditions', keysBlocked: 14, venue: 'Paine Massif Glacier Estancias' },
+    { title: 'Serenity Collective Austral Sound Retreat', date: 'Oct 25 – Oct 30, 2026', category: 'Wellness Retreat', revenueSharePct: 1.5, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-006', stage: 'Verbal Definite', client: 'Serenity Wellness Collective', keysBlocked: 12, venue: 'Glacial Botanical Spa Pavilion' },
+    { title: 'Vanguard Biome Patagonian Steppe Symposium', date: 'Nov 06 – Nov 11, 2026', category: 'Research Forum', revenueSharePct: 1.4, attendeeSharePct: 1.1, targetType: 'lead', targetId: 'LD-025', stage: 'Prospect', client: 'Vanguard Biome Research', keysBlocked: 14, venue: 'Lenga Forest Refuge Suites' },
+    { title: 'Grey Glacier Private Kayak & Asador Charter', date: 'Nov 18 – Nov 24, 2026', category: 'Private Charter', revenueSharePct: 1.8, attendeeSharePct: 1.2, targetType: 'lead', targetId: 'LD-009', stage: 'Tentative', client: 'Abercrombie & Kent', keysBlocked: 16, venue: 'Lake Sarmiento Horizon Villas' },
   ],
 };
 
@@ -855,15 +935,20 @@ export const GUEST_SATISFACTION_DISTRIBUTION: Array<{ name: string; value: numbe
 ];
 
 const PROPERTY_SATISFACTION_PROFILES: Record<string, { score: number; delta: number; fiveStar: number; fourStar: number; threeStar: number }> = {
-  'sosei-barcelona': { score: 4.8, delta: 0.3, fiveStar: 72, fourStar: 20, threeStar: 6 },
-  'sosei-andermatt': { score: 4.9, delta: 0.4, fiveStar: 78, fourStar: 16, threeStar: 5 },
-  'sosei-el-gouna': { score: 4.7, delta: 0.2, fiveStar: 66, fourStar: 24, threeStar: 7 },
-  'sosei-auh': { score: 4.9, delta: 0.3, fiveStar: 76, fourStar: 18, threeStar: 5 },
-  'sosei-melides': { score: 4.8, delta: 0.3, fiveStar: 74, fourStar: 19, threeStar: 5 },
-  'sosei-umbria': { score: 4.9, delta: 0.4, fiveStar: 80, fourStar: 15, threeStar: 4 },
-  'sosei-tinos': { score: 4.8, delta: 0.2, fiveStar: 71, fourStar: 21, threeStar: 6 },
-  'sosei-osa': { score: 4.9, delta: 0.5, fiveStar: 82, fourStar: 13, threeStar: 4 },
-  'sosei-bali': { score: 4.9, delta: 0.4, fiveStar: 79, fourStar: 16, threeStar: 4 },
+  'sosei-geneva': { score: 4.8, delta: 0.3, fiveStar: 72, fourStar: 20, threeStar: 6 },
+  'sosei-courchevel': { score: 4.9, delta: 0.4, fiveStar: 78, fourStar: 16, threeStar: 5 },
+  'sosei-niseko': { score: 4.9, delta: 0.4, fiveStar: 79, fourStar: 16, threeStar: 4 },
+  'sosei-aspen': { score: 4.9, delta: 0.3, fiveStar: 77, fourStar: 17, threeStar: 5 },
+  'sosei-marrakech': { score: 4.7, delta: 0.2, fiveStar: 66, fourStar: 24, threeStar: 7 },
+  'sosei-alula': { score: 4.9, delta: 0.3, fiveStar: 76, fourStar: 18, threeStar: 5 },
+  'sosei-los-cabos': { score: 4.8, delta: 0.3, fiveStar: 74, fourStar: 19, threeStar: 5 },
+  'sosei-sumba': { score: 4.9, delta: 0.4, fiveStar: 81, fourStar: 14, threeStar: 4 },
+  'sosei-amalfi': { score: 4.9, delta: 0.4, fiveStar: 80, fourStar: 15, threeStar: 4 },
+  'sosei-muscat': { score: 4.8, delta: 0.2, fiveStar: 71, fourStar: 21, threeStar: 6 },
+  'sosei-seychelles': { score: 4.9, delta: 0.4, fiveStar: 78, fourStar: 17, threeStar: 4 },
+  'sosei-patagonia': { score: 4.9, delta: 0.5, fiveStar: 82, fourStar: 13, threeStar: 4 },
+  'sosei-serengeti': { score: 4.9, delta: 0.4, fiveStar: 81, fourStar: 14, threeStar: 4 },
+  'sosei-kyoto': { score: 4.9, delta: 0.4, fiveStar: 79, fourStar: 16, threeStar: 4 },
 };
 
 export interface SatisfactionPillarRow {
@@ -919,7 +1004,7 @@ const PILLAR_SHARES: ShareDef[] = [
 
 export function getPropertyGuestSatisfaction(propertyId: string, period: PeriodId = 'mtd') {
   const m = getPropertyMetrics(propertyId, period);
-  const base = PROPERTY_SATISFACTION_PROFILES[propertyId] ?? PROPERTY_SATISFACTION_PROFILES['sosei-barcelona'];
+  const base = PROPERTY_SATISFACTION_PROFILES[propertyId] ?? PROPERTY_SATISFACTION_PROFILES['sosei-geneva'];
   const periodShift = period === 'today' ? 4 : period === 'mtd' ? 0 : -4;
   const five = clamp(base.fiveStar + periodShift, 55, 88);
   const four = clamp(base.fourStar - Math.round(periodShift * 0.7), 10, 32);
@@ -1071,7 +1156,7 @@ export function getPropertyGuestSatisfaction(propertyId: string, period: PeriodI
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const tiers = PROPERTY_ROOM_TIERS[propertyId] ?? PROPERTY_ROOM_TIERS['sosei-barcelona'];
+  const tiers = PROPERTY_ROOM_TIERS[propertyId] ?? PROPERTY_ROOM_TIERS['sosei-geneva'];
   const recentReviews: PropertyVerifiedReview[] = [
     {
       guest: 'Lord & Lady Harrington',

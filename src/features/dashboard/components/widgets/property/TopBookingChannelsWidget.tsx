@@ -26,8 +26,8 @@ const CHANNEL_OCC_OFFSETS: Record<string, number> = {
 };
 
 export function TopBookingChannelsWidget({
-  propertyId: rawPropertyId = 'sosei-barcelona',
-  propertyName = 'SOSEI Barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
+  propertyName = 'SOSEI Geneva',
   period = 'mtd',
 }: {
   propertyId?: string;

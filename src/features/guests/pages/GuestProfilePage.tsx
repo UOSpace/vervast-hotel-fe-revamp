@@ -141,14 +141,14 @@ export function GuestProfilePage() {
               {/* Left: Image on Top, Clean Key Details Below (col-7) */}
               <div className="col-span-1 md:col-span-7 flex flex-col justify-between h-full gap-2.5">
                 <div className="rounded-lg overflow-hidden shrink-0">
-                  <img src={stayAndermattImg} alt="SOSEI Andermatt" className="w-full h-[125px] object-cover hover:scale-105 transition-transform duration-500" />
+                  <img src={stayAndermattImg} alt="SOSEI Courchevel" className="w-full h-[125px] object-cover hover:scale-105 transition-transform duration-500" />
                 </div>
 
                 <div className="flex flex-col flex-1 justify-between gap-2.5">
                   <div className="flex justify-between items-baseline">
                     <div>
-                      <h4 className="text-xl font-serif text-zinc-900 leading-none">SOSEI Andermatt</h4>
-                      <div className="text-zinc-500 text-[10px] font-normal mt-1">Andermatt, Switzerland</div>
+                      <h4 className="text-xl font-serif text-zinc-900 leading-none">SOSEI Courchevel</h4>
+                      <div className="text-zinc-500 text-[10px] font-normal mt-1">Courchevel, France</div>
                     </div>
                   </div>
 
@@ -163,7 +163,7 @@ export function GuestProfilePage() {
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[9px] text-zinc-500 font-medium">Accommodation</span>
-                      <span className="font-medium text-zinc-900 text-[10px]">Andermatt Summit Penthouse</span>
+                      <span className="font-medium text-zinc-900 text-[10px]">Courchevel Summit Penthouse</span>
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[9px] text-zinc-500 font-medium">Dedicated Service</span>
@@ -204,10 +204,10 @@ export function GuestProfilePage() {
             </div>
             <div className="flex flex-col justify-between flex-1 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 py-1 gap-2">
               {[
-                { date: 'Mar 2025', name: 'SOSEI Andermatt', loc: 'Switzerland', img: journeyAlpineImg, bookingId: 'BK-JA-02' },
-                { date: 'Aug 2024', name: 'SOSEI Barcelona', loc: 'Spain', img: journeySingaporeImg, bookingId: 'BK-JA-03' },
-                { date: 'Feb 2024', name: 'SOSEI Tinos', loc: 'Greece', img: journeyOmanImg, bookingId: 'BK-JA-04' },
-                { date: 'May 2023', name: 'SOSEI AUH', loc: 'UAE', img: journeyMaldivesImg, bookingId: 'BK-JA-05' },
+                { date: 'Mar 2025', name: 'SOSEI Courchevel', loc: 'France', img: journeyAlpineImg, bookingId: 'BK-JA-02' },
+                { date: 'Aug 2024', name: 'SOSEI Geneva', loc: 'Switzerland', img: journeySingaporeImg, bookingId: 'BK-JA-03' },
+                { date: 'Feb 2024', name: 'SOSEI Muscat', loc: 'Oman', img: journeyOmanImg, bookingId: 'BK-JA-04' },
+                { date: 'May 2023', name: 'SOSEI AlUla', loc: 'Saudi Arabia', img: journeyMaldivesImg, bookingId: 'BK-JA-05' },
               ].map((stay, idx) => (
                 <div
                   key={idx}

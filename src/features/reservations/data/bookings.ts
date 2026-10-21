@@ -56,7 +56,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'sal.zanjabila@salindustry.com',
     phone: '+62 812 3456 7890',
     notes: 'Honeymoon stay. Private sunset dolphin cruise and in-villa floating champagne breakfast requested.',
-    hotel: 'SOSEI AUH',
+    hotel: 'SOSEI AlUla',
     destinationCountry: 'UAE',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -82,7 +82,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'm.fuentes@skylinetours.com',
     phone: '+41 22 555 8901',
     notes: 'Ski-in / ski-out equipment fitting arranged. Reserved VIP Gemsstock Cable Car passes.',
-    hotel: 'SOSEI Andermatt',
+    hotel: 'SOSEI Courchevel',
     destinationCountry: 'Switzerland',
     propertyType: 'Ski',
     folioItems: [
@@ -108,7 +108,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'elizabeth.hall@oxfordmed.ac.uk',
     phone: '+44 20 7946 0912',
     notes: 'Attending European Medical Congress. Early runner breakfast and private terrace meeting setups.',
-    hotel: 'SOSEI Barcelona',
+    hotel: 'SOSEI Geneva',
     destinationCountry: 'Spain',
     propertyType: 'Urban',
     folioItems: [
@@ -134,7 +134,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'k.tanaka@tokyocapital.jp',
     phone: '+81 3 5555 0142',
     notes: 'Private outdoor thermal pool requested. Strict allergy protocol: shell-fish free seasonal Umbrian truffle tasting.',
-    hotel: 'SOSEI Umbria',
+    hotel: 'SOSEI Amalfi',
     destinationCountry: 'Italy',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -160,7 +160,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 't.bailey@greenfieldenergy.com',
     phone: '+1 (415) 555-0199',
     notes: 'Eco-tour family itinerary. Private naturalist canopy walk, suspension bridges, and organic cacao workshop.',
-    hotel: 'SOSEI OSA',
+    hotel: 'SOSEI Patagonia',
     destinationCountry: 'Costa Rica',
     propertyType: 'Nature',
     folioItems: [
@@ -186,7 +186,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'rosa.rios@wellnesscollective.org',
     phone: '+1 (305) 555-0814',
     notes: '7-day silent rejuvenation program with daily Ayurvedic doctor consultations, herbal bath, and vegan raw dining.',
-    hotel: 'SOSEI Bali',
+    hotel: 'SOSEI Kyoto',
     destinationCountry: 'Indonesia',
     propertyType: 'Wellness',
     folioItems: [
@@ -212,7 +212,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'a.wright@vancouvertech.ca',
     phone: '+1 (604) 555-3312',
     notes: 'Full coastal equestrian and surf package on pristine Alentejo beaches.',
-    hotel: 'SOSEI Melides',
+    hotel: 'SOSEI Los Cabos',
     destinationCountry: 'Portugal',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -238,7 +238,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 't.mansoori@royaloffice.om',
     phone: '+968 24 555 771',
     notes: 'Private helicopter transfers, private stargazing astronomy session and Cycladic island yacht charter.',
-    hotel: 'SOSEI Tinos',
+    hotel: 'SOSEI Muscat',
     destinationCountry: 'Greece',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -264,7 +264,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'g.hamilton@mayfairholdings.co.uk',
     phone: '+44 20 7946 0883',
     notes: 'Private Red Sea yacht charter and private desert astronomy excursion.',
-    hotel: 'SOSEI El Gouna',
+    hotel: 'SOSEI Marrakech',
     destinationCountry: 'Egypt',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -290,7 +290,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'e.rostova@techcorp.com',
     phone: '+1 (415) 555-8912',
     notes: 'Private marble sculpting master workshop in Pyrgos and VIP yacht tour.',
-    hotel: 'SOSEI Tinos',
+    hotel: 'SOSEI Muscat',
     destinationCountry: 'Greece',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -316,7 +316,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'john.anderson@vervast.com',
     phone: '+1 (212) 555-7842',
     notes: 'Private yacht airport transfer. Top floor unobstructed sunset ocean view. In-villa yoga mat & foam roller setup. Butler Maria assigned.',
-    hotel: 'SOSEI AUH',
+    hotel: 'SOSEI AlUla',
     destinationCountry: 'UAE',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -342,7 +342,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'john.anderson@vervast.com',
     phone: '+1 (212) 555-7842',
     notes: 'Private alpine helicopter tour over glacier with mountain guide. Daily cardio & thermal sauna sessions arranged.',
-    hotel: 'SOSEI Andermatt',
+    hotel: 'SOSEI Courchevel',
     destinationCountry: 'Switzerland',
     propertyType: 'Ski',
     folioItems: [
@@ -368,7 +368,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'john.anderson@vervast.com',
     phone: '+1 (212) 555-7842',
     notes: 'Private biodynamic wine cellar tastings and chef pairings. Contemporary art galleries private viewing.',
-    hotel: 'SOSEI Barcelona',
+    hotel: 'SOSEI Geneva',
     destinationCountry: 'Spain',
     propertyType: 'Urban',
     folioItems: [
@@ -394,7 +394,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'john.anderson@vervast.com',
     phone: '+1 (212) 555-7842',
     notes: 'Private astronomy session & island excursion. Sunset pavilion terrace with quiet workstation.',
-    hotel: 'SOSEI Tinos',
+    hotel: 'SOSEI Muscat',
     destinationCountry: 'Greece',
     propertyType: 'Beach Resort',
     folioItems: [
@@ -420,7 +420,7 @@ export const BOOKINGS: BookingRecord[] = [
     email: 'john.anderson@vervast.com',
     phone: '+1 (212) 555-7842',
     notes: 'Requested Butler Maria. Private sailing yacht charter, early morning terrace espresso, and deep tissue therapy.',
-    hotel: 'SOSEI AUH',
+    hotel: 'SOSEI AlUla',
     destinationCountry: 'UAE',
     propertyType: 'Beach Resort',
     folioItems: [

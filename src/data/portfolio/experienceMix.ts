@@ -361,41 +361,61 @@ interface BottleneckDef {
 
 /** Lead capacity-constrained programmes per resort (at most 65% of a resort's unmet demand in total). */
 const BOTTLENECK_PROGRAMS: Record<string, BottleneckDef[]> = {
-  'sosei-andermatt': [
-    { activity: 'Gotthard Glacier Heli-Ski & Hike', fix: '2nd Partner Helicopter Contract', sharePct: 40 },
+  'sosei-courchevel': [
+    { activity: 'Trois Vallées Glacier Heli-Ski & Hike', fix: '2nd Partner Helicopter Contract', sharePct: 40 },
     { activity: 'Alpine Thermal Breathwork', fix: 'Add Chalet Studio Session', sharePct: 25 },
   ],
-  'sosei-el-gouna': [
-    { activity: 'Red Sea Coral Reef Dive Charter', fix: 'Add Morning Yacht Departure', sharePct: 40 },
-    { activity: 'Desert Lagoon Kitesurf Clinic', fix: 'Certify 2 Additional Instructors', sharePct: 25 },
+  'sosei-niseko': [
+    { activity: 'Mount Yotei Backcountry Cat-Ski', fix: 'Add Second Snowcat Departure', sharePct: 40 },
+    { activity: 'Volcanic Onsen Forest Bathing', fix: 'Extend Afternoon Guide Slot', sharePct: 25 },
   ],
-  'sosei-auh': [
-    { activity: 'Saadiyat Private Dhow Sunset Cruise', fix: 'Second Dhow Vessel Charter', sharePct: 40 },
-    { activity: 'Hawksbill Turtle Conservation Walk', fix: 'Add Dawn Marine Biologist Slot', sharePct: 25 },
+  'sosei-aspen': [
+    { activity: 'Continental Divide Heli-Powder Tour', fix: 'Add Morning Charter Slot', sharePct: 40 },
+    { activity: 'High-Altitude Oxygen Recovery Lab', fix: 'Add 2nd Practitioner Suite', sharePct: 25 },
   ],
-  'sosei-melides': [
-    { activity: 'Alentejo Dune Horseback Expedition', fix: 'Expand Equestrian Guide Roster', sharePct: 40 },
-    { activity: 'Atlantic Surf & Lagoon Paddle', fix: 'Add Afternoon Tide Session', sharePct: 25 },
+  'sosei-amalfi': [
+    { activity: 'Capri & Positano Private Riva Charter', fix: 'Partner with 2nd Riva Yacht', sharePct: 40 },
+    { activity: 'Ravello Cliffside Lemon Grove Walk', fix: 'Expand Agronomist Guide Slot', sharePct: 25 },
   ],
-  'sosei-umbria': [
-    { activity: 'Private White Truffle Foraging', fix: 'Partner with 2nd Truffle Hunter', sharePct: 40 },
-    { activity: 'Medieval Vineyard Cycling Tour', fix: 'Expand E-Bike Fleet & Guide Slot', sharePct: 25 },
+  'sosei-sumba': [
+    { activity: 'Sumbanese Stallion Sunset Beach Ride', fix: 'Expand Equestrian Guide Roster', sharePct: 40 },
+    { activity: 'Occy’s Left Reef Surf Safari', fix: 'Add Second Tropics Boat Transfer', sharePct: 25 },
   ],
-  'sosei-tinos': [
-    { activity: 'Cycladic Marble Sculpting Workshop', fix: 'Add Second Artisan Studio Slot', sharePct: 40 },
-    { activity: 'Aegean Private Catamaran Hopping', fix: 'Second Vessel Departure', sharePct: 25 },
+  'sosei-los-cabos': [
+    { activity: 'Sea of Cortez Whale Shark Sail', fix: 'Expand Catamaran Charter Fleet', sharePct: 40 },
+    { activity: 'Baja Desert Arroyo Horseback Trek', fix: 'Add Late-Afternoon Tide Session', sharePct: 25 },
   ],
-  'sosei-barcelona': [
-    { activity: 'Private Architect Sail', fix: 'Charter Second Yacht', sharePct: 40 },
-    { activity: 'Gothic Quarter Art Walk', fix: 'Add Evening Departure', sharePct: 25 },
+  'sosei-muscat': [
+    { activity: 'Dimaniyat Islands Private Dhow Dive', fix: 'Add Second Dhow Vessel Departure', sharePct: 40 },
+    { activity: 'Jebel Akhdar Canyon Via Ferrata', fix: 'Certify 2 Additional Mountaineers', sharePct: 25 },
   ],
-  'sosei-osa': [
-    { activity: 'Corcovado Night Wildlife Expedition', fix: 'Certify 2 Additional Naturalists', sharePct: 40 },
-    { activity: 'Golfo Dulce Outrigger Voyage', fix: 'Extend Afternoon Window', sharePct: 25 },
+  'sosei-seychelles': [
+    { activity: 'Félicité & La Digue Helicopter Hop', fix: 'Second Island Heli Slot', sharePct: 40 },
+    { activity: 'Aldabra Giant Tortoise Sanctuary Walk', fix: 'Add Dawn Naturalist Rotation', sharePct: 25 },
   ],
-  'sosei-bali': [
-    { activity: 'Uluwatu Cliff Sunrise Pranayama', fix: 'Expand Cliff Deck Capacity', sharePct: 40 },
-    { activity: 'Melukat Water Blessing', fix: 'Add Dawn Priest Rotation', sharePct: 25 },
+  'sosei-geneva': [
+    { activity: 'Private Haute Horlogerie Atelier Tour', fix: 'Partner with 2nd Master Watchmaker', sharePct: 40 },
+    { activity: 'Lake Geneva Classic Riva Cruise', fix: 'Add Sunset Departure', sharePct: 25 },
+  ],
+  'sosei-marrakech': [
+    { activity: 'Atlas Mountains Private Heli-Trek', fix: 'Add Morning Helicopter Rotation', sharePct: 40 },
+    { activity: 'Medina Artisan & Majorelle Curator Walk', fix: 'Certify 2 Additional Historians', sharePct: 25 },
+  ],
+  'sosei-patagonia': [
+    { activity: 'Torres del Paine Puma Tracking Safari', fix: 'Certify 2 Additional Trackers', sharePct: 40 },
+    { activity: 'Grey Glacier Ice-Hike & Kayak Voyage', fix: 'Extend Afternoon Expedition Window', sharePct: 25 },
+  ],
+  'sosei-serengeti': [
+    { activity: 'Great Migration Dawn Balloon Safari', fix: 'Add Second Balloon Pilot Crew', sharePct: 40 },
+    { activity: 'Kopje Lion & Leopard Conservation Drive', fix: 'Add 2nd Open-Top Land Cruiser', sharePct: 25 },
+  ],
+  'sosei-kyoto': [
+    { activity: 'Arashiyama Dawn Zen Temple Meditation', fix: 'Expand Temple Garden Session', sharePct: 40 },
+    { activity: 'Private Uji Tea Master Ceremony', fix: 'Add Afternoon Chashitsu Rotation', sharePct: 25 },
+  ],
+  'sosei-alula': [
+    { activity: 'Hegra Nabataean Stargazing & Astronomy', fix: 'Add Second Telescope Deck', sharePct: 40 },
+    { activity: 'Ashar Sandstone Canyon Sound Bath', fix: 'Add Twilight Acoustic Session', sharePct: 25 },
   ],
 };
 

@@ -1,7 +1,7 @@
 [
   {
     "id": "exp_alp_001",
-    "property_id": "sosei-nocturne",
+    "property_id": "sosei-courchevel",
     "name": "Glacier Thermal Hydrotherapy & Alpine Sauna",
     "category": "spa_wellness",
     "target_segment": "alpine",
@@ -14,7 +14,7 @@
   },
   {
     "id": "exp_alp_002",
-    "property_id": "sosei-aurora",
+    "property_id": "sosei-aspen",
     "name": "Arctic Reindeer Sledding & Aurora Hunt",
     "category": "arctic_adventure",
     "target_segment": "alpine",
@@ -27,7 +27,7 @@
   },
   {
     "id": "exp_ocn_001",
-    "property_id": "sosei-marea",
+    "property_id": "sosei-alula",
     "name": "Sunset Manta Ray & Bioluminescent Night Dive",
     "category": "ocean_marine",
     "target_segment": "ocean",
@@ -40,7 +40,7 @@
   },
   {
     "id": "exp_cty_001",
-    "property_id": "sosei-verper",
+    "property_id": "sosei-geneva",
     "name": "Curated MoMA & Private Art Collector Tour",
     "category": "culture_arts",
     "target_segment": "city",
@@ -53,7 +53,7 @@
   },
   {
     "id": "exp_for_001",
-    "property_id": "sosei-sylvan",
+    "property_id": "sosei-patagonia",
     "name": "Zen Bamboo Forest Bathing & Temple Meditation",
     "category": "zen_wellness",
     "target_segment": "forest",
@@ -66,7 +66,7 @@
   },
   {
     "id": "exp_cou_001",
-    "property_id": "sosei-hearth",
+    "property_id": "sosei-courchevel",
     "name": "Tuscan White Truffle Hunt & Master Winemaker Blend",
     "category": "culinary_estate",
     "target_segment": "countryside",
@@ -79,7 +79,7 @@
   },
   {
     "id": "exp_des_001",
-    "property_id": "sosei-mirage",
+    "property_id": "sosei-muscat",
     "name": "Siwa Great Sand Sea Stargazing & Bedouin Camp",
     "category": "desert_astronomy",
     "target_segment": "desert",

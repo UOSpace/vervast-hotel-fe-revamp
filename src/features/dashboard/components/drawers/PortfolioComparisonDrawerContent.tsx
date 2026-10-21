@@ -399,7 +399,7 @@ export function PortfolioComparisonDrawerContent(
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Portfolio Total / Average</td>
-                <td className="py-3 px-3 text-zinc-500">9 Properties · 5 Collections</td>
+                <td className="py-3 px-3 text-zinc-500">14 · 5 Collections</td>
                 <td className="py-3 px-3 text-right text-emerald-700">{fmtPct(portfolioMetrics.occupancyPct, 1)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.adr)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(portfolioMetrics.revpar)}</td>

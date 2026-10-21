@@ -1,126 +1,58 @@
 [
   {
-    "id": "sosei-nocturne",
-    "code": "ALP-NOCT",
-    "name": "SOSEI Nocturne",
+    "id": "sosei-courchevel",
+    "code": "SKI-COU",
+    "name": "SOSEI Courchevel",
     "brand": "SOSEI",
-    "category": "alpine",
-    "sub_category": "Luxury Ski & Mountain Wellness Resort",
+    "category": "ski",
+    "sub_category": "Luxury Ski & Alpine Sanctuary",
     "region": "Europe",
-    "slug": "sosei-nocturne-switzerland",
+    "slug": "sosei-courchevel",
     "status": "active",
-    "tagline": "Elevated sanctuary nestled in the Swiss Alps",
-    "star_rating": 5.0,
+    "tagline": "Luxury Ski & Alpine Sanctuary",
+    "star_rating": 5,
     "opening_date": "2021-11-15",
     "location": {
-      "address_line_1": "Matterhorn Glacier Way 42",
+      "address_line_1": "Courchevel Sanctuary Estate 1",
       "address_line_2": "",
-      "city": "Zermatt",
-      "state_province": "Valais",
-      "postal_code": "3920",
-      "country_code": "CH",
-      "country_name": "Switzerland",
-      "latitude": 46.8182,
-      "longitude": 8.2275,
-      "coordinates": [8.2275, 46.8182],
-      "altitude_meters": 1620,
-      "timezone": "Europe/Zurich"
+      "city": "Courchevel",
+      "state_province": "Savoie",
+      "postal_code": "10000",
+      "country_code": "FR",
+      "country_name": "France",
+      "latitude": 45.4153,
+      "longitude": 6.6347,
+      "coordinates": [
+        6.6347,
+        45.4153
+      ],
+      "altitude_meters": 100,
+      "timezone": "Europe/Paris"
     },
     "contact": {
-      "phone": "+41 27 966 8000",
-      "email": "concierge.nocturne@soseihotels.com",
-      "reservations_email": "reservations.nocturne@soseihotels.com",
-      "website": "https://soseihotels.com/alpine/nocturne"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.courchevel@soseihotels.com",
+      "reservations_email": "reservations.courchevel@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-courchevel"
     },
     "currency": "USD",
-    "local_currency": "CHF",
+    "local_currency": "EUR",
     "check_in_time": "15:00",
-    "check_out_time": "11:00",
-    "total_rooms": 95,
-    "total_floors": 6,
-    "total_area_sqm": 24500,
+    "check_out_time": "12:00",
+    "total_rooms": 85,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
     "amenities": [
-      "Ski-in / Ski-out Access",
-      "Thermal Hydrotherapy Onsen",
-      "Michelin-Starred Alpine Grill",
-      "Helipad Shuttle Service",
-      "Private Ski Concierge & Valet",
-      "Holistic Mountain Spa",
-      "Fireplace Cigar Lounge",
-      "Heated Panoramic Infinity Pool"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
       "cancellation_deadline_hours": 72,
       "deposit_required_pct": 30,
       "pet_friendly": true,
-      "child_policy": "Children welcome; complimentary ski crèche",
-      "smoking_policy": "100% Non-smoking indoors"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/alpine.png",
-      "hero_banner": "/assets/contents/alpine.png",
-      "gallery": [
-        "/assets/contents/alpine.png",
-        "/assets/contents/sanctuary_portal.png"
-      ]
-    },
-    "created_at": "2023-01-10T08:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-aurora",
-    "code": "ALP-AURO",
-    "name": "SOSEI Aurora",
-    "brand": "SOSEI",
-    "category": "alpine",
-    "sub_category": "Arctic Wilderness & Northern Lights Retreat",
-    "region": "Europe",
-    "slug": "sosei-aurora-finland",
-    "status": "active",
-    "tagline": "Private glass-dome sanctuaries under the Northern Lights",
-    "star_rating": 5.0,
-    "opening_date": "2023-10-01",
-    "location": {
-      "address_line_1": "Revontulentie 18",
-      "address_line_2": "",
-      "city": "Rovaniemi",
-      "state_province": "Lapland",
-      "postal_code": "96930",
-      "country_code": "FI",
-      "country_name": "Finland",
-      "latitude": 66.5039,
-      "longitude": 25.7208,
-      "coordinates": [25.7208, 66.5039],
-      "altitude_meters": 320,
-      "timezone": "Europe/Helsinki"
-    },
-    "contact": {
-      "phone": "+358 16 331 4000",
-      "email": "aurora@soseihotels.com",
-      "reservations_email": "reservations.aurora@soseihotels.com",
-      "website": "https://soseihotels.com/alpine/aurora"
-    },
-    "currency": "USD",
-    "local_currency": "EUR",
-    "check_in_time": "16:00",
-    "check_out_time": "11:00",
-    "total_rooms": 48,
-    "total_floors": 2,
-    "total_area_sqm": 18000,
-    "amenities": [
-      "Geothermal Glass Ceilings",
-      "Private Cedar Wood Saunas",
-      "Husky & Reindeer Safari Hub",
-      "Nordic Wild Game Restaurant",
-      "Aurora Observatory Deck",
-      "Snowshoeing Trails"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 120,
-      "deposit_required_pct": 50,
-      "pet_friendly": false,
-      "child_policy": "Family friendly",
-      "smoking_policy": "Strictly non-smoking"
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
       "thumbnail": "/assets/contents/alpine.png",
@@ -129,128 +61,193 @@
         "/assets/contents/alpine.png"
       ]
     },
-    "created_at": "2023-05-14T10:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   },
   {
-    "id": "sosei-marea",
-    "code": "OCN-MARE",
-    "name": "SOSEI Maréa",
+    "id": "sosei-niseko",
+    "code": "SKI-NIS",
+    "name": "SOSEI Niseko",
     "brand": "SOSEI",
-    "category": "ocean",
-    "sub_category": "Private Island & Overwater Villa Resort",
+    "category": "ski",
+    "sub_category": "Hokkaido Powder & Onsen Sanctuary",
     "region": "Asia Pacific",
-    "slug": "sosei-marea-maldives",
+    "slug": "sosei-niseko",
     "status": "active",
-    "tagline": "Private island sanctuary suspended above turquoise waters",
-    "star_rating": 5.0,
-    "opening_date": "2020-12-01",
+    "tagline": "Hokkaido Powder & Onsen Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2022-12-01",
     "location": {
-      "address_line_1": "Baa Atoll Biosphere Reserve",
-      "address_line_2": "Island 07",
-      "city": "Baa Atoll",
-      "state_province": "North Province",
-      "postal_code": "20026",
-      "country_code": "MV",
-      "country_name": "Maldives",
-      "latitude": 4.1755,
-      "longitude": 73.5089,
-      "coordinates": [73.5089, 4.1755],
-      "altitude_meters": 2,
-      "timezone": "Indian/Maldives"
+      "address_line_1": "Niseko Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Niseko",
+      "state_province": "Hokkaido",
+      "postal_code": "10000",
+      "country_code": "JP",
+      "country_name": "Japan",
+      "latitude": 42.8048,
+      "longitude": 140.6874,
+      "coordinates": [
+        140.6874,
+        42.8048
+      ],
+      "altitude_meters": 100,
+      "timezone": "Asia/Tokyo"
     },
     "contact": {
-      "phone": "+960 660 3000",
-      "email": "marea@soseihotels.com",
-      "reservations_email": "reservations.marea@soseihotels.com",
-      "website": "https://soseihotels.com/ocean/marea"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.niseko@soseihotels.com",
+      "reservations_email": "reservations.niseko@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-niseko"
     },
     "currency": "USD",
-    "local_currency": "USD",
-    "check_in_time": "14:00",
-    "check_out_time": "12:00",
-    "total_rooms": 64,
-    "total_floors": 1,
-    "total_area_sqm": 82000,
-    "amenities": [
-      "Overwater Sunset Villas with Private Plunge Pools",
-      "Underwater Wine Cellar & Coral Lounge",
-      "PADI 5-Star Marine Conservation Center",
-      "Ayurvedic Water Spa Pavilions",
-      "Private Seaplane Arrival Lounge",
-      "Yacht Charter & Sandbank Excursions"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 168,
-      "deposit_required_pct": 50,
-      "pet_friendly": false,
-      "child_policy": "Overwater villas require safety waiver for under 12",
-      "smoking_policy": "Designated outdoor terraces only"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/ocean.png",
-      "hero_banner": "/assets/contents/ocean.png",
-      "gallery": [
-        "/assets/contents/ocean.png",
-        "/assets/contents/hospitality_portal.png"
-      ]
-    },
-    "created_at": "2021-06-15T08:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-pelagia",
-    "code": "OCN-PELA",
-    "name": "SOSEI Pelagia",
-    "brand": "SOSEI",
-    "category": "ocean",
-    "sub_category": "Oceanfront Cliff & Coral Sanctuary",
-    "region": "Asia Pacific",
-    "slug": "sosei-pelagia-indonesia",
-    "status": "active",
-    "tagline": "Dramatic ocean cliffs meeting pristine Balinese waters",
-    "star_rating": 5.0,
-    "opening_date": "2022-08-20",
-    "location": {
-      "address_line_1": "Jalan Pantai Bingin No. 88",
-      "address_line_2": "Uluwatu Cliffs",
-      "city": "Pecatu",
-      "state_province": "Bali",
-      "postal_code": "80361",
-      "country_code": "ID",
-      "country_name": "Indonesia",
-      "latitude": -8.4095,
-      "longitude": 115.1889,
-      "coordinates": [115.1889, -8.4095],
-      "altitude_meters": 65,
-      "timezone": "Asia/Makassar"
-    },
-    "contact": {
-      "phone": "+62 361 895 7000",
-      "email": "pelagia@soseihotels.com",
-      "reservations_email": "reservations.pelagia@soseihotels.com",
-      "website": "https://soseihotels.com/ocean/pelagia"
-    },
-    "currency": "USD",
-    "local_currency": "IDR",
+    "local_currency": "JPY",
     "check_in_time": "15:00",
     "check_out_time": "12:00",
-    "total_rooms": 72,
-    "total_floors": 3,
-    "total_area_sqm": 45000,
+    "total_rooms": 75,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
     "amenities": [
-      "Cliff-Edge Infinity Pools",
-      "Private Incline Funicular to Beach",
-      "Balinese Sound Healing & Yoga Shala",
-      "Oceanfront Open-Fire Grill",
-      "Surf Guide & Ocean Board Concierge"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
       "cancellation_deadline_hours": 72,
       "deposit_required_pct": 30,
-      "pet_friendly": false,
-      "child_policy": "All ages welcome; kids club provided",
-      "smoking_policy": "Outdoor balconies only"
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/alpine.png",
+      "hero_banner": "/assets/contents/alpine.png",
+      "gallery": [
+        "/assets/contents/alpine.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-aspen",
+    "code": "SKI-ASP",
+    "name": "SOSEI Aspen",
+    "brand": "SOSEI",
+    "category": "ski",
+    "sub_category": "Rocky Mountain Ski & Alpine Retreat",
+    "region": "Americas",
+    "slug": "sosei-aspen",
+    "status": "active",
+    "tagline": "Rocky Mountain Ski & Alpine Retreat",
+    "star_rating": 5,
+    "opening_date": "2023-11-10",
+    "location": {
+      "address_line_1": "Aspen Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Aspen",
+      "state_province": "Colorado",
+      "postal_code": "10000",
+      "country_code": "US",
+      "country_name": "United States",
+      "latitude": 39.1911,
+      "longitude": -106.8175,
+      "coordinates": [
+        -106.8175,
+        39.1911
+      ],
+      "altitude_meters": 100,
+      "timezone": "America/Denver"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.aspen@soseihotels.com",
+      "reservations_email": "reservations.aspen@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-aspen"
+    },
+    "currency": "USD",
+    "local_currency": "USD",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 80,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/alpine.png",
+      "hero_banner": "/assets/contents/alpine.png",
+      "gallery": [
+        "/assets/contents/alpine.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-amalfi",
+    "code": "BCH-AMA",
+    "name": "SOSEI Amalfi",
+    "brand": "SOSEI",
+    "category": "beach-resort",
+    "sub_category": "Tyrrhenian Cliffside & Lemon Grove Sanctuary",
+    "region": "Europe",
+    "slug": "sosei-amalfi",
+    "status": "active",
+    "tagline": "Tyrrhenian Cliffside & Lemon Grove Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2021-05-18",
+    "location": {
+      "address_line_1": "Amalfi Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Amalfi",
+      "state_province": "Campania",
+      "postal_code": "10000",
+      "country_code": "IT",
+      "country_name": "Italy",
+      "latitude": 40.634,
+      "longitude": 14.6027,
+      "coordinates": [
+        14.6027,
+        40.634
+      ],
+      "altitude_meters": 100,
+      "timezone": "Europe/Rome"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.amalfi@soseihotels.com",
+      "reservations_email": "reservations.amalfi@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-amalfi"
+    },
+    "currency": "USD",
+    "local_currency": "EUR",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 60,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
       "thumbnail": "/assets/contents/ocean.png",
@@ -259,128 +256,323 @@
         "/assets/contents/ocean.png"
       ]
     },
-    "created_at": "2022-03-01T10:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   },
   {
-    "id": "sosei-verper",
-    "code": "CTY-VERP",
-    "name": "SOSEI Verper",
+    "id": "sosei-los-cabos",
+    "code": "BCH-CAB",
+    "name": "SOSEI Los Cabos",
     "brand": "SOSEI",
-    "category": "city",
-    "sub_category": "Urban Ultra-Luxury Landmark Hotel",
+    "category": "beach-resort",
+    "sub_category": "Sea of Cortez & Desert Coast Sanctuary",
     "region": "Americas",
-    "slug": "sosei-verper-new-york",
+    "slug": "sosei-los-cabos",
     "status": "active",
-    "tagline": "Architectural serenity in the epicenter of Manhattan",
-    "star_rating": 5.0,
-    "opening_date": "2022-04-18",
+    "tagline": "Sea of Cortez & Desert Coast Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2023-06-01",
     "location": {
-      "address_line_1": "742 Fifth Avenue",
-      "address_line_2": "Floors 28-54",
-      "city": "New York",
-      "state_province": "NY",
-      "postal_code": "10019",
-      "country_code": "US",
-      "country_name": "United States",
-      "latitude": 40.7128,
-      "longitude": -74.0060,
-      "coordinates": [-74.0060, 40.7128],
-      "altitude_meters": 35,
-      "timezone": "America/New_York"
+      "address_line_1": "Los Cabos Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Los Cabos",
+      "state_province": "Baja California Sur",
+      "postal_code": "10000",
+      "country_code": "MX",
+      "country_name": "Mexico",
+      "latitude": 22.8905,
+      "longitude": -109.9167,
+      "coordinates": [
+        -109.9167,
+        22.8905
+      ],
+      "altitude_meters": 100,
+      "timezone": "America/Mazatlan"
     },
     "contact": {
-      "phone": "+1 212 555 0199",
-      "email": "verper@soseihotels.com",
-      "reservations_email": "reservations.verper@soseihotels.com",
-      "website": "https://soseihotels.com/city/verper"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.los-cabos@soseihotels.com",
+      "reservations_email": "reservations.los-cabos@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-los-cabos"
     },
     "currency": "USD",
-    "local_currency": "USD",
+    "local_currency": "MXN",
     "check_in_time": "15:00",
     "check_out_time": "12:00",
-    "total_rooms": 142,
-    "total_floors": 26,
+    "total_rooms": 65,
+    "total_floors": 4,
     "total_area_sqm": 38000,
     "amenities": [
-      "Rooftop Observatory Cocktail Lounge",
-      "Private Art Gallery & Curated Library",
-      "High-Tech Executive Boardrooms",
-      "24/7 Butler & Chauffeur Fleet",
-      "Biophilic Wellness & Cryotherapy Center",
-      "Private Dining by Renowned Chef"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
-      "cancellation_deadline_hours": 48,
-      "deposit_required_pct": 20,
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
       "pet_friendly": true,
       "child_policy": "All ages welcome",
-      "smoking_policy": "Non-smoking property"
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
-      "thumbnail": "/assets/contents/city.png",
-      "hero_banner": "/assets/contents/city.png",
+      "thumbnail": "/assets/contents/ocean.png",
+      "hero_banner": "/assets/contents/ocean.png",
       "gallery": [
-        "/assets/contents/city.png",
-        "/assets/contents/design_portal.png"
+        "/assets/contents/ocean.png"
       ]
     },
-    "created_at": "2022-01-20T08:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   },
   {
-    "id": "sosei-elan",
-    "code": "CTY-ELAN",
-    "name": "SOSEI Élan",
+    "id": "sosei-muscat",
+    "code": "BCH-MCT",
+    "name": "SOSEI Muscat",
     "brand": "SOSEI",
-    "category": "city",
-    "sub_category": "Modernist Haven & Creative Sanctuary",
-    "region": "Americas",
-    "slug": "sosei-elan-los-angeles",
+    "category": "beach-resort",
+    "sub_category": "Al Hajar Cove & Arabian Sea Sanctuary",
+    "region": "Middle East & Africa",
+    "slug": "sosei-muscat",
     "status": "active",
-    "tagline": "Discreet modernist luxury overlooking the hills",
-    "star_rating": 5.0,
-    "opening_date": "2023-02-10",
+    "tagline": "Al Hajar Cove & Arabian Sea Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2023-07-01",
     "location": {
-      "address_line_1": "9820 Wilshire Blvd",
+      "address_line_1": "Muscat Sanctuary Estate 1",
       "address_line_2": "",
-      "city": "Los Angeles",
-      "state_province": "CA",
-      "postal_code": "90212",
-      "country_code": "US",
-      "country_name": "United States",
-      "latitude": 34.0522,
-      "longitude": -118.2437,
-      "coordinates": [-118.2437, 34.0522],
-      "altitude_meters": 78,
-      "timezone": "America/Los_Angeles"
+      "city": "Muscat",
+      "state_province": "Muscat",
+      "postal_code": "10000",
+      "country_code": "OM",
+      "country_name": "Oman",
+      "latitude": 23.588,
+      "longitude": 58.3829,
+      "coordinates": [
+        58.3829,
+        23.588
+      ],
+      "altitude_meters": 100,
+      "timezone": "Asia/Muscat"
     },
     "contact": {
-      "phone": "+1 310 555 8820",
-      "email": "elan@soseihotels.com",
-      "reservations_email": "reservations.elan@soseihotels.com",
-      "website": "https://soseihotels.com/city/elan"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.muscat@soseihotels.com",
+      "reservations_email": "reservations.muscat@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-muscat"
     },
     "currency": "USD",
-    "local_currency": "USD",
+    "local_currency": "OMR",
     "check_in_time": "15:00",
     "check_out_time": "12:00",
-    "total_rooms": 88,
-    "total_floors": 8,
-    "total_area_sqm": 22000,
+    "total_rooms": 65,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
     "amenities": [
-      "Subtropical Courtyard Pool & Cabanas",
-      "Private Screening Room",
-      "Omakase Sushi Counter",
-      "Electric Car Valet & Chauffeur",
-      "Organic Herbal Infusion Bar"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
-      "cancellation_deadline_hours": 48,
-      "deposit_required_pct": 25,
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
       "pet_friendly": true,
       "child_policy": "All ages welcome",
-      "smoking_policy": "Non-smoking property"
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/ocean.png",
+      "hero_banner": "/assets/contents/ocean.png",
+      "gallery": [
+        "/assets/contents/ocean.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-sumba",
+    "code": "BCH-SUM",
+    "name": "SOSEI Sumba",
+    "brand": "SOSEI",
+    "category": "beach-resort",
+    "sub_category": "Oceanfront Cliff & Equestrian Sanctuary",
+    "region": "Asia Pacific",
+    "slug": "sosei-sumba",
+    "status": "active",
+    "tagline": "Oceanfront Cliff & Equestrian Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2022-08-20",
+    "location": {
+      "address_line_1": "Sumba Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Sumba",
+      "state_province": "East Nusa Tenggara",
+      "postal_code": "10000",
+      "country_code": "ID",
+      "country_name": "Indonesia",
+      "latitude": -9.65,
+      "longitude": 119.4,
+      "coordinates": [
+        119.4,
+        -9.65
+      ],
+      "altitude_meters": 100,
+      "timezone": "Asia/Makassar"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.sumba@soseihotels.com",
+      "reservations_email": "reservations.sumba@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-sumba"
+    },
+    "currency": "USD",
+    "local_currency": "IDR",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 65,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/ocean.png",
+      "hero_banner": "/assets/contents/ocean.png",
+      "gallery": [
+        "/assets/contents/ocean.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-seychelles",
+    "code": "BCH-SEY",
+    "name": "SOSEI Seychelles",
+    "brand": "SOSEI",
+    "category": "beach-resort",
+    "sub_category": "Granite Cove & Indian Ocean Sanctuary",
+    "region": "Middle East & Africa",
+    "slug": "sosei-seychelles",
+    "status": "active",
+    "tagline": "Granite Cove & Indian Ocean Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2023-09-01",
+    "location": {
+      "address_line_1": "Mahé Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Mahé",
+      "state_province": "Mahé",
+      "postal_code": "10000",
+      "country_code": "SC",
+      "country_name": "Seychelles",
+      "latitude": -4.6796,
+      "longitude": 55.492,
+      "coordinates": [
+        55.492,
+        -4.6796
+      ],
+      "altitude_meters": 100,
+      "timezone": "Indian/Mahe"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.seychelles@soseihotels.com",
+      "reservations_email": "reservations.seychelles@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-seychelles"
+    },
+    "currency": "USD",
+    "local_currency": "SCR",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 60,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/ocean.png",
+      "hero_banner": "/assets/contents/ocean.png",
+      "gallery": [
+        "/assets/contents/ocean.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-geneva",
+    "code": "URB-GVA",
+    "name": "SOSEI Geneva",
+    "brand": "SOSEI",
+    "category": "urban",
+    "sub_category": "Lac Léman Diplomatic & Horlogerie Landmark",
+    "region": "Europe",
+    "slug": "sosei-geneva",
+    "status": "active",
+    "tagline": "Lac Léman Diplomatic & Horlogerie Landmark",
+    "star_rating": 5,
+    "opening_date": "2022-04-18",
+    "location": {
+      "address_line_1": "Geneva Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Geneva",
+      "state_province": "Geneva",
+      "postal_code": "10000",
+      "country_code": "CH",
+      "country_name": "Switzerland",
+      "latitude": 46.2044,
+      "longitude": 6.1432,
+      "coordinates": [
+        6.1432,
+        46.2044
+      ],
+      "altitude_meters": 100,
+      "timezone": "Europe/Zurich"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.geneva@soseihotels.com",
+      "reservations_email": "reservations.geneva@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-geneva"
+    },
+    "currency": "USD",
+    "local_currency": "CHF",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 110,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
       "thumbnail": "/assets/contents/city.png",
@@ -389,62 +581,258 @@
         "/assets/contents/city.png"
       ]
     },
-    "created_at": "2022-09-01T12:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   },
   {
-    "id": "sosei-sylvan",
-    "code": "FOR-SYLV",
-    "name": "SOSEI Sylvan",
+    "id": "sosei-marrakech",
+    "code": "URB-MAR",
+    "name": "SOSEI Marrakech",
     "brand": "SOSEI",
-    "category": "forest",
-    "sub_category": "Zen Forest & Botanical Ryokan Retreat",
-    "region": "Asia Pacific",
-    "slug": "sosei-sylvan-kyoto",
+    "category": "urban",
+    "sub_category": "Palmeraie Royal Riad & Atlas Sanctuary",
+    "region": "Middle East & Africa",
+    "slug": "sosei-marrakech",
     "status": "active",
-    "tagline": "Timeless Japanese serenity among ancient cedar and bamboo groves",
-    "star_rating": 5.0,
+    "tagline": "Palmeraie Royal Riad & Atlas Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2022-05-15",
+    "location": {
+      "address_line_1": "Marrakech Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Marrakech",
+      "state_province": "Marrakesh-Safi",
+      "postal_code": "10000",
+      "country_code": "MA",
+      "country_name": "Morocco",
+      "latitude": 31.6295,
+      "longitude": -7.9811,
+      "coordinates": [
+        -7.9811,
+        31.6295
+      ],
+      "altitude_meters": 100,
+      "timezone": "Africa/Casablanca"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.marrakech@soseihotels.com",
+      "reservations_email": "reservations.marrakech@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-marrakech"
+    },
+    "currency": "USD",
+    "local_currency": "MAD",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 80,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/city.png",
+      "hero_banner": "/assets/contents/city.png",
+      "gallery": [
+        "/assets/contents/city.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-patagonia",
+    "code": "NAT-PAT",
+    "name": "SOSEI Patagonia",
+    "brand": "SOSEI",
+    "category": "nature",
+    "sub_category": "Torres del Paine Glacier & Steppe Sanctuary",
+    "region": "Americas",
+    "slug": "sosei-patagonia",
+    "status": "active",
+    "tagline": "Torres del Paine Glacier & Steppe Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2022-09-12",
+    "location": {
+      "address_line_1": "Torres del Paine Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Torres del Paine",
+      "state_province": "Magallanes",
+      "postal_code": "10000",
+      "country_code": "CL",
+      "country_name": "Chile",
+      "latitude": -50.9423,
+      "longitude": -73.4068,
+      "coordinates": [
+        -73.4068,
+        -50.9423
+      ],
+      "altitude_meters": 100,
+      "timezone": "America/Punta_Arenas"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.patagonia@soseihotels.com",
+      "reservations_email": "reservations.patagonia@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-patagonia"
+    },
+    "currency": "USD",
+    "local_currency": "CLP",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 70,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/forest.png",
+      "hero_banner": "/assets/contents/forest.png",
+      "gallery": [
+        "/assets/contents/forest.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-serengeti",
+    "code": "NAT-SER",
+    "name": "SOSEI Serengeti",
+    "brand": "SOSEI",
+    "category": "nature",
+    "sub_category": "Savannah Kopje & Migration Sanctuary",
+    "region": "Middle East & Africa",
+    "slug": "sosei-serengeti",
+    "status": "active",
+    "tagline": "Savannah Kopje & Migration Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2023-08-15",
+    "location": {
+      "address_line_1": "Serengeti Sanctuary Estate 1",
+      "address_line_2": "",
+      "city": "Serengeti",
+      "state_province": "Mara",
+      "postal_code": "10000",
+      "country_code": "TZ",
+      "country_name": "Tanzania",
+      "latitude": -2.3333,
+      "longitude": 34.8333,
+      "coordinates": [
+        34.8333,
+        -2.3333
+      ],
+      "altitude_meters": 100,
+      "timezone": "Africa/Dar_es_Salaam"
+    },
+    "contact": {
+      "phone": "+41 41 888 0000",
+      "email": "concierge.serengeti@soseihotels.com",
+      "reservations_email": "reservations.serengeti@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-serengeti"
+    },
+    "currency": "USD",
+    "local_currency": "TZS",
+    "check_in_time": "15:00",
+    "check_out_time": "12:00",
+    "total_rooms": 60,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
+    "amenities": [
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
+    ],
+    "policies": {
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
+    },
+    "images": {
+      "thumbnail": "/assets/contents/forest.png",
+      "hero_banner": "/assets/contents/forest.png",
+      "gallery": [
+        "/assets/contents/forest.png"
+      ]
+    },
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
+  },
+  {
+    "id": "sosei-kyoto",
+    "code": "WEL-KYO",
+    "name": "SOSEI Kyoto",
+    "brand": "SOSEI",
+    "category": "wellness",
+    "sub_category": "Arashiyama Bamboo & Onsen Sanctuary",
+    "region": "Asia Pacific",
+    "slug": "sosei-kyoto",
+    "status": "active",
+    "tagline": "Arashiyama Bamboo & Onsen Sanctuary",
+    "star_rating": 5,
     "opening_date": "2021-09-12",
     "location": {
-      "address_line_1": "Arashiyama Bamboo Way 12",
+      "address_line_1": "Kyoto Sanctuary Estate 1",
       "address_line_2": "",
       "city": "Kyoto",
       "state_province": "Kansai",
-      "postal_code": "616-0000",
+      "postal_code": "10000",
       "country_code": "JP",
       "country_name": "Japan",
       "latitude": 35.0116,
       "longitude": 135.7681,
-      "coordinates": [135.7681, 35.0116],
-      "altitude_meters": 110,
+      "coordinates": [
+        135.7681,
+        35.0116
+      ],
+      "altitude_meters": 100,
       "timezone": "Asia/Tokyo"
     },
     "contact": {
-      "phone": "+81 75 882 5000",
-      "email": "sylvan@soseihotels.com",
-      "reservations_email": "reservations.sylvan@soseihotels.com",
-      "website": "https://soseihotels.com/forest/sylvan"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.kyoto@soseihotels.com",
+      "reservations_email": "reservations.kyoto@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-kyoto"
     },
     "currency": "USD",
     "local_currency": "JPY",
     "check_in_time": "15:00",
-    "check_out_time": "11:00",
-    "total_rooms": 52,
-    "total_floors": 2,
-    "total_area_sqm": 26000,
+    "check_out_time": "12:00",
+    "total_rooms": 90,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
     "amenities": [
-      "Natural Hinoki Wood Hot Springs (Onsen)",
-      "Traditional Zen Tea Ceremony House",
-      "Kaiseki Multi-Course Haute Cuisine",
-      "Forest Bathing (Shinrin-yoku) Trails",
-      "Private Meditation Garden"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
       "cancellation_deadline_hours": 72,
       "deposit_required_pct": 30,
-      "pet_friendly": false,
-      "child_policy": "Children above 8 years welcome",
-      "smoking_policy": "Non-smoking property"
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
       "thumbnail": "/assets/contents/forest.png",
@@ -453,254 +841,63 @@
         "/assets/contents/forest.png"
       ]
     },
-    "created_at": "2021-04-10T09:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   },
   {
-    "id": "sosei-verdant",
-    "code": "FOR-VERD",
-    "name": "SOSEI Verdant",
+    "id": "sosei-alula",
+    "code": "WEL-ALU",
+    "name": "SOSEI AlUla",
     "brand": "SOSEI",
-    "category": "forest",
-    "sub_category": "Rainforest Canopy & Organic Sanctuary",
-    "region": "Asia Pacific",
-    "slug": "sosei-verdant-thailand",
-    "status": "active",
-    "tagline": "Lush jungle sanctuary floating in the misty northern peaks",
-    "star_rating": 5.0,
-    "opening_date": "2023-04-05",
-    "location": {
-      "address_line_1": "Mae Rim Mountain Ridge 99",
-      "address_line_2": "",
-      "city": "Chiang Mai",
-      "state_province": "Chiang Mai Province",
-      "postal_code": "50180",
-      "country_code": "TH",
-      "country_name": "Thailand",
-      "latitude": 18.7883,
-      "longitude": 98.9853,
-      "coordinates": [98.9853, 18.7883],
-      "altitude_meters": 740,
-      "timezone": "Asia/Bangkok"
-    },
-    "contact": {
-      "phone": "+66 53 889 200",
-      "email": "verdant@soseihotels.com",
-      "reservations_email": "reservations.verdant@soseihotels.com",
-      "website": "https://soseihotels.com/forest/verdant"
-    },
-    "currency": "USD",
-    "local_currency": "THB",
-    "check_in_time": "14:00",
-    "check_out_time": "12:00",
-    "total_rooms": 46,
-    "total_floors": 2,
-    "total_area_sqm": 31000,
-    "amenities": [
-      "Treehouse Villas with Plunge Pools",
-      "Organic Botanical Herb Garden",
-      "Traditional Thai Herbal Herbalists",
-      "Canopy Walkway & Birdwatching",
-      "Farm-to-Table Bamboo Dining"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 72,
-      "deposit_required_pct": 30,
-      "pet_friendly": false,
-      "child_policy": "All ages welcome",
-      "smoking_policy": "Non-smoking property"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/forest.png",
-      "hero_banner": "/assets/contents/forest.png",
-      "gallery": [
-        "/assets/contents/forest.png"
-      ]
-    },
-    "created_at": "2022-11-20T08:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-hearth",
-    "code": "COU-HEAR",
-    "name": "SOSEI Hearth",
-    "brand": "SOSEI",
-    "category": "countryside",
-    "sub_category": "Tuscan Vineyard & Historic Estate",
-    "region": "Europe",
-    "slug": "sosei-hearth-italy",
-    "status": "active",
-    "tagline": "Renaissance elegance amidst undulating Tuscan olive groves and vineyards",
-    "star_rating": 5.0,
-    "opening_date": "2021-05-18",
-    "location": {
-      "address_line_1": "Via del Chianti Classico 108",
-      "address_line_2": "",
-      "city": "Siena",
-      "state_province": "Tuscany",
-      "postal_code": "53100",
-      "country_code": "IT",
-      "country_name": "Italy",
-      "latitude": 43.7696,
-      "longitude": 11.2558,
-      "coordinates": [11.2558, 43.7696],
-      "altitude_meters": 320,
-      "timezone": "Europe/Rome"
-    },
-    "contact": {
-      "phone": "+39 0577 884 100",
-      "email": "hearth@soseihotels.com",
-      "reservations_email": "reservations.hearth@soseihotels.com",
-      "website": "https://soseihotels.com/countryside/hearth"
-    },
-    "currency": "USD",
-    "local_currency": "EUR",
-    "check_in_time": "15:00",
-    "check_out_time": "11:00",
-    "total_rooms": 58,
-    "total_floors": 3,
-    "total_area_sqm": 54000,
-    "amenities": [
-      "Private Biodynamic Vineyard & Cellar",
-      "Truffle Hunting & Cooking Academy",
-      "Restored 16th-Century Chapel & Courtyard",
-      "Heated Cypress-Lined Pool",
-      "Vinotherapy Spa Treatments"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 72,
-      "deposit_required_pct": 30,
-      "pet_friendly": true,
-      "child_policy": "All ages welcome",
-      "smoking_policy": "Designated garden areas only"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/country.png",
-      "hero_banner": "/assets/contents/country.png",
-      "gallery": [
-        "/assets/contents/country.png"
-      ]
-    },
-    "created_at": "2021-02-15T11:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-pastoral",
-    "code": "COU-PAST",
-    "name": "SOSEI Pastoral",
-    "brand": "SOSEI",
-    "category": "countryside",
-    "sub_category": "Provencal Lavender Domaine & Bastide",
-    "region": "Europe",
-    "slug": "sosei-pastoral-france",
-    "status": "active",
-    "tagline": "Sun-drenched bastide enveloped by purple lavender fields and olive trees",
-    "star_rating": 5.0,
-    "opening_date": "2022-06-01",
-    "location": {
-      "address_line_1": "Chemin des Lavandes 24",
-      "address_line_2": "",
-      "city": "Gordes",
-      "state_province": "Provence",
-      "postal_code": "84220",
-      "country_code": "FR",
-      "country_name": "France",
-      "latitude": 43.7151,
-      "longitude": 5.2684,
-      "coordinates": [5.2684, 43.7151],
-      "altitude_meters": 370,
-      "timezone": "Europe/Paris"
-    },
-    "contact": {
-      "phone": "+33 4 90 72 00 00",
-      "email": "pastoral@soseihotels.com",
-      "reservations_email": "reservations.pastoral@soseihotels.com",
-      "website": "https://soseihotels.com/countryside/pastoral"
-    },
-    "currency": "USD",
-    "local_currency": "EUR",
-    "check_in_time": "15:00",
-    "check_out_time": "11:00",
-    "total_rooms": 44,
-    "total_floors": 2,
-    "total_area_sqm": 42000,
-    "amenities": [
-      "Ancient Stone Bastide Suites",
-      "Essential Oil Distillation Workshop",
-      "Michelin Provencal Bistro",
-      "Petanque Courts & Herb Garden",
-      "E-Bike Tours through Luberon Valleys"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 72,
-      "deposit_required_pct": 30,
-      "pet_friendly": true,
-      "child_policy": "All ages welcome",
-      "smoking_policy": "Non-smoking rooms"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/country.png",
-      "hero_banner": "/assets/contents/country.png",
-      "gallery": [
-        "/assets/contents/country.png"
-      ]
-    },
-    "created_at": "2022-01-10T10:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-mirage",
-    "code": "DES-MIRA",
-    "name": "SOSEI Mirage",
-    "brand": "SOSEI",
-    "category": "desert",
-    "sub_category": "Oasis & Dunes Eco-Sanctuary",
+    "category": "wellness",
+    "sub_category": "Ashar Sandstone Canyon & Oasis Sanctuary",
     "region": "Middle East & Africa",
-    "slug": "sosei-mirage-egypt",
+    "slug": "sosei-alula",
     "status": "active",
-    "tagline": "Mythic desert oasis surrounded by monumental golden dunes",
-    "star_rating": 5.0,
-    "opening_date": "2023-11-10",
+    "tagline": "Ashar Sandstone Canyon & Oasis Sanctuary",
+    "star_rating": 5,
+    "opening_date": "2022-10-20",
     "location": {
-      "address_line_1": "Siwa Oasis Protected Area",
+      "address_line_1": "AlUla Sanctuary Estate 1",
       "address_line_2": "",
-      "city": "Siwa / Giza",
-      "state_province": "Western Desert",
-      "postal_code": "11511",
-      "country_code": "EG",
-      "country_name": "Egypt",
-      "latitude": 29.97,
-      "longitude": 31.13,
-      "coordinates": [31.13, 29.97],
-      "altitude_meters": -18,
-      "timezone": "Africa/Cairo"
+      "city": "AlUla",
+      "state_province": "Medina",
+      "postal_code": "10000",
+      "country_code": "SA",
+      "country_name": "Saudi Arabia",
+      "latitude": 26.6085,
+      "longitude": 37.9232,
+      "coordinates": [
+        37.9232,
+        26.6085
+      ],
+      "altitude_meters": 100,
+      "timezone": "Asia/Riyadh"
     },
     "contact": {
-      "phone": "+20 2 3377 8000",
-      "email": "mirage@soseihotels.com",
-      "reservations_email": "reservations.mirage@soseihotels.com",
-      "website": "https://soseihotels.com/desert/mirage"
+      "phone": "+41 41 888 0000",
+      "email": "concierge.alula@soseihotels.com",
+      "reservations_email": "reservations.alula@soseihotels.com",
+      "website": "https://soseihotels.com/sosei-alula"
     },
     "currency": "USD",
-    "local_currency": "EGP",
+    "local_currency": "SAR",
     "check_in_time": "15:00",
     "check_out_time": "12:00",
-    "total_rooms": 38,
-    "total_floors": 1,
-    "total_area_sqm": 68000,
+    "total_rooms": 85,
+    "total_floors": 4,
+    "total_area_sqm": 38000,
     "amenities": [
-      "Thermal Saline Mineral Springs",
-      "Kershef Adobe Eco-Architecture",
-      "Private Astronomy & Stargazing Deck",
-      "Bedouin Tent Fine Dining",
-      "Desert 4x4 Safari & Sandboarding"
+      "24/7 Private Butler Service",
+      "Holistic Thermal & Longevity Spa",
+      "Signature Fine Gastronomy"
     ],
     "policies": {
-      "cancellation_deadline_hours": 96,
-      "deposit_required_pct": 40,
-      "pet_friendly": false,
-      "child_policy": "Children over 6 welcome",
-      "smoking_policy": "Outdoor patio only"
+      "cancellation_deadline_hours": 72,
+      "deposit_required_pct": 30,
+      "pet_friendly": true,
+      "child_policy": "All ages welcome",
+      "smoking_policy": "Non-smoking indoors"
     },
     "images": {
       "thumbnail": "/assets/contents/desert.png",
@@ -709,71 +906,7 @@
         "/assets/contents/desert.png"
       ]
     },
-    "created_at": "2023-04-12T14:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
-  },
-  {
-    "id": "sosei-solstice",
-    "code": "DES-SOLS",
-    "name": "SOSEI Solstice",
-    "brand": "SOSEI",
-    "category": "desert",
-    "sub_category": "Canyon & Desert Luxury Pavilions",
-    "region": "Middle East & Africa",
-    "slug": "sosei-solstice-oman",
-    "status": "active",
-    "tagline": "Cliffside solitude suspended over dramatic desert canyons",
-    "star_rating": 5.0,
-    "opening_date": "2024-01-20",
-    "location": {
-      "address_line_1": "Jabal Akhdar Summit Trail 04",
-      "address_line_2": "",
-      "city": "Nizwa / Muscat",
-      "state_province": "Ad Dakhiliyah",
-      "postal_code": "611",
-      "country_code": "OM",
-      "country_name": "Oman",
-      "latitude": 23.5859,
-      "longitude": 58.4059,
-      "coordinates": [58.4059, 23.5859],
-      "altitude_meters": 2000,
-      "timezone": "Asia/Muscat"
-    },
-    "contact": {
-      "phone": "+968 2534 8800",
-      "email": "solstice@soseihotels.com",
-      "reservations_email": "reservations.solstice@soseihotels.com",
-      "website": "https://soseihotels.com/desert/solstice"
-    },
-    "currency": "USD",
-    "local_currency": "OMR",
-    "check_in_time": "15:00",
-    "check_out_time": "12:00",
-    "total_rooms": 40,
-    "total_floors": 2,
-    "total_area_sqm": 48000,
-    "amenities": [
-      "Canyon-Edge Infinity Jacuzzis",
-      "Frankincense & Rose Wellness Spa",
-      "Traditional Omani Fire Pit Dining",
-      "Via Ferrata & Mountain Climbing",
-      "Helicopter Canyon Transfers"
-    ],
-    "policies": {
-      "cancellation_deadline_hours": 96,
-      "deposit_required_pct": 40,
-      "pet_friendly": false,
-      "child_policy": "All ages welcome",
-      "smoking_policy": "Non-smoking indoor pavilions"
-    },
-    "images": {
-      "thumbnail": "/assets/contents/desert.png",
-      "hero_banner": "/assets/contents/desert.png",
-      "gallery": [
-        "/assets/contents/desert.png"
-      ]
-    },
-    "created_at": "2023-08-01T10:00:00Z",
-    "updated_at": "2026-08-31T09:30:00Z"
+    "created_at": "2022-01-10T08:00:00Z",
+    "updated_at": "2026-10-17T09:30:00Z"
   }
 ]

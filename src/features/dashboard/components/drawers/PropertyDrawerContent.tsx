@@ -22,7 +22,7 @@ import {
 
 // ── 1. Property Today's Activity Drawer ─────────────────────────────────────
 export function PropertyActivityDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const activity = getPropertyGuestActivity(propertyId);
   const todayMetrics = getPropertyMetrics(propertyId, 'today');
 
@@ -120,7 +120,7 @@ export function PropertyActivityDrawerContent({ data }: { data: any }) {
 
 // ── 2. Property Rhythm & Peak Load Schedule Drawer ──────────────────────────
 export function PropertyRhythmDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const todayMetrics = getPropertyMetrics(propertyId, 'today');
   const propName = data?.propertyName || todayMetrics.name;
   const period: PeriodId = data?.period || 'mtd';
@@ -248,7 +248,7 @@ export function PropertyRhythmDrawerContent({ data }: { data: any }) {
 
 // ── 3. Property Room Type Performance Drawer ─────────────────────────────────
 export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const initialPeriod: 'today' | 'mtd' | 'ytd' =
     data?.period === 'today' || data?.period === 'mtd' || data?.period === 'ytd'
       ? data.period
@@ -424,7 +424,7 @@ export function PropertyRoomTierDrawerContent({ data }: { data: any }) {
 
 // ── 4. Property Department Revenue Drawer ────────────────────────────────────
 export function PropertyDepartmentRevenueDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const period: PeriodId = data?.period || 'mtd';
   const m = getPropertyMetrics(propertyId, period);
   const propName = data?.propertyName || m.name;
@@ -551,7 +551,7 @@ export function PropertyUpcomingEventsDrawerContent({ data }: { data: any }) {
   const { closeDrawer } = useDashboardDrawer();
   const [filterType, setFilterType] = useState<'all' | 'booking' | 'lead'>('all');
 
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const todayMetrics = getPropertyMetrics(propertyId, 'today');
   const propName = data?.propertyName || todayMetrics.name;
   const rawEvents = getPropertyEvents(propertyId);
@@ -764,7 +764,7 @@ export function PropertyUpcomingEventsDrawerContent({ data }: { data: any }) {
 
 // ── 6. Property Guest Satisfaction & Sentiment Drawer ────────────────────────
 export function PropertyGuestSatisfactionDrawerContent({ data }: { data: any }) {
-  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-barcelona');
+  const propertyId = resolvePropertyId(data?.propertyId || 'sosei-geneva');
   const initialPeriod: 'today' | 'mtd' | 'ytd' =
     data?.period === 'today' || data?.period === 'mtd' || data?.period === 'ytd'
       ? data.period

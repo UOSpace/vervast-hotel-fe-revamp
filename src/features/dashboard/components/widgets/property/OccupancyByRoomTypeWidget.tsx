@@ -12,7 +12,7 @@ import {
 import { buildRoomTiers } from '@/data/portfolio/hospitalitySubMix';
 
 export function OccupancyByRoomTypeWidget({ 
-  propertyId: rawPropertyId = 'sosei-barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
   propertyName,
   period = 'mtd',
 }: { 

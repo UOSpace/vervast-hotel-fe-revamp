@@ -27,7 +27,7 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   const tktCode = booking.crsNo.replace('CRS-', 'TKT-');
 
   // 1. SKI RESORT ITINERARY (Andermatt)
-  if (booking.hotel === 'SOSEI Andermatt') {
+  if (booking.hotel === 'SOSEI Courchevel') {
     return [
       {
         day: 'Day 1',
@@ -107,8 +107,8 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   }
 
   // 2. BEACH / LAGOON / WELLNESS RESORT (AUH, Bali, Melides)
-  if (booking.hotel === 'SOSEI AUH' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Bali' || booking.hotel === 'SOSEI Melides') {
-    const mainImg = booking.hotel === 'SOSEI AUH' ? maldivesImg : baliImg;
+  if (booking.hotel === 'SOSEI AlUla' || booking.hotel === 'SOSEI Kyoto' || booking.hotel === 'SOSEI Kyoto' || booking.hotel === 'SOSEI Los Cabos') {
+    const mainImg = booking.hotel === 'SOSEI AlUla' ? maldivesImg : baliImg;
     return [
       {
         day: 'Day 1',
@@ -182,8 +182,8 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   }
 
   // 3. NATURE / RAINFOREST / AEGEAN (OSA, Tinos)
-  if (booking.hotel === 'SOSEI OSA' || booking.hotel === 'SOSEI Tinos') {
-    const isDesert = booking.hotel === 'SOSEI Tinos';
+  if (booking.hotel === 'SOSEI Patagonia' || booking.hotel === 'SOSEI Muscat') {
+    const isDesert = booking.hotel === 'SOSEI Muscat';
     const mainImg = isDesert ? omanImg : costaRicaImg;
     return [
       {
@@ -254,7 +254,7 @@ export function buildBookingItinerary(booking: BookingRecord): BookingItineraryI
   }
 
   // 4. URBAN / CULTURAL / BEACH ESTATE (Barcelona, Umbria, El Gouna)
-  const urbanMain = booking.hotel === 'SOSEI Umbria' ? japanImg : (booking.hotel === 'SOSEI El Gouna' ? egyptImg : urbanImg);
+  const urbanMain = booking.hotel === 'SOSEI Amalfi' ? japanImg : (booking.hotel === 'SOSEI Marrakech' ? egyptImg : urbanImg);
   return [
     {
       day: 'Day 1',

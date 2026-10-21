@@ -17,8 +17,8 @@ import {
 const GRID = 'grid-cols-[31%_15%_18%_17%_19%]';
 
 export function GuestNationalityWidget({
-  propertyId: rawPropertyId = 'sosei-barcelona',
-  propertyName = 'SOSEI Barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
+  propertyName = 'SOSEI Geneva',
   period = 'mtd',
 }: {
   propertyId?: string;

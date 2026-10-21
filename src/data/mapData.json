@@ -1,6 +1,6 @@
 [
   { 
-    "id": "sosei-nocturne", 
+    "id": "sosei-courchevel", 
     "name": "SOSEI NOCTURNE", 
     "city": "Switzerland", 
     "grouping": "Alpine",
@@ -13,7 +13,7 @@
     "coordinates": [8.2275, 46.8182]
   },
   { 
-    "id": "sosei-aurora", 
+    "id": "sosei-aspen", 
     "name": "SOSEI AURORA", 
     "city": "Finland", 
     "grouping": "Alpine",
@@ -26,7 +26,7 @@
     "coordinates": [25.7208, 66.5039]
   },
   { 
-    "id": "sosei-marea", 
+    "id": "sosei-alula", 
     "name": "SOSEI MARÉA", 
     "city": "Maldives", 
     "grouping": "Ocean",
@@ -39,7 +39,7 @@
     "coordinates": [73.5089, 4.1755]
   },
   { 
-    "id": "sosei-pelagia", 
+    "id": "sosei-seychelles", 
     "name": "SOSEI PELAGIA", 
     "city": "Indonesia", 
     "grouping": "Ocean",
@@ -52,7 +52,7 @@
     "coordinates": [115.1889, -8.4095]
   },
   { 
-    "id": "sosei-verper", 
+    "id": "sosei-geneva", 
     "name": "SOSEI VERPER", 
     "city": "New York, USA", 
     "grouping": "City",
@@ -65,7 +65,7 @@
     "coordinates": [-74.0060, 40.7128]
   },
   { 
-    "id": "sosei-elan", 
+    "id": "sosei-geneva", 
     "name": "SOSEI ÉLAN", 
     "city": "Los Angeles, USA", 
     "grouping": "City",
@@ -78,7 +78,7 @@
     "coordinates": [-118.2437, 34.0522]
   },
   { 
-    "id": "sosei-sylvan", 
+    "id": "sosei-patagonia", 
     "name": "SOSEI SYLVAN", 
     "city": "Kyoto, Japan", 
     "grouping": "Forest",
@@ -91,7 +91,7 @@
     "coordinates": [135.7681, 35.0116]
   },
   { 
-    "id": "sosei-verdant", 
+    "id": "sosei-sumba", 
     "name": "SOSEI VERDANT", 
     "city": "Thailand", 
     "grouping": "Forest",
@@ -104,7 +104,7 @@
     "coordinates": [98.9853, 18.7883]
   },
   { 
-    "id": "sosei-hearth", 
+    "id": "sosei-courchevel", 
     "name": "SOSEI HEARTH", 
     "city": "Tuscany, Italy", 
     "grouping": "Countryside",
@@ -117,7 +117,7 @@
     "coordinates": [11.2558, 43.7696]
   },
   { 
-    "id": "sosei-pastoral", 
+    "id": "sosei-amalfi", 
     "name": "SOSEI PASTORAL", 
     "city": "Provence, France", 
     "grouping": "Countryside",
@@ -130,7 +130,7 @@
     "coordinates": [5.2684, 43.7151]
   },
   { 
-    "id": "sosei-mirage", 
+    "id": "sosei-muscat", 
     "name": "SOSEI MIRAGE", 
     "city": "Egypt", 
     "grouping": "Desert",
@@ -143,7 +143,7 @@
     "coordinates": [31.13, 29.97]
   },
   { 
-    "id": "sosei-solstice", 
+    "id": "sosei-marrakech", 
     "name": "SOSEI SOLSTICE", 
     "city": "Oman", 
     "grouping": "Desert",

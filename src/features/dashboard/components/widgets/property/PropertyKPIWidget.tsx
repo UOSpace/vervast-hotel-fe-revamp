@@ -26,7 +26,7 @@ import {
 import { getPropertyGuestActivity, getPropertyLosNights } from '@/data/portfolio/hospitalitySubMix';
 
 export function PropertyKPIWidget({ 
-  propertyId = 'sosei-barcelona',
+  propertyId = 'sosei-geneva',
   propertyName,
   period = 'mtd',
 }: { 

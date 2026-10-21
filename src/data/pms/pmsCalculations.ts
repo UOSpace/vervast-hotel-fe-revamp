@@ -570,22 +570,21 @@ export function getDashboardComputedData(): DashboardComputedData {
     { name: 'Rooms', score: 4.8 },
   ];
 
-  // 9. VVIP Arrivals Today (Aug 31, 2026)
   const vvipArrivals = [
     {
       id: 'arr_01',
       name: 'Sal Zanjabila',
-      property: 'SOSEI Andermatt',
+      property: 'SOSEI Courchevel',
       time: '14:20',
       room: 'Suite 101',
       vip: true,
       tier: 'Platinum VIP',
-      notes: 'Gluten-free in-room menu & Gemsstock view guaranteed',
+      notes: 'Gluten-free in-room menu & Trois Vallées view guaranteed',
     },
     {
       id: 'arr_02',
       name: 'Martin Fuentes',
-      property: 'SOSEI Melides',
+      property: 'SOSEI Los Cabos',
       time: '15:45',
       room: 'Villa 201',
       vip: true,
@@ -595,7 +594,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_03',
       name: 'Elizabeth Hall',
-      property: 'SOSEI Barcelona',
+      property: 'SOSEI Geneva',
       time: '12:30',
       room: 'Skyline Penthouse 2801',
       vip: true,
@@ -605,17 +604,17 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_04',
       name: 'Thomas Bailey & Family',
-      property: 'SOSEI AUH',
+      property: 'SOSEI AlUla',
       time: '13:45',
-      room: 'Overwater Villa 108',
+      room: 'Canyon Villa 108',
       vip: true,
       tier: 'Platinum VIP',
-      notes: 'Family marine biologist dive & Nut allergy alert',
+      notes: 'Family desert astronomy tour & Nut allergy alert',
     },
     {
       id: 'arr_05',
       name: 'Kenzo Tanaka',
-      property: 'SOSEI Umbria',
+      property: 'SOSEI Amalfi',
       time: '15:00',
       room: 'Estate Villa 12',
       vip: true,
@@ -625,7 +624,7 @@ export function getDashboardComputedData(): DashboardComputedData {
     {
       id: 'arr_06',
       name: 'Lord Sterling',
-      property: 'SOSEI Bali',
+      property: 'SOSEI Kyoto',
       time: '16:00',
       room: 'Sanctuary Pool Villa 204',
       vip: true,

@@ -1,7 +1,7 @@
 [
   {
     "id": "rt_alp_001",
-    "property_id": "sosei-nocturne",
+    "property_id": "sosei-courchevel",
     "code": "ALP-PSUITE",
     "name": "Alpine Panoramic Suite",
     "category": "Suite",
@@ -18,7 +18,7 @@
   },
   {
     "id": "rt_alp_002",
-    "property_id": "sosei-nocturne",
+    "property_id": "sosei-courchevel",
     "code": "ALP-CHALET",
     "name": "Glacier Penthouse Chalet",
     "category": "Chalet",
@@ -35,7 +35,7 @@
   },
   {
     "id": "rt_alp_003",
-    "property_id": "sosei-aurora",
+    "property_id": "sosei-aspen",
     "code": "ALP-DOME",
     "name": "Aurora Geothermal Glass Igloo",
     "category": "Dome Chalet",
@@ -52,7 +52,7 @@
   },
   {
     "id": "rt_ocn_001",
-    "property_id": "sosei-marea",
+    "property_id": "sosei-alula",
     "code": "OCN-OWV",
     "name": "Overwater Sunset Pool Villa",
     "category": "Overwater Villa",
@@ -69,7 +69,7 @@
   },
   {
     "id": "rt_ocn_002",
-    "property_id": "sosei-marea",
+    "property_id": "sosei-alula",
     "code": "OCN-REEFRES",
     "name": "Coral Reef Grand Residence",
     "category": "Grand Residence",
@@ -86,7 +86,7 @@
   },
   {
     "id": "rt_ocn_003",
-    "property_id": "sosei-pelagia",
+    "property_id": "sosei-seychelles",
     "code": "OCN-CLIFFV",
     "name": "Uluwatu Cliff Edge Ocean Villa",
     "category": "Cliff Villa",
@@ -103,7 +103,7 @@
   },
   {
     "id": "rt_cty_001",
-    "property_id": "sosei-verper",
+    "property_id": "sosei-geneva",
     "code": "CTY-PENT",
     "name": "Vesper Skyline Penthouse",
     "category": "Penthouse",
@@ -120,7 +120,7 @@
   },
   {
     "id": "rt_cty_002",
-    "property_id": "sosei-verper",
+    "property_id": "sosei-geneva",
     "code": "CTY-EXEC",
     "name": "Fifth Avenue Executive Suite",
     "category": "Suite",
@@ -137,7 +137,7 @@
   },
   {
     "id": "rt_cty_003",
-    "property_id": "sosei-elan",
+    "property_id": "sosei-geneva",
     "code": "CTY-BEVSTE",
     "name": "Wilshire Modernist Suite",
     "category": "Suite",
@@ -154,7 +154,7 @@
   },
   {
     "id": "rt_for_001",
-    "property_id": "sosei-sylvan",
+    "property_id": "sosei-patagonia",
     "code": "FOR-RYOKAN",
     "name": "Kyoto Sylvan Onsen Villa",
     "category": "Ryokan Villa",
@@ -171,7 +171,7 @@
   },
   {
     "id": "rt_for_002",
-    "property_id": "sosei-verdant",
+    "property_id": "sosei-sumba",
     "code": "FOR-TREEH",
     "name": "Verdant Rainforest Canopy Villa",
     "category": "Canopy Villa",
@@ -188,7 +188,7 @@
   },
   {
     "id": "rt_cou_001",
-    "property_id": "sosei-hearth",
+    "property_id": "sosei-courchevel",
     "code": "COU-VINEY",
     "name": "Chianti Estate Vineyard Suite",
     "category": "Estate Suite",
@@ -205,7 +205,7 @@
   },
   {
     "id": "rt_cou_002",
-    "property_id": "sosei-pastoral",
+    "property_id": "sosei-amalfi",
     "code": "COU-BAST",
     "name": "Provencal Lavender Bastide",
     "category": "Bastide",
@@ -222,7 +222,7 @@
   },
   {
     "id": "rt_des_001",
-    "property_id": "sosei-mirage",
+    "property_id": "sosei-muscat",
     "code": "DES-OASIS",
     "name": "Siwa Mirage Dune Pavilion",
     "category": "Dune Pavilion",
@@ -239,7 +239,7 @@
   },
   {
     "id": "rt_des_002",
-    "property_id": "sosei-solstice",
+    "property_id": "sosei-marrakech",
     "code": "DES-CANYN",
     "name": "Jabal Canyon Cliff Pavilion",
     "category": "Canyon Pavilion",

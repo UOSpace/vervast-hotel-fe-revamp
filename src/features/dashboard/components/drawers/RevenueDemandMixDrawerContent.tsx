@@ -137,7 +137,7 @@ export function RevenueDemandMixDrawerContent({
         ))}
       </div>
 
-      {/* Property Categories Breakdown (5 Categories expandable to 10 Sanctuaries) */}
+      {/* Property Categories Breakdown (5 Categories expandable to 14) */}
       <div>
         <div className="flex justify-between items-center mb-2 px-0.5">
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
@@ -250,7 +250,7 @@ export function RevenueDemandMixDrawerContent({
               })}
               <tr className="font-bold border-t-2 border-zinc-200 bg-zinc-50/80">
                 <td className="py-3 px-3 text-zinc-900">Total / Portfolio Average</td>
-                <td className="py-3 px-3 text-zinc-500">Global Portfolio (9 Properties)</td>
+                <td className="py-3 px-3 text-zinc-500">Global Portfolio (14)</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.roomRevenue)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.fnbRevenue)}</td>
                 <td className="py-3 px-3 text-right text-zinc-900">{fmtUsd(m.spaRevenue)}</td>

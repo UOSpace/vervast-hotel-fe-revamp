@@ -6,8 +6,8 @@ import { type PeriodId } from '@/data/portfolio';
 import { getPropertyAlerts } from '@/data/portfolio/hospitalitySubMix';
 
 export function AlertsTasksWidget({
-  propertyId: rawPropertyId = 'sosei-barcelona',
-  propertyName = 'SOSEI Barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
+  propertyName = 'SOSEI Geneva',
   period = 'mtd',
 }: {
   propertyId?: string;

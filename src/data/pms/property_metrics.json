@@ -1,225 +1,294 @@
 {
   "portfolio_summary": {
-    "date": "2026-08-31",
-    "total_properties": 12,
+    "date": "2026-10-17",
+    "total_properties": 14,
     "categories": [
-      { "id": "urban", "name": "SOSEI Urban", "revenue": "$3.03M", "occ": "67%", "adr": "$2,504", "revpar": "$1,682" },
-      { "id": "beach-resort", "name": "SOSEI Beach Resort", "revenue": "$2.60M", "occ": "72%", "adr": "$2,207", "revpar": "$1,596" },
-      { "id": "sky", "name": "SOSEI Sky", "revenue": "$4.20M", "occ": "76%", "adr": "$2,705", "revpar": "$2,104" },
-      { "id": "nature", "name": "SOSEI Nature", "revenue": "$2.80M", "occ": "71%", "adr": "$1,829", "revpar": "$1,303" },
-      { "id": "wellness", "name": "SOSEI Wellness", "revenue": "$2.60M", "occ": "58%", "adr": "$1,694", "revpar": "$989" }
+      {
+        "id": "urban",
+        "name": "SOSEI Urban",
+        "revenue": "$4.76M",
+        "occ": "74%",
+        "adr": "$1,400",
+        "revpar": "$1,036"
+      },
+      {
+        "id": "beach-resort",
+        "name": "SOSEI Beach Resort",
+        "revenue": "$9.65M",
+        "occ": "77%",
+        "adr": "$1,631",
+        "revpar": "$1,256"
+      },
+      {
+        "id": "ski",
+        "name": "SOSEI Ski",
+        "revenue": "$8.89M",
+        "occ": "80%",
+        "adr": "$1,867",
+        "revpar": "$1,500"
+      },
+      {
+        "id": "nature",
+        "name": "SOSEI Nature",
+        "revenue": "$4.30M",
+        "occ": "77%",
+        "adr": "$1,744",
+        "revpar": "$1,341"
+      },
+      {
+        "id": "wellness",
+        "name": "SOSEI Wellness",
+        "revenue": "$5.54M",
+        "occ": "78%",
+        "adr": "$1,647",
+        "revpar": "$1,285"
+      }
     ],
-    "total_rooms": 789,
-    "total_guests_today": 2847,
-    "portfolio_occupancy_pct": 68.0,
-    "portfolio_adr_usd": 2100.00,
-    "portfolio_revpar_usd": 1428.00,
-    "total_monthly_revenue_usd": 5900000.00,
-    "ytd_total_revenue_usd": 118000000.00
+    "total_rooms": 1050,
+    "total_guests_today": 1790,
+    "portfolio_occupancy_pct": 77.4,
+    "portfolio_adr_usd": 1658,
+    "portfolio_revpar_usd": 1283,
+    "total_monthly_revenue_usd": 33140000,
+    "ytd_total_revenue_usd": 548000000
   },
   "properties_metrics": [
     {
-      "property_id": "sosei-nocturne",
-      "property_name": "SOSEI Nocturne",
-      "category": "sky",
+      "property_id": "sosei-courchevel",
+      "property_name": "SOSEI Courchevel",
+      "category": "ski",
       "region": "Europe",
-      "location": "Switzerland",
+      "location": "Courchevel, France",
       "kpis": {
-        "occupancy_rate_pct": 78.0,
-        "adr_usd": 2800.00,
-        "revpar_usd": 2080.00,
-        "monthly_revenue_usd": 1100000.00,
-        "annual_revenue_usd": 22000000.00,
-        "guests_in_house": 148,
+        "occupancy_rate_pct": 82,
+        "adr_usd": 1920,
+        "revpar_usd": 1574,
+        "monthly_revenue_usd": 2911270,
+        "annual_revenue_usd": 49662848,
+        "guests_in_house": 146,
+        "arrivals_today": 19,
+        "departures_today": 18
+      }
+    },
+    {
+      "property_id": "sosei-niseko",
+      "property_name": "SOSEI Niseko",
+      "category": "ski",
+      "region": "Asia Pacific",
+      "location": "Niseko, Japan",
+      "kpis": {
+        "occupancy_rate_pct": 80,
+        "adr_usd": 1780,
+        "revpar_usd": 1424,
+        "monthly_revenue_usd": 2323968,
+        "annual_revenue_usd": 39644160,
+        "guests_in_house": 126,
+        "arrivals_today": 17,
+        "departures_today": 16
+      }
+    },
+    {
+      "property_id": "sosei-aspen",
+      "property_name": "SOSEI Aspen",
+      "category": "ski",
+      "region": "Americas",
+      "location": "Aspen, United States",
+      "kpis": {
+        "occupancy_rate_pct": 79,
+        "adr_usd": 1890,
+        "revpar_usd": 1493,
+        "monthly_revenue_usd": 2599014,
+        "annual_revenue_usd": 44336128,
+        "guests_in_house": 133,
         "arrivals_today": 18,
-        "departures_today": 12
+        "departures_today": 17
       }
     },
     {
-      "property_id": "sosei-aurora",
-      "property_name": "SOSEI Aurora",
-      "category": "sky",
+      "property_id": "sosei-amalfi",
+      "property_name": "SOSEI Amalfi",
+      "category": "beach-resort",
       "region": "Europe",
-      "location": "Finland",
+      "location": "Amalfi, Italy",
       "kpis": {
-        "occupancy_rate_pct": 74.0,
-        "adr_usd": 2600.00,
-        "revpar_usd": 1940.00,
-        "monthly_revenue_usd": 1000000.00,
-        "annual_revenue_usd": 20000000.00,
-        "guests_in_house": 72,
-        "arrivals_today": 10,
-        "departures_today": 8
+        "occupancy_rate_pct": 76,
+        "adr_usd": 1680,
+        "revpar_usd": 1277,
+        "monthly_revenue_usd": 1667251,
+        "annual_revenue_usd": 28441344,
+        "guests_in_house": 96,
+        "arrivals_today": 13,
+        "departures_today": 13
       }
     },
     {
-      "property_id": "sosei-marea",
-      "property_name": "SOSEI Maréa",
+      "property_id": "sosei-los-cabos",
+      "property_name": "SOSEI Los Cabos",
       "category": "beach-resort",
-      "region": "Asia Pacific",
-      "location": "Maldives",
+      "region": "Americas",
+      "location": "Los Cabos, Mexico",
       "kpis": {
-        "occupancy_rate_pct": 74.0,
-        "adr_usd": 2300.00,
-        "revpar_usd": 1620.00,
-        "monthly_revenue_usd": 700000.00,
-        "annual_revenue_usd": 14000000.00,
-        "guests_in_house": 95,
-        "arrivals_today": 12,
-        "departures_today": 9
-      }
-    },
-    {
-      "property_id": "sosei-pelagia",
-      "property_name": "SOSEI Pelagia",
-      "category": "beach-resort",
-      "region": "Asia Pacific",
-      "location": "Indonesia",
-      "kpis": {
-        "occupancy_rate_pct": 70.0,
-        "adr_usd": 2100.00,
-        "revpar_usd": 1480.00,
-        "monthly_revenue_usd": 600000.00,
-        "annual_revenue_usd": 12000000.00,
-        "guests_in_house": 101,
+        "occupancy_rate_pct": 77,
+        "adr_usd": 1580,
+        "revpar_usd": 1217,
+        "monthly_revenue_usd": 1721325,
+        "annual_revenue_usd": 29363776,
+        "guests_in_house": 105,
         "arrivals_today": 14,
-        "departures_today": 11
-      }
-    },
-    {
-      "property_id": "sosei-verper",
-      "property_name": "SOSEI Verper",
-      "category": "urban",
-      "region": "Americas",
-      "location": "New York, USA",
-      "kpis": {
-        "occupancy_rate_pct": 70.0,
-        "adr_usd": 2600.00,
-        "revpar_usd": 1750.00,
-        "monthly_revenue_usd": 350000.00,
-        "annual_revenue_usd": 7000000.00,
-        "guests_in_house": 198,
-        "arrivals_today": 32,
-        "departures_today": 28
-      }
-    },
-    {
-      "property_id": "sosei-elan",
-      "property_name": "SOSEI Élan",
-      "category": "urban",
-      "region": "Americas",
-      "location": "Los Angeles, USA",
-      "kpis": {
-        "occupancy_rate_pct": 66.0,
-        "adr_usd": 2400.00,
-        "revpar_usd": 1610.00,
-        "monthly_revenue_usd": 250000.00,
-        "annual_revenue_usd": 5000000.00,
-        "guests_in_house": 116,
-        "arrivals_today": 16,
         "departures_today": 14
       }
     },
     {
-      "property_id": "sosei-sylvan",
-      "property_name": "SOSEI Sylvan",
+      "property_id": "sosei-muscat",
+      "property_name": "SOSEI Muscat",
+      "category": "beach-resort",
+      "region": "Middle East & Africa",
+      "location": "Muscat, Oman",
+      "kpis": {
+        "occupancy_rate_pct": 74,
+        "adr_usd": 1560,
+        "revpar_usd": 1154,
+        "monthly_revenue_usd": 1632218,
+        "annual_revenue_usd": 27843712,
+        "guests_in_house": 101,
+        "arrivals_today": 14,
+        "departures_today": 14
+      }
+    },
+    {
+      "property_id": "sosei-sumba",
+      "property_name": "SOSEI Sumba",
+      "category": "beach-resort",
+      "region": "Asia Pacific",
+      "location": "Sumba, Indonesia",
+      "kpis": {
+        "occupancy_rate_pct": 78,
+        "adr_usd": 1620,
+        "revpar_usd": 1264,
+        "monthly_revenue_usd": 1787802,
+        "annual_revenue_usd": 30497792,
+        "guests_in_house": 106,
+        "arrivals_today": 14,
+        "departures_today": 14
+      }
+    },
+    {
+      "property_id": "sosei-seychelles",
+      "property_name": "SOSEI Seychelles",
+      "category": "beach-resort",
+      "region": "Middle East & Africa",
+      "location": "Mahé, Seychelles",
+      "kpis": {
+        "occupancy_rate_pct": 78,
+        "adr_usd": 1720,
+        "revpar_usd": 1342,
+        "monthly_revenue_usd": 1752115,
+        "annual_revenue_usd": 29889024,
+        "guests_in_house": 98,
+        "arrivals_today": 13,
+        "departures_today": 13
+      }
+    },
+    {
+      "property_id": "sosei-geneva",
+      "property_name": "SOSEI Geneva",
+      "category": "urban",
+      "region": "Europe",
+      "location": "Geneva, Switzerland",
+      "kpis": {
+        "occupancy_rate_pct": 77,
+        "adr_usd": 1480,
+        "revpar_usd": 1140,
+        "monthly_revenue_usd": 2728704,
+        "annual_revenue_usd": 46548480,
+        "guests_in_house": 178,
+        "arrivals_today": 24,
+        "departures_today": 23
+      }
+    },
+    {
+      "property_id": "sosei-marrakech",
+      "property_name": "SOSEI Marrakech",
+      "category": "urban",
+      "region": "Middle East & Africa",
+      "location": "Marrakech, Morocco",
+      "kpis": {
+        "occupancy_rate_pct": 70,
+        "adr_usd": 1290,
+        "revpar_usd": 903,
+        "monthly_revenue_usd": 1571942,
+        "annual_revenue_usd": 26815488,
+        "guests_in_house": 118,
+        "arrivals_today": 18,
+        "departures_today": 17
+      }
+    },
+    {
+      "property_id": "sosei-patagonia",
+      "property_name": "SOSEI Patagonia",
       "category": "nature",
+      "region": "Americas",
+      "location": "Torres del Paine, Chile",
+      "kpis": {
+        "occupancy_rate_pct": 76,
+        "adr_usd": 1650,
+        "revpar_usd": 1254,
+        "monthly_revenue_usd": 1910093,
+        "annual_revenue_usd": 32583936,
+        "guests_in_house": 112,
+        "arrivals_today": 15,
+        "departures_today": 15
+      }
+    },
+    {
+      "property_id": "sosei-serengeti",
+      "property_name": "SOSEI Serengeti",
+      "category": "nature",
+      "region": "Middle East & Africa",
+      "location": "Serengeti, Tanzania",
+      "kpis": {
+        "occupancy_rate_pct": 78,
+        "adr_usd": 1850,
+        "revpar_usd": 1443,
+        "monthly_revenue_usd": 1883981,
+        "annual_revenue_usd": 32138496,
+        "guests_in_house": 98,
+        "arrivals_today": 13,
+        "departures_today": 13
+      }
+    },
+    {
+      "property_id": "sosei-kyoto",
+      "property_name": "SOSEI Kyoto",
+      "category": "wellness",
       "region": "Asia Pacific",
       "location": "Kyoto, Japan",
       "kpis": {
-        "occupancy_rate_pct": 62.0,
-        "adr_usd": 1700.00,
-        "revpar_usd": 1020.00,
-        "monthly_revenue_usd": 400000.00,
-        "annual_revenue_usd": 8000000.00,
-        "guests_in_house": 64,
-        "arrivals_today": 8,
-        "departures_today": 6
+        "occupancy_rate_pct": 79,
+        "adr_usd": 1540,
+        "revpar_usd": 1217,
+        "monthly_revenue_usd": 2383373,
+        "annual_revenue_usd": 40657536,
+        "guests_in_house": 149,
+        "arrivals_today": 20,
+        "departures_today": 19
       }
     },
     {
-      "property_id": "sosei-verdant",
-      "property_name": "SOSEI Verdant",
-      "category": "wellness",
-      "region": "Asia Pacific",
-      "location": "Thailand",
-      "kpis": {
-        "occupancy_rate_pct": 58.0,
-        "adr_usd": 1500.00,
-        "revpar_usd": 880.00,
-        "monthly_revenue_usd": 300000.00,
-        "annual_revenue_usd": 6000000.00,
-        "guests_in_house": 53,
-        "arrivals_today": 7,
-        "departures_today": 5
-      }
-    },
-    {
-      "property_id": "sosei-hearth",
-      "property_name": "SOSEI Hearth",
-      "category": "nature",
-      "region": "Europe",
-      "location": "Tuscany, Italy",
-      "kpis": {
-        "occupancy_rate_pct": 74.0,
-        "adr_usd": 1900.00,
-        "revpar_usd": 1360.00,
-        "monthly_revenue_usd": 550000.00,
-        "annual_revenue_usd": 11000000.00,
-        "guests_in_house": 86,
-        "arrivals_today": 11,
-        "departures_today": 9
-      }
-    },
-    {
-      "property_id": "sosei-pastoral",
-      "property_name": "SOSEI Pastoral",
-      "category": "nature",
-      "region": "Europe",
-      "location": "Provence, France",
-      "kpis": {
-        "occupancy_rate_pct": 70.0,
-        "adr_usd": 1700.00,
-        "revpar_usd": 1220.00,
-        "monthly_revenue_usd": 450000.00,
-        "annual_revenue_usd": 9000000.00,
-        "guests_in_house": 62,
-        "arrivals_today": 8,
-        "departures_today": 7
-      }
-    },
-    {
-      "property_id": "sosei-mirage",
-      "property_name": "SOSEI Mirage",
+      "property_id": "sosei-alula",
+      "property_name": "SOSEI AlUla",
       "category": "wellness",
       "region": "Middle East & Africa",
-      "location": "Egypt",
+      "location": "AlUla, Saudi Arabia",
       "kpis": {
-        "occupancy_rate_pct": 62.0,
-        "adr_usd": 1900.00,
-        "revpar_usd": 1148.00,
-        "monthly_revenue_usd": 120000.00,
-        "annual_revenue_usd": 2400000.00,
-        "guests_in_house": 47,
-        "arrivals_today": 6,
-        "departures_today": 4
-      }
-    },
-    {
-      "property_id": "sosei-solstice",
-      "property_name": "SOSEI Solstice",
-      "category": "wellness",
-      "region": "Middle East & Africa",
-      "location": "Oman",
-      "kpis": {
-        "occupancy_rate_pct": 58.0,
-        "adr_usd": 1700.00,
-        "revpar_usd": 1028.00,
-        "monthly_revenue_usd": 80000.00,
-        "annual_revenue_usd": 1600000.00,
-        "guests_in_house": 46,
-        "arrivals_today": 5,
-        "departures_today": 4
+        "occupancy_rate_pct": 78,
+        "adr_usd": 1760,
+        "revpar_usd": 1373,
+        "monthly_revenue_usd": 2539501,
+        "annual_revenue_usd": 43320896,
+        "guests_in_house": 139,
+        "arrivals_today": 19,
+        "departures_today": 18
       }
     }
   ]

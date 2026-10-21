@@ -493,7 +493,7 @@ export function ExperienceDashboardPage() {
                     sub:
                       staffing.watchlist.length > 0
                         ? `${staffing.watchlist.map((w) => `${w.name} (${fmtPct(w.readinessPct)})`).join(' · ')} & ${fmtInt(staffing.sessionsAtRisk)} sessions monitored`
-                        : 'All 9 resorts above 95% readiness target',
+                        : 'All 14 above 95% readiness target',
                     badge: `${staffing.watchlist.length} Watchlist`,
                     meta: `${fmtInt(staffing.sessionsAtRisk)} At-Risk`,
                     tone: staffing.watchlist.length > 0 ? 'warn' : 'pos',
@@ -619,7 +619,7 @@ export function ExperienceDashboardPage() {
               </p>
             </div>
             <span className="text-[8.5px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-700">
-              9 Resorts · {fmtInt(m.experiences.programs)} Programs · {fmtInt(m.experiences.sessions)} Sessions · {fmtUsd(m.experienceRevenue)} Paid Rev
+              14 · {fmtInt(m.experiences.programs)} Programs · {fmtInt(m.experiences.sessions)} Sessions · {fmtUsd(m.experienceRevenue)} Paid Rev
             </span>
           </div>
 

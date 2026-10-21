@@ -16,8 +16,8 @@ function getBlockColorClass(loadPct: number): string {
 }
 
 export function PropertyRhythmWidget({
-  propertyId: rawPropertyId = 'sosei-barcelona',
-  propertyName = 'SOSEI Barcelona',
+  propertyId: rawPropertyId = 'sosei-geneva',
+  propertyName = 'SOSEI Geneva',
   period = 'mtd',
 }: {
   propertyId?: string;

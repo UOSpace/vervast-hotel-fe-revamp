@@ -319,7 +319,7 @@
     {
       "id": 3,
       "name": "Elizabeth Hall",
-      "property": "SOSEI Barcelona",
+      "property": "SOSEI Geneva",
       "time": "12:30 PM",
       "suite": "Skyline Penthouse 2801",
       "guestsCount": "1 Guest",
@@ -352,7 +352,7 @@
     {
       "id": 6,
       "name": "Lord Sterling",
-      "property": "SOSEI Bali",
+      "property": "SOSEI Kyoto",
       "time": "4:00 PM",
       "suite": "Sanctuary Pool Villa 204",
       "guestsCount": "2 Guests",
@@ -408,7 +408,7 @@
     {
       "imgKey": "country",
       "date": "May 2021",
-      "name": "SOSEI Bali",
+      "name": "SOSEI Kyoto",
       "location": "Ubud, Bali"
     },
     {
@@ -420,8 +420,8 @@
     {
       "imgKey": "city",
       "date": "April 2022",
-      "name": "SOSEI Barcelona",
-      "location": "Barcelona, Spain"
+      "name": "SOSEI Geneva",
+      "location": "Geneva, Switzerland"
     },
     {
       "imgKey": "desert",

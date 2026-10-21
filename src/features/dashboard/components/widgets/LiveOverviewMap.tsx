@@ -12,25 +12,23 @@ const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
  * across Europe & Mediterranean never overlap or steal hover events.
  */
 const CLOSE_PIN_OFFSETS: Record<string, [number, number]> = {
-  'sosei-andermatt': [0.8, 1.4],
-  'sosei-umbria': [1.6, -0.6],
-  'sosei-barcelona': [-0.8, 0.5],
-  'sosei-melides': [-1.4, -0.8],
-  'sosei-tinos': [1.2, -0.8],
+  'sosei-courchevel': [1.2, -0.9],
+  'sosei-geneva': [-1.2, 1.1],
+  'sosei-amalfi': [0.8, -0.6],
 };
 
 function getDisplayCoordinates(id: string, coords: [number, number], zoom: number): [number, number] {
   const offset = CLOSE_PIN_OFFSETS[id];
   if (!offset) return coords;
   // Smoothly reduce visual offset as user zooms in
-  const factor = Math.max(0.15, Math.min(1, 1.35 / zoom));
+  const factor = Math.max(0.15, Math.min(1, 1.15 / zoom));
   return [coords[0] + offset[0] * factor, coords[1] + offset[1] * factor];
 }
 
 export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ coordinates: [18, 25] as [number, number], zoom: 1.35 });
+  const [position, setPosition] = useState({ coordinates: [15, 12] as [number, number], zoom: 1.15 });
   const [hoveredInfo, setHoveredInfo] = useState<{
     id: string;
     x: number;
@@ -67,7 +65,7 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
 
   const handleReset = () => {
     setHoveredInfo(null);
-    setPosition({ coordinates: [18, 25], zoom: 1.35 });
+    setPosition({ coordinates: [15, 12], zoom: 1.15 });
   };
 
   const updateHoveredFromEvent = (item: SimulatedPropertyMapItem, target: SVGGElement) => {
@@ -131,7 +129,7 @@ export function LiveOverviewMap({ period = 'mtd' }: { period?: PeriodId }) {
       <div className="flex-1 relative overflow-hidden rounded-md bg-white">
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ scale: 110, center: [18, 25] }}
+          projectionConfig={{ scale: 110, center: [15, 12] }}
           width={850}
           height={360}
           style={{ width: '100%', height: '100%', cursor: 'grab' }}

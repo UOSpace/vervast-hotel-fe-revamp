@@ -1,24 +1,46 @@
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { getPortfolioMetrics, getPropertyIdsByCategory, fmtInt } from '@/data/portfolio';
 
 interface GuestMovementDrawerContentProps {
   theme?: string;
 }
 
 export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContentProps) {
-  const movementData = [
-    { name: 'Ski', arr: 85, in: 320, dep: 60, vip: 12, collection: 'SOSEI Ski (Andermatt)' },
-    { name: 'Beach Resort', arr: 240, in: 1380, dep: 195, vip: 38, collection: 'SOSEI Beach Resort (El Gouna, AUH, Melides, Umbria, Tinos)' },
-    { name: 'Urban', arr: 95, in: 440, dep: 80, vip: 14, collection: 'SOSEI Urban (Barcelona)' },
-    { name: 'Nature', arr: 55, in: 310, dep: 60, vip: 8, collection: 'SOSEI Nature (Osa)' },
-    { name: 'Wellness', arr: 60, in: 397, dep: 60, vip: 12, collection: 'SOSEI Wellness (Bali)' },
+  const collections = [
+    { id: 'ski' as const, name: 'Ski', collection: 'SOSEI Ski (Courchevel, Niseko, Aspen)' },
+    { id: 'beach-resort' as const, name: 'Beach Resort', collection: 'SOSEI Beach Resort (Amalfi, Los Cabos, Muscat, Sumba, Seychelles)' },
+    { id: 'urban' as const, name: 'Urban', collection: 'SOSEI Urban (Geneva, Marrakech)' },
+    { id: 'nature' as const, name: 'Nature', collection: 'SOSEI Nature (Patagonia, Serengeti)' },
+    { id: 'wellness' as const, name: 'Wellness', collection: 'SOSEI Wellness (Kyoto, AlUla)' },
   ];
+
+  const movementData = collections.map((c) => {
+    const m = getPortfolioMetrics(getPropertyIdsByCategory([c.id]), 'today');
+    const inHouse = m.avgDailyInHouseGuests;
+    const arr = m.avgDailyArrivals;
+    const dep = Math.max(4, Math.round(arr * 0.88));
+    const vip = Math.max(4, Math.round(inHouse * 0.08));
+    return {
+      name: c.name,
+      arr,
+      in: inHouse,
+      dep,
+      vip,
+      collection: c.collection,
+    };
+  });
+
+  const totIn = movementData.reduce((s, r) => s + r.in, 0);
+  const totArr = movementData.reduce((s, r) => s + r.arr, 0);
+  const totDep = movementData.reduce((s, r) => s + r.dep, 0);
+  const totVip = movementData.reduce((s, r) => s + r.vip, 0);
 
   return (
     <div className="space-y-6 animate-fade-in text-zinc-900 dark:text-zinc-100">
       <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-zinc-800">
-        <p className="text-xs text-zinc-500 font-normal">Real-time arrivals, in-house headcount, and scheduled departures across all 5 collections.</p>
+        <p className="text-xs text-zinc-500 font-normal">Real-time arrivals, in-house headcount, and scheduled departures across all 5 collections (14 global properties).</p>
         <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-          Total In-House: 2,847 Guests
+          Total In-House: {fmtInt(totIn)} Guests
         </span>
       </div>
 
@@ -61,20 +83,20 @@ export function GuestMovementDrawerContent({ theme }: GuestMovementDrawerContent
             {movementData.map((row) => (
               <tr key={row.name} className="border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                 <td className="py-2.5 px-3 font-semibold text-zinc-900 dark:text-zinc-100">{row.collection}</td>
-                <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{row.in}</td>
-                <td className="py-2.5 px-3 text-right text-emerald-700 font-medium">+{row.arr}</td>
-                <td className="py-2.5 px-3 text-right text-zinc-500 font-medium">-{row.dep}</td>
-                <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">+{row.arr - row.dep}</td>
+                <td className="py-2.5 px-3 text-right font-medium text-zinc-900 dark:text-zinc-100">{fmtInt(row.in)}</td>
+                <td className="py-2.5 px-3 text-right text-emerald-700 font-medium">+{fmtInt(row.arr)}</td>
+                <td className="py-2.5 px-3 text-right text-zinc-500 font-medium">-{fmtInt(row.dep)}</td>
+                <td className="py-2.5 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">+{fmtInt(row.arr - row.dep)}</td>
                 <td className="py-2.5 px-3 text-right font-semibold text-zinc-700 dark:text-zinc-300">{row.vip}</td>
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800">
-              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (9 Properties)</td>
-              <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">2,847</td>
-              <td className="py-3 px-3 text-right text-emerald-700">+535</td>
-              <td className="py-3 px-3 text-right text-zinc-500">-455</td>
-              <td className="py-3 px-3 text-right font-bold text-emerald-700">+80</td>
-              <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">84 VIPs</td>
+              <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total Portfolio (14 Properties)</td>
+              <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{fmtInt(totIn)}</td>
+              <td className="py-3 px-3 text-right text-emerald-700">+{fmtInt(totArr)}</td>
+              <td className="py-3 px-3 text-right text-zinc-500">-{fmtInt(totDep)}</td>
+              <td className="py-3 px-3 text-right font-bold text-emerald-700">+{fmtInt(totArr - totDep)}</td>
+              <td className="py-3 px-3 text-right font-bold text-zinc-900 dark:text-zinc-100">{totVip} VIPs</td>
             </tr>
           </tbody>
         </table>

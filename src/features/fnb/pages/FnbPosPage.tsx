@@ -117,14 +117,29 @@ export function FnbPosPage() {
   } | null>(null);
 
   // ── Grouped Restaurants by SOSEI Property List ───────────────────────────
+  const posProperties = useMemo(
+    () =>
+      MASTER_PROPERTIES.map((prop) => ({
+        property: prop,
+        totalRestaurants: SOSEI_RESTAURANTS.filter((r) => r.propertyId === prop.id).length,
+      })),
+    []
+  );
+
+  const visiblePropertyCount = useMemo(
+    () => posProperties.filter((p) => p.totalRestaurants >= 2).length,
+    [posProperties]
+  );
+
   const groupedPropertyRestaurants = useMemo(() => {
     const q = restaurantSearch.trim().toLowerCase();
 
-    return MASTER_PROPERTIES.filter((prop) => {
-      if (propertyFilter !== 'all' && prop.id !== propertyFilter) return false;
-      return true;
-    })
-      .map((prop) => {
+    return posProperties
+      .filter(({ property: prop }) => {
+        if (propertyFilter !== 'all' && prop.id !== propertyFilter) return false;
+        return true;
+      })
+      .map(({ property: prop, totalRestaurants }) => {
         const restaurants = SOSEI_RESTAURANTS.filter((r) => {
           if (r.propertyId !== prop.id) return false;
           if (!q) return true;
@@ -140,11 +155,13 @@ export function FnbPosPage() {
         return {
           property: prop,
           restaurants,
+          totalRestaurants,
           inHouseCount,
         };
       })
-      .filter((group) => group.restaurants.length > 0);
-  }, [propertyFilter, restaurantSearch]);
+      .filter((group) => group.restaurants.length > 0)
+      .sort((a, b) => b.totalRestaurants - a.totalRestaurants);
+  }, [posProperties, propertyFilter, restaurantSearch]);
 
   // ── Handle Selecting a Restaurant ────────────────────────────────────────
   const handleSelectRestaurant = (restaurant: SoseiRestaurant) => {
@@ -347,13 +364,13 @@ export function FnbPosPage() {
                 : 'bg-zinc-50 text-zinc-500 hover:text-zinc-900 border border-zinc-200/60'
             }`}
           >
-            All SOSEI Properties ({MASTER_PROPERTIES.length})
+            All SOSEI Properties ({visiblePropertyCount})
           </button>
-          {MASTER_PROPERTIES.map((prop) => (
+          {posProperties.map(({ property: prop, totalRestaurants }) => (
             <button
               key={prop.id}
               onClick={() => setPropertyFilter(prop.id)}
-              className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-wide whitespace-nowrap transition-all cursor-pointer ${
+              className={`${totalRestaurants < 2 ? 'hidden ' : ''}px-3 py-1 rounded-full text-[10px] font-medium tracking-wide whitespace-nowrap transition-all cursor-pointer ${
                 propertyFilter === prop.id
                   ? 'bg-zinc-900 text-white'
                   : 'bg-zinc-50 text-zinc-500 hover:text-zinc-900 border border-zinc-200/60'
@@ -366,8 +383,11 @@ export function FnbPosPage() {
 
         {/* Grouped Property Sections */}
         <div className="flex-1 space-y-8 pt-6">
-          {groupedPropertyRestaurants.map(({ property, restaurants }) => (
-            <section key={property.id} className="space-y-3 animate-card-enter">
+          {groupedPropertyRestaurants.map(({ property, restaurants, totalRestaurants }) => (
+            <section
+              key={property.id}
+              className={totalRestaurants < 2 ? 'hidden' : 'space-y-3 animate-card-enter'}
+            >
               {/* Property Group Header */}
               <div className="flex items-baseline justify-between border-b border-zinc-100 pb-2">
                 <div className="flex items-baseline gap-2.5">

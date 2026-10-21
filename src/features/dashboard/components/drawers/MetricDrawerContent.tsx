@@ -234,7 +234,7 @@ export function MetricDrawerContent({ config }: MetricDrawerContentProps) {
                 })}
                 <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
                   <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
-                  <td className="py-3 px-3 text-zinc-500">Global Portfolio (9 Properties)</td>
+                  <td className="py-3 px-3 text-zinc-500">Global Portfolio (14)</td>
                   <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{footerSummary.roomsRev}</td>
                   <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{footerSummary.fnbRev}</td>
                   <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{footerSummary.spaRev}</td>
@@ -351,7 +351,7 @@ export function MetricDrawerContent({ config }: MetricDrawerContentProps) {
                   })}
                   <tr className="font-bold border-t-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50/80 dark:bg-zinc-800/80">
                     <td className="py-3 px-3 text-zinc-900 dark:text-zinc-100">Total / Portfolio Average</td>
-                    <td className="py-3 px-3 text-zinc-500">Global Portfolio (9 Properties)</td>
+                    <td className="py-3 px-3 text-zinc-500">Global Portfolio (14)</td>
                     <td className="py-3 px-3 text-right text-emerald-700 font-bold">{footerSummary.occ}</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{footerSummary.adr}</td>
                     <td className="py-3 px-3 text-right text-zinc-900 dark:text-zinc-100 font-bold">{footerSummary.revenue}</td>
